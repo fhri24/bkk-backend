@@ -9,57 +9,69 @@ Laravel 12 backend application with Docker/Podman support.
 - Podman 4.0+ and Podman Compose 1.0+
 - Git
 
+**Note for Podman users:** The application runs on port 8080 (not 80) to avoid privileged port restrictions with rootless Podman.
+
 ## Quick Start
 
 ### Using Docker
 
 ```bash
-# Copy environment file
-cp .env.docker .env
+# Clone the repository
+git clone https://github.com/your-username/bkk-backend.git
+cd bkk-backend
 
-# Start containers
+# Start containers (everything is automated)
 docker-compose up -d
 
-# Initialize application
-docker-compose exec app php artisan key:generate
-docker-compose exec app php artisan migrate
-
 # Access application
-open http://localhost
+open http://localhost:8080
 ```
 
 ### Using Podman
 
 ```bash
-# Copy environment file
-cp .env.docker .env
+# Clone the repository
+git clone https://github.com/your-username/bkk-backend.git
+cd bkk-backend
 
-# Start containers
+# Start containers (everything is automated)
 podman-compose up -d
 
-# Initialize application
-podman-compose exec app php artisan key:generate
-podman-compose exec app php artisan migrate
-
 # Access application
-open http://localhost
+open http://localhost:8080
 ```
 
-### Automated Setup
+That's it! The containers will automatically:
+- Install dependencies
+- Generate application key
+- Run database migrations
+- Configure storage
+- Start the application
 
-Run the setup script for automatic initialization:
+### First Time Setup Notes
 
+The first time you run `docker-compose up -d` or `podman-compose up -d`, the containers will:
+1. Build the Docker image (takes 3-5 minutes)
+2. Wait for the database to be ready
+3. Auto-generate `.env` file from `.env.docker`
+4. Generate Laravel application key
+5. Run database migrations
+6. Create storage symlink
+
+Check the logs to see the initialization progress:
 ```bash
-./setup-docker.sh
+docker-compose logs -f app
+# or
+podman-compose logs -f app
 ```
 
 ## Services
 
 | Service | Port | Description |
 |---------|------|-------------|
-| Nginx | 80 | Web server |
+| Nginx | 8080 | Web server (http://localhost:8080) |
 | PHP-FPM | 9000 | Application runtime |
-| MySQL | 3306 | Database |
+| MariaDB | 3306 | Database |
 
 ## Environment Configuration
 
@@ -121,7 +133,7 @@ Replace `docker-compose` with `podman-compose` in all commands above.
 
 ## Database
 
-### MySQL Access
+### MariaDB Access
 
 ```bash
 # Using Docker
@@ -229,7 +241,7 @@ See `DEPLOYMENT.md` for complete production setup guide.
 ├── docker/                 # Docker configuration files
 │   ├── nginx/             # Nginx configuration
 │   ├── php/               # PHP configuration
-│   ├── mysql/             # MySQL configuration
+│   ├── mysql/             # MariaDB configuration
 │   └── supervisor/        # Process manager
 ├── public/                # Web root
 ├── resources/             # Views and assets

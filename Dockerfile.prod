@@ -7,78 +7,58 @@ RUN apk add --no-cache \
     build-base \
     curl \
     git \
+    libzip \
     libzip-dev \
-    sqlite-dev \
     mysql-client \
-    postgresql-client \
     nodejs \
     npm
 
 # Install PHP extensions
 RUN docker-php-ext-install \
     pdo \
-    pdo_sqlite \
     pdo_mysql \
-    pdo_pgsql \
     zip \
     bcmath \
     opcache
 
-# Install Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+# Install Composer using curl
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 WORKDIR /app
 
-# Copy composer files
-COPY composer.json composer.lock ./
+# Copy entire application first
+COPY . .
 
 # Install PHP dependencies
 RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
-# Copy package files
-COPY package.json package-lock.json ./
-
 # Install Node dependencies and build assets
 RUN npm ci && npm run build
 
-# Copy application code
-COPY . .
 
 # Stage 2: Runtime
 FROM php:8.3-fpm-alpine
 
-# Install only runtime dependencies
+# Install runtime dependencies, compile PHP extensions, then remove build tools
 RUN apk add --no-cache \
     curl \
     git \
     libzip \
-    sqlite-libs \
+    libzip-dev \
     mysql-client \
-    postgresql-client \
     supervisor \
     bash \
-    ca-certificates
-
-# Install PHP extensions
-RUN docker-php-ext-install \
-    pdo \
-    pdo_sqlite \
-    pdo_mysql \
-    pdo_pgsql \
-    zip \
-    bcmath \
-    opcache
-
-# Enable opcache
-RUN docker-php-ext-enable opcache
+    ca-certificates \
+    build-base \
+    && docker-php-ext-install pdo pdo_mysql zip bcmath opcache \
+    && docker-php-ext-enable opcache \
+    && apk del --no-cache build-base libzip-dev
 
 # Copy configurations from builder
 COPY --from=builder /usr/local/etc/php/conf.d /usr/local/etc/php/conf.d
 COPY docker/php/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 COPY docker/php/php.ini /usr/local/etc/php/conf.d/custom.ini
 
-# Install Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
 
@@ -94,23 +74,12 @@ COPY docker/supervisor/conf.d/ /etc/supervisor/conf.d/
 RUN mkdir -p /var/log/supervisor \
     && chown -R www-data:www-data /app/storage /app/bootstrap/cache
 
-# Security: Remove unnecessary files
-RUN rm -rf \
-    /app/tests \
-    /app/.github \
-    /app/.git \
-    /app/node_modules \
-    /app/docker/entrypoint.sh \
-    /app/setup-docker.sh \
-    /app/docker-help.sh
-
-# Add health check script
-RUN echo '#!/bin/sh\ncurl -f http://localhost:9000/ping || exit 1' > /healthcheck.sh && chmod +x /healthcheck.sh
-
+# Expose port
 EXPOSE 9000
 
+# Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD /healthcheck.sh || exit 1
+    CMD curl -f http://localhost:9000/ping || exit 1
 
-# Run supervisord
+# Run PHP-FPM
 CMD ["/usr/sbin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]

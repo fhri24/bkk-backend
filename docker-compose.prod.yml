@@ -39,7 +39,7 @@ services:
       start_period: 40s
 
   nginx:
-    image: nginx:alpine
+    image: docker.io/library/nginx:alpine
     container_name: bkk-laravel-nginx-prod
     restart: always
     ports:
@@ -62,15 +62,14 @@ services:
       start_period: 40s
 
   db:
-    image: mysql:8.0
+    image: docker.io/library/mariadb:11
     container_name: bkk-laravel-db-prod
     restart: always
     environment:
-      MYSQL_DATABASE: ${DB_DATABASE:-laravel}
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-}
-      MYSQL_PASSWORD: ${DB_PASSWORD:-}
-      MYSQL_USER: ${DB_USERNAME:-laravel}
-      MYSQL_ALLOW_EMPTY_PASSWORD: 'no'
+      MARIADB_DATABASE: ${DB_DATABASE:-laravel}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-}
+      MARIADB_PASSWORD: ${DB_PASSWORD:-}
+      MARIADB_USER: ${DB_USERNAME:-laravel}
     volumes:
       - dbdata-prod:/var/lib/mysql
       - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf:ro
@@ -78,7 +77,7 @@ services:
     networks:
       - laravel
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 10s
       timeout: 5s
       retries: 5

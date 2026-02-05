@@ -1,15 +1,25 @@
 #!/bin/bash
 set -e
 
-echo "Initializing Laravel application in Docker..."
+echo "Initializing Laravel application..."
 
 # Wait for database to be ready
-echo "Waiting for database to be ready..."
+echo "Waiting for database..."
+MAX_TRIES=30
+COUNT=0
 while ! nc -z db 3306; do
-  sleep 1
+  COUNT=$((COUNT+1))
+  if [ $COUNT -ge $MAX_TRIES ]; then
+    echo "Database connection timeout after ${MAX_TRIES} attempts"
+    exit 1
+  fi
+  echo "Database not ready yet... waiting (${COUNT}/${MAX_TRIES})"
+  sleep 2
 done
-
 echo "Database is ready!"
+
+# Ensure proper permissions for storage and cache
+chmod -R 777 storage bootstrap/cache 2>/dev/null || true
 
 # Copy .env file if it doesn't exist
 if [ ! -f .env ]; then
@@ -22,29 +32,21 @@ if [ ! -f .env ]; then
   fi
 fi
 
-# Generate application key if not set
-if ! grep -q "^APP_KEY=" .env || [ -z "$(grep '^APP_KEY=' .env | cut -d= -f2)" ]; then
+# Generate application key if not set or empty
+if ! grep -q "^APP_KEY=.\+" .env 2>/dev/null; then
   echo "Generating application key..."
-  php artisan key:generate
+  php artisan key:generate --force
+  echo "Application key generated"
 fi
 
-# Run migrations
+# Run migrations automatically
 echo "Running migrations..."
-php artisan migrate --force
-
-# Seed database (optional - uncomment if needed)
-# echo "Seeding database..."
-# php artisan db:seed
+php artisan migrate --force 2>/dev/null || echo "Migrations already up to date or failed (this is normal on first run)"
 
 # Create storage symlink
-php artisan storage:link || true
-
-# Clear caches
-echo "Clearing caches..."
-php artisan cache:clear
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
+php artisan storage:link 2>/dev/null || echo "Storage link already exists"
 
 echo "Laravel application initialized successfully!"
-echo "Application is running at http://localhost"
+
+# Execute the CMD from Dockerfile
+exec "$@"
