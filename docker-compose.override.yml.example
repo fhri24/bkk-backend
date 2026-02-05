@@ -1,0 +1,53 @@
+# Development overrides for docker-compose
+# This file is loaded automatically by docker-compose
+# Customize this for your local development environment
+
+version: '3.8'
+
+services:
+  app:
+    # Mount source code for live editing
+    volumes:
+      - ./:/app
+      - ./storage:/app/storage
+      - ./bootstrap/cache:/app/bootstrap/cache
+    # Enable xdebug for debugging (uncomment to enable)
+    # environment:
+    #   - XDEBUG_MODE=develop,debug
+    #   - XDEBUG_CONFIG=client_host=host.docker.internal
+
+  nginx:
+    # Expose on different port for development (optional)
+    # ports:
+    #   - "8000:80"
+
+  db:
+    # Optional: Expose database port to host
+    # ports:
+    #   - "3306:3306"
+
+    # Optional: Mount SQL files for initialization
+    # volumes:
+    #   - ./docker/mysql/init:/docker-entrypoint-initdb.d
+
+  redis:
+    # Optional: Expose redis port to host
+    # ports:
+    #   - "6379:6379"
+
+# Optional: Add Mailpit for email testing
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: bkk-laravel-mailpit
+    restart: unless-stopped
+    ports:
+      - "8025:8025"  # Web UI
+      - "1025:1025"  # SMTP
+    networks:
+      - laravel
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8025"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
