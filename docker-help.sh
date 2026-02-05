@@ -112,8 +112,6 @@ case "$1" in
         echo "=== Service Health ==="
         echo "Checking database..."
         $DOCKER_CMD exec db mysqladmin ping -h localhost >/dev/null 2>&1 && echo "[OK] Database is healthy" || echo "[FAIL] Database is not responding"
-        echo "Checking Redis..."
-        $DOCKER_CMD exec redis redis-cli ping >/dev/null 2>&1 && echo "[OK] Redis is healthy" || echo "[FAIL] Redis is not responding"
         echo "Checking app..."
         $DOCKER_CMD exec app php -v >/dev/null 2>&1 && echo "[OK] App is healthy" || echo "[FAIL] App is not responding"
         ;;

@@ -60,8 +60,6 @@ Run the setup script for automatic initialization:
 | Nginx | 80 | Web server |
 | PHP-FPM | 9000 | Application runtime |
 | MySQL | 3306 | Database |
-| Redis | 6379 | Cache and sessions |
-| Queue Worker | - | Background jobs |
 
 ## Environment Configuration
 
@@ -80,10 +78,9 @@ DB_DATABASE=laravel
 DB_USERNAME=laravel
 DB_PASSWORD=secret
 
-CACHE_STORE=redis
-SESSION_DRIVER=redis
-QUEUE_CONNECTION=redis
-REDIS_HOST=redis
+CACHE_STORE=database
+SESSION_DRIVER=database
+QUEUE_CONNECTION=database
 ```
 
 ## Development Commands
@@ -173,7 +170,6 @@ docker-compose logs -f
 # Specific service
 docker-compose logs -f app
 docker-compose logs -f db
-docker-compose logs -f redis
 
 # Using make
 make logs

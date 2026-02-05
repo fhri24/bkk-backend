@@ -13,15 +13,15 @@ help: ## Show this help message
 # Container Management
 start: ## Start all containers
 	@$(DC) up -d
-	@echo "✓ Containers started"
+	@echo "Containers started"
 
 stop: ## Stop all containers
 	@$(DC) down
-	@echo "✓ Containers stopped"
+	@echo "Containers stopped"
 
 restart: ## Restart all containers
 	@$(DC) restart
-	@echo "✓ Containers restarted"
+	@echo "Containers restarted"
 
 build: ## Build Docker image
 	@$(DC) build
@@ -49,7 +49,7 @@ init: ## Initialize Laravel (key, migrate, cache)
 	@$(APP) php artisan storage:link 2>/dev/null || true
 	@$(APP) php artisan cache:clear
 	@$(APP) php artisan config:cache
-	@echo "✓ Initialization complete"
+	@echo "Initialization complete"
 
 bash: ## Open bash in app container
 	@$(EXEC) app bash
@@ -87,21 +87,19 @@ cache-clear: ## Clear all caches
 	@$(APP) php artisan config:clear
 	@$(APP) php artisan route:clear
 	@$(APP) php artisan view:clear
-	@echo "✓ Caches cleared"
+	@echo "Caches cleared"
 
 cache-build: ## Build all caches
 	@echo "Building caches..."
 	@$(APP) php artisan config:cache
 	@$(APP) php artisan route:cache
 	@$(APP) php artisan view:cache
-	@echo "✓ Caches built"
+	@echo "Caches built"
 
 # Database Access
 mysql: ## Open MySQL CLI
 	@$(DC) exec db mysql -u laravel -plaravel laravel
 
-redis: ## Open Redis CLI
-	@$(DC) exec redis redis-cli
 
 # Health & Status
 status: ## Show service health status
@@ -110,17 +108,15 @@ status: ## Show service health status
 	@echo ""
 	@echo "=== Service Health ==="
 	@echo -n "Database: "
-	@$(DC) exec db mysqladmin ping -h localhost >/dev/null 2>&1 && echo "✓ healthy" || echo "✗ not responding"
-	@echo -n "Redis: "
-	@$(DC) exec redis redis-cli ping >/dev/null 2>&1 && echo "✓ healthy" || echo "✗ not responding"
+	@$(DC) exec db mysqladmin ping -h localhost >/dev/null 2>&1 && echo "healthy" || echo "not responding"
 	@echo -n "App: "
-	@$(DC) exec app php -v >/dev/null 2>&1 && echo "✓ healthy" || echo "✗ not responding"
+	@$(DC) exec app php -v >/dev/null 2>&1 && echo "healthy" || echo "not responding"
 
 health-check: status ## Alias for status
 
 # Cleanup
 destroy: ## Remove all containers and volumes (DESTRUCTIVE!)
-	@echo "⚠️  WARNING: This will delete all containers and volumes!"
+	@echo "WARNING: This will delete all containers and volumes!"
 	@read -p "Are you sure? (type 'yes' to confirm): " confirm && \
 	if [ "$$confirm" = "yes" ]; then \
 		$(DC) down -v && echo "✓ All containers and volumes removed"; \
@@ -129,7 +125,7 @@ destroy: ## Remove all containers and volumes (DESTRUCTIVE!)
 	fi
 
 clean: stop ## Stop and remove containers (keep volumes)
-	@echo "✓ Containers removed"
+	@echo "Containers removed"
 
 # Development Utilities
 watch-logs: ## Watch logs in real-time: make watch-logs service="app"
