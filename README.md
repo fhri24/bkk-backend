@@ -17,7 +17,7 @@ Laravel 12 backend application with Docker/Podman support.
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/bkk-backend.git
+git clone https://github.com/fauzymadani/bkk-backend.git
 cd bkk-backend
 
 # Start containers (everything is automated)
@@ -31,7 +31,7 @@ open http://localhost:8080
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/bkk-backend.git
+git clone https://github.com/fauzymadani/bkk-backend.git
 cd bkk-backend
 
 # Start containers (everything is automated)
