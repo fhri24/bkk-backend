@@ -32,13 +32,17 @@ Feature requests are welcome! Please:
    git checkout -b feature/your-feature-name
    ```
 3. Make your changes
-4. Test your changes:
+4. Run code quality checks locally before pushing:
    ```bash
-   podman-compose exec app php artisan test
+   ./vendor/bin/pint         # Auto-fix code style
+   php artisan test          # Run tests
+   composer audit            # Check security
    ```
 5. Commit your changes with clear commit messages
 6. Push to your fork
 7. Open a Pull Request
+
+All pull requests automatically run through GitHub Actions for code quality checks. For detailed information on running these checks locally, see [CODE_QUALITY_GUIDE.md](CODE_QUALITY_GUIDE.md).
 
 ## Development Setup
 
@@ -66,13 +70,23 @@ podman-compose up -d
 podman-compose exec app php artisan test
 ```
 
-### Code Style
+## Code Quality
 
-This project follows Laravel coding standards. Run Pint to format your code:
+This project uses automated tools to maintain code quality. All code must pass:
+- PHP syntax checks
+- Laravel Pint (code style)
+- PHPUnit tests
+- Security vulnerability checks
+
+Before submitting a pull request, run these commands locally:
 
 ```bash
-podman-compose exec app ./vendor/bin/pint
+./vendor/bin/pint
+php artisan test
+composer audit
 ```
+
+For more details, see [CODE_QUALITY_GUIDE.md](CODE_QUALITY_GUIDE.md)
 
 ## Project Structure
 

@@ -23,14 +23,14 @@ class ExampleApiTest extends TestCase
             ->assertJsonStructure([
                 'success',
                 'data' => [
-                    '*' => ['id', 'name', 'email', 'created_at', 'updated_at']
+                    '*' => ['id', 'name', 'email', 'created_at', 'updated_at'],
                 ],
                 'pagination' => [
                     'total',
                     'per_page',
                     'current_page',
                     'last_page',
-                ]
+                ],
             ])
             ->assertJson(['success' => true]);
     }
@@ -53,7 +53,7 @@ class ExampleApiTest extends TestCase
             ->assertJsonStructure([
                 'success',
                 'message',
-                'data' => ['id', 'name', 'email', 'created_at', 'updated_at']
+                'data' => ['id', 'name', 'email', 'created_at', 'updated_at'],
             ])
             ->assertJson([
                 'success' => true,
@@ -61,7 +61,7 @@ class ExampleApiTest extends TestCase
                 'data' => [
                     'name' => 'Item Name',
                     'email' => 'item@example.com',
-                ]
+                ],
             ]);
 
         $this->assertDatabaseHas('users', [
@@ -96,7 +96,7 @@ class ExampleApiTest extends TestCase
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'success',
-                'data' => ['id', 'name', 'email', 'created_at', 'updated_at']
+                'data' => ['id', 'name', 'email', 'created_at', 'updated_at'],
             ])
             ->assertJson([
                 'success' => true,
@@ -104,7 +104,7 @@ class ExampleApiTest extends TestCase
                     'id' => $user->id,
                     'name' => $user->name,
                     'email' => $user->email,
-                ]
+                ],
             ]);
     }
 
@@ -136,7 +136,7 @@ class ExampleApiTest extends TestCase
             ->assertJsonStructure([
                 'success',
                 'message',
-                'data' => ['id', 'name', 'email', 'created_at', 'updated_at']
+                'data' => ['id', 'name', 'email', 'created_at', 'updated_at'],
             ])
             ->assertJson([
                 'success' => true,
@@ -145,7 +145,7 @@ class ExampleApiTest extends TestCase
                     'id' => $user->id,
                     'name' => 'Updated Item',
                     'email' => 'updated@example.com',
-                ]
+                ],
             ]);
 
         $this->assertDatabaseHas('users', [
@@ -194,7 +194,7 @@ class ExampleApiTest extends TestCase
                 'success',
                 'query',
                 'results' => [
-                    '*' => ['id', 'name', 'email']
+                    '*' => ['id', 'name', 'email'],
                 ],
                 'count',
             ])
@@ -224,5 +224,3 @@ class ExampleApiTest extends TestCase
             ]);
     }
 }
-
-

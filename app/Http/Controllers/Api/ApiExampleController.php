@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 /**
  * API Example Controller
@@ -15,8 +15,8 @@ use App\Http\Controllers\Controller;
  *
  * Copy this controller and modify it for your specific resource needs.
  *
- * @package App\Http\Controllers\Api
  * @author <fauzy>
+ *
  * @version 1.0.0
  */
 class ApiExampleController extends Controller
@@ -27,7 +27,7 @@ class ApiExampleController extends Controller
      * Returns all items from the database with support for pagination.
      * Items are ordered by most recent first (DESC by created_at).
      *
-     * @param Request $request The HTTP request object
+     * @param  Request  $request  The HTTP request object
      * @return JsonResponse Returns JSON with items and pagination details
      *
      * @example
@@ -69,7 +69,7 @@ class ApiExampleController extends Controller
      * Creates and stores a new item in the database. Validates required fields
      * and returns the created item with its assigned ID.
      *
-     * @param Request $request The HTTP request containing item data
+     * @param  Request  $request  The HTTP request containing item data
      * @return JsonResponse Returns JSON with created item (201 Created) or validation errors (422)
      *
      * @throws \Illuminate\Validation\ValidationException If validation fails
@@ -94,7 +94,6 @@ class ApiExampleController extends Controller
      *     "updated_at": "2026-02-05T10:30:00Z"
      *   }
      * }
-     *
      * @response 422 {
      *   "message": "The given data was invalid.",
      *   "errors": {
@@ -128,7 +127,7 @@ class ApiExampleController extends Controller
      * Fetches a specific item from the database by its ID.
      * Uses Laravel's implicit route model binding for automatic resolution.
      *
-     * @param User $item The item model instance (auto-resolved by Laravel)
+     * @param  User  $item  The item model instance (auto-resolved by Laravel)
      * @return JsonResponse Returns JSON with the requested item
      *
      * @example
@@ -144,7 +143,6 @@ class ApiExampleController extends Controller
      *     "updated_at": "2026-02-05T10:00:00Z"
      *   }
      * }
-     *
      * @response 404 {
      *   "message": "No query results found for model [App\\Models\\User]."
      * }
@@ -163,8 +161,8 @@ class ApiExampleController extends Controller
      * Updates one or more fields of an existing item. All fields are optional
      * (use partial updates). Validates data and ensures uniqueness constraints.
      *
-     * @param Request $request The HTTP request containing update data
-     * @param User $item The item model instance to update (auto-resolved by Laravel)
+     * @param  Request  $request  The HTTP request containing update data
+     * @param  User  $item  The item model instance to update (auto-resolved by Laravel)
      * @return JsonResponse Returns JSON with updated item
      *
      * @throws \Illuminate\Validation\ValidationException If validation fails
@@ -187,7 +185,6 @@ class ApiExampleController extends Controller
      *     "updated_at": "2026-02-05T10:35:00Z"
      *   }
      * }
-     *
      * @response 422 {
      *   "message": "The given data was invalid.",
      *   "errors": {
@@ -199,7 +196,7 @@ class ApiExampleController extends Controller
     {
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
-            'email' => 'sometimes|email|unique:users,email,' . $item->id,
+            'email' => 'sometimes|email|unique:users,email,'.$item->id,
             'password' => 'sometimes|string|min:8|confirmed',
         ]);
 
@@ -223,7 +220,7 @@ class ApiExampleController extends Controller
      * Permanently deletes an item from the database. This action cannot be undone.
      * Returns success response if deletion was successful.
      *
-     * @param User $item The item model instance to delete (auto-resolved by Laravel)
+     * @param  User  $item  The item model instance to delete (auto-resolved by Laravel)
      * @return JsonResponse Returns JSON with success message
      *
      * @example
@@ -233,7 +230,6 @@ class ApiExampleController extends Controller
      *   "success": true,
      *   "message": "Item deleted successfully"
      * }
-     *
      * @response 404 {
      *   "message": "No query results found for model [App\\Models\\User]."
      * }
@@ -254,7 +250,7 @@ class ApiExampleController extends Controller
      * Searches items by name or email using LIKE operator. Performs a full-text
      * search across multiple fields and limits results to prevent large result sets.
      *
-     * @param string $query The search query string (minimum 2 characters)
+     * @param  string  $query  The search query string (minimum 2 characters)
      * @return JsonResponse Returns JSON with matching items and count
      *
      * @example
@@ -274,7 +270,6 @@ class ApiExampleController extends Controller
      *   ],
      *   "count": 1
      * }
-     *
      * @response 422 {
      *   "success": false,
      *   "message": "Search query must be at least 2 characters"

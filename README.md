@@ -171,6 +171,24 @@ docker-compose exec app php artisan test --filter=TestName
 make test
 ```
 
+## Code Quality
+
+This project maintains code quality through automated checks on every pull request.
+
+Before committing your code:
+
+```bash
+./vendor/bin/pint           # Auto-fix code style
+php artisan test            # Run tests
+composer audit              # Check for security issues
+```
+
+All pull requests automatically run:
+- PHP syntax checks
+- Code style verification (Laravel Pint)
+- Unit and feature tests
+- Security vulnerability scanning
+
 ## Debugging
 
 ### View Logs
