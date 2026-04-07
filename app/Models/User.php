@@ -47,7 +47,15 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+        public function kepalaSekolah()
+        {
+            return $this->hasOne(KepalaSekolah::class);
+        }
 
+        public function siswa()
+        {
+            return $this->hasOne(Siswa::class);
+        }
     public function superAdmin()
     {
         return $this->hasOne(SuperAdmin::class);
