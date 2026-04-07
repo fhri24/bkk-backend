@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            
+            // Kolom untuk Role Manual (Opsional jika sudah pakai Polymorphic)
             $table->enum('role', [
                 'super_admin',
                 'admin_bkk',
@@ -25,6 +27,12 @@ return new class extends Migration
                 'siswa',
                 'perusahaan'
             ]);
+
+            // Tambahan untuk Polymorphic Relationship sesuai tugas
+            $table->unsignedBigInteger('userable_id')->nullable();
+            $table->string('userable_type')->nullable();
+            
+            $table->boolean('is_active')->default(true); // Tambahan is_active dari instruksi gambar
             $table->rememberToken();
             $table->timestamps();
         });

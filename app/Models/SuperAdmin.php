@@ -3,17 +3,22 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+// Import di bawah ini wajib ada agar tidak merah
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class SuperAdmin extends Model
 {
     protected $fillable = [
-        'user_id',
+        
         'nama_lengkap',
         'kontak'
     ];
 
-    public function user()
+    /**
+     * Relasi ke User (Polymorphic)
+     */
+    public function user(): MorphOne
     {
-        return $this->belongsTo(User::class);
+        return $this->morphOne(User::class, 'userable');
     }
 }
