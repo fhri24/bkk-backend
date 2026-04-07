@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
 {
-    SSchema::create('roles', function (Blueprint $table) {
+    Schema::create('roles', function (Blueprint $table) {
     $table->id();
     $table->string('role_name');
     $table->string('description')->nullable();
+    $table->timestamps();
 });
 }
 
