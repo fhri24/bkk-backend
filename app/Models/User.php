@@ -36,6 +36,7 @@ class User extends Authenticatable
     /**
      * Gabungan $casts (Mengubah tipe data otomatis)
      */
+<<<<<<< HEAD
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
@@ -46,6 +47,25 @@ class User extends Authenticatable
      * Relasi Polymorphic (Inti dari tugas kamu)
      */
     public function userable(): MorphTo
+=======
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
+    }
+        public function kepalaSekolah()
+        {
+            return $this->hasOne(KepalaSekolah::class);
+        }
+
+        public function siswa()
+        {
+            return $this->hasOne(Siswa::class);
+        }
+    public function superAdmin()
+>>>>>>> 0fba9585499a55aa46eec1fa5cd10108e3723000
     {
         return $this->morphTo();
     }
