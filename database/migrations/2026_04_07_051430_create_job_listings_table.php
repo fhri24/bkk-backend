@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('job_type')->nullable(); // Misal: Full-time, Part-time
             
             // Gabungan opsi visibility yang lebih lengkap
+            $table->enum('status', ['active', 'inactive'])->default('active');
             $table->enum('visibility', ['public', 'alumni_only', 'private', 'internal'])->default('public'); 
             
             $table->boolean('is_active')->default(true);
