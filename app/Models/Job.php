@@ -2,29 +2,52 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Builder;
 
 class Job extends Model
 {
-    use HasFactory;
-
-    protected $table = 'job_listings';
-    protected $primaryKey = 'job_id';
-    protected $guarded = [];
-
-    // --- TAMBAHAN BIAR AMAN ---
-    protected $casts = [
-        'posted_at' => 'datetime',
-        'expired_at' => 'datetime',
-        'is_active' => 'boolean',
+    // Agar kolom bisa diisi lewat form
+    protected $fillable = [
+        'company_id', 
+        'admin_id', 
+        'title', 
+        'description', 
+        'status', 
+        'visibility'
     ];
 
-    public function company(): BelongsTo
+    // --- RELASI ---
+
+    // Menghubungkan Job ke Perusahaan
+    public function company()
     {
-        // Parameter: (ModelTujuan, ForeignKeyDiTabelIni, OwnerKeyDiTabelLawan)
-        return $this->belongsTo(Company::class, 'company_id', 'company_id');
+        return $this->belongsTo(Company::class);
+    }
+
+    // Menghubungkan Job ke Admin yang posting
+    public function admin()
+    {
+        return $this->belongsTo(User::class, 'admin_id');
+    }
+
+    // --- VISIBILITY SCOPES (Filter Otomatis) ---
+
+    // Mengambil yang statusnya 'active'
+    public function scopeActive(Builder $query)
+    {
+        return $query->where('status', 'active');
+    }
+
+    // Mengambil yang visibility-nya 'public'
+    public function scopePublic(Builder $query)
+    {
+        return $query->where('visibility', 'public');
+    }
+
+    // Mengambil yang khusus 'alumni_only'
+    public function scopeAlumniOnly(Builder $query)
+    {
+        return $query->where('visibility', 'alumni_only');
     }
 }
