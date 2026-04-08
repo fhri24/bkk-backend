@@ -6,33 +6,40 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
+    
     public function up(): void
     {
         Schema::create('job_applications', function (Blueprint $table) {
-            $table->id(); // Ini Primary Key untuk tabel lamaran ini sendiri
+            // 1. ID Utama (Konsisten dengan model lain)
+            $table->id('job_application_id'); 
 
-            // Relasi ke Lowongan Kerja (Job Listings)
-            $table->unsignedBigInteger('job_id');
-            $table->foreign('job_id')->references('job_id')->on('job_listings')->onDelete('cascade');
+            // 2. Relasi ke Lowongan (Pastikan merujuk ke 'job_listing_id' jika itu nama di tabel listings)
+            $table->unsignedBigInteger('job_listing_id');
+            $table->foreign('job_listing_id')->references('job_listing_id')->on('job_listings')->onDelete('cascade');
 
-            // Relasi ke Siswa (Students)
+            // 3. Relasi ke Siswa
             $table->unsignedBigInteger('student_id');
             $table->foreign('student_id')->references('student_id')->on('students')->onDelete('cascade');
 
-            // Detail Lamaran
-            $table->text('cover_letter')->nullable();
-            $table->enum('status', ['pending', 'reviewed', 'accepted', 'rejected'])->default('pending');
-            $table->timestamp('application_date')->useCurrent();
+            // 4. Detail Lamaran sesuai Tugas Nomor 9
+            $table->text('cover_letter')->nullable(); // pesan dari siswa
+            $table->string('additional_file')->nullable(); // file_pendukung (opsional)
+            $table->text('admin_notes')->nullable(); // catatan_admin
+            
+            // 5. Status Lamaran (Sesuai bahasa tugas kamu)
+            $table->enum('status', [
+                'Seleksi Administrasi', 
+                'Interview', 
+                'Diterima', 
+                'Ditolak'
+            ])->default('Seleksi Administrasi');
+
+            $table->timestamp('application_date')->useCurrent(); // tgl_melamar
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
+
     public function down(): void
     {
         Schema::dropIfExists('job_applications');
