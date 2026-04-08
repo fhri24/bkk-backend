@@ -6,9 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
+    
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
@@ -18,25 +16,19 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             
-            // Kolom untuk Role Manual (Opsional jika sudah pakai Polymorphic)
-            $table->enum('role', [
-                'super_admin',
-                'admin_bkk',
-                'kepala_bkk',
-                'kepala_sekolah',
-                'siswa',
-                'perusahaan'
-            ]);
-
-            // Tambahan untuk Polymorphic Relationship sesuai tugas
+            // Relasi ke tabel Roles (Menggantikan ENUM)
+            $table->foreignId('role_id')->constrained('roles')->onDelete('restrict');
+            
+            // Polymorphic Relationship (Tugas Utama Kamu)
             $table->unsignedBigInteger('userable_id')->nullable();
             $table->string('userable_type')->nullable();
             
-            $table->boolean('is_active')->default(true); // Tambahan is_active dari instruksi gambar
+            $table->boolean('is_active')->default(true);
             $table->rememberToken();
             $table->timestamps();
         });
 
+        // Tabel sistem (Jangan dihapus)
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');
@@ -53,9 +45,7 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
+    
     public function down(): void
     {
         Schema::dropIfExists('users');

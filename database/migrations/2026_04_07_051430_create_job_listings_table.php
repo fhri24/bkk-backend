@@ -11,26 +11,27 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Kita gunakan 'job_listings' agar tidak bentrok dengan tabel 'jobs' bawaan Laravel
+        // Kita gunakan 'job_listings' agar tidak bentrok dengan tabel 'jobs' sistem Laravel
         Schema::create('job_listings', function (Blueprint $table) {
-            $table->id('job_id'); // Primary Key sesuai ERD
-            $table->unsignedBigInteger('company_id'); 
+            $table->id('job_id'); // Primary Key sesuai ERD kamu
             
-            // Relasi Foreign Key ke tabel companies
+            // Relasi ke tabel companies
+            // Kita gunakan unsignedBigInteger karena primary key di tabel companies adalah company_id
+            $table->unsignedBigInteger('company_id'); 
             $table->foreign('company_id')->references('company_id')->on('companies')->onDelete('cascade');
             
             $table->string('title');
             $table->text('description')->nullable();
             $table->text('requirements')->nullable();
             $table->string('location')->nullable();
-            $table->string('job_type')->nullable(); 
+            $table->string('job_type')->nullable(); // Misal: Full-time, Part-time
             
-            // Enum untuk visibilitas lowongan
-            $table->enum('visibility', ['public', 'private', 'internal'])->default('public'); 
+            // Gabungan opsi visibility yang lebih lengkap
+            $table->enum('visibility', ['public', 'alumni_only', 'private', 'internal'])->default('public'); 
             
             $table->boolean('is_active')->default(true);
-            $table->dateTime('posted_at')->nullable();
-            $table->dateTime('expired_at')->nullable();
+            $table->timestamp('posted_at')->nullable();
+            $table->timestamp('expired_at')->nullable();
             $table->timestamps();
         });
     }

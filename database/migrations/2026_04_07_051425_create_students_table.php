@@ -10,21 +10,39 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-{
-            Schema::create('students', function (Blueprint $table) {
-            $table->id();
+    {
+        Schema::create('students', function (Blueprint $table) {
+            // Kita gunakan student_id sebagai Primary Key agar sinkron dengan Job Applications
+            $table->id('student_id'); 
+            
+            // Relasi ke tabel users (Polymorphic)
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('nis');
+            
+            // Data Identitas (Gabungan dari versi Student & Siswa)
+            $table->string('nis')->unique();
             $table->string('full_name');
-            $table->integer('graduation_year');
-            $table->string('major');
-            $table->string('phone')->nullable();
+            $table->enum('gender', ['L', 'P']); 
+            $table->string('birth_info')->nullable(); // Contoh: "Jakarta, 01-01-2005"
+            
+            // Data Akademik
+            $table->string('major'); // Jurusan
+            $table->year('graduation_year');
             $table->boolean('alumni_flag')->default(false);
-            $table->string('resume_url')->nullable();
-            $table->enum('status', ['active','inactive'])->default('active');
+            
+            // Data Kontak & Alamat
+            $table->string('phone')->nullable();
+            $table->text('address')->nullable();
+            
+            // Berkas Media
+            $table->string('resume_url')->nullable(); // Untuk upload CV
+            $table->string('profile_picture')->nullable(); // Untuk foto profil
+            
+            // Status Akun
+            $table->enum('status', ['active', 'inactive'])->default('active');
+            
             $table->timestamps();
         });
-}
+    }
 
     /**
      * Reverse the migrations.

@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-// Import yang wajib ada:
+
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Job extends Model
@@ -15,8 +15,16 @@ class Job extends Model
     protected $primaryKey = 'job_id';
     protected $guarded = [];
 
+    // --- TAMBAHAN BIAR AMAN ---
+    protected $casts = [
+        'posted_at' => 'datetime',
+        'expired_at' => 'datetime',
+        'is_active' => 'boolean',
+    ];
+
     public function company(): BelongsTo
     {
+        // Parameter: (ModelTujuan, ForeignKeyDiTabelIni, OwnerKeyDiTabelLawan)
         return $this->belongsTo(Company::class, 'company_id', 'company_id');
     }
 }
