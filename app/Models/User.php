@@ -8,6 +8,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable
 {
@@ -46,5 +48,23 @@ class User extends Authenticatable
     public function userable(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    // Relasi ke Job (User/Admin yang posting job)
+    public function postedJobs(): HasMany
+    {
+        return $this->hasMany(Job::class, 'admin_id');
+    }
+
+    // Relasi ke Student (User yang merupakan siswa)
+    public function studentProfile(): HasOne
+    {
+        return $this->hasOne(Student::class);
+    }
+
+    // Relasi ke Company (User yang pemilik perusahaan)
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
     }
 }
