@@ -4,9 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Job extends Model
 {
+    protected $table = 'job_listings';
+    protected $primaryKey = 'job_id';
+
     // Agar kolom bisa diisi lewat form
     protected $fillable = [
         'company_id', 
@@ -20,15 +25,21 @@ class Job extends Model
     // --- RELASI ---
 
     // Menghubungkan Job ke Perusahaan
-    public function company()
+    public function company(): BelongsTo
     {
-        return $this->belongsTo(Company::class);
+        return $this->belongsTo(Company::class, 'company_id', 'company_id');
     }
 
     // Menghubungkan Job ke Admin yang posting
-    public function admin()
+    public function admin(): BelongsTo
     {
         return $this->belongsTo(User::class, 'admin_id');
+    }
+
+    // Job ke Job Applications (satu lowongan bisa punya banyak lamaran)
+    public function applications(): HasMany
+    {
+        return $this->hasMany(JobApplication::class, 'job_id', 'job_id');
     }
 
     // --- VISIBILITY SCOPES (Filter Otomatis) ---

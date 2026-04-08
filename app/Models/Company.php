@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Company extends Model
 {
@@ -22,12 +22,12 @@ class Company extends Model
     protected $guarded = [];
 
     /**
-     * Relasi ke User (Profil Polymorphic)
-     * Menghubungkan perusahaan ke akun di tabel users
+     * Relasi ke User
+     * Perusahaan punya satu user akun (owner/contact person)
      */
-    public function user(): MorphOne
+    public function user(): BelongsTo
     {
-        return $this->morphOne(User::class, 'userable');
+        return $this->belongsTo(User::class);
     }
 
     /**
@@ -36,7 +36,15 @@ class Company extends Model
      */
     public function jobs(): HasMany
     {
-        // Pastikan nama modelnya 'Job'. Jika namanya 'JobListing', ganti di bawah ini.
         return $this->hasMany(Job::class, 'company_id', 'company_id');
+    }
+
+    /**
+     * Relasi polymorphic ke User (untuk profil user company)
+     * Perusahaan bisa punya profil sebagai userable di tabel users
+     */
+    public function userProfile(): MorphOne
+    {
+        return $this->morphOne(User::class, 'userable');
     }
 }
