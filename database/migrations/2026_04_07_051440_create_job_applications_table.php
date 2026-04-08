@@ -15,7 +15,7 @@ return new class extends Migration
 
             // 2. Relasi ke Lowongan (Pastikan merujuk ke 'job_listing_id' jika itu nama di tabel listings)
             $table->unsignedBigInteger('job_listing_id');
-            $table->foreign('job_listing_id')->references('job_listing_id')->on('job_listings')->onDelete('cascade');
+            $table->foreign('job_listing_id')->references('job_id')->on('job_listings')->onDelete('cascade');
 
             // 3. Relasi ke Siswa
             $table->unsignedBigInteger('student_id');
