@@ -17,9 +17,15 @@ class Job extends Model
         'company_id', 
         'admin_id', 
         'title', 
-        'description', 
+        'description',
+        'requirements',
+        'location',
+        'job_type',
         'status', 
-        'visibility'
+        'visibility',
+        'is_active',
+        'posted_at',
+        'expired_at'
     ];
 
     // --- RELASI ---
