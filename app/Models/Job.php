@@ -14,7 +14,6 @@ class Job extends Model
 
     // Agar kolom bisa diisi lewat form
     protected $fillable = [
-<<<<<<< HEAD
         'company_id', 
         'admin_id', 
         'title', 
@@ -27,14 +26,6 @@ class Job extends Model
         'is_active',
         'posted_at',
         'expired_at'
-=======
-        'company_id',
-        'admin_id',
-        'title',
-        'description',
-        'status',
-        'visibility'
->>>>>>> 50c051c90e645ff9422b8555d994514b88a31e99
     ];
 
     // --- RELASI ---
