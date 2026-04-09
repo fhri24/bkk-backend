@@ -23,7 +23,10 @@ Route::get('example/search/{query}', [ApiExampleController::class, 'search']);
 
 
 // --- 2. Rute Terproteksi ---
-Route::middleware('auth:sanctum')->group(function () {
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/students/me', [StudentController::class, 'me']);
+        Route::put('/students/me', [StudentController::class, 'updateMe']);
+    });
 
     // KELOMPOK SUPER ADMIN
     Route::middleware('role:super_admin')->group(function () {
@@ -47,4 +50,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('role:admin_bkk')->group(function () {
         // Tempat route review lamaran nanti
     });
-});
+
+
