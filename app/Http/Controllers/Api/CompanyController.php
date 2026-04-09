@@ -1,39 +1,36 @@
 <?php
 
+namespace App\Http\Controllers\Api; // Cek huruf besar kecilnya!
+
+use App\Http\Controllers\Controller;
+use App\Models\Company;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\ApiExampleController;
-use App\Http\Controllers\API\SuperAdminController;
-use App\Http\Controllers\Api\JobApplicationController;
-use App\Http\Controllers\Api\CompanyController; // WAJIB ADA INI
 
-// --- 1. Rute Publik ---
-Route::get('/health', function () {
-    return response()->json([
-        'status' => 'healthy',
-        'timestamp' => now(),
-    ]);
-});
+class CompanyController extends Controller
+{
+    public function index()
+    {
+        $companies = Company::where('is_verified', true)
+            ->select('company_id', 'company_name', 'industry', 'address', 'contact')
+            ->get();
 
-// --- 2. Rute Terproteksi ---
-Route::middleware('auth:sanctum')->group(function () {
+        return response()->json([
+            'message' => 'Daftar perusahaan terverifikasi berhasil dimuat.',
+            'data' => $companies
+        ]);
+    }
 
-    // KELOMPOK SUPER ADMIN
-    Route::middleware('role:super_admin')->group(function () {
-        Route::apiResource('super-admins', SuperAdminController::class);
-    });
+    public function show($id)
+    {
+        $company = Company::where('is_verified', true)
+            ->select('company_id', 'company_name', 'industry', 'address', 'contact')
+            ->where('company_id', $id)
+            ->first();
 
-    // KELOMPOK SISWA (STUDENT)
-    Route::middleware('role:student')->group(function () {
-        // Fitur Company View (Read-Only)
-        Route::get('/companies', [CompanyController::class, 'index']);
-        Route::get('/companies/{id}', [CompanyController::class, 'show']);
-        
-        // Fitur Melamar Pekerjaan
-        Route::post('/applications', [JobApplicationController::class, 'store']);
-    });
+        if (!$company) {
+            return response()->json(['message' => 'Perusahaan tidak ditemukan.'], 404);
+        }
 
-    // KELOMPOK LAIN (Bisa diisi nanti)
-    Route::middleware('role:company')->group(function () { });
-    Route::middleware('role:admin_bkk')->group(function () { });
-});
+        return response()->json(['data' => $company]);
+    }
+}

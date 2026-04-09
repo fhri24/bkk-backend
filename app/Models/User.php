@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-
+use Laravel\Sanctum\HasApiTokens; // 1. Tambahkan ini
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -13,9 +13,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable
 {
-
-    use HasFactory, Notifiable;
-
+    // 2. Tambahkan HasApiTokens di baris use ini
+    use HasApiTokens, HasFactory, Notifiable;
 
     protected $fillable = [
         'name',
@@ -32,7 +31,7 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
-
+    
 
     protected $casts = [
         'email_verified_at' => 'datetime',

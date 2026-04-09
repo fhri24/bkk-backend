@@ -5,9 +5,17 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ApiExampleController;
 
 use App\Http\Controllers\API\SuperAdminController;
-use App\Http\Controllers\Api\JobApplicationController; // Import baru
+use App\Http\Controllers\Api\JobApplicationController;
+use App\Http\Controllers\Api\CompanyController; 
+use App\Http\Controllers\Api\AuthController; // Pastikan ini ada
 
-// --- 1. Rute Publik ---
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+*/
+
+// --- 1. RUTE PUBLIK (Bisa diakses siapa saja tanpa login) ---
 Route::get('/health', function () {
     return response()->json([
         'status' => 'healthy',
@@ -15,6 +23,8 @@ Route::get('/health', function () {
     ]);
 });
 
+// Rute Login: Ini gerbang utama untuk dapet token
+Route::post('/login', [AuthController::class, 'login']); 
 
 Route::apiResource('example', ApiExampleController::class);
 
@@ -22,8 +32,11 @@ Route::apiResource('example', ApiExampleController::class);
 Route::get('example/search/{query}', [ApiExampleController::class, 'search']);
 
 
-// --- 2. Rute Terproteksi ---
+// --- 2. RUTE TERPROTEKSI (Harus Login / Pakai Token) ---
 Route::middleware('auth:sanctum')->group(function () {
+
+    // Rute Logout: Harus login dulu baru bisa logout
+    Route::post('/logout', [AuthController::class, 'logout']);
 
     // KELOMPOK SUPER ADMIN
     Route::middleware('role:super_admin')->group(function () {
@@ -32,19 +45,22 @@ Route::middleware('auth:sanctum')->group(function () {
 
     });
 
-    // KELOMPOK PERUSAHAAN (COMPANY)
-    Route::middleware('role:company')->group(function () {
-        // Tempat route lowongan kerja nanti
-    });
 
     // KELOMPOK SISWA (STUDENT)
     Route::middleware('role:student')->group(function () {
-        // Route untuk melamar pekerjaan
+        Route::get('/companies', [CompanyController::class, 'index']);
+        Route::get('/companies/{id}', [CompanyController::class, 'show']);
+        
         Route::post('/applications', [JobApplicationController::class, 'store']);
     });
 
-    // KELOMPOK ADMIN BKK / KEPALA BKK
+    // KELOMPOK PERUSAHAAN
+    Route::middleware('role:company')->group(function () {
+        // Bisa diisi rute posting lowongan nanti
+    });
+
+    // KELOMPOK ADMIN BKK
     Route::middleware('role:admin_bkk')->group(function () {
-        // Tempat route review lamaran nanti
+        // Bisa diisi rute verifikasi lamaran nanti
     });
 });
