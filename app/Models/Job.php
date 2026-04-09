@@ -14,11 +14,11 @@ class Job extends Model
 
     // Agar kolom bisa diisi lewat form
     protected $fillable = [
-        'company_id', 
-        'admin_id', 
-        'title', 
-        'description', 
-        'status', 
+        'company_id',
+        'admin_id',
+        'title',
+        'description',
+        'status',
         'visibility'
     ];
 
@@ -61,4 +61,20 @@ class Job extends Model
     {
         return $query->where('visibility', 'alumni_only');
     }
+
+    public function scopeVisibleFor(Builder $query, $user)
+    {
+    // Kalau belum login → hanya public
+    if (!$user) {
+        return $query->public();
+    }
+
+    // Kalau user adalah alumni → bisa lihat semua
+    if ($user->alumni_flag) {
+        return $query;
+    }
+
+    // Selain alumni → hanya public
+    return $query->public();
+}
 }

@@ -18,9 +18,15 @@ class JobController extends Controller
 
     public function khususAlumni()
     {
-        // Kita ambil lowongan yang statusnya 'active' DAN hanya untuk 'alumni'
-        $lowonganAlumni = Job::active()->alumniOnly()->get();
+    // Cegah user non-alumni masuk
+    if (!auth()->check() || !auth()->user()->alumni_flag) {
+        abort(403, 'Akses hanya untuk alumni');
+    }
 
-        return view('lowongan.alumni', compact('lowonganAlumni'));
+    $lowonganAlumni = Job::active()
+        ->alumniOnly()
+        ->get();
+
+    return view('lowongan.alumni', compact('lowonganAlumni'));
     }
 }
