@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BKK SMKN 1 Garut - Survey Kepuasan Pengguna Lulusan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body class="bg-slate-50 text-slate-900" data-page="tracer-industri">
+    <!-- Navigation -->
+    <nav class="bg-[#001f3f] text-white sticky top-0 z-[100] shadow-xl">
+      <div class="container mx-auto px-4 md:px-6">
+        <div class="flex justify-between items-center h-20">
+          <!-- Logo -->
+          <div class="flex items-center space-x-3 cursor-pointer" onclick="window.location.href = 'beranda.html'">
+            <div class="w-11 h-11 bg-white rounded-xl flex items-center justify-center shadow-lg">
+              <i class="fas fa-graduation-cap text-[#001f3f] text-xl"></i>
+            </div>
+            <div>
+              <h1 class="font-extrabold text-xl tracking-tight leading-none">BKK SMKN 1</h1>
+              <p class="text-[10px] uppercase tracking-widest opacity-70">Garut Bermartabat</p>
+            </div>
+          </div>
+
+          <!-- Desktop Menu -->
+          <div class="hidden lg:flex space-x-8 text-sm font-semibold">
+            <a href="beranda.html" class="nav-btn transition hover:text-blue-400" id="nav-beranda">Beranda</a>
+            <a href="lowongan.html" class="nav-btn transition hover:text-blue-400" id="nav-lowongan">Lowongan</a>
+            <a href="acara.html" class="nav-btn transition hover:text-blue-400" id="nav-acara">Acara</a>
+            <a href="berita.html" class="nav-btn transition hover:text-blue-400" id="nav-berita">Berita</a>
+            <a href="tracer.html" class="nav-btn transition hover:text-blue-400" id="nav-tracer">Tracer Study</a>
+          </div>
+
+          <!-- Auth Buttons -->
+          <div class="hidden lg:flex items-center space-x-4">
+            <a href="auth.html" class="text-sm font-bold hover:text-blue-400 transition">Daftar</a>
+            <a href="auth.html" class="bg-blue-600 hover:bg-blue-700 px-7 py-2.5 rounded-full text-sm font-bold shadow-lg transition transform hover:scale-105 active:scale-95">Masuk</a>
+          </div>
+
+          <!-- Mobile Toggle -->
+          <button class="lg:hidden text-2xl" onclick="toggleMobileMenu()">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Menu -->
+      <div id="mobile-menu" class="hidden lg:hidden bg-[#001f3f] border-t border-white/10 px-6 py-6 space-y-4">
+        <a href="beranda.html" class="block w-full text-left py-2 font-semibold">Beranda</a>
+        <a href="lowongan.html" class="block w-full text-left py-2 font-semibold">Lowongan</a>
+        <a href="acara.html" class="block w-full text-left py-2 font-semibold">Acara</a>
+        <a href="berita.html" class="block w-full text-left py-2 font-semibold">Berita</a>
+        <a href="tracer.html" class="block w-full text-left py-2 font-semibold">Tracer Study</a>
+        <div class="pt-4 border-t border-white/10 flex flex-col space-y-3">
+          <a href="auth.html" class="w-full bg-blue-600 py-3 rounded-xl font-bold text-center">Masuk Ke Akun</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="page-transition container mx-auto px-6 py-12">
+      <!-- Header -->
+      <div class="mb-12">
+        <a href="tracer.html" class="text-green-600 hover:text-green-700 font-bold mb-4 inline-flex items-center"> <i class="fas fa-chevron-left mr-2"></i>Kembali ke Tracer Study </a>
+        <h1 class="text-4xl font-extrabold text-[#001f3f] mb-4">Survey Kepuasan Pengguna Lulusan</h1>
+        <p class="text-slate-600 text-lg">Formulir evaluasi performa lulusan SMKN 1 Garut dari perspektif industri</p>
+      </div>
+
+      <!-- Introduction -->
+      <div class="bg-gradient-to-r from-green-50 to-green-100 border border-green-200 p-8 rounded-2xl mb-12">
+        <h2 class="text-xl font-bold text-slate-900 mb-4 flex items-center"><i class="fas fa-info-circle text-green-600 mr-3"></i>Pengantar Survei</h2>
+        <div class="space-y-4 text-slate-700">
+          <p>Kepada Yth. Pimpinan/Atasan Langsung dan Pengguna Lulusan SMKN 1 Garut,</p>
+          <p>
+            Dalam rangka peningkatan mutu lulusan dan memenuhi kebutuhan untuk kelengkapan akreditasi serta penyiapan kompetensi lulusan agar lebih relevan dengan kebutuhan industri, Bursa Kerja Khusus SMKN 1 Garut mengundang Bapak/Ibu
+            untuk mengisi formulir survey kepuasan pengguna lulusan.
+          </p>
+          <p>
+            Kami dengan hormat memohon bantuan Bapak/Ibu sebagai atasan langsung untuk memberikan penilaian, masukan, dan saran terhadap kinerja lulusan kami yang bekerja di perusahaan Bapak/Ibu. Data isian tersebut sangat kami perlukan
+            sebagai feedback bagi pengembangan sekolah dan program studi.
+          </p>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <form id="surveyForm" class="space-y-8">
+        <!-- Company Information Section -->
+        <div class="bg-white rounded-2xl shadow-lg p-8">
+          <h3 class="text-2xl font-bold text-slate-900 mb-6 flex items-center"><i class="fas fa-building text-green-600 mr-3"></i>Informasi Perusahaan</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-xs font-bold text-slate-500 uppercase mb-3">Nama Perusahaan *</label>
+              <input type="text" placeholder="Masukkan Nama Perusahaan" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100" required />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-500 uppercase mb-3">Jenis Perusahaan (Badan Hukum) *</label>
+              <select class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100" required>
+                <option value="">Pilih Jenis Perusahaan</option>
+                <option>PT (Perseroan Terbatas)</option>
+                <option>CV (Commanditaire Vennootschap)</option>
+                <option>Koperasi</option>
+                <option>BUMN</option>
+                <option>BUMD</option>
+                <option>Lainnya</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-500 uppercase mb-3">Alamat Perusahaan *</label>
+              <input
+                type="text"
+                placeholder="Masukkan Alamat Perusahaan"
+                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
+                required
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-500 uppercase mb-3">Bisnis Utama Perusahaan *</label>
+              <input
+                type="text"
+                placeholder="Contoh: Manufaktur, Teknologi, Keuangan, dll"
+                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
+                required
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Responder Information Section -->
+        <div class="bg-white rounded-2xl shadow-lg p-8">
+          <h3 class="text-2xl font-bold text-slate-900 mb-6 flex items-center"><i class="fas fa-user-tie text-green-600 mr-3"></i>Informasi Responden</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-xs font-bold text-slate-500 uppercase mb-3">Nama Responden *</label>
+              <input type="text" placeholder="Masukkan Nama Responden" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100" required />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-500 uppercase mb-3">Jabatan Responden *</label>
+              <input
+                type="text"
+                placeholder="Contoh: HRD Manager, Pimpinan, Owner, dll"
+                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
+                required
+              />
+            </div>
+            <div class="md:col-span-2">
+              <label class="block text-xs font-bold text-slate-500 uppercase mb-3">Email Responden *</label>
+              <input type="email" placeholder="Masukkan Email Responden" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100" required />
+            </div>
+          </div>
+        </div>
+
+        <!-- Alumni Competency Assessment Section -->
+        <div class="bg-white rounded-2xl shadow-lg p-8">
+          <h3 class="text-2xl font-bold text-slate-900 mb-6 flex items-center"><i class="fas fa-star text-green-600 mr-3"></i>Penilaian Kemampuan Lulusan</h3>
+          <p class="text-sm text-slate-600 mb-6 bg-slate-50 p-4 rounded-xl">
+            Silahkan isi penilaian kemampuan lulusan SMKN 1 Garut yang bekerja di perusahaan Bapak/Ibu dengan skala:
+            <strong>1 = Sangat Kurang</strong>, <strong>2 = Kurang</strong>, <strong>3 = Cukup</strong>, <strong>4 = Baik</strong>, <strong>5 = Sangat Baik</strong>
+          </p>
+
+          <div class="space-y-4">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 py-4 border-b border-slate-200 hover:bg-slate-50 px-3 rounded">
+              <span class="font-semibold text-slate-800 flex-1">Integritas (Etika dan Moral)</span>
+              <div class="flex gap-3 flex-wrap md:flex-nowrap">
+                <label class="flex items-center cursor-pointer"><input type="radio" name="integritas" value="1" class="mr-2" /> <span class="text-sm">1</span></label>
+                <label class="flex items-center cursor-pointer"><input type="radio" name="integritas" value="2" class="mr-2" /> <span class="text-sm">2</span></label>
+                <label class="flex items-center cursor-pointer"><input type="radio" name="integritas" value="3" class="mr-2" /> <span class="text-sm">3</span></label>
+                <label class="flex items-center cursor-pointer"><input type="radio" name="integritas" value="4" class="mr-2" /> <span class="text-sm">4</span></label>
+                <label class="flex items-center cursor-pointer"><input type="radio" name="integritas" value="5" class="mr-2" /> <span class="text-sm">5</span></label>
+              </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 py-4 border-b border-slate-200 hover:bg-slate-50 px-3 rounded">
+              <span class="font-semibold text-slate-800 flex-1">Keahlian Berdasarkan Bidang Ilmu</span>
+              <div class="flex gap-3 flex-wrap md:flex-nowrap">
+                <label class="flex items-center cursor-pointer"><input type="radio" name="keahlian" value="1" class="mr-2" /> <span class="text-sm">1</span></label>
+                <label class="flex items-center cursor-pointer"><input type="radio" name="keahlian" value="2" class="mr-2" /> <span class="text-sm">2</span></label>
+                <label class="flex items-center cursor-pointer"><input type="radio" name="keahlian" value="3" class="mr-2" /> <span class="text-sm">3</span></label>
+                <label class="flex items-center cursor-pointer"><input type="radio" name="keahlian" value="4" class="mr-2" /> <span class="text-sm">4</span></label>
+                <label class="flex items-center cursor-pointer"><input type="radio" name="keahlian" value="5" class="mr-2" /> <span class="text-sm">5</span></label>
+              </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 py-4 border-b border-slate-200 hover:bg-slate-50 px-3 rounded">
+              <span class="font-semibold text-slate-800 flex-1">Keterampilan Bahasa Inggris</span>
+              <div class="flex gap-3 flex-wrap md:flex-nowrap">
+                <label class="flex items-center cursor-pointer"><input type="radio" name="bahasa" value="1" class="mr-2" /> <span class="text-sm">1</span></label>
+                <label class="flex items-center cursor-pointer"><input type="radio" name="bahasa" value="2" class="mr-2" /> <span class="text-sm">2</span></label>
+                <label class="flex items-center cursor-pointer"><input type="radio" name="bahasa" value="3" class="mr-2" /> <span class="text-sm">3</span></label>
+                <label class="flex items-center cursor-pointer"><input type="radio" name="bahasa" value="4" class="mr-2" /> <span class="text-sm">4</span></label>
+                <label class="flex items-center cursor-pointer"><input type="radio" name="bahasa" value="5" class="mr-2" /> <span class="text-sm">5</span></label>
+              </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 py-4 border-b border-slate-200 hover:bg-slate-50 px-3 rounded">
+              <span class="font-semibold text-slate-800 flex-1">Penggunaan Teknologi & TIK</span>
+              <div class="flex gap-3 flex-wrap md:flex-nowrap">
+                <label class="flex items-center cursor-pointer"><input type="radio" name="teknologi" value="1" class="mr-2" /> <span class="text-sm">1</span></label>
+                <label class="flex items-center cursor-pointer"><input type="radio" name="teknologi" value="2" class="mr-2" /> <span class="text-sm">2</span></label>
+                <label class="flex items-center cursor-pointer"><input type="radio" name="teknologi" value="3" class="mr-2" /> <span class="text-sm">3</span></label>
+                <label class="flex items-center cursor-pointer"><input type="radio" name="teknologi" value="4" class="mr-2" /> <span class="text-sm">4</span></label>
+                <label class="flex items-center cursor-pointer"><input type="radio" name="teknologi" value="5" class="mr-2" /> <span class="text-sm">5</span></label>
+              </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 py-4 border-b border-slate-200 hover:bg-slate-50 px-3 rounded">
+              <span class="font-semibold text-slate-800 flex-1">Keterampilan Komunikasi</span>
+              <div class="flex gap-3 flex-wrap md:flex-nowrap">
+                <label class="flex items-center cursor-pointer"><input type="radio" name="komunikasi" value="1" class="mr-2" /> <span class="text-sm">1</span></label>
+                <label class="flex items-center cursor-pointer"><input type="radio" name="komunikasi" value="2" class="mr-2" /> <span class="text-sm">2</span></label>
+                <label class="flex items-center cursor-pointer"><input type="radio" name="komunikasi" value="3" class="mr-2" /> <span class="text-sm">3</span></label>
+                <label class="flex items-center cursor-pointer"><input type="radio" name="komunikasi" value="4" class="mr-2" /> <span class="text-sm">4</span></label>
+                <label class="flex items-center cursor-pointer"><input type="radio" name="komunikasi" value="5" class="mr-2" /> <span class="text-sm">5</span></label>
+              </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 py-4 border-b border-slate-200 hover:bg-slate-50 px-3 rounded">
+              <span class="font-semibold text-slate-800 flex-1">Kerja Sama Tim</span>
+              <div class="flex gap-3 flex-wrap md:flex-nowrap">
+                <label class="flex items-center cursor-pointer"><input type="radio" name="teamwork" value="1" class="mr-2" /> <span class="text-sm">1</span></label>
+                <label class="flex items-center cursor-pointer"><input type="radio" name="teamwork" value="2" class="mr-2" /> <span class="text-sm">2</span></label>
+                <label class="flex items-center cursor-pointer"><input type="radio" name="teamwork" value="3" class="mr-2" /> <span class="text-sm">3</span></label>
+                <label class="flex items-center cursor-pointer"><input type="radio" name="teamwork" value="4" class="mr-2" /> <span class="text-sm">4</span></label>
+                <label class="flex items-center cursor-pointer"><input type="radio" name="teamwork" value="5" class="mr-2" /> <span class="text-sm">5</span></label>
+              </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 py-4 border-b border-slate-200 hover:bg-slate-50 px-3 rounded">
+              <span class="font-semibold text-slate-800 flex-1">Pemikiran Analitis & Inovasi</span>
+              <div class="flex gap-3 flex-wrap md:flex-nowrap">
+                <label class="flex items-center cursor-pointer"><input type="radio" name="analitis" value="1" class="mr-2" /> <span class="text-sm">1</span></label>
+                <label class="flex items-center cursor-pointer"><input type="radio" name="analitis" value="2" class="mr-2" /> <span class="text-sm">2</span></label>
+                <label class="flex items-center cursor-pointer"><input type="radio" name="analitis" value="3" class="mr-2" /> <span class="text-sm">3</span></label>
+                <label class="flex items-center cursor-pointer"><input type="radio" name="analitis" value="4" class="mr-2" /> <span class="text-sm">4</span></label>
+                <label class="flex items-center cursor-pointer"><input type="radio" name="analitis" value="5" class="mr-2" /> <span class="text-sm">5</span></label>
+              </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 py-4 border-b border-slate-200 hover:bg-slate-50 px-3 rounded">
+              <span class="font-semibold text-slate-800 flex-1">Kemampuan Kepemimpinan</span>
+              <div class="flex gap-3 flex-wrap md:flex-nowrap">
+                <label class="flex items-center cursor-pointer"><input type="radio" name="kepemimpinan" value="1" class="mr-2" /> <span class="text-sm">1</span></label>
+                <label class="flex items-center cursor-pointer"><input type="radio" name="kepemimpinan" value="2" class="mr-2" /> <span class="text-sm">2</span></label>
+                <label class="flex items-center cursor-pointer"><input type="radio" name="kepemimpinan" value="3" class="mr-2" /> <span class="text-sm">3</span></label>
+                <label class="flex items-center cursor-pointer"><input type="radio" name="kepemimpinan" value="4" class="mr-2" /> <span class="text-sm">4</span></label>
+                <label class="flex items-center cursor-pointer"><input type="radio" name="kepemimpinan" value="5" class="mr-2" /> <span class="text-sm">5</span></label>
+              </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 py-4 border-b border-slate-200 hover:bg-slate-50 px-3 rounded">
+              <span class="font-semibold text-slate-800 flex-1">Kemampuan Bekerja Dibawah Tekanan</span>
+              <div class="flex gap-3 flex-wrap md:flex-nowrap">
+                <label class="flex items-center cursor-pointer"><input type="radio" name="tekanan" value="1" class="mr-2" /> <span class="text-sm">1</span></label>
+                <label class="flex items-center cursor-pointer"><input type="radio" name="tekanan" value="2" class="mr-2" /> <span class="text-sm">2</span></label>
+                <label class="flex items-center cursor-pointer"><input type="radio" name="tekanan" value="3" class="mr-2" /> <span class="text-sm">3</span></label>
+                <label class="flex items-center cursor-pointer"><input type="radio" name="tekanan" value="4" class="mr-2" /> <span class="text-sm">4</span></label>
+                <label class="flex items-center cursor-pointer"><input type="radio" name="tekanan" value="5" class="mr-2" /> <span class="text-sm">5</span></label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Suggestions Section -->
+        <div class="bg-white rounded-2xl shadow-lg p-8">
+          <h3 class="text-2xl font-bold text-slate-900 mb-6 flex items-center"><i class="fas fa-lightbulb text-green-600 mr-3"></i>Masukan & Saran</h3>
+          <label class="block text-xs font-bold text-slate-500 uppercase mb-4">Berikan saran untuk peningkatan kualitas lulusan SMKN 1 Garut</label>
+          <textarea
+            id="saran"
+            name="saran"
+            placeholder="Tulis masukan dan saran Bapak/Ibu di sini..."
+            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100 h-32 resize-none"
+          ></textarea>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex gap-4 pb-8">
+          <button type="submit" class="flex-1 bg-green-600 text-white px-6 py-4 rounded-xl font-bold hover:bg-green-700 transition transform hover:scale-105 active:scale-95 shadow-lg">
+            <i class="fas fa-paper-plane mr-2"></i>Kirim Survey
+          </button>
+          <a href="tracer.html" class="flex-1 bg-slate-200 text-slate-800 px-6 py-4 rounded-xl font-bold hover:bg-slate-300 transition text-center"> Batal </a>
+        </div>
+      </form>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-[#001f3f] text-slate-300 pt-20 pb-10">
+      <div class="container mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+          <div>
+            <div class="flex items-center space-x-3 mb-6">
+              <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+                <i class="fas fa-briefcase text-[#001f3f]"></i>
+              </div>
+              <h2 class="text-white font-bold text-xl">BKK SMKN 1</h2>
+            </div>
+            <p class="text-sm leading-relaxed opacity-80 mb-6">Pusat pengembangan karir dan penyaluran tenaga kerja profesional khusus alumni SMKN 1 Garut menuju Indonesia Emas.</p>
+            <div class="flex space-x-4">
+              <a href="#" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-blue-600 transition"><i class="fab fa-instagram"></i></a>
+              <a href="#" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-blue-600 transition"><i class="fab fa-facebook-f"></i></a>
+              <a href="#" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-blue-600 transition"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+          </div>
+          <div>
+            <h3 class="text-white font-bold mb-6 text-lg">Tautan Cepat</h3>
+            <ul class="space-y-4 text-sm">
+              <li>
+                <a href="lowongan.html" class="hover:text-blue-400 transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i> Lowongan Kerja</a>
+              </li>
+              <li>
+                <a href="acara.html" class="hover:text-blue-400 transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i> Jadwal Rekrutmen</a>
+              </li>
+              <li>
+                <a href="auth.html" class="hover:text-blue-400 transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i> Tutorial Pendaftaran</a>
+              </li>
+              <li>
+                <a href="tracer.html" class="hover:text-blue-400 transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i> Tracer Study</a>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-white font-bold mb-6 text-lg">Hubungi Kami</h3>
+            <ul class="space-y-4 text-sm">
+              <li class="flex items-start">
+                <i class="fas fa-map-marker-alt mt-1 mr-3 text-blue-500"></i>
+                <span>Jl. Cimanuk No. 309 A, Tarogong Kidul, Garut, Jawa Barat 44151</span>
+              </li>
+              <li class="flex items-center">
+                <i class="fas fa-phone mr-3 text-blue-500"></i>
+                <span>(0262) 233796</span>
+              </li>
+              <li class="flex items-center">
+                <i class="fas fa-envelope mr-3 text-blue-500"></i>
+                <span>bkk@smkn1garut.sch.id</span>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-white font-bold mb-6 text-lg">Newsletter</h3>
+            <p class="text-xs mb-4 opacity-70">Dapatkan info lowongan terbaru langsung di email Anda.</p>
+            <div class="flex">
+              <input type="email" placeholder="Email Anda" class="bg-white/5 border border-white/10 px-4 py-2.5 rounded-l-lg w-full focus:outline-none focus:border-blue-500" />
+              <button class="bg-blue-600 px-4 rounded-r-lg hover:bg-blue-700"><i class="fas fa-paper-plane"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="border-t border-white/10 pt-8 text-center text-xs opacity-50">&copy; 2024 Sistem Informasi BKK Sekolah Menengah Kejuruan Negeri 1 Garut. Seluruh Hak Cipta Dilindungi.</div>
+      </div>
+    </footer>
+
+    <script src="js/utils.js"></script>
+    <script>
+      document.getElementById("surveyForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        alert("Terima kasih atas partisipasi Bapak/Ibu dalam survey kepuasan pengguna lulusan SMKN 1 Garut. Data Anda telah kami terima dan akan digunakan untuk meningkatkan kualitas pendidikan kami. Hormat kami.");
+        this.reset();
+        window.location.href = "tracer.html";
+      });
+    </script>
+  </body>
+</html>

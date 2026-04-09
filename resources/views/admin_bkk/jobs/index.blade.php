@@ -1,23 +1,26 @@
-@extends('layouts.app')
+@extends('layouts.admin')
+
+@section('page_title', 'Manajemen Lowongan Kerja')
 
 @section('content')
-<div class="container mx-auto px-4 py-6">
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-3xl font-bold">Manajemen Lowongan Kerja</h1>
-        <a href="{{ route('admin.jobs.create') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-            + Tambah Lowongan
-        </a>
+<div class="flex justify-between items-center mb-6">
+    <div>
+        <p class="text-slate-600">Kelola semua lowongan kerja yang telah dipublikasikan</p>
     </div>
+    <a href="{{ route('admin.jobs.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold flex items-center gap-2 transition">
+        <i class="fas fa-plus"></i> Tambah Lowongan
+    </a>
+</div>
 
-    @if ($message = Session::get('success'))
-        <div class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
-            {{ $message }}
-        </div>
-    @endif
+@if (session('success'))
+    <div class="mb-4 p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg flex items-center gap-3">
+        <i class="fas fa-check-circle"></i>
+        {{ session('success') }}
+    </div>
+@endif
 
-    @if ($jobs->count() > 0)
-        <div class="overflow-x-auto">
-            <table class="min-w-full bg-white border border-gray-300 rounded">
+@if ($jobs->count() > 0)
+    <div class="table-custom">
                 <thead class="bg-gray-100">
                     <tr>
                         <th class="px-4 py-2 border text-left">Judul</th>

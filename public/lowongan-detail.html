@@ -1,0 +1,1063 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detail Lowongan - BKK SMKN 1 Garut</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+      .detail-header {
+        background:
+          linear-gradient(135deg, rgba(30, 58, 138, 0.9), rgba(0, 31, 63, 0.9)),
+          url("https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1920&q=80");
+        background-size: cover;
+        background-position: center;
+        color: white;
+        padding: 60px 0;
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        animation: fadeIn 0.3s ease-in;
+      }
+
+      .modal.show {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .modal-content {
+        background-color: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        max-width: 600px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+        animation: slideUp 0.3s ease-out;
+      }
+
+      @keyframes slideUp {
+        from {
+          transform: translateY(50px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      .company-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 100px;
+        height: 100px;
+        background: white;
+        border-radius: 12px;
+        font-size: 48px;
+        font-weight: bold;
+        color: #001f3f;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .detail-section {
+        margin-bottom: 40px;
+      }
+
+      .detail-section h2 {
+        font-size: 24px;
+        font-weight: 700;
+        color: #001f3f;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+      }
+
+      .detail-section h2 i {
+        margin-right: 12px;
+        color: #3b82f6;
+      }
+
+      .requirements-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+      }
+
+      .requirement-box {
+        background: #f8fafc;
+        padding: 20px;
+        border-radius: 12px;
+        border-left: 4px solid #3b82f6;
+      }
+
+      .requirement-box h4 {
+        font-weight: 700;
+        color: #001f3f;
+        margin-bottom: 12px;
+      }
+
+      .requirement-box ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      .requirement-box li {
+        padding: 6px 0;
+        color: #64748b;
+        font-size: 14px;
+      }
+
+      .requirement-box li:before {
+        content: "✓ ";
+        color: #3b82f6;
+        font-weight: bold;
+        margin-right: 8px;
+      }
+
+      .benefits-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px;
+      }
+
+      .benefit-item {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        padding: 12px 16px;
+        border-radius: 8px;
+        color: #1e40af;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+      }
+
+      .sidebar-box {
+        background: white;
+        padding: 24px;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        margin-bottom: 24px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+
+      .sidebar-box h3 {
+        font-size: 18px;
+        font-weight: 700;
+        color: #001f3f;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+      }
+
+      .sidebar-box h3 i {
+        margin-right: 8px;
+        color: #3b82f6;
+      }
+
+      .info-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid #e2e8f0;
+        font-size: 14px;
+      }
+
+      .info-item:last-child {
+        border-bottom: none;
+      }
+
+      .info-item .label {
+        font-weight: 600;
+        color: #64748b;
+      }
+
+      .info-item .value {
+        color: #001f3f;
+        font-weight: 600;
+      }
+
+      .status-open {
+        background: #dcfce7;
+        color: #166534;
+        padding: 4px 12px;
+        border-radius: 6px;
+        display: inline-block;
+      }
+
+      .similar-item {
+        padding: 12px 0;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      .similar-item:last-child {
+        border-bottom: none;
+      }
+
+      .similar-item h4 {
+        font-weight: 600;
+        color: #001f3f;
+        margin-bottom: 4px;
+        font-size: 14px;
+      }
+
+      .similar-item p {
+        font-size: 13px;
+        color: #64748b;
+        margin-bottom: 8px;
+      }
+
+      .similar-item a {
+        color: #3b82f6;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 600;
+        transition: color 0.3s;
+      }
+
+      .similar-item a:hover {
+        color: #1e40af;
+      }
+
+      .responsibilities-list {
+        list-style: none;
+        padding: 0;
+      }
+
+      .responsibilities-list li {
+        padding: 12px 0;
+        color: #475569;
+        font-size: 15px;
+        display: flex;
+        align-items: flex-start;
+      }
+
+      .responsibilities-list li:before {
+        content: "";
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background: #3b82f6;
+        border-radius: 50%;
+        margin-right: 12px;
+        margin-top: 6px;
+        flex-shrink: 0;
+      }
+
+      .breadcrumb-nav {
+        background: #f8fafc;
+        padding: 12px 0;
+        font-size: 14px;
+        color: #64748b;
+      }
+
+      .breadcrumb-nav a {
+        color: #3b82f6;
+        text-decoration: none;
+      }
+
+      .breadcrumb-nav a:hover {
+        text-decoration: underline;
+      }
+
+      @media (max-width: 768px) {
+        .detail-header {
+          padding: 40px 0;
+        }
+
+        .requirements-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .benefits-list {
+          grid-template-columns: 1fr;
+        }
+
+        .detail-section h2 {
+          font-size: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-slate-50 text-slate-900" data-page="lowongan-detail">
+    <!-- Navigation -->
+    <nav class="bg-[#001f3f] text-white sticky top-0 z-[100] shadow-xl">
+      <div class="container mx-auto px-4 md:px-6">
+        <div class="flex justify-between items-center h-20">
+          <!-- Logo -->
+          <div
+            class="flex items-center space-x-3 cursor-pointer"
+            onclick="window.location.href = 'beranda.html'"
+          >
+            <div
+              class="w-11 h-11 bg-white rounded-xl flex items-center justify-center shadow-lg"
+            >
+              <i class="fas fa-graduation-cap text-[#001f3f] text-xl"></i>
+            </div>
+            <div>
+              <h1 class="font-extrabold text-xl tracking-tight leading-none">
+                BKK SMKN 1
+              </h1>
+              <p class="text-[10px] uppercase tracking-widest opacity-70">
+                Garut Bermartabat
+              </p>
+            </div>
+          </div>
+
+          <!-- Desktop Menu -->
+          <div class="hidden lg:flex space-x-8 text-sm font-semibold">
+            <a
+              href="beranda.html"
+              class="nav-btn transition hover:text-blue-400"
+              id="nav-beranda"
+              >Beranda</a
+            >
+            <a
+              href="lowongan.html"
+              class="nav-btn transition hover:text-blue-400 active"
+              id="nav-lowongan"
+              >Lowongan</a
+            >
+            <a
+              href="acara.html"
+              class="nav-btn transition hover:text-blue-400"
+              id="nav-acara"
+              >Acara</a
+            >
+            <a
+              href="berita.html"
+              class="nav-btn transition hover:text-blue-400"
+              id="nav-berita"
+              >Berita</a
+            >
+            <a
+              href="tracer.html"
+              class="nav-btn transition hover:text-blue-400"
+              id="nav-tracer"
+              >Tracer Study</a
+            >
+          </div>
+
+          <!-- Auth Buttons -->
+          <div class="hidden lg:flex items-center space-x-4">
+            <a
+              href="lowongan.html"
+              class="text-sm font-bold hover:text-blue-400 transition"
+            >
+              <i class="fas fa-arrow-left mr-2"></i>Kembali
+            </a>
+          </div>
+
+          <!-- Mobile Toggle -->
+          <button class="lg:hidden text-2xl" onclick="toggleMobileMenu()">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Menu -->
+      <div
+        id="mobile-menu"
+        class="hidden lg:hidden bg-[#001f3f] border-t border-white/10 px-6 py-6 space-y-4"
+      >
+        <a href="beranda.html" class="block w-full text-left py-2 font-semibold"
+          >Beranda</a
+        >
+        <a
+          href="lowongan.html"
+          class="block w-full text-left py-2 font-semibold"
+          >Lowongan</a
+        >
+        <a href="acara.html" class="block w-full text-left py-2 font-semibold"
+          >Acara</a
+        >
+        <a href="berita.html" class="block w-full text-left py-2 font-semibold"
+          >Berita</a
+        >
+        <a href="tracer.html" class="block w-full text-left py-2 font-semibold"
+          >Tracer Study</a
+        >
+      </div>
+    </nav>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-nav container mx-auto px-6 py-3">
+      <a href="beranda.html">Beranda</a> /
+      <a href="lowongan.html">Lowongan</a> /
+      <span class="text-slate-500">Detail Lowongan</span>
+    </div>
+
+    <!-- Detail Header -->
+    <div class="detail-header">
+      <div class="container mx-auto px-6 py-12">
+        <div class="flex flex-col md:flex-row gap-8 items-start">
+          <div class="company-badge" id="companyBadge">L</div>
+          <div class="flex-1">
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-3" id="jobTitle">
+              Maintenance Technician
+            </h1>
+            <p class="text-2xl text-blue-100 font-bold mb-6" id="companyName">
+              PT. Toyota Motor Manufacturing Indonesia
+            </p>
+            <div class="flex flex-wrap gap-4">
+              <span
+                class="bg-white/20 px-4 py-2 rounded-lg backdrop-blur-sm flex items-center"
+              >
+                <i class="fas fa-map-marker-alt mr-2"></i
+                ><span id="jobLocation">Karawang, Jabar</span>
+              </span>
+              <span
+                class="bg-white/20 px-4 py-2 rounded-lg backdrop-blur-sm flex items-center"
+              >
+                <i class="fas fa-briefcase mr-2"></i
+                ><span id="jobType">Full Time</span>
+              </span>
+              <span
+                class="bg-white/20 px-4 py-2 rounded-lg backdrop-blur-sm flex items-center"
+              >
+                <i class="fas fa-clock mr-2"></i
+                ><span id="jobPosted">Baru</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-6 py-16">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Main Content -->
+        <div class="lg:col-span-2">
+          <!-- Job Description -->
+          <div class="detail-section">
+            <h2><i class="fas fa-briefcase"></i> Deskripsi Pekerjaan</h2>
+            <p class="text-slate-600 leading-relaxed" id="jobDescription">
+              Bertanggung jawab atas pemeliharaan rutin mesin produksi dan
+              sistem otomasi di line assembly untuk memastikan kelancaran
+              operasional dan produktivitas. Melakukan inspeksi harian,
+              perawatan preventif, dan troubleshooting sistem mesin.
+            </p>
+          </div>
+
+          <!-- Responsibilities -->
+          <div class="detail-section">
+            <h2><i class="fas fa-tasks"></i> Tanggung Jawab</h2>
+            <ul class="responsibilities-list">
+              <li>Mengelola dan memelihara sistem mesin produksi</li>
+              <li>Melakukan inspeksi harian dan perawatan preventif</li>
+              <li>Monitoring performa mesin dan sistem otomasi</li>
+              <li>Troubleshooting dan problem solving</li>
+              <li>Dokumentasi dan pelaporan maintenance</li>
+              <li>Koordinasi dengan tim produksi dan engineering</li>
+              <li>Memastikan keselamatan kerja dan standar kualitas</li>
+            </ul>
+          </div>
+
+          <!-- Requirements -->
+          <div class="detail-section">
+            <h2><i class="fas fa-graduation-cap"></i> Persyaratan</h2>
+            <div class="requirements-grid">
+              <div class="requirement-box">
+                <h4>Pendidikan</h4>
+                <ul>
+                  <li>Minimal SMK Teknik Mesin</li>
+                  <li>S1 Teknik Mesin lebih diutamakan</li>
+                </ul>
+              </div>
+              <div class="requirement-box">
+                <h4>Pengalaman</h4>
+                <ul>
+                  <li>Minimal 2 tahun di bidang yang sama</li>
+                  <li>Pengalaman dengan sistem PLC</li>
+                </ul>
+              </div>
+              <div class="requirement-box">
+                <h4>Skill Teknis</h4>
+                <ul>
+                  <li>PLC dan sistem hidrolik</li>
+                  <li>Membaca drawing teknis</li>
+                  <li>Penguasaan alat ukur</li>
+                </ul>
+              </div>
+              <div class="requirement-box">
+                <h4>Soft Skills</h4>
+                <ul>
+                  <li>Problem solving yang kuat</li>
+                  <li>Team player</li>
+                  <li>Disiplin dan detail-oriented</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Benefits -->
+          <div class="detail-section">
+            <h2><i class="fas fa-gift"></i> Benefit & Tunjangan</h2>
+            <div class="benefits-list">
+              <span class="benefit-item"
+                ><i class="fas fa-check"></i> Gaji kompetitif 5-7.5 juta</span
+              >
+              <span class="benefit-item"
+                ><i class="fas fa-check"></i> Tunjangan kesehatan lengkap</span
+              >
+              <span class="benefit-item"
+                ><i class="fas fa-check"></i> Asuransi jiwa</span
+              >
+              <span class="benefit-item"
+                ><i class="fas fa-check"></i> Tunjangan transportasi</span
+              >
+              <span class="benefit-item"
+                ><i class="fas fa-check"></i> Bonus kinerja tahunan</span
+              >
+              <span class="benefit-item"
+                ><i class="fas fa-check"></i> Training & pengembangan
+                karir</span
+              >
+              <span class="benefit-item"
+                ><i class="fas fa-check"></i> Flexible working hours</span
+              >
+              <span class="benefit-item"
+                ><i class="fas fa-check"></i> Career advancement</span
+              >
+            </div>
+          </div>
+
+          <!-- Company Info -->
+          <div class="detail-section">
+            <h2><i class="fas fa-building"></i> Tentang Perusahaan</h2>
+            <p class="text-slate-600 leading-relaxed mb-4">
+              PT. Toyota Motor Manufacturing Indonesia (TMMIN) adalah salah satu
+              produsen kendaraan terbesar di Indonesia. Kami berkomitmen untuk
+              menghasilkan produk berkualitas tinggi dengan standar
+              internasional dan memberikan pengalaman kerja yang terbaik bagi
+              semua karyawan.
+            </p>
+            <a
+              href="#"
+              class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg font-bold transition"
+            >
+              <i class="fas fa-external-link-alt mr-2"></i> Lihat Profil
+              Perusahaan
+            </a>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="lg:col-span-1">
+          <!-- Quick Info Box -->
+          <div class="sidebar-box sticky top-24">
+            <h3><i class="fas fa-info-circle"></i> Informasi Singkat</h3>
+            <div class="info-item">
+              <span class="label">Gaji:</span>
+              <span class="value" id="sidebarSalary">Rp 5.0 - 7.5 Juta</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Tipe Pekerjaan:</span>
+              <span class="value" id="sidebarType">Full Time</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Lokasi:</span>
+              <span class="value" id="sidebarLocation">Karawang, Jabar</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Pengalaman:</span>
+              <span class="value">2+ Tahun</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Status:</span>
+              <span class="value"><span class="status-open">Buka</span></span>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="sidebar-box">
+            <h3><i class="fas fa-bolt"></i> Aksi</h3>
+            <button
+              onclick="openApplicationForm()"
+              class="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold transition mb-3 flex items-center justify-center"
+            >
+              <i class="fas fa-paper-plane mr-2"></i> Apply Sekarang
+            </button>
+            <button
+              onclick="saveLowongan()"
+              class="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 px-6 py-3 rounded-xl font-bold transition mb-3 flex items-center justify-center"
+            >
+              <i class="fas fa-bookmark mr-2"></i> Simpan Lowongan
+            </button>
+            <button
+              onclick="shareVacancy()"
+              class="w-full border-2 border-slate-200 hover:border-slate-300 text-slate-600 px-6 py-3 rounded-xl font-bold transition flex items-center justify-center"
+            >
+              <i class="fas fa-share-alt mr-2"></i> Bagikan
+            </button>
+          </div>
+
+          <!-- Similar Vacancies -->
+          <div class="sidebar-box">
+            <h3><i class="fas fa-list"></i> Lowongan Serupa</h3>
+            <div class="similar-item">
+              <h4>IT Support Specialist</h4>
+              <p>Telkom Indonesia</p>
+              <a
+                href="lowongan-detail.html?id=it-support"
+                class="flex items-center"
+                >Lihat <i class="fas fa-arrow-right ml-1"></i
+              ></a>
+            </div>
+            <div class="similar-item">
+              <h4>Database Administrator</h4>
+              <p>PT. Megayasa Teknologi</p>
+              <a
+                href="lowongan-detail.html?id=db-admin"
+                class="flex items-center"
+                >Lihat <i class="fas fa-arrow-right ml-1"></i
+              ></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Application Modal -->
+    <div id="applicationModal" class="modal">
+      <div class="modal-content">
+        <div
+          class="bg-gradient-to-r from-blue-600 to-blue-700 p-8 text-white flex justify-between items-center rounded-t-2xl"
+        >
+          <h2 class="text-2xl font-extrabold flex items-center">
+            <i class="fas fa-file-invoice mr-3"></i> Formulir Aplikasi Kerja
+          </h2>
+          <button
+            onclick="closeApplicationForm()"
+            class="text-white text-3xl font-bold hover:text-blue-200 transition"
+          >
+            &times;
+          </button>
+        </div>
+
+        <form
+          id="applicationForm"
+          onsubmit="submitApplication(event)"
+          class="p-8 space-y-6"
+        >
+          <div>
+            <label
+              for="fullName"
+              class="block text-sm font-bold text-slate-700 mb-2"
+              >Nama Lengkap *</label
+            >
+            <input
+              type="text"
+              id="fullName"
+              name="fullName"
+              class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+              required
+            />
+          </div>
+
+          <div>
+            <label
+              for="email"
+              class="block text-sm font-bold text-slate-700 mb-2"
+              >Email *</label
+            >
+            <input
+              type="email"
+              id="email"
+              name="email"
+              class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+              required
+            />
+          </div>
+
+          <div>
+            <label
+              for="phone"
+              class="block text-sm font-bold text-slate-700 mb-2"
+              >Nomor Telepon *</label
+            >
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+              required
+            />
+          </div>
+
+          <div>
+            <label
+              for="resume"
+              class="block text-sm font-bold text-slate-700 mb-2"
+              >Upload CV/Resume (PDF) *</label
+            >
+            <input
+              type="file"
+              id="resume"
+              name="resume"
+              accept=".pdf"
+              class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+              required
+            />
+            <p class="text-xs text-slate-500 mt-2">
+              Format: PDF, Ukuran maksimal 5 MB
+            </p>
+          </div>
+
+          <div>
+            <label
+              for="coverLetter"
+              class="block text-sm font-bold text-slate-700 mb-2"
+              >Cover Letter (Opsional)</label
+            >
+            <textarea
+              id="coverLetter"
+              name="coverLetter"
+              rows="4"
+              placeholder="Tulis motivasi Anda bergabung dengan kami..."
+              class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+            ></textarea>
+          </div>
+
+          <div>
+            <label
+              for="experience"
+              class="block text-sm font-bold text-slate-700 mb-2"
+              >Pengalaman Singkat (Opsional)</label
+            >
+            <textarea
+              id="experience"
+              name="experience"
+              rows="3"
+              placeholder="Jelaskan pengalaman relevan Anda..."
+              class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+            ></textarea>
+          </div>
+
+          <div class="flex items-start">
+            <input
+              type="checkbox"
+              id="agree"
+              name="agree"
+              class="mt-1 rounded focus:ring-2 focus:ring-blue-600"
+              required
+            />
+            <label for="agree" class="ml-3 text-sm text-slate-600"
+              >Saya setuju dengan
+              <a href="#" class="text-blue-600 font-bold"
+                >syarat dan ketentuan</a
+              >
+              yang berlaku</label
+            >
+          </div>
+
+          <button
+            type="submit"
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold transition flex items-center justify-center"
+          >
+            <i class="fas fa-send mr-2"></i> Kirim Aplikasi
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-[#001f3f] text-slate-300 pt-20 pb-10 mt-20">
+      <div class="container mx-auto px-6">
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16"
+        >
+          <div>
+            <div class="flex items-center space-x-3 mb-6">
+              <div
+                class="w-10 h-10 bg-white rounded-lg flex items-center justify-center"
+              >
+                <i class="fas fa-briefcase text-[#001f3f]"></i>
+              </div>
+              <h2 class="text-white font-bold text-xl">BKK SMKN 1</h2>
+            </div>
+            <p class="text-sm leading-relaxed opacity-80 mb-6">
+              Pusat pengembangan karir dan penyaluran tenaga kerja profesional
+              khusus alumni SMKN 1 Garut menuju Indonesia Emas.
+            </p>
+            <div class="flex space-x-4">
+              <a
+                href="#"
+                class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-blue-600 transition"
+                ><i class="fab fa-instagram"></i
+              ></a>
+              <a
+                href="#"
+                class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-blue-600 transition"
+                ><i class="fab fa-facebook-f"></i
+              ></a>
+              <a
+                href="#"
+                class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-blue-600 transition"
+                ><i class="fab fa-linkedin-in"></i
+              ></a>
+            </div>
+          </div>
+          <div>
+            <h3 class="text-white font-bold mb-6 text-lg">Tautan Cepat</h3>
+            <ul class="space-y-4 text-sm">
+              <li>
+                <a
+                  href="lowongan.html"
+                  class="hover:text-blue-400 transition flex items-center"
+                  ><i class="fas fa-chevron-right text-[10px] mr-2"></i>
+                  Lowongan Kerja</a
+                >
+              </li>
+              <li>
+                <a
+                  href="acara.html"
+                  class="hover:text-blue-400 transition flex items-center"
+                  ><i class="fas fa-chevron-right text-[10px] mr-2"></i> Jadwal
+                  Rekrutmen</a
+                >
+              </li>
+              <li>
+                <a
+                  href="auth.html"
+                  class="hover:text-blue-400 transition flex items-center"
+                  ><i class="fas fa-chevron-right text-[10px] mr-2"></i>
+                  Tutorial Pendaftaran</a
+                >
+              </li>
+              <li>
+                <a
+                  href="tracer.html"
+                  class="hover:text-blue-400 transition flex items-center"
+                  ><i class="fas fa-chevron-right text-[10px] mr-2"></i> Tracer
+                  Study</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-white font-bold mb-6 text-lg">Hubungi Kami</h3>
+            <ul class="space-y-4 text-sm">
+              <li class="flex items-start">
+                <i class="fas fa-map-marker-alt mt-1 mr-3 text-blue-500"></i>
+                <span
+                  >Jl. Cimanuk No. 309 A, Tarogong Kidul, Garut, Jawa Barat
+                  44151</span
+                >
+              </li>
+              <li class="flex items-center">
+                <i class="fas fa-phone mr-3 text-blue-500"></i>
+                <span>(0262) 233796</span>
+              </li>
+              <li class="flex items-center">
+                <i class="fas fa-envelope mr-3 text-blue-500"></i>
+                <span>bkk@smkn1garut.sch.id</span>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-white font-bold mb-6 text-lg">Newsletter</h3>
+            <p class="text-xs mb-4 opacity-70">
+              Dapatkan info lowongan terbaru langsung di email Anda.
+            </p>
+            <div class="flex">
+              <input
+                type="email"
+                placeholder="Email Anda"
+                class="bg-white/5 border border-white/10 px-4 py-2.5 rounded-l-lg w-full focus:outline-none focus:border-blue-500"
+              />
+              <button class="bg-blue-600 px-4 rounded-r-lg hover:bg-blue-700">
+                <i class="fas fa-paper-plane"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div
+          class="border-t border-white/10 pt-8 text-center text-xs opacity-50"
+        >
+          &copy; 2024 Sistem Informasi BKK Sekolah Menengah Kejuruan Negeri 1
+          Garut. Seluruh Hak Cipta Dilindungi.
+        </div>
+      </div>
+    </footer>
+
+    <script src="js/utils.js"></script>
+    <script>
+      let savedJobs = JSON.parse(localStorage.getItem("savedJobs")) || [];
+      const urlParams = new URLSearchParams(window.location.search);
+      const jobId = urlParams.get("id") || "maintenance";
+
+      // Job data sample
+      const jobsData = {
+        maintenance: {
+          title: "Maintenance Technician",
+          company: "PT. Toyota Motor Manufacturing Indonesia",
+          location: "Karawang, Jabar",
+          salary: "Rp 5.000.000 - 7.500.000",
+          type: "Tetap",
+          badge: "T",
+          posted: "Baru",
+          description:
+            "Bertanggung jawab atas pemeliharaan rutin mesin produksi dan sistem otomasi di line assembly untuk memastikan kelancaran operasional dan produktivitas. Melakukan inspeksi harian, perawatan preventif, dan troubleshooting sistem mesin.",
+        },
+        "it-support": {
+          title: "IT Support Specialist",
+          company: "Telkom Indonesia",
+          location: "Bandung, Jabar",
+          salary: "Rp 4.500.000 - 6.500.000",
+          type: "Tetap",
+          badge: "T",
+          posted: "1 minggu lalu",
+          description:
+            "Memberikan dukungan teknis kepada pengguna IT. Menangani help desk, troubleshooting hardware/software, dan maintenance sistem jaringan perusahaan.",
+        },
+        "db-admin": {
+          title: "Database Administrator",
+          company: "PT. Megayasa Teknologi",
+          location: "Jakarta",
+          salary: "Rp 6.000.000 - 8.500.000",
+          type: "Tetap",
+          badge: "M",
+          posted: "2 minggu lalu",
+          description:
+            "Mengelola database enterprise, melakukan backup, monitoring performa, dan security management.",
+        },
+      };
+
+      const job = jobsData[jobId] || jobsData.maintenance;
+
+      // Load job data
+      function loadJobData() {
+        document.getElementById("jobTitle").textContent = job.title;
+        document.getElementById("companyName").textContent = job.company;
+        document.getElementById("jobLocation").textContent = job.location;
+        document.getElementById("jobType").textContent = job.type;
+        document.getElementById("jobPosted").textContent = job.posted;
+        document.getElementById("jobDescription").textContent = job.description;
+        document.getElementById("companyBadge").textContent = job.badge;
+        document.getElementById("sidebarSalary").textContent = job.salary;
+        document.getElementById("sidebarType").textContent = job.type;
+        document.getElementById("sidebarLocation").textContent = job.location;
+
+        updateSaveButton();
+      }
+
+      function openApplicationForm() {
+        document.getElementById("applicationModal").classList.add("show");
+      }
+
+      function closeApplicationForm() {
+        document.getElementById("applicationModal").classList.remove("show");
+      }
+
+      function submitApplication(event) {
+        event.preventDefault();
+        const formData = new FormData(
+          document.getElementById("applicationForm"),
+        );
+        const data = Object.fromEntries(formData);
+
+        console.log("Application submitted:", data);
+        alert(
+          "Aplikasi Anda telah dikirim. Kami akan menghubungi Anda dalam 3 hari kerja.",
+        );
+        closeApplicationForm();
+        document.getElementById("applicationForm").reset();
+      }
+
+      function saveLowongan() {
+        const job = { title: job.title, company: job.company };
+        const exists = savedJobs.some(
+          (j) => j.title === job.title && j.company === job.company,
+        );
+
+        if (!exists) {
+          savedJobs.push(job);
+          localStorage.setItem("savedJobs", JSON.stringify(savedJobs));
+          alert("Lowongan berhasil disimpan!");
+        } else {
+          savedJobs = savedJobs.filter(
+            (j) => !(j.title === job.title && j.company === job.company),
+          );
+          localStorage.setItem("savedJobs", JSON.stringify(savedJobs));
+          alert("Lowongan dihapus dari tersimpan");
+        }
+        updateSaveButton();
+      }
+
+      function updateSaveButton() {
+        const saveBtn = document.querySelector(
+          'button[onclick="saveLowongan()"]',
+        );
+        const exists = savedJobs.some(
+          (j) => j.title === job.title && j.company === job.company,
+        );
+
+        if (exists) {
+          saveBtn.innerHTML =
+            '<i class="fas fa-bookmark mr-2 text-amber-500"></i> Sudah Disimpan';
+          saveBtn.classList.add("opacity-75");
+        } else {
+          saveBtn.innerHTML =
+            '<i class="fas fa-bookmark mr-2"></i> Simpan Lowongan';
+          saveBtn.classList.remove("opacity-75");
+        }
+      }
+
+      function shareVacancy() {
+        const text = `${job.title} - ${job.company}`;
+        const url = window.location.href;
+
+        if (navigator.share) {
+          navigator.share({
+            title: text,
+            url: url,
+          });
+        } else {
+          alert("Link lowongan:\n" + url);
+        }
+      }
+
+      function toggleMobileMenu() {
+        const menu = document.getElementById("mobile-menu");
+        menu.classList.toggle("hidden");
+      }
+
+      // Close modal when clicking outside
+      window.onclick = function (event) {
+        const modal = document.getElementById("applicationModal");
+        if (event.target === modal) {
+          modal.classList.remove("show");
+        }
+      };
+
+      // Load data on page load
+      window.addEventListener("load", loadJobData);
+    </script>
+  </body>
+</html>

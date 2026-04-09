@@ -2,14 +2,62 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
     public function index() 
     {
         return view('auth.login');
+    }
+
+    public function showRegister()
+    {
+        return view('auth.register');
+    }
+
+    public function register(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:6|confirmed',
+            'nis' => 'nullable|string|max:20',
+            'major' => 'nullable|string|max:100',
+            'graduation_year' => 'nullable|integer|min:1995|max:2100',
+        ]);
+
+        // Cari role 'siswa'
+        $siswas_role = \App\Models\Role::where('name', 'siswa')->first();
+        
+        // Create User
+        $user = User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'role_id' => $siswas_role->id,
+            'is_active' => true,
+        ]);
+
+        // Create Student Profile
+        Student::create([
+            'user_id' => $user->id,
+            'nis' => $validated['nis'] ?? null,
+            'full_name' => $validated['name'],
+            'major' => $validated['major'] ?? null,
+            'graduation_year' => $validated['graduation_year'] ?? 2024,
+            'status' => 'active',
+            'alumni_flag' => false,
+        ]);
+
+        // Auto login after register
+        Auth::login($user);
+        
+        return redirect()->route('student.home')->with('success', 'Registrasi berhasil!');
     }
 
     public function login(Request $request) 
@@ -23,13 +71,16 @@ class AuthController extends Controller
             $request->session()->regenerate();
             
             $user = Auth::user();
+            $adminRoles = ['super_admin', 'admin_bkk', 'kepala_bkk', 'perusahaan'];
 
-            if ($user->role === 'admin_bkk') {
-                return redirect()->route('admin.bkk.dashboard');
-            } 
+            // Redirect ke admin jika admin
+            if (in_array($user->role->name, $adminRoles)) {
+                return redirect()->route('admin.dashboard');
+            }
             
-            if ($user->role === 'kepala_bkk') {
-                return redirect()->route('kepala.bkk.dashboard');
+            // Redirect ke student jika siswa
+            if ($user->role->name === 'siswa') {
+                return redirect()->route('student.home');
             }
 
             return redirect('/');

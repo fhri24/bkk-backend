@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SMKN 1 Garut Kembali Meraih Penghargaan BKK Terbaik - BKK SMKN 1 Garut</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body class="bg-slate-50 text-slate-900" data-page="berita-detail">
+    <!-- Navigation -->
+    <nav class="bg-[#001f3f] text-white sticky top-0 z-[100] shadow-xl">
+      <div class="container mx-auto px-4 md:px-6">
+        <div class="flex justify-between items-center h-20">
+          <!-- Logo -->
+          <div class="flex items-center space-x-3 cursor-pointer" onclick="window.location.href = 'beranda.html'">
+            <div class="w-11 h-11 bg-white rounded-xl flex items-center justify-center shadow-lg">
+              <i class="fas fa-graduation-cap text-[#001f3f] text-xl"></i>
+            </div>
+            <div>
+              <h1 class="font-extrabold text-xl tracking-tight leading-none">BKK SMKN 1</h1>
+              <p class="text-[10px] uppercase tracking-widest opacity-70">Garut Bermartabat</p>
+            </div>
+          </div>
+
+          <!-- Desktop Menu -->
+          <div class="hidden lg:flex space-x-8 text-sm font-semibold">
+            <a href="beranda.html" class="nav-btn transition hover:text-blue-400" id="nav-beranda">Beranda</a>
+            <a href="lowongan.html" class="nav-btn transition hover:text-blue-400" id="nav-lowongan">Lowongan</a>
+            <a href="acara.html" class="nav-btn transition hover:text-blue-400" id="nav-acara">Acara</a>
+            <a href="berita.html" class="nav-btn transition hover:text-blue-400 active" id="nav-berita">Berita</a>
+            <a href="tracer.html" class="nav-btn transition hover:text-blue-400" id="nav-tracer">Tracer Study</a>
+          </div>
+
+          <!-- Auth Buttons -->
+          <div class="hidden lg:flex items-center space-x-4">
+            <a href="auth.html" class="text-sm font-bold hover:text-blue-400 transition">Daftar</a>
+            <a href="auth.html" class="bg-blue-600 hover:bg-blue-700 px-7 py-2.5 rounded-full text-sm font-bold shadow-lg transition transform hover:scale-105 active:scale-95">Masuk</a>
+          </div>
+
+          <!-- Mobile Toggle -->
+          <button class="lg:hidden text-2xl" onclick="toggleMobileMenu()">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Menu -->
+      <div id="mobile-menu" class="hidden lg:hidden bg-[#001f3f] border-t border-white/10 px-6 py-6 space-y-4">
+        <a href="beranda.html" class="block w-full text-left py-2 font-semibold">Beranda</a>
+        <a href="lowongan.html" class="block w-full text-left py-2 font-semibold">Lowongan</a>
+        <a href="acara.html" class="block w-full text-left py-2 font-semibold">Acara</a>
+        <a href="berita.html" class="block w-full text-left py-2 font-semibold">Berita</a>
+        <a href="tracer.html" class="block w-full text-left py-2 font-semibold">Tracer Study</a>
+        <div class="pt-4 border-t border-white/10 flex flex-col space-y-3">
+          <a href="auth.html" class="w-full bg-blue-600 py-3 rounded-xl font-bold text-center">Masuk Ke Akun</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="page-transition container mx-auto px-6 py-12">
+      <!-- Back Button -->
+      <a href="berita.html" class="inline-flex items-center text-blue-600 hover:text-blue-700 font-bold mb-8 transition"> <i class="fas fa-chevron-left mr-2"></i>Kembali ke Berita </a>
+
+      <article class="max-w-4xl mx-auto">
+        <!-- Article Header -->
+        <div class="mb-10">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="bg-blue-100 text-blue-600 font-bold text-xs uppercase tracking-widest px-4 py-2 rounded-full">Sekolah</span>
+            <span class="text-slate-400 text-sm">14 Februari 2024</span>
+          </div>
+          <h1 class="text-5xl font-extrabold text-[#001f3f] mb-4 leading-tight">SMKN 1 Garut Kembali Meraih Penghargaan BKK Terbaik Tingkat Jawa Barat</h1>
+          <div class="flex items-center gap-6 text-slate-600 text-sm border-t border-b border-slate-200 py-4">
+            <div class="flex items-center gap-2">
+              <i class="fas fa-user-circle text-blue-600"></i>
+              <span>BKK SMKN 1 Garut</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <i class="fas fa-clock text-blue-600"></i>
+              <span>5 Menit Baca</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Featured Image -->
+        <div class="mb-10 rounded-2xl overflow-hidden shadow-lg">
+          <img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1200&q=80" alt="Article" class="w-full h-[400px] object-cover" />
+        </div>
+
+        <!-- Article Content -->
+        <div class="prose prose-lg max-w-none space-y-6 text-slate-700">
+          <p class="text-xl leading-relaxed">
+            Bursa Kerja Khusus (BKK) SMKN 1 Garut berhasil meraih penghargaan sebagai BKK Terbaik Tingkat Jawa Barat untuk tahun 2024. Prestasi ini merupakan bukti komitmen sekolah dalam mempersiapkan lulusan yang siap memasuki dunia kerja
+            dan relevan dengan kebutuhan industri.
+          </p>
+
+          <h2 class="text-3xl font-bold text-slate-900 mt-8">Angka Keterserapan Alumni Mencapai Rekor Tertinggi</h2>
+          <p>
+            Penghargaan ini diraih berkat tingginya angka keterserapan alumni SMKN 1 Garut di berbagai industri, terutama sektor manufaktur dan teknologi. Dari data yang dikumpulkan, sebanyak 92% lulusan tahun 2023 telah terserap di dunia
+            kerja dalam kurun waktu kurang dari 3 bulan setelah lulus.
+          </p>
+
+          <p>
+            Keberhasilan ini menjadi hasil dari kolaborasi yang kuat antara sekolah, industri mitra, dan alumni. BKK SMKN 1 Garut telah membangun jaringan dengan lebih dari 150 perusahaan di seluruh Indonesia, menciptakan peluang kerja yang
+            beragam bagi setiap lulusan.
+          </p>
+
+          <h2 class="text-3xl font-bold text-slate-900 mt-8">Program-Program Unggulan yang Mendukung Kesuksesan</h2>
+          <p>Beberapa program unggulan yang menjadi kunci kesuksesan BKK SMKN 1 Garut antara lain:</p>
+
+          <ul class="list-disc list-inside space-y-3 ml-4">
+            <li><strong>Pelatihan Soft Skills:</strong> Program intensif untuk meningkatkan kemampuan komunikasi, kepemimpinan, dan kerjasama tim lulusan</li>
+            <li><strong>Matching dengan Industri:</strong> Pertemuan langsung antara calon pekerja dengan HRD perusahaan untuk memahami kebutuhan industri</li>
+            <li><strong>Sertifikasi Kompetensi:</strong> Program sertifikasi yang diakui industri untuk meningkatkan kredibilitas lulusan</li>
+            <li><strong>Pendampingan Karir:</strong> Bimbingan berkelanjutan untuk alumni dalam mengembangkan karir mereka</li>
+          </ul>
+
+          <h2 class="text-3xl font-bold text-slate-900 mt-8">Komitmen Terus Meningkatkan Kualitas</h2>
+          <p>
+            Kepala BKK SMKN 1 Garut menyatakan bahwa penghargaan ini bukan akhir, tetapi awal dari komitmen yang lebih besar. "Kami akan terus berinovasi dalam mempersiapkan lulusan agar tidak hanya mendapat pekerjaan, tetapi juga dapat
+            berkembang dalam karirnya," ujar beliau.
+          </p>
+
+          <p>Untuk tahun depan, BKK SMKN 1 Garut merencanakan ekspansi jangkauan ke negara-negara ASEAN, memberikan kesempatan bagi lulusan untuk bekerja di luar negeri dengan program yang terstruktur dan aman.</p>
+
+          <div class="bg-blue-50 border-l-4 border-blue-600 p-6 rounded mt-10">
+            <p class="text-slate-800">
+              <strong>Informasi Lebih Lanjut:</strong> Bagi siswa atau alumni yang ingin mengetahui lebih lanjut tentang layanan BKK, dapat menghubungi ruang BKK di SMKN 1 Garut atau mengunjungi website resmi kami.
+            </p>
+          </div>
+        </div>
+
+        <!-- Article Meta -->
+        <div class="border-t border-slate-200 pt-8 mt-12">
+          <p class="text-sm text-slate-600 mb-6">
+            <strong>Tags:</strong>
+            <span class="inline-flex gap-2 mt-2 flex-wrap">
+              <a href="berita.html" class="bg-slate-100 hover:bg-blue-100 text-slate-700 px-3 py-1 rounded-full text-xs font-semibold transition">#BKK</a>
+              <a href="berita.html" class="bg-slate-100 hover:bg-blue-100 text-slate-700 px-3 py-1 rounded-full text-xs font-semibold transition">#Penghargaan</a>
+              <a href="berita.html" class="bg-slate-100 hover:bg-blue-100 text-slate-700 px-3 py-1 rounded-full text-xs font-semibold transition">#Karir</a>
+            </span>
+          </p>
+        </div>
+
+        <!-- Related Articles -->
+        <div class="mt-16 pt-12 border-t border-slate-200">
+          <h3 class="text-2xl font-bold text-slate-900 mb-8">Artikel Terkait</h3>
+          <div class="grid md:grid-cols-2 gap-8">
+            <article class="group cursor-pointer" onclick="window.location.href = 'berita-detail-2.html'">
+              <div class="aspect-[16/10] overflow-hidden rounded-xl bg-slate-200 mb-4">
+                <img src="https://images.unsplash.com/photo-1454165833767-027ffea9e77b?auto=format&fit=crop&w=500&q=80" class="w-full h-full object-cover group-hover:scale-105 transition" />
+              </div>
+              <h4 class="font-bold text-slate-800 group-hover:text-blue-600 transition">5 Skill Digital yang Paling Dicari Perusahaan di Tahun 2024</h4>
+              <p class="text-sm text-slate-500 mt-2">10 Februari 2024 • 8 Menit Baca</p>
+            </article>
+
+            <article class="group cursor-pointer" onclick="window.location.href = 'berita-detail-3.html'">
+              <div class="aspect-[16/10] overflow-hidden rounded-xl bg-slate-200 mb-4">
+                <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=500&q=80" class="w-full h-full object-cover group-hover:scale-105 transition" />
+              </div>
+              <h4 class="font-bold text-slate-800 group-hover:text-blue-600 transition">Mengenal Budaya Kerja 5S di Perusahaan Jepang</h4>
+              <p class="text-sm text-slate-500 mt-2">02 Februari 2024 • 12 Menit Baca</p>
+            </article>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-[#001f3f] text-slate-300 pt-20 pb-10 mt-20">
+      <div class="container mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+          <div>
+            <div class="flex items-center space-x-3 mb-6">
+              <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+                <i class="fas fa-briefcase text-[#001f3f]"></i>
+              </div>
+              <h2 class="text-white font-bold text-xl">BKK SMKN 1</h2>
+            </div>
+            <p class="text-sm leading-relaxed opacity-80 mb-6">Pusat pengembangan karir dan penyaluran tenaga kerja profesional khusus alumni SMKN 1 Garut menuju Indonesia Emas.</p>
+            <div class="flex space-x-4">
+              <a href="#" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-blue-600 transition"><i class="fab fa-instagram"></i></a>
+              <a href="#" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-blue-600 transition"><i class="fab fa-facebook-f"></i></a>
+              <a href="#" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-blue-600 transition"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+          </div>
+          <div>
+            <h3 class="text-white font-bold mb-6 text-lg">Tautan Cepat</h3>
+            <ul class="space-y-4 text-sm">
+              <li>
+                <a href="lowongan.html" class="hover:text-blue-400 transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i> Lowongan Kerja</a>
+              </li>
+              <li>
+                <a href="acara.html" class="hover:text-blue-400 transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i> Jadwal Rekrutmen</a>
+              </li>
+              <li>
+                <a href="tutorial-pendaftaran.html" class="hover:text-blue-400 transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i> Tutorial Pendaftaran</a>
+              </li>
+              <li>
+                <a href="tracer.html" class="hover:text-blue-400 transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i> Tracer Study</a>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-white font-bold mb-6 text-lg">Hubungi Kami</h3>
+            <ul class="space-y-4 text-sm">
+              <li class="flex items-start">
+                <i class="fas fa-map-marker-alt mt-1 mr-3 text-blue-500"></i>
+                <span>Jl. Cimanuk No. 309 A, Tarogong Kidul, Garut, Jawa Barat 44151</span>
+              </li>
+              <li class="flex items-center">
+                <i class="fas fa-phone mr-3 text-blue-500"></i>
+                <span>(0262) 233796</span>
+              </li>
+              <li class="flex items-center">
+                <i class="fas fa-envelope mr-3 text-blue-500"></i>
+                <span>bkk@smkn1garut.sch.id</span>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-white font-bold mb-6 text-lg">Newsletter</h3>
+            <p class="text-xs mb-4 opacity-70">Dapatkan info lowongan terbaru langsung di email Anda.</p>
+            <div class="flex">
+              <input type="email" placeholder="Email Anda" class="bg-white/5 border border-white/10 px-4 py-2.5 rounded-l-lg w-full focus:outline-none focus:border-blue-500" />
+              <button class="bg-blue-600 px-4 rounded-r-lg hover:bg-blue-700"><i class="fas fa-paper-plane"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="border-t border-white/10 pt-8 text-center text-xs opacity-50">&copy; 2024 Sistem Informasi BKK Sekolah Menengah Kejuruan Negeri 1 Garut. Seluruh Hak Cipta Dilindungi.</div>
+      </div>
+    </footer>
+
+    <script src="js/utils.js"></script>
+  </body>
+</html>

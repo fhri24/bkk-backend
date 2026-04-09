@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BKK SMKN 1 Garut - Tracer Study</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body class="bg-slate-50 text-slate-900" data-page="tracer">
+    <!-- Navigation -->
+    <nav class="bg-[#001f3f] text-white sticky top-0 z-[100] shadow-xl">
+      <div class="container mx-auto px-4 md:px-6">
+        <div class="flex justify-between items-center h-20">
+          <!-- Logo -->
+          <div class="flex items-center space-x-3 cursor-pointer" onclick="window.location.href = 'beranda.html'">
+            <div class="w-11 h-11 bg-white rounded-xl flex items-center justify-center shadow-lg">
+              <i class="fas fa-graduation-cap text-[#001f3f] text-xl"></i>
+            </div>
+            <div>
+              <h1 class="font-extrabold text-xl tracking-tight leading-none">BKK SMKN 1</h1>
+              <p class="text-[10px] uppercase tracking-widest opacity-70">Garut Bermartabat</p>
+            </div>
+          </div>
+
+          <!-- Desktop Menu -->
+          <div class="hidden lg:flex space-x-8 text-sm font-semibold">
+            <a href="beranda.html" class="nav-btn transition hover:text-blue-400" id="nav-beranda">Beranda</a>
+            <a href="lowongan.html" class="nav-btn transition hover:text-blue-400" id="nav-lowongan">Lowongan</a>
+            <a href="acara.html" class="nav-btn transition hover:text-blue-400" id="nav-acara">Acara</a>
+            <a href="berita.html" class="nav-btn transition hover:text-blue-400" id="nav-berita">Berita</a>
+            <a href="tracer.html" class="nav-btn transition hover:text-blue-400 active" id="nav-tracer">Tracer Study</a>
+          </div>
+
+          <!-- Auth Buttons -->
+          <div class="hidden lg:flex items-center space-x-4">
+            <a href="auth.html" class="text-sm font-bold hover:text-blue-400 transition">Daftar</a>
+            <a href="auth.html" class="bg-blue-600 hover:bg-blue-700 px-7 py-2.5 rounded-full text-sm font-bold shadow-lg transition transform hover:scale-105 active:scale-95">Masuk</a>
+          </div>
+
+          <!-- Mobile Toggle -->
+          <button class="lg:hidden text-2xl" onclick="toggleMobileMenu()">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Menu -->
+      <div id="mobile-menu" class="hidden lg:hidden bg-[#001f3f] border-t border-white/10 px-6 py-6 space-y-4">
+        <a href="beranda.html" class="block w-full text-left py-2 font-semibold">Beranda</a>
+        <a href="lowongan.html" class="block w-full text-left py-2 font-semibold">Lowongan</a>
+        <a href="acara.html" class="block w-full text-left py-2 font-semibold">Acara</a>
+        <a href="berita.html" class="block w-full text-left py-2 font-semibold">Berita</a>
+        <a href="tracer.html" class="block w-full text-left py-2 font-semibold">Tracer Study</a>
+        <div class="pt-4 border-t border-white/10 flex flex-col space-y-3">
+          <a href="auth.html" class="w-full bg-blue-600 py-3 rounded-xl font-bold text-center">Masuk Ke Akun</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="page-transition container mx-auto px-6 py-16">
+      <div class="grid lg:grid-cols-2 gap-12 items-center mb-20">
+        <div>
+          <h2 class="text-4xl font-extrabold text-[#001f3f] mb-6">Tracer Study & <br />Laporan Karir</h2>
+          <p class="text-slate-500 text-lg leading-relaxed mb-8">Sistem pelacakan jejak alumni untuk memetakan kualitas pendidikan dan kebutuhan dunia industri yang dinamis.</p>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="bg-blue-600 p-6 rounded-2xl text-white shadow-lg">
+              <div class="text-3xl font-bold mb-1">92%</div>
+              <div class="text-[10px] font-bold uppercase tracking-widest opacity-80">Data Terverifikasi</div>
+            </div>
+            <div class="bg-slate-800 p-6 rounded-2xl text-white shadow-lg">
+              <div class="text-3xl font-bold mb-1">450+</div>
+              <div class="text-[10px] font-bold uppercase tracking-widest opacity-80">User Surveyed</div>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white p-8 rounded-[40px] shadow-2xl border border-slate-100">
+          <canvas id="tracerChart" width="400" height="300"></canvas>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-8">
+        <div class="bg-white p-10 rounded-[40px] shadow-sm border border-slate-100 group">
+          <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 text-2xl mb-8 group-hover:bg-blue-600 group-hover:text-white transition duration-500">
+            <i class="fas fa-user-graduate"></i>
+          </div>
+          <h3 class="text-2xl font-bold text-slate-800 mb-4">Tracer Study Report</h3>
+          <p class="text-slate-500 mb-8 leading-relaxed">Laporan lengkap hasil pelacakan alumni mencakup masa tunggu kerja, rata-rata pendapatan, dan relevansi kurikulum sekolah dengan dunia kerja.</p>
+          <button class="bg-slate-100 text-slate-800 px-8 py-3.5 rounded-xl font-bold hover:bg-blue-600 hover:text-white transition">Lihat Laporan Alumni</button>
+        </div>
+
+        <div class="bg-white p-10 rounded-[40px] shadow-sm border border-slate-100 group">
+          <div class="w-16 h-16 bg-green-50 rounded-2xl flex items-center justify-center text-green-600 text-2xl mb-8 group-hover:bg-green-600 group-hover:text-white transition duration-500">
+            <i class="fas fa-building-user"></i>
+          </div>
+          <h3 class="text-2xl font-bold text-slate-800 mb-4">User Study Report (DUDI)</h3>
+          <p class="text-slate-500 mb-8 leading-relaxed">Survei tingkat kepuasan mitra industri terhadap performa kerja alumni SMKN 1 Garut sebagai bahan evaluasi pengembangan sekolah.</p>
+          <a href="tracer-industri.html" class="block bg-slate-100 text-slate-800 px-8 py-3.5 rounded-xl font-bold hover:bg-green-600 hover:text-white transition text-center">Lihat Laporan Industri</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-[#001f3f] text-slate-300 pt-20 pb-10">
+      <div class="container mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+          <div>
+            <div class="flex items-center space-x-3 mb-6">
+              <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+                <i class="fas fa-briefcase text-[#001f3f]"></i>
+              </div>
+              <h2 class="text-white font-bold text-xl">BKK SMKN 1</h2>
+            </div>
+            <p class="text-sm leading-relaxed opacity-80 mb-6">Pusat pengembangan karir dan penyaluran tenaga kerja profesional khusus alumni SMKN 1 Garut menuju Indonesia Emas.</p>
+            <div class="flex space-x-4">
+              <a href="#" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-blue-600 transition"><i class="fab fa-instagram"></i></a>
+              <a href="#" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-blue-600 transition"><i class="fab fa-facebook-f"></i></a>
+              <a href="#" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-blue-600 transition"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+          </div>
+          <div>
+            <h3 class="text-white font-bold mb-6 text-lg">Tautan Cepat</h3>
+            <ul class="space-y-4 text-sm">
+              <li>
+                <a href="lowongan.html" class="hover:text-blue-400 transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i> Lowongan Kerja</a>
+              </li>
+              <li>
+                <a href="acara.html" class="hover:text-blue-400 transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i> Jadwal Rekrutmen</a>
+              </li>
+              <li>
+                <a href="auth.html" class="hover:text-blue-400 transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i> Tutorial Pendaftaran</a>
+              </li>
+              <li>
+                <a href="tracer.html" class="hover:text-blue-400 transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i> Tracer Study</a>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-white font-bold mb-6 text-lg">Hubungi Kami</h3>
+            <ul class="space-y-4 text-sm">
+              <li class="flex items-start">
+                <i class="fas fa-map-marker-alt mt-1 mr-3 text-blue-500"></i>
+                <span>Jl. Cimanuk No. 309 A, Tarogong Kidul, Garut, Jawa Barat 44151</span>
+              </li>
+              <li class="flex items-center">
+                <i class="fas fa-phone mr-3 text-blue-500"></i>
+                <span>(0262) 233796</span>
+              </li>
+              <li class="flex items-center">
+                <i class="fas fa-envelope mr-3 text-blue-500"></i>
+                <span>bkk@smkn1garut.sch.id</span>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-white font-bold mb-6 text-lg">Newsletter</h3>
+            <p class="text-xs mb-4 opacity-70">Dapatkan info lowongan terbaru langsung di email Anda.</p>
+            <div class="flex">
+              <input type="email" placeholder="Email Anda" class="bg-white/5 border border-white/10 px-4 py-2.5 rounded-l-lg w-full focus:outline-none focus:border-blue-500" />
+              <button class="bg-blue-600 px-4 rounded-r-lg hover:bg-blue-700"><i class="fas fa-paper-plane"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="border-t border-white/10 pt-8 text-center text-xs opacity-50">&copy; 2024 Sistem Informasi BKK Sekolah Menengah Kejuruan Negeri 1 Garut. Seluruh Hak Cipta Dilindungi.</div>
+      </div>
+    </footer>
+
+    <!-- Industry Report Modal -->
+    <div id="industryModal" class="modal">
+      <div class="modal-content max-w-4xl max-h-[90vh] overflow-y-auto">
+        <div class="bg-gradient-to-r from-green-600 to-green-700 p-8 text-white sticky top-0 flex justify-between items-center">
+          <h2 class="text-2xl font-extrabold">Survey Kepuasan Pengguna Lulusan (DUDI)</h2>
+          <button onclick="closeIndustryReport()" class="text-white text-2xl hover:text-green-200 transition">&times;</button>
+        </div>
+
+        <div class="p-8 space-y-8">
+          <!-- Introduction -->
+          <div class="bg-green-50 border border-green-200 p-6 rounded-xl">
+            <p class="text-slate-700 leading-relaxed mb-4">
+              <strong>Responden Yth.</strong>
+            </p>
+            <p class="text-slate-700 leading-relaxed">
+              Dalam rangka peningkatan mutu lulusan dan memenuhi kebutuhan untuk kelengkapan akreditasi serta penyiapan kompetensi lulusan agar lebih relevan dengan kebutuhan industri, Bursa Kerja Khusus SMKN 1 Garut melakukan survey
+              terhadap industri pengguna lulusan.
+            </p>
+            <p class="text-slate-700 leading-relaxed mt-4">
+              Kami dengan hormat memohon bantuan Bapak/Ibu sebagai atasan langsung untuk memberikan penilaian, masukan, dan saran terhadap kinerja lulusan kami yang bekerja di perusahaan Bapak/Ibu. Data isian tersebut sangat kami perlukan
+              sebagai feedback bagi pengembangan sekolah.
+            </p>
+          </div>
+
+          <!-- Company Information Section -->
+          <div>
+            <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center"><i class="fas fa-building text-green-600 mr-3"></i>Informasi Perusahaan</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-6 rounded-xl">
+              <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Nama Perusahaan</label>
+                <input type="text" placeholder="Masukkan Nama Perusahaan" class="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-green-600" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Jenis Perusahaan (Badan Hukum)</label>
+                <select class="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-green-600">
+                  <option>Pilih Jenis Perusahaan</option>
+                  <option>PT (Perseroan Terbatas)</option>
+                  <option>CV (Commanditaire Vennootschap)</option>
+                  <option>Koperasi</option>
+                  <option>BUMN</option>
+                  <option>Lainnya</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Alamat Perusahaan</label>
+                <input type="text" placeholder="Masukkan Alamat Perusahaan" class="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-green-600" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Bisnis Utama Perusahaan</label>
+                <input type="text" placeholder="Contoh: Manufaktur, Teknologi, dll" class="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-green-600" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Responder Information Section -->
+          <div>
+            <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center"><i class="fas fa-user-tie text-green-600 mr-3"></i>Informasi Responden</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-6 rounded-xl">
+              <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Nama Responden</label>
+                <input type="text" placeholder="Masukkan Nama Responden" class="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-green-600" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Jabatan Responden</label>
+                <input type="text" placeholder="Contoh: HRD Manager, Pimpinan, dll" class="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-green-600" />
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Email Responden</label>
+                <input type="email" placeholder="Masukkan Email Responden" class="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-green-600" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Alumni Competency Assessment Section -->
+          <div>
+            <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center"><i class="fas fa-star text-green-600 mr-3"></i>Penilaian Kemampuan Lulusan</h3>
+            <p class="text-sm text-slate-600 mb-4">Silahkan isi penilaian kemampuan lulusan SMKN 1 Garut yang bekerja di perusahaan Bapak/Ibu (Skala: 1=Sangat Kurang, 5=Sangat Baik)</p>
+
+            <div class="space-y-3 bg-slate-50 p-6 rounded-xl">
+              <div class="flex justify-between items-center py-3 border-b border-slate-200">
+                <span class="text-sm font-semibold text-slate-700">Integritas (Etika dan Moral)</span>
+                <div class="flex gap-2">
+                  <label><input type="radio" name="integritas" class="mr-1" /> 1</label>
+                  <label><input type="radio" name="integritas" class="mr-1" /> 2</label>
+                  <label><input type="radio" name="integritas" class="mr-1" /> 3</label>
+                  <label><input type="radio" name="integritas" class="mr-1" /> 4</label>
+                  <label><input type="radio" name="integritas" class="mr-1" /> 5</label>
+                </div>
+              </div>
+
+              <div class="flex justify-between items-center py-3 border-b border-slate-200">
+                <span class="text-sm font-semibold text-slate-700">Keahlian Berdasarkan Bidang Ilmu</span>
+                <div class="flex gap-2">
+                  <label><input type="radio" name="keahlian" class="mr-1" /> 1</label>
+                  <label><input type="radio" name="keahlian" class="mr-1" /> 2</label>
+                  <label><input type="radio" name="keahlian" class="mr-1" /> 3</label>
+                  <label><input type="radio" name="keahlian" class="mr-1" /> 4</label>
+                  <label><input type="radio" name="keahlian" class="mr-1" /> 5</label>
+                </div>
+              </div>
+
+              <div class="flex justify-between items-center py-3 border-b border-slate-200">
+                <span class="text-sm font-semibold text-slate-700">Keterampilan Bahasa Inggris</span>
+                <div class="flex gap-2">
+                  <label><input type="radio" name="bahasa" class="mr-1" /> 1</label>
+                  <label><input type="radio" name="bahasa" class="mr-1" /> 2</label>
+                  <label><input type="radio" name="bahasa" class="mr-1" /> 3</label>
+                  <label><input type="radio" name="bahasa" class="mr-1" /> 4</label>
+                  <label><input type="radio" name="bahasa" class="mr-1" /> 5</label>
+                </div>
+              </div>
+
+              <div class="flex justify-between items-center py-3 border-b border-slate-200">
+                <span class="text-sm font-semibold text-slate-700">Penggunaan Teknologi & TIK</span>
+                <div class="flex gap-2">
+                  <label><input type="radio" name="teknologi" class="mr-1" /> 1</label>
+                  <label><input type="radio" name="teknologi" class="mr-1" /> 2</label>
+                  <label><input type="radio" name="teknologi" class="mr-1" /> 3</label>
+                  <label><input type="radio" name="teknologi" class="mr-1" /> 4</label>
+                  <label><input type="radio" name="teknologi" class="mr-1" /> 5</label>
+                </div>
+              </div>
+
+              <div class="flex justify-between items-center py-3 border-b border-slate-200">
+                <span class="text-sm font-semibold text-slate-700">Keterampilan Komunikasi</span>
+                <div class="flex gap-2">
+                  <label><input type="radio" name="komunikasi" class="mr-1" /> 1</label>
+                  <label><input type="radio" name="komunikasi" class="mr-1" /> 2</label>
+                  <label><input type="radio" name="komunikasi" class="mr-1" /> 3</label>
+                  <label><input type="radio" name="komunikasi" class="mr-1" /> 4</label>
+                  <label><input type="radio" name="komunikasi" class="mr-1" /> 5</label>
+                </div>
+              </div>
+
+              <div class="flex justify-between items-center py-3 border-b border-slate-200">
+                <span class="text-sm font-semibold text-slate-700">Kerja Sama Tim</span>
+                <div class="flex gap-2">
+                  <label><input type="radio" name="teamwork" class="mr-1" /> 1</label>
+                  <label><input type="radio" name="teamwork" class="mr-1" /> 2</label>
+                  <label><input type="radio" name="teamwork" class="mr-1" /> 3</label>
+                  <label><input type="radio" name="teamwork" class="mr-1" /> 4</label>
+                  <label><input type="radio" name="teamwork" class="mr-1" /> 5</label>
+                </div>
+              </div>
+
+              <div class="flex justify-between items-center py-3 border-b border-slate-200">
+                <span class="text-sm font-semibold text-slate-700">Pemikiran Analitis & Inovasi</span>
+                <div class="flex gap-2">
+                  <label><input type="radio" name="analitis" class="mr-1" /> 1</label>
+                  <label><input type="radio" name="analitis" class="mr-1" /> 2</label>
+                  <label><input type="radio" name="analitis" class="mr-1" /> 3</label>
+                  <label><input type="radio" name="analitis" class="mr-1" /> 4</label>
+                  <label><input type="radio" name="analitis" class="mr-1" /> 5</label>
+                </div>
+              </div>
+
+              <div class="flex justify-between items-center py-3 border-b border-slate-200">
+                <span class="text-sm font-semibold text-slate-700">Kemampuan Kepemimpinan</span>
+                <div class="flex gap-2">
+                  <label><input type="radio" name="kepemimpinan" class="mr-1" /> 1</label>
+                  <label><input type="radio" name="kepemimpinan" class="mr-1" /> 2</label>
+                  <label><input type="radio" name="kepemimpinan" class="mr-1" /> 3</label>
+                  <label><input type="radio" name="kepemimpinan" class="mr-1" /> 4</label>
+                  <label><input type="radio" name="kepemimpinan" class="mr-1" /> 5</label>
+                </div>
+              </div>
+
+              <div class="flex justify-between items-center py-3">
+                <span class="text-sm font-semibold text-slate-700">Kemampuan Bekerja Dibawah Tekanan</span>
+                <div class="flex gap-2">
+                  <label><input type="radio" name="tekanan" class="mr-1" /> 1</label>
+                  <label><input type="radio" name="tekanan" class="mr-1" /> 2</label>
+                  <label><input type="radio" name="tekanan" class="mr-1" /> 3</label>
+                  <label><input type="radio" name="tekanan" class="mr-1" /> 4</label>
+                  <label><input type="radio" name="tekanan" class="mr-1" /> 5</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Suggestions Section -->
+          <div>
+            <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center"><i class="fas fa-lightbulb text-green-600 mr-3"></i>Masukan & Saran</h3>
+            <div class="bg-slate-50 p-6 rounded-xl">
+              <label class="block text-xs font-bold text-slate-500 uppercase mb-3">Berikan saran untuk peningkatan kualitas lulusan SMKN 1 Garut</label>
+              <textarea placeholder="Tulis masukan dan saran Bapak/Ibu di sini..." class="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-green-600 h-24 resize-none"></textarea>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex gap-3 sticky bottom-0 bg-white pt-4 border-t border-slate-200">
+            <button onclick="submitIndustrySurvey()" class="flex-1 bg-green-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-green-700 transition">Kirim Survey</button>
+            <button onclick="closeIndustryReport()" class="flex-1 bg-slate-200 text-slate-800 px-6 py-3 rounded-xl font-bold hover:bg-slate-300 transition">Tutup</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <style>
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        animation: fadeIn 0.3s ease-in-out;
+      }
+
+      .modal.show {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .modal-content {
+        background: white;
+        border-radius: 24px;
+        width: 90%;
+        max-width: 900px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        animation: slideUp 0.3s ease-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes slideUp {
+        from {
+          transform: translateY(50px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+    </style>
+
+    <script src="js/utils.js"></script>
+    <script>
+      function openIndustryReport() {
+        document.getElementById("industryModal").classList.add("show");
+      }
+
+      function closeIndustryReport() {
+        document.getElementById("industryModal").classList.remove("show");
+      }
+
+      function submitIndustrySurvey() {
+        alert("Terima kasih atas partisipasi Bapak/Ibu dalam survey kepuasan pengguna lulusan. Data Anda telah kami terima dan akan digunakan untuk meningkatkan kualitas pendidikan kami.");
+        closeIndustryReport();
+      }
+
+      // Close modal when clicking outside
+      document.getElementById("industryModal").addEventListener("click", function (e) {
+        if (e.target === this) {
+          closeIndustryReport();
+        }
+      });
+
+      function initTracerChart() {
+        const ctx = document.getElementById("tracerChart");
+        if (!ctx) return;
+
+        new Chart(ctx, {
+          type: "doughnut",
+          data: {
+            labels: ["Bekerja", "Kuliah", "Wirausaha", "Mencari Kerja"],
+            datasets: [
+              {
+                data: [65, 15, 12, 8],
+                backgroundColor: ["#2563eb", "#9333ea", "#f59e0b", "#94a3b8"],
+                borderWidth: 0,
+                hoverOffset: 15,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: "bottom",
+                labels: {
+                  padding: 20,
+                  font: {
+                    family: "'Plus Jakarta Sans'",
+                    size: 11,
+                    weight: "bold",
+                  },
+                },
+              },
+            },
+          },
+        });
+      }
+
+      document.addEventListener("DOMContentLoaded", initTracerChart);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,604 @@
+<!doctype html>
+  <html lang="id">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>BKK SMKN 1 Garut - Beranda</title>
+      <script src="https://cdn.tailwindcss.com"></script>
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+      <link rel="stylesheet" href="css/style.css" />
+       <style>
+        body { 
+            font-family: 'Poppins', sans-serif; 
+        }
+        
+        @keyframes zoomInUp {
+            from { opacity: 0; transform: scale(0.85) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .animate-zoom-in { animation: zoomInUp 0.6s ease-out forwards; }
+        .card-zoom { transition: transform 0.3s ease-out; }
+        .card-zoom:hover { transform: scale(1.02); }
+        .stat-card { animation: zoomInUp 0.8s ease-out backwards; }
+        .job-card { animation: zoomInUp 0.8s ease-out backwards; }
+        
+        .section-header { position: relative; padding: 16px 0; }
+        .section-header::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 4px;
+            height: 30px;
+            background: linear-gradient(180deg, #2563eb, #1d4ed8);
+            border-radius: 2px;
+            transform: translateY(-50%);
+        }
+
+        .hero-bg {
+            background: linear-gradient(rgba(0, 31, 63, 0.85), rgba(0, 31, 63, 0.85)), url('https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .custom-shadow {
+            box-shadow: 0 15px 40px rgba(0,0,0,0.06);
+        }
+
+        .custom-input {
+            background-color: #f8fafc;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .custom-input:focus {
+            background-color: #ffffff;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+        }
+
+        /* Hide scrollbar */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+    </head>
+    <body class="bg-slate-50 text-slate-900" data-page="beranda">
+      <!-- Navigation -->
+      <nav class="bg-[#001f3f] text-white sticky top-0 z-[100] shadow-xl">
+        <div class="container mx-auto px-4 md:px-6">
+          <div class="flex justify-between items-center h-20">
+            <!-- Logo -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="window.location.href = 'index.html'">
+              <div class="w-11 h-11 bg-white rounded-xl flex items-center justify-center shadow-lg">
+                <i class="fas fa-graduation-cap text-[#001f3f] text-xl"></i>
+              </div>
+              <div>
+                <h1 class="font-extrabold text-xl tracking-tight leading-none">BKK SMKN 1</h1>
+                <p class="text-[10px] uppercase tracking-widest opacity-70">Garut Melesat</p>
+              </div>
+            </div>
+
+            <!-- Desktop Menu -->
+            <div class="hidden lg:flex space-x-8 text-sm font-semibold">
+              <a href="beranda.html" class="nav-btn transition hover:text-blue-400 active" id="nav-beranda">Beranda</a>
+              <a href="lowongan.html" class="nav-btn transition hover:text-blue-400" id="nav-lowongan">Lowongan</a>
+              <a href="acara.html" class="nav-btn transition hover:text-blue-400" id="nav-acara">Acara</a>
+              <a href="berita.html" class="nav-btn transition hover:text-blue-400" id="nav-berita">Berita</a>
+              <a href="tracer.html" class="nav-btn transition hover:text-blue-400" id="nav-tracer">Tracer Study</a>
+            </div>
+
+            <!-- Auth Buttons -->
+            <div class="lg:flex items-center space-x-4">
+              <a href="auth.html" class="text-sm font-bold hover:text-blue-400 transition">Daftar</a>
+              <a href="auth.html" class="bg-blue-600 hover:bg-blue-700 px-7 py-2.5 rounded-full text-sm font-bold shadow-lg transition transform hover:scale-105 active:scale-95">Masuk</a>
+            </div>
+
+            <!-- Mobile Toggle -->
+            <button class="lg:hidden text-2xl" onclick="toggleMobileMenu()">
+              <i class="fas fa-bars"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden lg:hidden bg-[#001f3f] border-t border-white/10 px-6 py-6 space-y-4">
+          <a href="beranda.html" class="block w-full text-left py-2 font-semibold">Beranda</a>
+          <a href="lowongan.html" class="block w-full text-left py-2 font-semibold">Lowongan</a>
+          <a href="acara.html" class="block w-full text-left py-2 font-semibold">Acara</a>
+          <a href="berita.html" class="block w-full text-left py-2 font-semibold">Berita</a>
+          <a href="tracer.html" class="block w-full text-left py-2 font-semibold">Tracer Study</a>
+          <div class="pt-4 border-t border-white/10 flex flex-col space-y-3">
+            <a href="auth.html" class="w-full bg-blue-600 py-3 rounded-xl font-bold text-center">Masuk Ke Akun</a>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Main Content -->
+      <div class="page-transition">
+        <section class="hero-bg h-[600px] flex items-center justify-center text-center text-white relative">
+          <div class="container mx-auto px-6 z-10">
+            <h2 class="text-5xl md:text-7xl font-extrabold mb-6 leading-tight">Sistem Informasi <br /><span class="text-blue-500">Bursa Kerja</span></h2>
+            <p class="text-lg md:text-xl opacity-90 mb-10 max-w-2xl mx-auto font-medium">"Menghubungkan Talenta Alumni SMKN 1 Garut dengan Peluang Karir Masa Depan di Industri Global"</p>
+            <div class="bg-white rounded-2xl p-2 flex flex-col md:flex-row shadow-2xl max-w-3xl mx-auto overflow-hidden">
+              <div class="flex items-center flex-1 px-4 py-2 border-b md:border-b-0 md:border-r border-slate-100">
+                <i class="fas fa-search text-slate-400 mr-3"></i>
+                <input type="text" placeholder="Posisi kerja..." class="w-full text-slate-800 focus:outline-none font-medium" />
+              </div>
+              <div class="flex items-center flex-1 px-4 py-2">
+                <i class="fas fa-location-arrow text-slate-400 mr-3"></i>
+                <input type="text" placeholder="Lokasi..." class="w-full text-slate-800 focus:outline-none font-medium" />
+              </div>
+              <button class="bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-xl font-bold transition">CARI KERJA</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="container mx-auto px-6 -mt-16 relative z-20">
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="bg-white p-8 rounded-2xl shadow-xl text-center border border-slate-100 stat-card">
+              <div class="text-4xl font-extrabold text-blue-600 mb-2">1.2K+</div>
+              <div class="text-slate-500 font-bold text-xs uppercase tracking-wider">Alumni Terserap</div>
+            </div>
+            <div class="bg-white p-8 rounded-2xl shadow-xl text-center border border-slate-100 stat-card">
+              <div class="text-4xl font-extrabold text-blue-600 mb-2">85%</div>
+              <div class="text-slate-500 font-bold text-xs uppercase tracking-wider">Tingkat Penyaluran</div>
+            </div>
+            <div class="bg-white p-8 rounded-2xl shadow-xl text-center border border-slate-100 stat-card">
+              <div class="text-4xl font-extrabold text-blue-600 mb-2">150+</div>
+              <div class="text-slate-500 font-bold text-xs uppercase tracking-wider">Lowongan Baru</div>
+            </div>
+            <div class="bg-white p-8 rounded-2xl shadow-xl text-center border border-slate-100 stat-card">
+              <div class="text-4xl font-extrabold text-blue-600 mb-2">45</div>
+              <div class="text-slate-500 font-bold text-xs uppercase tracking-wider">MoU Industri</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Lowongan Unggulan Section -->
+        <section class="container mx-auto px-6 py-20">
+          <div class="flex justify-between items-end mb-12">
+            <div class="section-header">
+              <h2 class="text-3xl font-extrabold text-[#001f3f] pl-6">Lowongan Unggulan</h2>
+              <p class="text-slate-500 mt-2 pl-6">Peluang kerja terbaru khusus untuk Anda</p>
+            </div>
+            <a href="lowongan.html" class="text-blue-600 font-bold hover:underline">Lihat Semua <i class="fas fa-arrow-right ml-2 text-xs"></i></a>
+          </div>
+          <div class="grid md:grid-cols-3 gap-8">
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl transition group card-zoom job-card">
+              <div class="flex items-center mb-6">
+                <div class="w-14 h-14 bg-slate-50 rounded-xl flex items-center justify-center border group-hover:bg-blue-50 transition">
+                  <i class="fas fa-industry text-blue-600 text-2xl"></i>
+                </div>
+                <div class="ml-4">
+                  <h4 class="font-bold text-lg">Operator Produksi</h4>
+                  <p class="text-xs text-slate-500">PT. Astra Honda Motor</p>
+                </div>
+              </div>
+              <div class="space-y-3 mb-8 text-sm text-slate-600 font-medium">
+                <div class="flex items-center"><i class="fas fa-map-marker-alt w-5 text-slate-400"></i> Cikarang, Bekasi</div>
+                <div class="flex items-center"><i class="fas fa-graduation-cap w-5 text-slate-400"></i> SMK Mesin/Otomotif</div>
+                <div class="flex items-center"><i class="fas fa-calendar-alt w-5 text-slate-400"></i> Tutup: 25 Feb 2024</div>
+              </div>
+              <button class="w-full bg-slate-100 py-3 rounded-xl font-bold text-slate-800 hover:bg-blue-600 hover:text-white transition">Lamar Sekarang</button>
+            </div>
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl transition group card-zoom job-card">
+              <div class="flex items-center mb-6">
+                <div class="w-14 h-14 bg-slate-50 rounded-xl flex items-center justify-center border group-hover:bg-blue-50 transition">
+                  <i class="fas fa-microchip text-blue-600 text-2xl"></i>
+                </div>
+                <div class="ml-4">
+                  <h4 class="font-bold text-lg">QC Inspector</h4>
+                  <p class="text-xs text-slate-500">PT. Epson Indonesia</p>
+                </div>
+              </div>
+              <div class="space-y-3 mb-8 text-sm text-slate-600 font-medium">
+                <div class="flex items-center"><i class="fas fa-map-marker-alt w-5 text-slate-400"></i> Bekasi, Jawa Barat</div>
+                <div class="flex items-center"><i class="fas fa-graduation-cap w-5 text-slate-400"></i> SMK Listrik/Elektronika</div>
+                <div class="flex items-center"><i class="fas fa-calendar-alt w-5 text-slate-400"></i> Tutup: 01 Mar 2024</div>
+              </div>
+              <button class="w-full bg-slate-100 py-3 rounded-xl font-bold text-slate-800 hover:bg-blue-600 hover:text-white transition">Lamar Sekarang</button>
+            </div>
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl transition group card-zoom job-card">
+              <div class="flex items-center mb-6">
+                <div class="w-14 h-14 bg-slate-50 rounded-xl flex items-center justify-center border group-hover:bg-blue-50 transition">
+                  <i class="fas fa-code text-blue-600 text-2xl"></i>
+                </div>
+                <div class="ml-4">
+                  <h4 class="font-bold text-lg">IT Support</h4>
+                  <p class="text-xs text-slate-500">Telkom Indonesia</p>
+                </div>
+              </div>
+              <div class="space-y-3 mb-8 text-sm text-slate-600 font-medium">
+                <div class="flex items-center"><i class="fas fa-map-marker-alt w-5 text-slate-400"></i> Bandung, Jawa Barat</div>
+                <div class="flex items-center"><i class="fas fa-graduation-cap w-5 text-slate-400"></i> SMK RPL/TKJ</div>
+                <div class="flex items-center"><i class="fas fa-calendar-alt w-5 text-slate-400"></i> Tutup: 15 Mar 2024</div>
+              </div>
+              <button class="w-full bg-slate-100 py-3 rounded-xl font-bold text-slate-800 hover:bg-blue-600 hover:text-white transition">Lamar Sekarang</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Divider -->
+        <div class="container mx-auto px-6 py-8">
+          <div class="divider-line"></div>
+        </div>
+
+        <!-- Acara Unggulan Section -->
+        <section class="bg-gradient-to-b from-slate-50 to-white py-20">
+          <div class="container mx-auto px-6">
+            <div class="flex justify-between items-end mb-12">
+              <div class="section-header">
+                <h2 class="text-3xl font-extrabold text-[#001f3f] pl-6">Acara Unggulan</h2>
+                <p class="text-slate-500 mt-2 pl-6">Bergabunglah dalam kegiatan pengembangan karir</p>
+              </div>
+            <a href="acara.html" class="text-blue-600 font-bold hover:underline">Lihat Semua <i class="fas fa-arrow-right ml-2 text-xs"></i></a>
+          </div>
+          <div class="grid md:grid-cols-3 gap-8">
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl transition group card-zoom job-card">
+              <div class="flex items-center mb-6">
+                <div class="w-14 h-14 bg-blue-50 rounded-xl flex items-center justify-center border group-hover:bg-blue-100 transition">
+                  <i class="fas fa-briefcase text-blue-600 text-2xl"></i>
+                </div>
+                <div class="ml-4">
+                  <h4 class="font-bold text-lg">Job Fair 2026</h4>
+                  <p class="text-xs text-slate-500">Pameran Karir</p>
+                </div>
+              </div>
+              <div class="space-y-3 mb-8 text-sm text-slate-600 font-medium">
+                <div class="flex items-center"><i class="fas fa-map-marker-alt w-5 text-slate-400"></i> SMKN 1 Garut</div>
+                <div class="flex items-center"><i class="fas fa-calendar-alt w-5 text-slate-400"></i> 15 - 17 Maret 2026</div>
+                <div class="flex items-center"><i class="fas fa-users w-5 text-slate-400"></i> 50+ Perusahaan</div>
+              </div>
+              <button class="w-full bg-slate-100 py-3 rounded-xl font-bold text-slate-800 hover:bg-blue-600 hover:text-white transition">Daftar Peserta</button>
+            </div>
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl transition group card-zoom job-card">
+              <div class="flex items-center mb-6">
+                <div class="w-14 h-14 bg-green-50 rounded-xl flex items-center justify-center border group-hover:bg-green-100 transition">
+                  <i class="fas fa-person-chalkboard text-green-600 text-2xl"></i>
+                </div>
+                <div class="ml-4">
+                  <h4 class="font-bold text-lg">Workshop Interview Skill</h4>
+                  <p class="text-xs text-slate-500">Pelatihan</p>
+                </div>
+              </div>
+              <div class="space-y-3 mb-8 text-sm text-slate-600 font-medium">
+                <div class="flex items-center"><i class="fas fa-map-marker-alt w-5 text-slate-400"></i> Ruang Aula BKK</div>
+                <div class="flex items-center"><i class="fas fa-calendar-alt w-5 text-slate-400"></i> 22 Februari 2026</div>
+                <div class="flex items-center"><i class="fas fa-users w-5 text-slate-400"></i> 50 Peserta</div>
+              </div>
+              <button class="w-full bg-slate-100 py-3 rounded-xl font-bold text-slate-800 hover:bg-blue-600 hover:text-white transition">Daftar Workshop</button>
+            </div>
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl transition group card-zoom job-card">
+              <div class="flex items-center mb-6">
+                <div class="w-14 h-14 bg-orange-50 rounded-xl flex items-center justify-center border group-hover:bg-orange-100 transition">
+                  <i class="fas fa-file-invoice text-orange-600 text-2xl"></i>
+                </div>
+                <div class="ml-4">
+                  <h4 class="font-bold text-lg">Training CV & Portfolio</h4>
+                  <p class="text-xs text-slate-500">Pelatihan</p>
+                </div>
+              </div>
+              <div class="space-y-3 mb-8 text-sm text-slate-600 font-medium">
+                <div class="flex items-center"><i class="fas fa-map-marker-alt w-5 text-slate-400"></i> Ruang Meeting BKK</div>
+                <div class="flex items-center"><i class="fas fa-calendar-alt w-5 text-slate-400"></i> 1 Maret 2026</div>
+                <div class="flex items-center"><i class="fas fa-users w-5 text-slate-400"></i> 40 Peserta</div>
+              </div>
+              <button class="w-full bg-slate-100 py-3 rounded-xl font-bold text-slate-800 hover:bg-blue-600 hover:text-white transition">Daftar Training</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Divider -->
+        <div class="container mx-auto px-6 py-8">
+          <div class="divider-line"></div>
+        </div>
+
+        <!-- Berita Unggulan Section -->
+        <section class="py-20">
+          <div class="container mx-auto px-6">
+            <div class="flex justify-between items-end mb-12">
+              <div class="section-header">
+                <h2 class="text-3xl font-extrabold text-[#001f3f] pl-6">Berita Unggulan</h2>
+                <p class="text-slate-500 mt-2 pl-6">Informasi terkini dari dunia karir dan industri</p>
+              </div>
+            <a href="berita.html" class="text-blue-600 font-bold hover:underline">Lihat Semua <i class="fas fa-arrow-right ml-2 text-xs"></i></a>
+          </div>
+          <div class="grid md:grid-cols-3 gap-8">
+            <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-xl transition card-zoom job-card">
+              <div class="h-40 bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
+                <i class="fas fa-chart-line text-white text-5xl opacity-20"></i>
+              </div>
+              <div class="p-6">
+                <div class="mb-4">
+                  <span class="inline-block bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full mb-3">Tren Industri</span>
+                  <h4 class="font-bold text-lg text-slate-800 leading-tight">Tren Industri 2026: Skill Digital & AI</h4>
+                </div>
+                <p class="text-xs text-slate-500 mb-4">2 Februari 2026</p>
+                <p class="text-sm text-slate-600 leading-relaxed line-clamp-2">Skill apa saja yang paling dicari perusahaan besar di tahun 2026? Pelajari trend terbaru industri dan cara mengembangkan kompetensi Anda.</p>
+                <button class="w-full mt-6 bg-slate-100 py-2.5 rounded-lg font-bold text-slate-800 hover:bg-blue-600 hover:text-white transition text-sm">Baca Selengkapnya</button>
+              </div>
+            </div>
+            <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-xl transition card-zoom job-card">
+              <div class="h-40 bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
+                <i class="fas fa-star text-white text-5xl opacity-20"></i>
+              </div>
+              <div class="p-6">
+                <div class="mb-4">
+                  <span class="inline-block bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full mb-3">Sukses Alumni</span>
+                  <h4 class="font-bold text-lg text-slate-800 leading-tight">Dari SMK ke Posisi Manager dalam 5 Tahun</h4>
+                </div>
+                <p class="text-xs text-slate-500 mb-4">30 Januari 2026</p>
+                <p class="text-sm text-slate-600 leading-relaxed line-clamp-2">Kisah inspiratif alumni SMKN 1 Garut yang berhasil mencapai posisi manager di perusahaan multinasional. Pelajari strategi karirnya.</p>
+                <button class="w-full mt-6 bg-slate-100 py-2.5 rounded-lg font-bold text-slate-800 hover:bg-blue-600 hover:text-white transition text-sm">Baca Selengkapnya</button>
+              </div>
+            </div>
+            <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-xl transition card-zoom job-card">
+              <div class="h-40 bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
+                <i class="fas fa-handshake text-white text-5xl opacity-20"></i>
+              </div>
+              <div class="p-6">
+                <div class="mb-4">
+                  <span class="inline-block bg-orange-100 text-orange-700 text-xs font-bold px-3 py-1 rounded-full mb-3">Tips Karir</span>
+                  <h4 class="font-bold text-lg text-slate-800 leading-tight">Negosiasi Gaji: Tips Bertanya Benefit Lebih</h4>
+                </div>
+                <p class="text-xs text-slate-500 mb-4">25 Januari 2026</p>
+                <p class="text-sm text-slate-600 leading-relaxed line-clamp-2">Panduan lengkap cara menegosiasikan gaji dan benefit saat interview. Tingkatkan penawaran pertama Anda dengan strategi ini.</p>
+                <button class="w-full mt-6 bg-slate-100 py-2.5 rounded-lg font-bold text-slate-800 hover:bg-blue-600 hover:text-white transition text-sm">Baca Selengkapnya</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Divider -->
+        <div class="container mx-auto px-6 py-8">
+          <div class="divider-line"></div>
+        </div>
+
+        <!-- Kisah Sukses Alumni -->
+    <section class="py-20 bg-slate-50 overflow-hidden">
+        <div class="container mx-auto px-6">
+            <div class="section-header mb-12">
+                <h2 class="text-3xl font-extrabold text-[#001f3f] pl-6">Kisah Sukses Alumni</h2>
+                <p class="text-slate-500 mt-2 pl-6">Inspirasi karir dari para lulusan terbaik</p>
+            </div>
+
+            <!-- Form Card -->
+            <div class="max-w-2xl mx-auto bg-white rounded-[40px] custom-shadow p-10 md:p-12 mb-20 relative animate-zoom-in">
+                <div class="text-center mb-8">
+                    <span class="bg-slate-100 px-5 py-1.5 rounded-full text-slate-400 font-bold text-[10px] uppercase tracking-widest">Berbagi Kisah</span>
+                    <h3 class="text-2xl md:text-3xl font-bold italic text-slate-800 mt-6 tracking-tight">"Tulis kisah suksesmu di sini"</h3>
+                </div>
+
+                <div class="space-y-4 max-w-md mx-auto text-left">
+                    <input type="text" id="alumniName" placeholder="Nama Anda" class="w-full px-5 py-3.5 custom-input rounded-xl focus:outline-none text-sm font-medium">
+                    <input type="text" id="alumniJob" placeholder="Pekerjaan & Instansi (Contoh: Staff - PT. Maju)" class="w-full px-5 py-3.5 custom-input rounded-xl focus:outline-none text-sm font-medium">
+                    <textarea id="alumniStory" placeholder="Komentar singkat..." rows="3" class="w-full px-5 py-3.5 custom-input rounded-xl focus:outline-none text-sm font-medium"></textarea>
+                    
+                    <button onclick="saveStory()" class="w-full bg-[#001f3f] text-white py-4 rounded-xl font-bold flex items-center justify-center space-x-2 hover:bg-slate-800 transition shadow-lg mt-6">
+                        <span class="tracking-widest uppercase text-sm">KIRIM</span>
+                        <span class="opacity-60 font-light italic text-xs">#kisahmu</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Divider -->
+        <div class="container mx-auto px-6 py-8">
+          <div class="divider-line"></div>
+        </div>
+
+            <!-- Testimonials Slider Container -->
+            <div class="relative group" onmouseenter="stopAutoScroll()" onmouseleave="startAutoScroll()">
+                <!-- Nav Panah -->
+                <button onclick="scrollTestimonials(-400)" class="hidden md:flex absolute -left-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white shadow-lg rounded-full text-blue-600 items-center justify-center hover:bg-blue-600 hover:text-white transition">
+                    <i class="fas fa-chevron-left text-xl"></i>
+                </button>
+                
+                <div id="testimonialContainer" class="flex space-x-6 overflow-x-auto no-scrollbar scroll-smooth pb-10 px-4">
+                    <!-- Data Testimoni -->
+                </div>
+
+                <button onclick="scrollTestimonials(400)" class="hidden md:flex absolute -right-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white shadow-lg rounded-full text-blue-600 items-center justify-center hover:bg-blue-600 hover:text-white transition">
+                    <i class="fas fa-chevron-right text-xl"></i>
+                </button>
+            </div>
+            
+        </div>
+    </section>
+
+    <!-- Divider -->
+        <div class="container mx-auto px-6 py-8">
+          <div class="divider-line"></div>
+        </div>
+
+        <!-- Partner Companies Section -->
+        <section class="bg-gradient-to-b from-white to-slate-100 py-20">
+          <div class="container mx-auto px-6 text-center">
+            <div class="section-header inline-block mb-10">
+              <p class="text-xs font-bold uppercase tracking-[0.3em] text-slate-400 pl-6">Bekerjasama dengan Industri Ternama</p>
+            </div>
+            <div class="flex flex-wrap justify-center items-center gap-12 md:gap-20 opacity-40 grayscale hover:grayscale-0 transition duration-700">
+              <span class="text-2xl font-black">TOYOTA</span>
+              <span class="text-2xl font-black">HONDA</span>
+              <span class="text-2xl font-black">ASTRA</span>
+              <span class="text-2xl font-black">EPSON</span>
+              <span class="text-2xl font-black">TELKOM</span>
+              <span class="text-2xl font-black">POLYTRON</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Divider -->
+        <div class="container mx-auto px-6 py-8">
+          <div class="divider-line"></div>
+        </div>
+
+        <!-- CTA Section -->
+        <section class="container mx-auto px-6 py-24">
+          <div class="bg-gradient-to-br from-[#1e3a8a] to-[#001f3f] rounded-[60px] p-12 md:p-24 text-center text-white shadow-2xl overflow-hidden relative">
+            <div class="absolute top-0 right-0 w-96 h-96 bg-blue-500/15 rounded-full -mr-48 -mt-48 blur-3xl"></div>
+            <div class="relative z-10">
+              <h2 class="text-4xl md:text-5xl font-extrabold mb-6">Siap Memulai Karir Profesional?</h2>
+              <p class="text-blue-100 mb-12 max-w-2xl mx-auto text-lg leading-relaxed">Daftarkan diri Anda sebagai alumni untuk mendapatkan notifikasi lowongan terbaru yang sesuai dengan jurusan Anda.</p>
+              <div class="flex flex-col sm:flex-row justify-center gap-6 items-center">
+                <a href="auth.html" class="bg-white text-[#1e3a8a] px-12 py-3.5 rounded-full font-extrabold shadow-xl hover:shadow-2xl hover:bg-slate-50 transition transform hover:scale-105 active:scale-95">Daftar Sebagai Alumni</a>
+                <a href="tutorial-pendaftaran.html" class="bg-[#2563eb] border-2 border-white text-white px-12 py-3.5 rounded-full font-extrabold hover:bg-[#1d4ed8] transition transform hover:scale-105 active:scale-95">Tutorial Pendaftaran</a>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Footer -->
+      <footer class="bg-[#001f3f] text-slate-300 pt-20 pb-10">
+        <div class="container mx-auto px-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+            <div>
+              <div class="flex items-center space-x-3 mb-6">
+                <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+                  <i class="fas fa-briefcase text-[#001f3f]"></i>
+                </div>
+                <h2 class="text-white font-bold text-xl">BKK SMKN 1</h2>
+              </div>
+              <p class="text-sm leading-relaxed opacity-80 mb-6">Pusat pengembangan karir dan penyaluran tenaga kerja profesional khusus alumni SMKN 1 Garut menuju Indonesia Emas.</p>
+              <div class="flex space-x-4">
+                <a href="#" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-blue-600 transition"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-blue-600 transition"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-blue-600 transition"><i class="fab fa-linkedin-in"></i></a>
+              </div>
+            </div>
+            <div>
+              <h3 class="text-white font-bold mb-6 text-lg">Tautan Cepat</h3>
+              <ul class="space-y-4 text-sm">
+                <li>
+                  <a href="lowongan.html" class="hover:text-blue-400 transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i> Lowongan Kerja</a>
+                </li>
+                <li>
+                  <a href="acara.html" class="hover:text-blue-400 transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i> Jadwal Rekrutmen</a>
+                </li>
+                <li>
+                  <a href="tutorial-pendaftaran.html" class="hover:text-blue-400 transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i> Tutorial Pendaftaran</a>
+                </li>
+                <li>
+                  <a href="tracer.html" class="hover:text-blue-400 transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i> Tracer Study</a>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="text-white font-bold mb-6 text-lg">Hubungi Kami</h3>
+              <ul class="space-y-4 text-sm">
+                <li class="flex items-start">
+                  <i class="fas fa-map-marker-alt mt-1 mr-3 text-blue-500"></i>
+                  <span>Jl. Cimanuk No. 309 A, Tarogong Kidul, Garut, Jawa Barat 44151</span>
+                </li>
+                <li class="flex items-center">
+                  <i class="fas fa-phone mr-3 text-blue-500"></i>
+                  <span>(0262) 233796</span>
+                </li>
+                <li class="flex items-center">
+                  <i class="fas fa-envelope mr-3 text-blue-500"></i>
+                  <span>bkk@smkn1garut.sch.id</span>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="text-white font-bold mb-6 text-lg">Newsletter</h3>
+              <p class="text-xs mb-4 opacity-70">Dapatkan info lowongan terbaru langsung di email Anda.</p>
+              <div class="flex">
+                <input type="email" placeholder="Email Anda" class="bg-white/5 border border-white/10 px-4 py-2.5 rounded-l-lg w-full focus:outline-none focus:border-blue-500" />
+                <button class="bg-blue-600 px-4 rounded-r-lg hover:bg-blue-700"><i class="fas fa-paper-plane"></i></button>
+              </div>
+            </div>
+          </div>
+          <div class="border-t border-white/10 pt-8 text-center text-xs opacity-50">&copy; 2024 Sistem Informasi BKK Sekolah Menengah Kejuruan Negeri 1 Garut. Seluruh Hak Cipta Dilindungi.</div>
+        </div>
+      </footer>
+
+      <script>
+        const defaultStories = [
+            { name: "Ade Rahmawan", job: "Operator - Astra Honda", story: "BKK sangat membantu saya mendapatkan karir impian di industri otomotif tak lama setelah lulus." },
+            { name: "Siti Nurhaliza", job: "QC - PT. Epson Indonesia", story: "Pelatihan interview di BKK benar-benar bermanfaat saat menghadapi rekrutmen perusahaan." },
+            { name: "Rudi Baharudin", job: "IT Support - Telkom", story: "Terima kasih BKK SMKN 1 Garut atas bimbingan dan info lowongan yang selalu update." },
+            { name: "Dina Mariana", job: "Admin - Bank Mandiri", story: "Informasi yang diberikan BKK sangat akurat dan prosesnya cepat." },
+            { name: "Fahmi Aziz", job: "Teknisi - Yamaha Music", story: "Sangat bersyukur ada BKK, saya dapat kerja kurang dari sebulan setelah lulus." }
+        ];
+
+        let autoScrollInterval;
+
+        function loadStories() {
+            const container = document.getElementById('testimonialContainer');
+            const savedStories = JSON.parse(localStorage.getItem('alumniStories')) || [];
+            const allStories = [...savedStories, ...defaultStories];
+            
+            container.innerHTML = '';
+            
+            allStories.forEach(item => {
+                const initials = item.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
+                const colors = ['bg-blue-600', 'bg-green-500', 'bg-purple-600', 'bg-orange-500', 'bg-red-500'];
+                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+
+                const card = `
+                    <div class="min-w-[300px] md:min-w-[350px] bg-white p-6 rounded-2xl shadow-sm border border-slate-100 text-left flex-shrink-0 card-zoom">
+                        <div class="flex items-center mb-4">
+                            <div class="w-10 h-10 ${randomColor} rounded-full flex items-center justify-center text-white font-bold text-xs mr-3">${initials}</div>
+                            <div>
+                                <h5 class="font-bold text-sm text-slate-800">${item.name}</h5>
+                                <p class="text-[9px] text-slate-400 font-medium uppercase">${item.job}</p>
+                            </div>
+                        </div>
+                        <p class="text-[11px] text-slate-600 leading-relaxed italic">"${item.story}"</p>
+                    </div>
+                `;
+                container.innerHTML += card;
+            });
+        }
+
+        function saveStory() {
+            const name = document.getElementById('alumniName').value;
+            const job = document.getElementById('alumniJob').value;
+            const story = document.getElementById('alumniStory').value;
+
+            if(!name || !job || !story) return;
+
+            const newStory = { name, job, story };
+            const savedStories = JSON.parse(localStorage.getItem('alumniStories')) || [];
+            savedStories.unshift(newStory);
+            localStorage.setItem('alumniStories', JSON.stringify(savedStories));
+
+            document.getElementById('alumniName').value = '';
+            document.getElementById('alumniJob').value = '';
+            document.getElementById('alumniStory').value = '';
+
+            loadStories();
+            document.getElementById('testimonialContainer').scrollLeft = 0;
+        }
+
+        function scrollTestimonials(amount) {
+            const container = document.getElementById('testimonialContainer');
+            container.scrollLeft += amount;
+        }
+
+        function startAutoScroll() {
+            const container = document.getElementById('testimonialContainer');
+            autoScrollInterval = setInterval(() => {
+                if (container.scrollLeft + container.clientWidth >= container.scrollWidth - 10) {
+                    container.scrollLeft = 0;
+                } else {
+                    container.scrollLeft += 1;
+                }
+            }, 30);
+        }
+
+        function stopAutoScroll() {
+            clearInterval(autoScrollInterval);
+        }
+
+        window.onload = () => {
+            loadStories();
+            startAutoScroll();
+        };
+    </script>

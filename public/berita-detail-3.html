@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mengenal Budaya Kerja 5S di Perusahaan Jepang - BKK SMKN 1 Garut</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body class="bg-slate-50 text-slate-900" data-page="berita-detail">
+    <!-- Navigation -->
+    <nav class="bg-[#001f3f] text-white sticky top-0 z-[100] shadow-xl">
+      <div class="container mx-auto px-4 md:px-6">
+        <div class="flex justify-between items-center h-20">
+          <!-- Logo -->
+          <div class="flex items-center space-x-3 cursor-pointer" onclick="window.location.href = 'beranda.html'">
+            <div class="w-11 h-11 bg-white rounded-xl flex items-center justify-center shadow-lg">
+              <i class="fas fa-graduation-cap text-[#001f3f] text-xl"></i>
+            </div>
+            <div>
+              <h1 class="font-extrabold text-xl tracking-tight leading-none">BKK SMKN 1</h1>
+              <p class="text-[10px] uppercase tracking-widest opacity-70">Garut Bermartabat</p>
+            </div>
+          </div>
+
+          <!-- Desktop Menu -->
+          <div class="hidden lg:flex space-x-8 text-sm font-semibold">
+            <a href="beranda.html" class="nav-btn transition hover:text-blue-400" id="nav-beranda">Beranda</a>
+            <a href="lowongan.html" class="nav-btn transition hover:text-blue-400" id="nav-lowongan">Lowongan</a>
+            <a href="acara.html" class="nav-btn transition hover:text-blue-400" id="nav-acara">Acara</a>
+            <a href="berita.html" class="nav-btn transition hover:text-blue-400 active" id="nav-berita">Berita</a>
+            <a href="tracer.html" class="nav-btn transition hover:text-blue-400" id="nav-tracer">Tracer Study</a>
+          </div>
+
+          <!-- Auth Buttons -->
+          <div class="hidden lg:flex items-center space-x-4">
+            <a href="auth.html" class="text-sm font-bold hover:text-blue-400 transition">Daftar</a>
+            <a href="auth.html" class="bg-blue-600 hover:bg-blue-700 px-7 py-2.5 rounded-full text-sm font-bold shadow-lg transition transform hover:scale-105 active:scale-95">Masuk</a>
+          </div>
+
+          <!-- Mobile Toggle -->
+          <button class="lg:hidden text-2xl" onclick="toggleMobileMenu()">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Menu -->
+      <div id="mobile-menu" class="hidden lg:hidden bg-[#001f3f] border-t border-white/10 px-6 py-6 space-y-4">
+        <a href="beranda.html" class="block w-full text-left py-2 font-semibold">Beranda</a>
+        <a href="lowongan.html" class="block w-full text-left py-2 font-semibold">Lowongan</a>
+        <a href="acara.html" class="block w-full text-left py-2 font-semibold">Acara</a>
+        <a href="berita.html" class="block w-full text-left py-2 font-semibold">Berita</a>
+        <a href="tracer.html" class="block w-full text-left py-2 font-semibold">Tracer Study</a>
+        <div class="pt-4 border-t border-white/10 flex flex-col space-y-3">
+          <a href="auth.html" class="w-full bg-blue-600 py-3 rounded-xl font-bold text-center">Masuk Ke Akun</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="page-transition container mx-auto px-6 py-12">
+      <!-- Back Button -->
+      <a href="berita.html" class="inline-flex items-center text-blue-600 hover:text-blue-700 font-bold mb-8 transition"> <i class="fas fa-chevron-left mr-2"></i>Kembali ke Berita </a>
+
+      <article class="max-w-4xl mx-auto">
+        <!-- Article Header -->
+        <div class="mb-10">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="bg-red-100 text-red-600 font-bold text-xs uppercase tracking-widest px-4 py-2 rounded-full">Industri</span>
+            <span class="text-slate-400 text-sm">02 Februari 2024</span>
+          </div>
+          <h1 class="text-5xl font-extrabold text-[#001f3f] mb-4 leading-tight">Mengenal Budaya Kerja 5S di Perusahaan Jepang bagi Calon Karyawan Baru</h1>
+          <div class="flex items-center gap-6 text-slate-600 text-sm border-t border-b border-slate-200 py-4">
+            <div class="flex items-center gap-2">
+              <i class="fas fa-user-circle text-red-600"></i>
+              <span>BKK SMKN 1 Garut</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <i class="fas fa-clock text-red-600"></i>
+              <span>12 Menit Baca</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Featured Image -->
+        <div class="mb-10 rounded-2xl overflow-hidden shadow-lg">
+          <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80" alt="Article" class="w-full h-[400px] object-cover" />
+        </div>
+
+        <!-- Article Content -->
+        <div class="prose prose-lg max-w-none space-y-6 text-slate-700">
+          <p class="text-xl leading-relaxed">
+            Budaya kerja 5S adalah konsep manajemen yang berasal dari Jepang dan telah diterapkan di berbagai perusahaan multinasional di seluruh dunia. Memahami 5S adalah kunci sukses untuk berkarir di perusahaan Jepang atau yang
+            mengadopsi budaya kerja Jepang. Mari kita pelajari lima pilar ini secara mendalam.
+          </p>
+
+          <h2 class="text-3xl font-bold text-slate-900 mt-8">Apa Itu 5S?</h2>
+          <p>5S adalah akronim dari lima kata Jepang yang merupakan fondasi dari lean management dan continuous improvement. Kelima S tersebut adalah:</p>
+
+          <h2 class="text-3xl font-bold text-slate-900 mt-8">1. Seiri (整理 - Sorting/Memilah)</h2>
+          <p>Seiri berarti memisahkan barang-barang yang dibutuhkan dengan yang tidak dibutuhkan di tempat kerja. Tujuannya adalah untuk mengurangi clutter dan meningkatkan efisiensi ruang kerja. Dalam praktiknya:</p>
+          <ul class="list-disc list-inside space-y-2 ml-4">
+            <li>Identifikasi semua item di workspace Anda</li>
+            <li>Tentukan item mana yang essential dan mana yang tidak</li>
+            <li>Buang atau pindahkan item yang tidak dibutuhkan</li>
+            <li>Hanya simpan yang benar-benar diperlukan untuk pekerjaan sehari-hari</li>
+          </ul>
+
+          <h2 class="text-3xl font-bold text-slate-900 mt-8">2. Seiton (整頓 - Organizing/Menata)</h2>
+          <p>Seiton adalah pengaturan barang-barang yang tersisa agar mudah diakses dan digunakan. Prinsipnya adalah "a place for everything and everything in its place". Implementasi praktis:</p>
+          <ul class="list-disc list-inside space-y-2 ml-4">
+            <li>Atur item berdasarkan frekuensi penggunaan</li>
+            <li>Gunakan label yang jelas untuk setiap lokasi penyimpanan</li>
+            <li>Terapkan prinsip visual management</li>
+            <li>Pastikan semua orang tahu di mana menyimpan dan mengambil barang</li>
+          </ul>
+
+          <h2 class="text-3xl font-bold text-slate-900 mt-8">3. Seiso (清掃 - Cleaning/Membersihkan)</h2>
+          <p>Seiso bukan hanya tentang kebersihan, tetapi juga tentang pemeliharaan peralatan dan lingkungan kerja. Pekerja Jepang percaya bahwa lingkungan yang bersih meningkatkan produktivitas dan morale. Kegiatan Seiso meliputi:</p>
+          <ul class="list-disc list-inside space-y-2 ml-4">
+            <li>Membersihkan workspace secara rutin</li>
+            <li>Melakukan maintenance peralatan sebelum rusak</li>
+            <li>Menghilangkan sumber kontaminasi</li>
+            <li>Menciptakan budaya tanggung jawab kolektif untuk kebersihan</li>
+          </ul>
+
+          <h2 class="text-3xl font-bold text-slate-900 mt-8">4. Seiketsu (清潔 - Standardizing/Mempertahankan Standar)</h2>
+          <p>Seiketsu adalah pembuatan standar dan prosedur untuk mempertahankan tiga S pertama. Ini melibatkan penciptaan aturan dan sistem yang jelas sehingga Seiri, Seiton, dan Seiso dapat dipertahankan dalam jangka panjang:</p>
+          <ul class="list-disc list-inside space-y-2 ml-4">
+            <li>Dokumentasikan prosedur dan standar dengan jelas</li>
+            <li>Buat checklist harian atau mingguan</li>
+            <li>Tetapkan tanggung jawab yang jelas untuk setiap orang</li>
+            <li>Komunikasikan standar kepada semua tim member</li>
+          </ul>
+
+          <h2 class="text-3xl font-bold text-slate-900 mt-8">5. Shitsuke (躾 - Sustaining/Mempertahankan Disiplin)</h2>
+          <p>Shitsuke adalah tentang menciptakan budaya dan disiplin untuk terus menerapkan empat S sebelumnya. Ini adalah yang paling menantang karena memerlukan perubahan mindset dan kebiasaan jangka panjang. Caranya:</p>
+          <ul class="list-disc list-inside space-y-2 ml-4">
+            <li>Bentuk kebiasaan positif melalui repetisi</li>
+            <li>Berikan contoh yang baik sebagai leader</li>
+            <li>Lakukan audit regular untuk memastikan compliance</li>
+            <li>Rayakan kesuksesan dan continuous improvement</li>
+          </ul>
+
+          <div class="bg-red-50 border-l-4 border-red-600 p-6 rounded mt-10">
+            <h3 class="font-bold text-slate-900 mb-3">Tips Mengadopsi 5S di Pekerjaan Anda:</h3>
+            <ul class="list-disc list-inside space-y-2 text-slate-800">
+              <li>Mulai dari diri sendiri - terapkan 5S di personal workspace Anda terlebih dahulu</li>
+              <li>Ajak team member untuk berpartisipasi aktif dalam implementasi</li>
+              <li>Lakukan retrospective meeting untuk diskusi improvement</li>
+              <li>Dokumentasikan progress dan share best practices</li>
+              <li>Hargai usaha dan kontribusi setiap orang dalam penerapan 5S</li>
+            </ul>
+          </div>
+
+          <h2 class="text-3xl font-bold text-slate-900 mt-8">Manfaat Menerapkan 5S</h2>
+          <p>Perusahaan yang menerapkan 5S dengan baik telah terbukti mengalami:</p>
+          <ul class="list-disc list-inside space-y-2 ml-4">
+            <li>Peningkatan produktivitas hingga 30%</li>
+            <li>Pengurangan waktu pencarian barang hingga 50%</li>
+            <li>Penurunan accident rate dan workplace injury</li>
+            <li>Peningkatan kualitas produk dan layanan</li>
+            <li>Moral karyawan yang lebih tinggi dan turnover lebih rendah</li>
+          </ul>
+        </div>
+
+        <!-- Article Meta -->
+        <div class="border-t border-slate-200 pt-8 mt-12">
+          <p class="text-sm text-slate-600 mb-6">
+            <strong>Tags:</strong>
+            <span class="inline-flex gap-2 mt-2 flex-wrap">
+              <a href="berita.html" class="bg-slate-100 hover:bg-red-100 text-slate-700 px-3 py-1 rounded-full text-xs font-semibold transition">#5S</a>
+              <a href="berita.html" class="bg-slate-100 hover:bg-red-100 text-slate-700 px-3 py-1 rounded-full text-xs font-semibold transition">#Budaya Kerja Jepang</a>
+              <a href="berita.html" class="bg-slate-100 hover:bg-red-100 text-slate-700 px-3 py-1 rounded-full text-xs font-semibold transition">#Karir</a>
+            </span>
+          </p>
+        </div>
+
+        <!-- Related Articles -->
+        <div class="mt-16 pt-12 border-t border-slate-200">
+          <h3 class="text-2xl font-bold text-slate-900 mb-8">Artikel Terkait</h3>
+          <div class="grid md:grid-cols-2 gap-8">
+            <article class="group cursor-pointer" onclick="window.location.href = 'berita-detail-1.html'">
+              <div class="aspect-[16/10] overflow-hidden rounded-xl bg-slate-200 mb-4">
+                <img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=500&q=80" class="w-full h-full object-cover group-hover:scale-105 transition" />
+              </div>
+              <h4 class="font-bold text-slate-800 group-hover:text-blue-600 transition">SMKN 1 Garut Meraih Penghargaan BKK Terbaik</h4>
+              <p class="text-sm text-slate-500 mt-2">14 Februari 2024 • 5 Menit Baca</p>
+            </article>
+
+            <article class="group cursor-pointer" onclick="window.location.href = 'berita-detail-2.html'">
+              <div class="aspect-[16/10] overflow-hidden rounded-xl bg-slate-200 mb-4">
+                <img src="https://images.unsplash.com/photo-1454165833767-027ffea9e77b?auto=format&fit=crop&w=500&q=80" class="w-full h-full object-cover group-hover:scale-105 transition" />
+              </div>
+              <h4 class="font-bold text-slate-800 group-hover:text-blue-600 transition">5 Skill Digital yang Paling Dicari Perusahaan</h4>
+              <p class="text-sm text-slate-500 mt-2">10 Februari 2024 • 8 Menit Baca</p>
+            </article>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-[#001f3f] text-slate-300 pt-20 pb-10 mt-20">
+      <div class="container mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+          <div>
+            <div class="flex items-center space-x-3 mb-6">
+              <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+                <i class="fas fa-briefcase text-[#001f3f]"></i>
+              </div>
+              <h2 class="text-white font-bold text-xl">BKK SMKN 1</h2>
+            </div>
+            <p class="text-sm leading-relaxed opacity-80 mb-6">Pusat pengembangan karir dan penyaluran tenaga kerja profesional khusus alumni SMKN 1 Garut menuju Indonesia Emas.</p>
+            <div class="flex space-x-4">
+              <a href="#" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-blue-600 transition"><i class="fab fa-instagram"></i></a>
+              <a href="#" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-blue-600 transition"><i class="fab fa-facebook-f"></i></a>
+              <a href="#" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-blue-600 transition"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+          </div>
+          <div>
+            <h3 class="text-white font-bold mb-6 text-lg">Tautan Cepat</h3>
+            <ul class="space-y-4 text-sm">
+              <li>
+                <a href="lowongan.html" class="hover:text-blue-400 transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i> Lowongan Kerja</a>
+              </li>
+              <li>
+                <a href="acara.html" class="hover:text-blue-400 transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i> Jadwal Rekrutmen</a>
+              </li>
+              <li>
+                <a href="tutorial-pendaftaran.html" class="hover:text-blue-400 transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i> Tutorial Pendaftaran</a>
+              </li>
+              <li>
+                <a href="tracer.html" class="hover:text-blue-400 transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i> Tracer Study</a>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-white font-bold mb-6 text-lg">Hubungi Kami</h3>
+            <ul class="space-y-4 text-sm">
+              <li class="flex items-start">
+                <i class="fas fa-map-marker-alt mt-1 mr-3 text-blue-500"></i>
+                <span>Jl. Cimanuk No. 309 A, Tarogong Kidul, Garut, Jawa Barat 44151</span>
+              </li>
+              <li class="flex items-center">
+                <i class="fas fa-phone mr-3 text-blue-500"></i>
+                <span>(0262) 233796</span>
+              </li>
+              <li class="flex items-center">
+                <i class="fas fa-envelope mr-3 text-blue-500"></i>
+                <span>bkk@smkn1garut.sch.id</span>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-white font-bold mb-6 text-lg">Newsletter</h3>
+            <p class="text-xs mb-4 opacity-70">Dapatkan info lowongan terbaru langsung di email Anda.</p>
+            <div class="flex">
+              <input type="email" placeholder="Email Anda" class="bg-white/5 border border-white/10 px-4 py-2.5 rounded-l-lg w-full focus:outline-none focus:border-blue-500" />
+              <button class="bg-blue-600 px-4 rounded-r-lg hover:bg-blue-700"><i class="fas fa-paper-plane"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="border-t border-white/10 pt-8 text-center text-xs opacity-50">&copy; 2024 Sistem Informasi BKK Sekolah Menengah Kejuruan Negeri 1 Garut. Seluruh Hak Cipta Dilindungi.</div>
+      </div>
+    </footer>
+
+    <script src="js/utils.js"></script>
+  </body>
+</html>

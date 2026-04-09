@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BKK SMKN 1 Garut - Acara & Event</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        animation: fadeIn 0.3s ease-in;
+      }
+
+      .modal.show {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .modal-content {
+        background-color: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        max-width: 700px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+        animation: slideUp 0.3s ease-out;
+      }
+
+      @keyframes slideUp {
+        from {
+          transform: translateY(50px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-slate-50 text-slate-900" data-page="acara">
+    <!-- Navigation -->
+    <nav class="bg-[#001f3f] text-white sticky top-0 z-[100] shadow-xl">
+      <div class="container mx-auto px-4 md:px-6">
+        <div class="flex justify-between items-center h-20">
+          <!-- Logo -->
+          <div
+            class="flex items-center space-x-3 cursor-pointer"
+            onclick="window.location.href = 'beranda.html'"
+          >
+            <div
+              class="w-11 h-11 bg-white rounded-xl flex items-center justify-center shadow-lg"
+            >
+              <i class="fas fa-graduation-cap text-[#001f3f] text-xl"></i>
+            </div>
+            <div>
+              <h1 class="font-extrabold text-xl tracking-tight leading-none">
+                BKK SMKN 1
+              </h1>
+              <p class="text-[10px] uppercase tracking-widest opacity-70">
+                Garut Bermartabat
+              </p>
+            </div>
+          </div>
+
+          <!-- Desktop Menu -->
+          <div class="hidden lg:flex space-x-8 text-sm font-semibold">
+            <a
+              href="beranda.html"
+              class="nav-btn transition hover:text-blue-400"
+              id="nav-beranda"
+              >Beranda</a
+            >
+            <a
+              href="lowongan.html"
+              class="nav-btn transition hover:text-blue-400"
+              id="nav-lowongan"
+              >Lowongan</a
+            >
+            <a
+              href="acara.html"
+              class="nav-btn transition hover:text-blue-400 active"
+              id="nav-acara"
+              >Acara</a
+            >
+            <a
+              href="berita.html"
+              class="nav-btn transition hover:text-blue-400"
+              id="nav-berita"
+              >Berita</a
+            >
+            <a
+              href="tracer.html"
+              class="nav-btn transition hover:text-blue-400"
+              id="nav-tracer"
+              >Tracer Study</a
+            >
+          </div>
+
+          <!-- Auth Buttons -->
+          <div class="lg:flex items-center space-x-4">
+            <a
+              href="auth.html"
+              class="text-sm font-bold hover:text-blue-400 transition"
+              >Daftar</a
+            >
+            <a
+              href="auth.html"
+              class="bg-blue-600 hover:bg-blue-700 px-7 py-2.5 rounded-full text-sm font-bold shadow-lg transition transform hover:scale-105 active:scale-95"
+              >Masuk</a
+            >
+          </div>
+
+          <!-- Mobile Toggle -->
+          <button class="lg:hidden text-2xl" onclick="toggleMobileMenu()">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Menu -->
+      <div
+        id="mobile-menu"
+        class="hidden lg:hidden bg-[#001f3f] border-t border-white/10 px-6 py-6 space-y-4"
+      >
+        <a href="beranda.html" class="block w-full text-left py-2 font-semibold"
+          >Beranda</a
+        >
+        <a
+          href="lowongan.html"
+          class="block w-full text-left py-2 font-semibold"
+          >Lowongan</a
+        >
+        <a href="acara.html" class="block w-full text-left py-2 font-semibold"
+          >Acara</a
+        >
+        <a href="berita.html" class="block w-full text-left py-2 font-semibold"
+          >Berita</a
+        >
+        <a href="tracer.html" class="block w-full text-left py-2 font-semibold"
+          >Tracer Study</a
+        >
+        <div class="pt-4 border-t border-white/10 flex flex-col space-y-3">
+          <a
+            href="auth.html"
+            class="w-full bg-blue-600 py-3 rounded-xl font-bold text-center"
+            >Masuk Ke Akun</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="page-transition container mx-auto px-6 py-16">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl font-extrabold text-[#001f3f] mb-4">
+          Agenda Mendatang
+        </h2>
+        <p class="text-slate-500 max-w-xl mx-auto">
+          Ikuti berbagai kegiatan pengembangan diri dan rekrutmen bersama mitra
+          industri.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-8">
+        <!-- Acara 1: Job Fair -->
+        <div
+          class="bg-white rounded-[32px] overflow-hidden shadow-sm border border-slate-100 flex flex-col hover:shadow-2xl transition duration-500 group"
+        >
+          <div class="h-56 overflow-hidden relative">
+            <img
+              src="https://images.unsplash.com/photo-1540575861501-7ad05823c95b?auto=format&fit=crop&w=800&q=80"
+              class="w-full h-full object-cover group-hover:scale-110 transition duration-700"
+              alt="Job Fair"
+            />
+            <div
+              class="absolute top-4 left-4 bg-blue-600 text-white px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-lg"
+            >
+              Rekrutmen
+            </div>
+          </div>
+          <div class="p-8 flex-1 flex flex-col">
+            <div class="flex items-center text-blue-600 text-xs font-bold mb-4">
+              <i class="far fa-calendar-alt mr-2"></i> 12 OKTOBER 2024
+            </div>
+            <h3 class="text-xl font-extrabold text-slate-800 mb-3">
+              Garut Career Expo 2024
+            </h3>
+            <p class="text-sm text-slate-500 mb-8 flex-1 leading-relaxed">
+              Pameran bursa kerja terbesar yang menghadirkan lebih dari 30
+              perusahaan manufaktur dan jasa untuk alumni SMK.
+            </p>
+            <div
+              class="pt-6 border-t border-slate-50 flex items-center justify-between"
+            >
+              <div class="flex items-center text-xs text-slate-400">
+                <i class="fas fa-map-marker-alt mr-2"></i> GOR SMKN 1 Garut
+              </div>
+              <a
+                href="acara-detail.html?id=jobfair"
+                class="text-blue-600 font-bold text-sm flex items-center group-hover:translate-x-1 transition"
+              >
+                Detail <i class="fas fa-chevron-right ml-2 text-[10px]"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Acara 2: Seminar -->
+        <div
+          class="bg-white rounded-[32px] overflow-hidden shadow-sm border border-slate-100 flex flex-col hover:shadow-2xl transition duration-500 group"
+        >
+          <div class="h-56 overflow-hidden relative">
+            <img
+              src="https://images.unsplash.com/photo-1475721027785-f74dea327912?auto=format&fit=crop&w=800&q=80"
+              class="w-full h-full object-cover group-hover:scale-110 transition duration-700"
+              alt="Seminar"
+            />
+            <div
+              class="absolute top-4 left-4 bg-purple-600 text-white px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-lg"
+            >
+              Seminar
+            </div>
+          </div>
+          <div class="p-8 flex-1 flex flex-col">
+            <div class="flex items-center text-blue-600 text-xs font-bold mb-4">
+              <i class="far fa-calendar-alt mr-2"></i> 20 OKTOBER 2024
+            </div>
+            <h3 class="text-xl font-extrabold text-slate-800 mb-3">
+              Persiapan Kerja di Jepang
+            </h3>
+            <p class="text-sm text-slate-500 mb-8 flex-1 leading-relaxed">
+              Seminar eksklusif mengenai peluang kerja magang (Tokutei Ginou) di
+              Jepang untuk lulusan teknik dan kesehatan.
+            </p>
+            <div
+              class="pt-6 border-t border-slate-50 flex items-center justify-between"
+            >
+              <div class="flex items-center text-xs text-slate-400">
+                <i class="fas fa-map-marker-alt mr-2"></i> Aula Utama
+              </div>
+              <a
+                href="acara-detail.html?id=seminar"
+                class="text-blue-600 font-bold text-sm flex items-center group-hover:translate-x-1 transition"
+              >
+                Detail <i class="fas fa-chevron-right ml-2 text-[10px]"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Acara 3: Workshop -->
+        <div
+          class="bg-white rounded-[32px] overflow-hidden shadow-sm border border-slate-100 flex flex-col hover:shadow-2xl transition duration-500 group"
+        >
+          <div class="h-56 overflow-hidden relative">
+            <img
+              src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80"
+              class="w-full h-full object-cover group-hover:scale-110 transition duration-700"
+              alt="Workshop"
+            />
+            <div
+              class="absolute top-4 left-4 bg-orange-600 text-white px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-lg"
+            >
+              Workshop
+            </div>
+          </div>
+          <div class="p-8 flex-1 flex flex-col">
+            <div class="flex items-center text-blue-600 text-xs font-bold mb-4">
+              <i class="far fa-calendar-alt mr-2"></i> 05 NOVEMBER 2024
+            </div>
+            <h3 class="text-xl font-extrabold text-slate-800 mb-3">
+              Mastering CV & LinkedIn
+            </h3>
+            <p class="text-sm text-slate-500 mb-8 flex-1 leading-relaxed">
+              Kelas intensif cara membuat CV ATS-friendly dan mengoptimalkan
+              profil LinkedIn agar dilirik HRD.
+            </p>
+            <div
+              class="pt-6 border-t border-slate-50 flex items-center justify-between"
+            >
+              <div class="flex items-center text-xs text-slate-400">
+                <i class="fas fa-video mr-2 text-red-500"></i> Zoom Meeting
+              </div>
+              <a
+                href="acara-detail.html?id=workshop"
+                class="text-blue-600 font-bold text-sm flex items-center group-hover:translate-x-1 transition"
+              >
+                Detail <i class="fas fa-chevron-right ml-2 text-[10px]"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-[#001f3f] text-slate-300 pt-20 pb-10">
+      <div class="container mx-auto px-6">
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16"
+        >
+          <div>
+            <div class="flex items-center space-x-3 mb-6">
+              <div
+                class="w-10 h-10 bg-white rounded-lg flex items-center justify-center"
+              >
+                <i class="fas fa-briefcase text-[#001f3f]"></i>
+              </div>
+              <h2 class="text-white font-bold text-xl">BKK SMKN 1</h2>
+            </div>
+            <p class="text-sm leading-relaxed opacity-80 mb-6">
+              Pusat pengembangan karir dan penyaluran tenaga kerja profesional
+              khusus alumni SMKN 1 Garut menuju Indonesia Emas.
+            </p>
+            <div class="flex space-x-4">
+              <a
+                href="#"
+                class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-blue-600 transition"
+                ><i class="fab fa-instagram"></i
+              ></a>
+              <a
+                href="#"
+                class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-blue-600 transition"
+                ><i class="fab fa-facebook-f"></i
+              ></a>
+              <a
+                href="#"
+                class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-blue-600 transition"
+                ><i class="fab fa-linkedin-in"></i
+              ></a>
+            </div>
+          </div>
+          <div>
+            <h3 class="text-white font-bold mb-6 text-lg">Tautan Cepat</h3>
+            <ul class="space-y-4 text-sm">
+              <li>
+                <a
+                  href="lowongan.html"
+                  class="hover:text-blue-400 transition flex items-center"
+                  ><i class="fas fa-chevron-right text-[10px] mr-2"></i>
+                  Lowongan Kerja</a
+                >
+              </li>
+              <li>
+                <a
+                  href="acara.html"
+                  class="hover:text-blue-400 transition flex items-center"
+                  ><i class="fas fa-chevron-right text-[10px] mr-2"></i> Jadwal
+                  Rekrutmen</a
+                >
+              </li>
+              <li>
+                <a
+                  href="tutorial-pendaftaran.html"
+                  class="hover:text-blue-400 transition flex items-center"
+                  ><i class="fas fa-chevron-right text-[10px] mr-2"></i>
+                  Tutorial Pendaftaran</a
+                >
+              </li>
+              <li>
+                <a
+                  href="tracer.html"
+                  class="hover:text-blue-400 transition flex items-center"
+                  ><i class="fas fa-chevron-right text-[10px] mr-2"></i> Tracer
+                  Study</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-white font-bold mb-6 text-lg">Hubungi Kami</h3>
+            <ul class="space-y-4 text-sm">
+              <li class="flex items-start">
+                <i class="fas fa-map-marker-alt mt-1 mr-3 text-blue-500"></i>
+                <span
+                  >Jl. Cimanuk No. 309 A, Tarogong Kidul, Garut, Jawa Barat
+                  44151</span
+                >
+              </li>
+              <li class="flex items-center">
+                <i class="fas fa-phone mr-3 text-blue-500"></i>
+                <span>(0262) 233796</span>
+              </li>
+              <li class="flex items-center">
+                <i class="fas fa-envelope mr-3 text-blue-500"></i>
+                <span>bkk@smkn1garut.sch.id</span>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-white font-bold mb-6 text-lg">Newsletter</h3>
+            <p class="text-xs mb-4 opacity-70">
+              Dapatkan info lowongan terbaru langsung di email Anda.
+            </p>
+            <div class="flex">
+              <input
+                type="email"
+                placeholder="Email Anda"
+                class="bg-white/5 border border-white/10 px-4 py-2.5 rounded-l-lg w-full focus:outline-none focus:border-blue-500"
+              />
+              <button class="bg-blue-600 px-4 rounded-r-lg hover:bg-blue-700">
+                <i class="fas fa-paper-plane"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div
+          class="border-t border-white/10 pt-8 text-center text-xs opacity-50"
+        >
+          &copy; 2024 Sistem Informasi BKK Sekolah Menengah Kejuruan Negeri 1
+          Garut. Seluruh Hak Cipta Dilindungi.
+        </div>
+      </div>
+    </footer>
+
+    <!-- Detail Modal -->
+    <div id="detailModal" class="modal">
+      <div class="modal-content">
+        <div
+          class="bg-gradient-to-r from-blue-600 to-blue-700 p-8 text-white flex justify-between items-start"
+        >
+          <div>
+            <h2 id="modalTitle" class="text-3xl font-extrabold mb-2"></h2>
+            <div
+              id="modalDate"
+              class="flex items-center text-blue-100 text-sm font-bold"
+            >
+              <i class="far fa-calendar-alt mr-2"></i>
+            </div>
+          </div>
+          <button
+            onclick="closeDetail()"
+            class="text-white text-3xl font-bold hover:text-blue-200 transition"
+          >
+            &times;
+          </button>
+        </div>
+
+        <div class="p-8 space-y-6">
+          <div class="grid grid-cols-2 gap-4">
+            <div class="bg-slate-50 p-4 rounded-xl">
+              <p class="text-xs text-slate-500 font-bold uppercase mb-1">
+                Lokasi
+              </p>
+              <p id="modalLocation" class="font-bold text-slate-800"></p>
+            </div>
+            <div class="bg-slate-50 p-4 rounded-xl">
+              <p class="text-xs text-slate-500 font-bold uppercase mb-1">
+                Waktu
+              </p>
+              <p id="modalTime" class="font-bold text-slate-800"></p>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-bold text-lg text-slate-800 mb-3">
+              Deskripsi Lengkap
+            </h3>
+            <p
+              id="modalDescription"
+              class="text-slate-600 leading-relaxed whitespace-pre-wrap"
+            ></p>
+          </div>
+
+          <div class="bg-blue-50 p-6 rounded-xl border border-blue-200">
+            <p class="text-sm text-slate-600">
+              <span class="font-bold">Info Penting:</span> Silakan daftar
+              melalui link pendaftaran yang sudah disediakan atau hubungi BKK
+              untuk informasi lebih lanjut.
+            </p>
+          </div>
+
+          <div class="flex gap-3">
+            <button
+              id="modalAction"
+              class="flex-1 bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition"
+            ></button>
+            <button
+              onclick="closeDetail()"
+              class="flex-1 bg-slate-200 text-slate-800 px-6 py-3 rounded-xl font-bold hover:bg-slate-300 transition"
+            >
+              Tutup
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/utils.js"></script>
+    <script>
+      function logout() {
+        if (confirm("Apakah Anda yakin ingin logout?")) {
+          localStorage.removeItem("isLoggedIn");
+          localStorage.removeItem("userName");
+          localStorage.removeItem("userNIK");
+          localStorage.removeItem("userEmail");
+          localStorage.removeItem("loginProvider");
+          window.location.href = window.location.href;
+        }
+      }
+
+      function updateAuthUI() {
+        // No auth UI to update - navbar stays clean
+      }
+
+      function openDetail(
+        id,
+        title,
+        date,
+        location,
+        time,
+        description,
+        actionText,
+      ) {
+        document.getElementById("modalTitle").innerText = title;
+        document.getElementById("modalDate").innerText = `📅 ${date}`;
+        document.getElementById("modalLocation").innerText = location;
+        document.getElementById("modalTime").innerText = time;
+        document.getElementById("modalDescription").innerText = description;
+        document.getElementById("modalAction").innerText = actionText;
+
+        document.getElementById("detailModal").classList.add("show");
+      }
+
+      function closeDetail() {
+        document.getElementById("detailModal").classList.remove("show");
+      }
+
+      // Close modal when clicking outside
+      document
+        .getElementById("detailModal")
+        .addEventListener("click", function (e) {
+          if (e.target === this) {
+            closeDetail();
+          }
+        });
+
+      window.addEventListener("load", updateAuthUI);
+    </script>
+  </body>
+</html>

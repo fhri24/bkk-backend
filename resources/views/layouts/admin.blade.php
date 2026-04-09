@@ -1,50 +1,348 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BKK Admin Panel</title>
+    <title>@yield('title', 'Admin Dashboard - BKK SMKN 1 Garut')</title>
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        * { font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: #f5f7fa; }
+        
+        .sidebar { 
+            background: linear-gradient(135deg, #001f3f 0%, #003d6b 100%);
+            transition: margin-left 0.3s ease;
+        }
+        
+        .sidebar-link {
+            border-left: 4px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-left-color: #3b82f6;
+        }
+        
+        .sidebar-link.active {
+            background: rgba(59, 130, 246, 0.2);
+            border-left-color: #3b82f6;
+        }
+        
+        .sidebar-link i { width: 20px; text-align: center; }
+        
+        .nav-divider { 
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin: 12px 0;
+        }
+        
+        .stat-box {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-box:hover {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+        
+        .table-custom {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .table-custom thead {
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .table-custom thead th {
+            padding: 16px;
+            font-weight: 700;
+            color: #475569;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .table-custom tbody tr {
+            border-bottom: 1px solid #e2e8f0;
+            transition: background 0.2s;
+        }
+        
+        .table-custom tbody tr:hover {
+            background: #f8fafc;
+        }
+        
+        .table-custom tbody td {
+            padding: 14px 16px;
+            color: #334e68;
+            font-size: 14px;
+        }
+        
+        .badge-pill {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge-success { background: #dcfce7; color: #166534; }
+        .badge-warning { background: #fef3c7; color: #92400e; }
+        .badge-danger { background: #fee2e2; color: #991b1b; }
+        .badge-info { background: #dbeafe; color: #1e40af; }
+        
+        .btn-action {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            transition: all 0.2s;
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+        }
+        
+        .btn-action:hover {
+            border-color: #cbd5e1;
+            background: #f1f5f9;
+        }
+        
+        @media (max-width: 1024px) {
+            .sidebar { margin-left: -16rem; }
+            .sidebar.mobile-active { margin-left: 0; }
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+        }
+        
+        @media (max-width: 1024px) {
+            .mobile-menu-btn { display: flex; }
+        }
+        
+        .breadcrumb-item {
+            color: #94a3b8;
+            font-size: 13px;
+        }
+        
+        .breadcrumb-item.active {
+            color: #1e293b;
+            font-weight: 600;
+        }
+        
+        .header-profile {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 24px;
+        }
+    </style>
+    
+    @yield('extra_css')
 </head>
-<body class="bg-blue-50/50 font-sans">
-    <div class="flex min-h-screen">
-        <aside class="w-64 bg-white border-r border-blue-100 flex-none hidden md:flex flex-col">
-            <div class="p-6">
-                <h1 class="text-2xl font-bold text-blue-600 tracking-tight">BKK Connect</h1>
-            </div>
-            <nav class="flex-1 px-4 space-y-2">
-                <a href="#" class="flex items-center px-4 py-3 text-blue-600 bg-blue-50 rounded-xl transition-all">
-                    <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3"></i> Dashboard
-                </a>
-                <a href="#" class="flex items-center px-4 py-3 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all">
-                    <i data-lucide="building-2" class="w-5 h-5 mr-3"></i> Perusahaan
-                </a>
-                <a href="#" class="flex items-center px-4 py-3 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all">
-                    <i data-lucide="briefcase" class="w-5 h-5 mr-3"></i> Lowongan Kerja
-                </a>
-                <a href="#" class="flex items-center px-4 py-3 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all">
-                    <i data-lucide="users" class="w-5 h-5 mr-3"></i> Data Siswa
-                </a>
-            </nav>
-        </aside>
-
-        <main class="flex-1 flex flex-col">
-            <header class="h-16 bg-white border-b border-blue-100 flex items-center justify-between px-8">
-                <h2 class="text-slate-700 font-medium">Selamat Datang, Admin</h2>
-                <div class="flex items-center space-x-4">
-                    <div class="w-10 h-10 rounded-full bg-blue-100 border border-blue-200"></div>
+<body>
+<div class="flex h-screen bg-gray-50">
+    <!-- Sidebar -->
+    <aside class="sidebar w-64 text-white flex flex-col fixed h-full lg:relative z-40 lg:z-10">
+        <!-- Logo -->
+        <div class="p-6 border-b border-white/10">
+            <div class="flex items-center">
+                <div class="w-12 h-12 bg-blue-400 rounded-lg flex items-center justify-center font-bold text-lg">BKK</div>
+                <div class="ml-3">
+                    <h2 class="font-bold text-white text-sm">BKK SMKN 1</h2>
+                    <p class="text-xs text-blue-200">Admin Panel</p>
                 </div>
-            </header>
-
-            <div class="p-8">
+            </div>
+        </div>
+        
+        <!-- Menu -->
+        <nav class="flex-1 overflow-y-auto px-4 py-6">
+            <div>
+                <h3 class="text-xs font-semibold text-blue-200 uppercase tracking-wider px-3 mb-4">Menu Utama</h3>
+                
+                <a href="{{ route('admin.dashboard') }}" class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white">
+                    <i class="fas fa-chart-line"></i>
+                    <span class="ml-3">Dashboard</span>
+                </a>
+                
+                <a href="{{ route('admin.jobs.index') }}" class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white">
+                    <i class="fas fa-briefcase"></i>
+                    <span class="ml-3">Lowongan Kerja</span>
+                </a>
+                
+                <a href="#" class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white">
+                    <i class="fas fa-file-alt"></i>
+                    <span class="ml-3">Lamaran</span>
+                </a>
+                
+                <a href="#" class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white">
+                    <i class="fas fa-users"></i>
+                    <span class="ml-3">Alumni</span>
+                </a>
+                
+                <a href="#" class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white">
+                    <i class="fas fa-building"></i>
+                    <span class="ml-3">Perusahaan</span>
+                </a>
+            </div>
+            
+            <div class="nav-divider"></div>
+            
+            <div>
+                <h3 class="text-xs font-semibold text-blue-200 uppercase tracking-wider px-3 mb-4">Manajemen</h3>
+                
+                <a href="#" class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white">
+                    <i class="fas fa-user-check"></i>
+                    <span class="ml-3">User</span>
+                </a>
+                
+                <a href="#" class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white">
+                    <i class="fas fa-chart-bar"></i>
+                    <span class="ml-3">Laporan</span>
+                </a>
+                
+                <a href="#" class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white">
+                    <i class="fas fa-cog"></i>
+                    <span class="ml-3">Pengaturan</span>
+                </a>
+            </div>
+        </nav>
+        
+        <!-- Footer -->
+        <div class="p-4 border-t border-white/10">
+            <button class="w-full flex items-center px-3 py-2.5 rounded-lg text-white/80 hover:text-white text-left text-sm" onclick="document.getElementById('logoutForm').submit();">
+                <i class="fas fa-sign-out-alt"></i>
+                <span class="ml-3">Logout</span>
+            </button>
+            <form id="logoutForm" action="{{ route('logout') }}" method="POST" style="display:none;">
+                @csrf
+            </form>
+        </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+        <!-- Header -->
+        <header class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center">
+                <button class="mobile-menu-btn lg:hidden mr-4" onclick="document.querySelector('.sidebar').classList.toggle('mobile-active')">
+                    <i class="fas fa-bars text-2xl text-slate-800"></i>
+                </button>
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-800">@yield('page_title', 'Dashboard')</h1>
+                    <div class="flex items-center mt-1">
+                        <a href="/" class="breadcrumb-item hover:text-slate-700">Home</a>
+                        <span class="mx-2 text-slate-300">/</span>
+                        <span class="breadcrumb-item active">@yield('page_title', 'Dashboard')</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Top Right -->
+            <div class="flex items-center gap-4">
+                <div class="hidden md:flex items-center bg-slate-100 rounded-lg px-3 py-2">
+                    <i class="fas fa-search text-slate-400 mr-2"></i>
+                    <input type="text" placeholder="Cari..." class="bg-transparent text-sm focus:outline-none text-slate-700" />
+                </div>
+                
+                <div class="relative">
+                    <button class="relative w-10 h-10 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-700">
+                        <i class="fas fa-bell"></i>
+                        <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                    </button>
+                </div>
+                
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">
+                        {{ substr(auth()->user()->email, 0, 1) }}
+                    </div>
+                    <div class="hidden md:block text-sm">
+                        <p class="font-semibold text-slate-800">{{ auth()->user()->email }}</p>
+                        <p class="text-xs text-slate-500 capitalize">
+                            @if(auth()->user()->role)
+                                {{ auth()->user()->role->display_name ?? 'Admin' }}
+                            @else
+                                Admin
+                            @endif
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Content -->
+        <main class="flex-1 overflow-auto">
+            <div class="p-6">
+                @if ($errors->any())
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                        <div class="flex items-start">
+                            <i class="fas fa-exclamation-circle text-red-500 mt-0.5 mr-3"></i>
+                            <div>
+                                <h3 class="font-semibold text-red-800 mb-2">Error</h3>
+                                <ul class="text-sm text-red-700">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+                
+                @if (session('success'))
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6 flex items-center">
+                        <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                        <p class="text-green-700">{{ session('success') }}</p>
+                    </div>
+                @endif
+                
                 @yield('content')
             </div>
         </main>
     </div>
+</div>
 
-    <script>
-        lucide.createIcons(); // Mengaktifkan icon
-    </script>
+<script>
+    // Mark active sidebar link
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentPath = window.location.pathname;
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+            if (link.href.includes(currentPath)) {
+                link.classList.add('active');
+            }
+        });
+    });
+</script>
+
+@yield('extra_js')
 </body>
 </html>

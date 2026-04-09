@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BKK SMKN 1 Garut - Login & Daftar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body class="bg-slate-50 text-slate-900" data-page="auth">
+    <!-- Navigation -->
+    <nav class="bg-[#001f3f] text-white sticky top-0 z-[100] shadow-xl">
+      <div class="container mx-auto px-4 md:px-6">
+        <div class="flex justify-between items-center h-20">
+          <!-- Logo -->
+          <div class="flex items-center space-x-3 cursor-pointer" onclick="window.location.href = 'beranda.html'">
+            <div class="w-11 h-11 bg-white rounded-xl flex items-center justify-center shadow-lg">
+              <i class="fas fa-graduation-cap text-[#001f3f] text-xl"></i>
+            </div>
+            <div>
+              <h1 class="font-extrabold text-xl tracking-tight leading-none">BKK SMKN 1</h1>
+              <p class="text-[10px] uppercase tracking-widest opacity-70">Garut Bermartabat</p>
+            </div>
+          </div>
+
+          <!-- Desktop Menu -->
+          <div class="hidden lg:flex space-x-8 text-sm font-semibold">
+            <a href="beranda.html" class="nav-btn transition hover:text-blue-400" id="nav-beranda">Beranda</a>
+            <a href="lowongan.html" class="nav-btn transition hover:text-blue-400" id="nav-lowongan">Lowongan</a>
+            <a href="acara.html" class="nav-btn transition hover:text-blue-400" id="nav-acara">Acara</a>
+            <a href="berita.html" class="nav-btn transition hover:text-blue-400" id="nav-berita">Berita</a>
+            <a href="tracer.html" class="nav-btn transition hover:text-blue-400" id="nav-tracer">Tracer Study</a>
+          </div>
+
+          <!-- Auth Buttons -->
+          <div class="hidden lg:flex items-center space-x-4">
+            <a href="auth.html" class="text-sm font-bold hover:text-blue-400 transition">Daftar</a>
+            <a href="auth.html" class="bg-blue-600 hover:bg-blue-700 px-7 py-2.5 rounded-full text-sm font-bold shadow-lg transition transform hover:scale-105 active:scale-95">Masuk</a>
+          </div>
+
+          <!-- Mobile Toggle -->
+          <button class="lg:hidden text-2xl" onclick="toggleMobileMenu()">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Menu -->
+      <div id="mobile-menu" class="hidden lg:hidden bg-[#001f3f] border-t border-white/10 px-6 py-6 space-y-4">
+        <a href="beranda.html" class="block w-full text-left py-2 font-semibold">Beranda</a>
+        <a href="lowongan.html" class="block w-full text-left py-2 font-semibold">Lowongan</a>
+        <a href="acara.html" class="block w-full text-left py-2 font-semibold">Acara</a>
+        <a href="berita.html" class="block w-full text-left py-2 font-semibold">Berita</a>
+        <a href="tracer.html" class="block w-full text-left py-2 font-semibold">Tracer Study</a>
+        <div class="pt-4 border-t border-white/10 flex flex-col space-y-3">
+          <a href="auth.html" class="w-full bg-blue-600 py-3 rounded-xl font-bold text-center">Masuk Ke Akun</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="page-transition flex items-center justify-center py-20 bg-slate-100 px-6">
+      <div class="bg-white w-full max-w-4xl rounded-[40px] shadow-2xl overflow-hidden flex flex-col md:flex-row">
+        <div class="md:w-1/2 bg-[#001f3f] p-12 text-white flex flex-col justify-between relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-64 h-64 bg-blue-500/20 rounded-full -mr-20 -mt-20 blur-3xl"></div>
+          <div>
+            <h2 class="text-3xl font-extrabold mb-4 leading-tight">Mulai Perjalanan Karirmu Disini</h2>
+            <p class="text-blue-200 text-sm leading-relaxed">Bergabunglah dengan ribuan alumni sukses SMKN 1 Garut yang telah berkarir di perusahaan-perusahaan terkemuka.</p>
+          </div>
+          <div class="space-y-4 pt-10">
+            <div class="flex items-center space-x-4">
+              <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-blue-400"><i class="fas fa-check"></i></div>
+              <span class="text-sm font-medium">Info Lowongan Eksklusif</span>
+            </div>
+            <div class="flex items-center space-x-4">
+              <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-blue-400"><i class="fas fa-check"></i></div>
+              <span class="text-sm font-medium">Tes Rekrutmen Terpusat</span>
+            </div>
+            <div class="flex items-center space-x-4">
+              <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-blue-400"><i class="fas fa-check"></i></div>
+              <span class="text-sm font-medium">Konsultasi Karir Gratis</span>
+            </div>
+          </div>
+        </div>
+        <div class="md:w-1/2 p-12">
+          <div class="flex border-b border-slate-100 mb-8">
+            <button type="button" onclick="switchTab('login')" id="btn-login" class="flex-1 pb-4 text-sm font-bold border-b-2 border-blue-600 text-blue-600">Masuk</button>
+            <button type="button" onclick="switchTab('register')" id="btn-register" class="flex-1 pb-4 text-sm font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-600">Daftar</button>
+          </div>
+
+          <!-- Login Form -->
+          <form id="login-form" class="space-y-6">
+            <div>
+              <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">NIK / Email</label>
+              <input type="text" placeholder="Masukkan NIK atau Email" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" />
+            </div>
+            <div>
+              <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">Kata Sandi</label>
+              <input type="password" placeholder="••••••••" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" />
+            </div>
+            <div class="flex justify-between items-center text-xs font-bold">
+              <label class="flex items-center text-slate-500"><input type="checkbox" class="mr-2" /> Ingat Saya</label>
+              <a href="#" class="text-blue-600 hover:underline">Lupa Sandi?</a>
+            </div>
+            <button type="submit" class="w-full bg-blue-600 text-white py-4 rounded-xl font-extrabold shadow-xl hover:bg-blue-700 transition transform active:scale-95">MASUK SEKARANG</button>
+            <div class="text-center text-slate-400 text-xs py-4">Atau masuk dengan</div>
+            <div class="grid grid-cols-2 gap-4">
+              <button id="google-login" type="button" class="border border-slate-200 py-3 rounded-xl hover:bg-slate-50 transition"><i class="fab fa-google mr-2 text-red-500"></i> Google</button>
+              <button id="facebook-login" type="button" class="border border-slate-200 py-3 rounded-xl hover:bg-slate-50 transition"><i class="fab fa-facebook-f mr-2 text-blue-600"></i> Facebook</button>
+            </div>
+          </form>
+
+          <!-- Register Form -->
+          <form id="register-form" class="space-y-6 hidden">
+            <div>
+              <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">Nama Lengkap</label>
+              <input type="text" placeholder="Masukkan Nama Lengkap" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" required />
+            </div>
+            <div>
+              <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">NIK / NIS</label>
+              <input type="text" placeholder="Masukkan NIK atau NIS" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" required />
+            </div>
+            <div>
+              <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">Email</label>
+              <input type="email" placeholder="Masukkan Email" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" required />
+            </div>
+            <div>
+              <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">Kata Sandi</label>
+              <input type="password" placeholder="••••••••" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" required />
+            </div>
+            <div>
+              <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">Konfirmasi Kata Sandi</label>
+              <input type="password" placeholder="••••••••" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" required />
+            </div>
+            <div class="flex items-start text-xs font-bold">
+              <input type="checkbox" class="mr-3 mt-1" required />
+              <label>Saya setuju dengan <a href="#" class="text-blue-600 hover:underline">Syarat & Ketentuan</a> dan <a href="#" class="text-blue-600 hover:underline">Kebijakan Privasi</a></label>
+            </div>
+            <button type="submit" class="w-full bg-blue-600 text-white py-4 rounded-xl font-extrabold shadow-xl hover:bg-blue-700 transition transform active:scale-95">DAFTAR SEKARANG</button>
+            <div class="text-center text-slate-400 text-xs py-4">Atau daftar dengan</div>
+            <div class="grid grid-cols-2 gap-4">
+              <button id="google-register" type="button" class="border border-slate-200 py-3 rounded-xl hover:bg-slate-50 transition"><i class="fab fa-google mr-2 text-red-500"></i> Google</button>
+              <button id="facebook-register" type="button" class="border border-slate-200 py-3 rounded-xl hover:bg-slate-50 transition"><i class="fab fa-facebook-f mr-2 text-blue-600"></i> Facebook</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-[#001f3f] text-slate-300 pt-20 pb-10">
+      <div class="container mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+          <div>
+            <div class="flex items-center space-x-3 mb-6">
+              <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+                <i class="fas fa-briefcase text-[#001f3f]"></i>
+              </div>
+              <h2 class="text-white font-bold text-xl">BKK SMKN 1</h2>
+            </div>
+            <p class="text-sm leading-relaxed opacity-80 mb-6">Pusat pengembangan karir dan penyaluran tenaga kerja profesional khusus alumni SMKN 1 Garut menuju Indonesia Emas.</p>
+            <div class="flex space-x-4">
+              <a href="#" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-blue-600 transition"><i class="fab fa-instagram"></i></a>
+              <a href="#" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-blue-600 transition"><i class="fab fa-facebook-f"></i></a>
+              <a href="#" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-blue-600 transition"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+          </div>
+          <div>
+            <h3 class="text-white font-bold mb-6 text-lg">Tautan Cepat</h3>
+            <ul class="space-y-4 text-sm">
+              <li>
+                <a href="lowongan.html" class="hover:text-blue-400 transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i> Lowongan Kerja</a>
+              </li>
+              <li>
+                <a href="acara.html" class="hover:text-blue-400 transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i> Jadwal Rekrutmen</a>
+              </li>
+              <li>
+                <a href="tutorial-pendaftaran.html" class="hover:text-blue-400 transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i> Tutorial Pendaftaran</a>
+              </li>
+              <li>
+                <a href="tracer.html" class="hover:text-blue-400 transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i> Tracer Study</a>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-white font-bold mb-6 text-lg">Hubungi Kami</h3>
+            <ul class="space-y-4 text-sm">
+              <li class="flex items-start">
+                <i class="fas fa-map-marker-alt mt-1 mr-3 text-blue-500"></i>
+                <span>Jl. Cimanuk No. 309 A, Tarogong Kidul, Garut, Jawa Barat 44151</span>
+              </li>
+              <li class="flex items-center">
+                <i class="fas fa-phone mr-3 text-blue-500"></i>
+                <span>(0262) 233796</span>
+              </li>
+              <li class="flex items-center">
+                <i class="fas fa-envelope mr-3 text-blue-500"></i>
+                <span>bkk@smkn1garut.sch.id</span>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-white font-bold mb-6 text-lg">Newsletter</h3>
+            <p class="text-xs mb-4 opacity-70">Dapatkan info lowongan terbaru langsung di email Anda.</p>
+            <div class="flex">
+              <input type="email" placeholder="Email Anda" class="bg-white/5 border border-white/10 px-4 py-2.5 rounded-l-lg w-full focus:outline-none focus:border-blue-500" />
+              <button class="bg-blue-600 px-4 rounded-r-lg hover:bg-blue-700"><i class="fas fa-paper-plane"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="border-t border-white/10 pt-8 text-center text-xs opacity-50">&copy; 2024 Sistem Informasi BKK Sekolah Menengah Kejuruan Negeri 1 Garut. Seluruh Hak Cipta Dilindungi.</div>
+      </div>
+    </footer>
+
+    <script src="js/utils.js"></script>
+    <script>
+      function switchTab(tab) {
+        const loginForm = document.getElementById("login-form");
+        const registerForm = document.getElementById("register-form");
+        const btnLogin = document.getElementById("btn-login");
+        const btnRegister = document.getElementById("btn-register");
+
+        if (tab === "login") {
+          loginForm.classList.remove("hidden");
+          registerForm.classList.add("hidden");
+          btnLogin.classList.add("border-b-blue-600", "text-blue-600");
+          btnLogin.classList.remove("border-b-transparent", "text-slate-400");
+          btnRegister.classList.remove("border-b-blue-600", "text-blue-600");
+          btnRegister.classList.add("border-b-transparent", "text-slate-400");
+        } else {
+          loginForm.classList.add("hidden");
+          registerForm.classList.remove("hidden");
+          btnRegister.classList.add("border-b-blue-600", "text-blue-600");
+          btnRegister.classList.remove("border-b-transparent", "text-slate-400");
+          btnLogin.classList.remove("border-b-blue-600", "text-blue-600");
+          btnLogin.classList.add("border-b-transparent", "text-slate-400");
+        }
+      }
+
+      // Handle login submission
+      document.getElementById("login-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const inputs = this.querySelectorAll('input[type="text"], input[type="password"]');
+        const nik = inputs[0].value;
+        const password = inputs[1].value;
+
+        if (nik && password) {
+          // Save login data to localStorage
+          localStorage.setItem("isLoggedIn", "true");
+          localStorage.setItem("userNIK", nik);
+          localStorage.setItem("userName", "Alumni SMKN 1");
+          window.location.href = "profil.html";
+        }
+      });
+
+      // Handle register submission
+      document.getElementById("register-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const inputs = this.querySelectorAll('input[type="text"], input[type="email"], input[type="password"]');
+        const name = inputs[0].value;
+        const nik = inputs[1].value;
+        const email = inputs[2].value;
+        const password = inputs[3].value;
+        const confirmPass = inputs[4].value;
+
+        if (password !== confirmPass) {
+          alert("Kata sandi tidak cocok!");
+          return;
+        }
+
+        if (name && nik && email && password) {
+          // Save registration data to localStorage
+          localStorage.setItem("isLoggedIn", "true");
+          localStorage.setItem("userNIK", nik);
+          localStorage.setItem("userName", name);
+          localStorage.setItem("userEmail", email);
+          window.location.href = "profil.html";
+        }
+      });
+
+      function setSocialLogin(provider, name, email) {
+        const existingName = localStorage.getItem("userName");
+        const finalName = existingName || name;
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("userNIK", localStorage.getItem("userNIK") || email || provider + " User");
+        localStorage.setItem("userName", finalName);
+        localStorage.setItem("userEmail", email || localStorage.getItem("userEmail") || "-");
+        localStorage.setItem("loginProvider", provider);
+        window.location.href = "profil.html";
+      }
+
+      function handleSocialClick(provider) {
+        const name = prompt(`Masukkan nama lengkap Anda:`);
+        if (!name || name.trim() === '') {
+          alert("Nama lengkap dibutuhkan untuk melanjutkan.");
+          return;
+        }
+
+        const email = prompt(`Masukkan email ${provider} Anda:`);
+        if (!email) {
+          alert("Email dibutuhkan untuk melanjutkan.");
+          return;
+        }
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          alert("Silakan masukkan email yang valid.");
+          return;
+        }
+
+        setSocialLogin(provider, name.trim(), email);
+      }
+
+      document.getElementById("google-login").addEventListener("click", function () {
+        handleSocialClick("Google");
+      });
+      document.getElementById("facebook-login").addEventListener("click", function () {
+        handleSocialClick("Facebook");
+      });
+      document.getElementById("google-register").addEventListener("click", function () {
+        handleSocialClick("Google");
+      });
+      document.getElementById("facebook-register").addEventListener("click", function () {
+        handleSocialClick("Facebook");
+      });    </script>
+  </body>
+</html>

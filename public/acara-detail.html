@@ -1,0 +1,1109 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detail Event - BKK SMKN 1 Garut</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+      .event-header {
+        background:
+          linear-gradient(135deg, rgba(30, 58, 138, 0.9), rgba(0, 31, 63, 0.9)),
+          url("https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1920&q=80");
+        background-size: cover;
+        background-position: center;
+        color: white;
+        padding: 60px 0;
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        animation: fadeIn 0.3s ease-in;
+      }
+
+      .modal.show {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .modal-content {
+        background-color: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        max-width: 600px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+        animation: slideUp 0.3s ease-out;
+      }
+
+      @keyframes slideUp {
+        from {
+          transform: translateY(50px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      .detail-section {
+        margin-bottom: 40px;
+      }
+
+      .detail-section h2 {
+        font-size: 24px;
+        font-weight: 700;
+        color: #001f3f;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+      }
+
+      .detail-section h2 i {
+        margin-right: 12px;
+        color: #3b82f6;
+      }
+
+      .agenda-item {
+        display: flex;
+        gap: 20px;
+        padding: 16px;
+        background: #f8fafc;
+        border-radius: 12px;
+        border-left: 4px solid #3b82f6;
+        margin-bottom: 12px;
+      }
+
+      .agenda-item .time {
+        font-weight: 700;
+        color: #3b82f6;
+        min-width: 120px;
+        flex-shrink: 0;
+      }
+
+      .agenda-item .content h4 {
+        font-weight: 600;
+        color: #001f3f;
+        margin-bottom: 4px;
+      }
+
+      .agenda-item .content p {
+        font-size: 14px;
+        color: #64748b;
+      }
+
+      .speakers-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+      }
+
+      .speaker-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        transition:
+          transform 0.3s,
+          box-shadow 0.3s;
+      }
+
+      .speaker-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      }
+
+      .speaker-image {
+        width: 100%;
+        height: 200px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+
+      .speaker-card h4 {
+        font-size: 18px;
+        font-weight: 700;
+        color: #001f3f;
+        padding: 16px 16px 0;
+      }
+
+      .speaker-title {
+        color: #3b82f6;
+        font-weight: 600;
+        font-size: 14px;
+        padding: 4px 16px;
+      }
+
+      .speaker-bio {
+        font-size: 13px;
+        color: #64748b;
+        padding: 0 16px 16px;
+        line-height: 1.5;
+      }
+
+      .target-list {
+        list-style: none;
+        padding: 0;
+      }
+
+      .target-list li {
+        padding: 12px 0;
+        padding-left: 28px;
+        color: #475569;
+        font-size: 15px;
+        position: relative;
+      }
+
+      .target-list li:before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: #3b82f6;
+        font-weight: bold;
+        font-size: 18px;
+      }
+
+      .learning-outcomes {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 12px;
+      }
+
+      .outcome {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        padding: 12px 16px;
+        border-radius: 8px;
+        color: #1e40af;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+      }
+
+      .sidebar-box {
+        background: white;
+        padding: 24px;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        margin-bottom: 24px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+
+      .sidebar-box h3 {
+        font-size: 18px;
+        font-weight: 700;
+        color: #001f3f;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+      }
+
+      .sidebar-box h3 i {
+        margin-right: 8px;
+        color: #3b82f6;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 8px;
+        background: #e2e8f0;
+        border-radius: 4px;
+        overflow: hidden;
+        margin: 8px 0;
+      }
+
+      .progress {
+        height: 100%;
+        background: linear-gradient(90deg, #3b82f6, #60a5fa);
+        border-radius: 4px;
+        transition: width 0.3s;
+      }
+
+      .share-buttons {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+
+      .share-btn {
+        padding: 10px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        background: #f8fafc;
+        color: #001f3f;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .share-btn:hover {
+        background: #3b82f6;
+        color: white;
+        border-color: #3b82f6;
+      }
+
+      .info-text {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .info-text p {
+        font-size: 13px;
+        color: #475569;
+        display: flex;
+        align-items: flex-start;
+      }
+
+      .info-text p strong {
+        color: #10b981;
+      }
+
+      .related-event {
+        padding: 12px 0;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      .related-event:last-child {
+        border-bottom: none;
+      }
+
+      .related-event h4 {
+        font-weight: 600;
+        color: #001f3f;
+        margin-bottom: 4px;
+        font-size: 14px;
+      }
+
+      .related-event p {
+        font-size: 13px;
+        color: #64748b;
+        margin-bottom: 8px;
+      }
+
+      .related-event a {
+        color: #3b82f6;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 600;
+        transition: color 0.3s;
+      }
+
+      .related-event a:hover {
+        color: #1e40af;
+      }
+
+      .breadcrumb-nav {
+        background: #f8fafc;
+        padding: 12px 0;
+        font-size: 14px;
+        color: #64748b;
+      }
+
+      .breadcrumb-nav a {
+        color: #3b82f6;
+        text-decoration: none;
+      }
+
+      .breadcrumb-nav a:hover {
+        text-decoration: underline;
+      }
+
+      .event-image {
+        width: 100%;
+        height: 300px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 16px;
+        margin-bottom: 24px;
+      }
+
+      @media (max-width: 768px) {
+        .event-header {
+          padding: 40px 0;
+        }
+
+        .speakers-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .learning-outcomes {
+          grid-template-columns: 1fr;
+        }
+
+        .detail-section h2 {
+          font-size: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-slate-50 text-slate-900" data-page="acara-detail">
+    <!-- Navigation -->
+    <nav class="bg-[#001f3f] text-white sticky top-0 z-[100] shadow-xl">
+      <div class="container mx-auto px-4 md:px-6">
+        <div class="flex justify-between items-center h-20">
+          <!-- Logo -->
+          <div
+            class="flex items-center space-x-3 cursor-pointer"
+            onclick="window.location.href = 'beranda.html'"
+          >
+            <div
+              class="w-11 h-11 bg-white rounded-xl flex items-center justify-center shadow-lg"
+            >
+              <i class="fas fa-graduation-cap text-[#001f3f] text-xl"></i>
+            </div>
+            <div>
+              <h1 class="font-extrabold text-xl tracking-tight leading-none">
+                BKK SMKN 1
+              </h1>
+              <p class="text-[10px] uppercase tracking-widest opacity-70">
+                Garut Bermartabat
+              </p>
+            </div>
+          </div>
+
+          <!-- Desktop Menu -->
+          <div class="hidden lg:flex space-x-8 text-sm font-semibold">
+            <a
+              href="beranda.html"
+              class="nav-btn transition hover:text-blue-400"
+              id="nav-beranda"
+              >Beranda</a
+            >
+            <a
+              href="lowongan.html"
+              class="nav-btn transition hover:text-blue-400"
+              id="nav-lowongan"
+              >Lowongan</a
+            >
+            <a
+              href="acara.html"
+              class="nav-btn transition hover:text-blue-400 active"
+              id="nav-acara"
+              >Acara</a
+            >
+            <a
+              href="berita.html"
+              class="nav-btn transition hover:text-blue-400"
+              id="nav-berita"
+              >Berita</a
+            >
+            <a
+              href="tracer.html"
+              class="nav-btn transition hover:text-blue-400"
+              id="nav-tracer"
+              >Tracer Study</a
+            >
+          </div>
+
+          <!-- Auth Buttons -->
+          <div class="hidden lg:flex items-center space-x-4">
+            <a
+              href="acara.html"
+              class="text-sm font-bold hover:text-blue-400 transition"
+            >
+              <i class="fas fa-arrow-left mr-2"></i>Kembali
+            </a>
+          </div>
+
+          <!-- Mobile Toggle -->
+          <button class="lg:hidden text-2xl" onclick="toggleMobileMenu()">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Menu -->
+      <div
+        id="mobile-menu"
+        class="hidden lg:hidden bg-[#001f3f] border-t border-white/10 px-6 py-6 space-y-4"
+      >
+        <a href="beranda.html" class="block w-full text-left py-2 font-semibold"
+          >Beranda</a
+        >
+        <a
+          href="lowongan.html"
+          class="block w-full text-left py-2 font-semibold"
+          >Lowongan</a
+        >
+        <a href="acara.html" class="block w-full text-left py-2 font-semibold"
+          >Acara</a
+        >
+        <a href="berita.html" class="block w-full text-left py-2 font-semibold"
+          >Berita</a
+        >
+        <a href="tracer.html" class="block w-full text-left py-2 font-semibold"
+          >Tracer Study</a
+        >
+      </div>
+    </nav>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-nav container mx-auto px-6 py-3">
+      <a href="beranda.html">Beranda</a> / <a href="acara.html">Acara</a> /
+      <span class="text-slate-500">Detail Event</span>
+    </div>
+
+    <!-- Event Header -->
+    <div class="event-header">
+      <div class="container mx-auto px-6 py-12">
+        <h1 class="text-4xl md:text-5xl font-extrabold mb-8" id="eventTitle">
+          Job Hugging: Keluar dari Zona Nyaman
+        </h1>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+            <p class="text-blue-100 text-sm mb-2">
+              <i class="fas fa-calendar-alt mr-2"></i> Tanggal
+            </p>
+            <p class="text-white font-bold" id="eventDate">20 November 2025</p>
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+            <p class="text-blue-100 text-sm mb-2">
+              <i class="fas fa-clock mr-2"></i> Waktu
+            </p>
+            <p class="text-white font-bold" id="eventTime">10:00 - 12:00 WIB</p>
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+            <p class="text-blue-100 text-sm mb-2">
+              <i class="fas fa-map-marker-alt mr-2"></i> Lokasi
+            </p>
+            <p class="text-white font-bold" id="eventLocation">Online (Zoom)</p>
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+            <p class="text-blue-100 text-sm mb-2">
+              <i class="fas fa-users mr-2"></i> Kapasitas
+            </p>
+            <p class="text-white font-bold" id="eventCapacity">500 Peserta</p>
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+            <p class="text-blue-100 text-sm mb-2">
+              <i class="fas fa-tag mr-2"></i> Biaya
+            </p>
+            <p class="text-white font-bold text-green-300" id="eventCost">
+              Gratis
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-6 py-16">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Main Content -->
+        <div class="lg:col-span-2">
+          <!-- Event Image -->
+          <div class="event-image"></div>
+
+          <!-- About Event -->
+          <div class="detail-section">
+            <h2><i class="fas fa-info-circle"></i> Tentang Event Ini</h2>
+            <p class="text-slate-600 leading-relaxed" id="eventDescription">
+              Event ini akan membahas fenomena "job hugging" - ketika kenyamanan
+              di posisi kerja saat ini membuat kita lupa untuk mengembangkan
+              diri dan meraih peluang karir yang lebih baik. Dalam webinar ini,
+              Anda akan belajar cara mengenali tanda-tanda job hugging dan
+              strategi untuk keluar dari zona nyaman untuk pertumbuhan karir
+              yang lebih optimal.
+            </p>
+          </div>
+
+          <!-- Agenda -->
+          <div class="detail-section">
+            <h2><i class="fas fa-list-check"></i> Agenda</h2>
+            <div class="space-y-3">
+              <div class="agenda-item">
+                <div class="time">10:00 - 10:15</div>
+                <div class="content">
+                  <h4>Pembukaan & Icebreaker</h4>
+                  <p>Perkenalan moderator dan peserta</p>
+                </div>
+              </div>
+              <div class="agenda-item">
+                <div class="time">10:15 - 10:45</div>
+                <div class="content">
+                  <h4>Memahami Job Hugging</h4>
+                  <p>Definisi, tanda-tanda, dan dampak terhadap karir</p>
+                </div>
+              </div>
+              <div class="agenda-item">
+                <div class="time">10:45 - 11:15</div>
+                <div class="content">
+                  <h4>Strategi Keluar dari Zona Nyaman</h4>
+                  <p>Langkah-langkah praktis untuk pengembangan karir</p>
+                </div>
+              </div>
+              <div class="agenda-item">
+                <div class="time">11:15 - 11:55</div>
+                <div class="content">
+                  <h4>Q&A Interaktif</h4>
+                  <p>Sesi tanya jawab dengan pembicara</p>
+                </div>
+              </div>
+              <div class="agenda-item">
+                <div class="time">11:55 - 12:00</div>
+                <div class="content">
+                  <h4>Penutup & Sertifikat</h4>
+                  <p>Distribusi sertifikat digital</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Speakers -->
+          <div class="detail-section">
+            <h2><i class="fas fa-microphone"></i> Pembicara</h2>
+            <div class="speakers-grid">
+              <div class="speaker-card">
+                <div
+                  class="speaker-image"
+                  style="
+                    background: linear-gradient(
+                      135deg,
+                      #667eea 0%,
+                      #764ba2 100%
+                    );
+                  "
+                ></div>
+                <h4>Budi Santoso</h4>
+                <p class="speaker-title">Senior HR Manager</p>
+                <p class="speaker-bio">
+                  20+ tahun pengalaman di bidang HR dan pengembangan karir
+                  profesional
+                </p>
+              </div>
+              <div class="speaker-card">
+                <div
+                  class="speaker-image"
+                  style="
+                    background: linear-gradient(
+                      135deg,
+                      #f093fb 0%,
+                      #f5576c 100%
+                    );
+                  "
+                ></div>
+                <h4>Siti Nurhaliza</h4>
+                <p class="speaker-title">Career Coach</p>
+                <p class="speaker-bio">
+                  Certified career coach dengan portfolio 500+ klien sukses
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Target Audience -->
+          <div class="detail-section">
+            <h2><i class="fas fa-bullseye"></i> Target Peserta</h2>
+            <ul class="target-list">
+              <li>Profesional muda yang ingin mengembangkan karir</li>
+              <li>Karyawan yang merasa stuck dalam posisi saat ini</li>
+              <li>Career changer yang sedang mencari arah baru</li>
+              <li>Fresh graduate yang ingin memahami dinamika karir</li>
+              <li>Siapa pun yang ingin meningkatkan kualitas karir mereka</li>
+            </ul>
+          </div>
+
+          <!-- Learning Outcomes -->
+          <div class="detail-section">
+            <h2>
+              <i class="fas fa-lightbulb"></i> Apa yang Akan Anda Pelajari
+            </h2>
+            <div class="learning-outcomes">
+              <span class="outcome"
+                ><i class="fas fa-check mr-2"></i> Mengenali tanda-tanda job
+                hugging dalam diri Anda</span
+              >
+              <span class="outcome"
+                ><i class="fas fa-check mr-2"></i> Memahami mengapa zona nyaman
+                bisa menjadi perangkap</span
+              >
+              <span class="outcome"
+                ><i class="fas fa-check mr-2"></i> Strategi konkret untuk keluar
+                dari job hugging</span
+              >
+              <span class="outcome"
+                ><i class="fas fa-check mr-2"></i> Cara merencanakan transisi
+                karir yang sukses</span
+              >
+              <span class="outcome"
+                ><i class="fas fa-check mr-2"></i> Tips networking dan mencari
+                peluang kerja baru</span
+              >
+              <span class="outcome"
+                ><i class="fas fa-check mr-2"></i> Mindset untuk pertumbuhan
+                karir berkelanjutan</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="lg:col-span-1">
+          <!-- Registration Box -->
+          <div class="sidebar-box sticky top-24">
+            <h3><i class="fas fa-ticket-alt"></i> Daftar Sekarang</h3>
+            <button
+              onclick="openRegistrationForm()"
+              class="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold transition mb-4 flex items-center justify-center"
+            >
+              <i class="fas fa-check-circle mr-2"></i> Registrasi Gratis
+            </button>
+            <div class="bg-slate-50 p-4 rounded-lg">
+              <p class="text-sm font-bold text-slate-700 mb-3">
+                <strong id="registeredCount">350</strong>/500 Peserta Terdaftar
+              </p>
+              <div class="progress-bar">
+                <div class="progress" style="width: 70%"></div>
+              </div>
+              <p class="text-xs text-slate-500 mt-2">✓ Kursi masih tersedia!</p>
+            </div>
+          </div>
+
+          <!-- Share Box -->
+          <div class="sidebar-box">
+            <h3><i class="fas fa-share-nodes"></i> Bagikan Event</h3>
+            <div class="share-buttons">
+              <button class="share-btn" onclick="share('facebook')">
+                <i class="fab fa-facebook-f mr-1"></i> Facebook
+              </button>
+              <button class="share-btn" onclick="share('twitter')">
+                <i class="fab fa-twitter mr-1"></i> Twitter
+              </button>
+              <button class="share-btn" onclick="share('whatsapp')">
+                <i class="fab fa-whatsapp mr-1"></i> WhatsApp
+              </button>
+              <button class="share-btn" onclick="share('email')">
+                <i class="fas fa-envelope mr-1"></i> Email
+              </button>
+            </div>
+          </div>
+
+          <!-- Important Info Box -->
+          <div class="sidebar-box">
+            <h3><i class="fas fa-exclamation-circle"></i> Informasi Penting</h3>
+            <div class="info-text">
+              <p>
+                <strong>✓</strong> Link Zoom akan dikirim ke email sebelum event
+              </p>
+              <p>
+                <strong>✓</strong> Sertifikat digital untuk peserta yang hadir
+              </p>
+              <p>
+                <strong>✓</strong> Event akan direkam dan dibagikan ke peserta
+              </p>
+            </div>
+          </div>
+
+          <!-- Related Events -->
+          <div class="sidebar-box">
+            <h3><i class="fas fa-calendar-days"></i> Event Terkait</h3>
+            <div class="related-event">
+              <h4>Interview Preparation Masterclass</h4>
+              <p>15 Nov 2025</p>
+              <a href="acara-detail.html?id=interview"
+                >Lihat <i class="fas fa-arrow-right ml-1"></i
+              ></a>
+            </div>
+            <div class="related-event">
+              <h4>Career Planning Seminar</h4>
+              <p>12 Des 2025</p>
+              <a href="acara-detail.html?id=planning"
+                >Lihat <i class="fas fa-arrow-right ml-1"></i
+              ></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Registration Modal -->
+    <div id="registrationModal" class="modal">
+      <div class="modal-content">
+        <div
+          class="bg-gradient-to-r from-blue-600 to-blue-700 p-8 text-white flex justify-between items-center rounded-t-2xl"
+        >
+          <h2 class="text-2xl font-extrabold flex items-center">
+            <i class="fas fa-clipboard-list mr-3"></i> Formulir Registrasi
+          </h2>
+          <button
+            onclick="closeRegistrationForm()"
+            class="text-white text-3xl font-bold hover:text-blue-200 transition"
+          >
+            &times;
+          </button>
+        </div>
+
+        <form
+          id="registrationForm"
+          onsubmit="submitRegistration(event)"
+          class="p-8 space-y-6"
+        >
+          <div>
+            <label
+              for="regName"
+              class="block text-sm font-bold text-slate-700 mb-2"
+              >Nama Lengkap *</label
+            >
+            <input
+              type="text"
+              id="regName"
+              name="name"
+              class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+              required
+            />
+          </div>
+
+          <div>
+            <label
+              for="regEmail"
+              class="block text-sm font-bold text-slate-700 mb-2"
+              >Email *</label
+            >
+            <input
+              type="email"
+              id="regEmail"
+              name="email"
+              class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+              required
+            />
+          </div>
+
+          <div>
+            <label
+              for="regPhone"
+              class="block text-sm font-bold text-slate-700 mb-2"
+              >Nomor Telepon *</label
+            >
+            <input
+              type="tel"
+              id="regPhone"
+              name="phone"
+              class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+              required
+            />
+          </div>
+
+          <div>
+            <label
+              for="regInstitution"
+              class="block text-sm font-bold text-slate-700 mb-2"
+              >Institusi/Perusahaan</label
+            >
+            <input
+              type="text"
+              id="regInstitution"
+              name="institution"
+              class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+            />
+          </div>
+
+          <div>
+            <label
+              for="regPosition"
+              class="block text-sm font-bold text-slate-700 mb-2"
+              >Posisi/Program Studi</label
+            >
+            <input
+              type="text"
+              id="regPosition"
+              name="position"
+              class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+            />
+          </div>
+
+          <div class="flex items-start">
+            <input
+              type="checkbox"
+              id="regAgree"
+              name="agree"
+              class="mt-1 rounded focus:ring-2 focus:ring-blue-600"
+              required
+            />
+            <label for="regAgree" class="ml-3 text-sm text-slate-600"
+              >Saya setuju menerima informasi dan update dari BKK SMKN 1
+              Garut</label
+            >
+          </div>
+
+          <button
+            type="submit"
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold transition flex items-center justify-center"
+          >
+            <i class="fas fa-paper-plane mr-2"></i> Registrasi
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-[#001f3f] text-slate-300 pt-20 pb-10 mt-20">
+      <div class="container mx-auto px-6">
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16"
+        >
+          <div>
+            <div class="flex items-center space-x-3 mb-6">
+              <div
+                class="w-10 h-10 bg-white rounded-lg flex items-center justify-center"
+              >
+                <i class="fas fa-briefcase text-[#001f3f]"></i>
+              </div>
+              <h2 class="text-white font-bold text-xl">BKK SMKN 1</h2>
+            </div>
+            <p class="text-sm leading-relaxed opacity-80 mb-6">
+              Pusat pengembangan karir dan penyaluran tenaga kerja profesional
+              khusus alumni SMKN 1 Garut menuju Indonesia Emas.
+            </p>
+            <div class="flex space-x-4">
+              <a
+                href="#"
+                class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-blue-600 transition"
+                ><i class="fab fa-instagram"></i
+              ></a>
+              <a
+                href="#"
+                class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-blue-600 transition"
+                ><i class="fab fa-facebook-f"></i
+              ></a>
+              <a
+                href="#"
+                class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-blue-600 transition"
+                ><i class="fab fa-linkedin-in"></i
+              ></a>
+            </div>
+          </div>
+          <div>
+            <h3 class="text-white font-bold mb-6 text-lg">Tautan Cepat</h3>
+            <ul class="space-y-4 text-sm">
+              <li>
+                <a
+                  href="lowongan.html"
+                  class="hover:text-blue-400 transition flex items-center"
+                  ><i class="fas fa-chevron-right text-[10px] mr-2"></i>
+                  Lowongan Kerja</a
+                >
+              </li>
+              <li>
+                <a
+                  href="acara.html"
+                  class="hover:text-blue-400 transition flex items-center"
+                  ><i class="fas fa-chevron-right text-[10px] mr-2"></i> Jadwal
+                  Acara</a
+                >
+              </li>
+              <li>
+                <a
+                  href="tutorial-pendaftaran.html"
+                  class="hover:text-blue-400 transition flex items-center"
+                  ><i class="fas fa-chevron-right text-[10px] mr-2"></i>
+                  Tutorial Pendaftaran</a
+                >
+              </li>
+              <li>
+                <a
+                  href="tracer.html"
+                  class="hover:text-blue-400 transition flex items-center"
+                  ><i class="fas fa-chevron-right text-[10px] mr-2"></i> Tracer
+                  Study</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-white font-bold mb-6 text-lg">Hubungi Kami</h3>
+            <ul class="space-y-4 text-sm">
+              <li class="flex items-start">
+                <i class="fas fa-map-marker-alt mt-1 mr-3 text-blue-500"></i>
+                <span
+                  >Jl. Cimanuk No. 309 A, Tarogong Kidul, Garut, Jawa Barat
+                  44151</span
+                >
+              </li>
+              <li class="flex items-center">
+                <i class="fas fa-phone mr-3 text-blue-500"></i>
+                <span>(0262) 233796</span>
+              </li>
+              <li class="flex items-center">
+                <i class="fas fa-envelope mr-3 text-blue-500"></i>
+                <span>bkk@smkn1garut.sch.id</span>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-white font-bold mb-6 text-lg">Newsletter</h3>
+            <p class="text-xs mb-4 opacity-70">
+              Dapatkan info event terbaru langsung di email Anda.
+            </p>
+            <div class="flex">
+              <input
+                type="email"
+                placeholder="Email Anda"
+                class="bg-white/5 border border-white/10 px-4 py-2.5 rounded-l-lg w-full focus:outline-none focus:border-blue-500"
+              />
+              <button class="bg-blue-600 px-4 rounded-r-lg hover:bg-blue-700">
+                <i class="fas fa-paper-plane"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div
+          class="border-t border-white/10 pt-8 text-center text-xs opacity-50"
+        >
+          &copy; 2024 Sistem Informasi BKK Sekolah Menengah Kejuruan Negeri 1
+          Garut. Seluruh Hak Cipta Dilindungi.
+        </div>
+      </div>
+    </footer>
+
+    <script src="js/utils.js"></script>
+    <script>
+      const urlParams = new URLSearchParams(window.location.search);
+      const eventId = urlParams.get("id") || "jobhugging";
+
+      // Event data sample
+      const eventsData = {
+        jobhugging: {
+          title: "Job Hugging: Keluar dari Zona Nyaman",
+          date: "20 November 2025",
+          time: "10:00 - 12:00 WIB",
+          location: "Online (Zoom)",
+          capacity: "500 Peserta",
+          cost: "Gratis",
+          registered: "350",
+          description:
+            "Event ini akan membahas fenomena 'job hugging' - ketika kenyamanan di posisi kerja saat ini membuat kita lupa untuk mengembangkan diri dan meraih peluang karir yang lebih baik. Dalam webinar ini, Anda akan belajar cara mengenali tanda-tanda job hugging dan strategi untuk keluar dari zona nyaman untuk pertumbuhan karir yang lebih optimal.",
+        },
+        interview: {
+          title: "Interview Preparation Masterclass",
+          date: "15 November 2025",
+          time: "14:00 - 16:00 WIB",
+          location: "Online (Zoom)",
+          capacity: "300 Peserta",
+          cost: "Gratis",
+          registered: "250",
+          description:
+            "Masterclass intensif untuk mempersiapkan diri menghadapi interview kerja dengan percaya diri. Belajar teknik presentasi diri, menjawab pertanyaan sulit, dan strategi follow-up yang efektif.",
+        },
+        planning: {
+          title: "Career Planning Seminar",
+          date: "12 Desember 2025",
+          time: "10:00 - 12:00 WIB",
+          location: "Auditorium SMKN 1 Garut",
+          capacity: "200 Peserta",
+          cost: "Gratis",
+          registered: "85",
+          description:
+            "Seminar tentang perencanaan karir jangka panjang, identifikasi passion dan skill, serta pemetaan karir yang tepat sesuai dengan potensi Anda.",
+        },
+      };
+
+      const event = eventsData[eventId] || eventsData.jobhugging;
+
+      // Load event data
+      function loadEventData() {
+        document.getElementById("eventTitle").textContent = event.title;
+        document.getElementById("eventDate").textContent = event.date;
+        document.getElementById("eventTime").textContent = event.time;
+        document.getElementById("eventLocation").textContent = event.location;
+        document.getElementById("eventCapacity").textContent = event.capacity;
+        document.getElementById("eventCost").textContent = event.cost;
+        document.getElementById("eventDescription").textContent =
+          event.description;
+        document.getElementById("registeredCount").textContent =
+          event.registered;
+      }
+
+      function openRegistrationForm() {
+        document.getElementById("registrationModal").classList.add("show");
+      }
+
+      function closeRegistrationForm() {
+        document.getElementById("registrationModal").classList.remove("show");
+      }
+
+      function submitRegistration(event) {
+        event.preventDefault();
+        const formData = new FormData(
+          document.getElementById("registrationForm"),
+        );
+        const data = Object.fromEntries(formData);
+
+        console.log("Registration submitted:", data);
+        alert(
+          "Registrasi Anda berhasil! Link Zoom akan dikirim ke email Anda sebelum event dimulai.",
+        );
+        closeRegistrationForm();
+        document.getElementById("registrationForm").reset();
+      }
+
+      function share(platform) {
+        const title = event.title;
+        const url = window.location.href;
+
+        switch (platform) {
+          case "facebook":
+            window.open(
+              `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+            );
+            break;
+          case "twitter":
+            window.open(
+              `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`,
+            );
+            break;
+          case "whatsapp":
+            window.open(
+              `https://wa.me/?text=${encodeURIComponent(title + " " + url)}`,
+            );
+            break;
+          case "email":
+            window.open(
+              `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(url)}`,
+            );
+            break;
+        }
+      }
+
+      function toggleMobileMenu() {
+        const menu = document.getElementById("mobile-menu");
+        menu.classList.toggle("hidden");
+      }
+
+      // Close modal when clicking outside
+      window.onclick = function (event) {
+        const modal = document.getElementById("registrationModal");
+        if (event.target === modal) {
+          modal.classList.remove("show");
+        }
+      };
+
+      // Load data on page load
+      window.addEventListener("load", loadEventData);
+    </script>
+  </body>
+</html>

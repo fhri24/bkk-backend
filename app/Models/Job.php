@@ -28,6 +28,12 @@ class Job extends Model
         'expired_at'
     ];
 
+    // Cast date columns to Carbon objects
+    protected $casts = [
+        'expired_at' => 'datetime',
+        'posted_at' => 'datetime',
+    ];
+
     // --- RELASI ---
 
     // Menghubungkan Job ke Perusahaan
