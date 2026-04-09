@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ApiExampleController;
 
 use App\Http\Controllers\API\SuperAdminController;
+use App\Http\Controllers\API\AuthController;
 
 // --- 1. Rute Publik (Bisa diakses tanpa login) ---
 Route::get('/health', function () {
@@ -13,6 +14,9 @@ Route::get('/health', function () {
         'timestamp' => now(),
     ]);
 });
+
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
 
 // Rute contoh (jika ini untuk testing publik)
 Route::apiResource('example', ApiExampleController::class);
