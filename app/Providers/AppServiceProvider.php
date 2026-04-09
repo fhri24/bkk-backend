@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Gate;
+use App\Models\User;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -11,7 +13,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Biarkan kosong jika belum ada service yang didaftarkan
     }
 
     /**
@@ -19,6 +21,24 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Gate untuk Super Admin
+        Gate::define('super_admin', function (User $user) {
+            return $user->role && $user->role->name === 'super_admin';
+        });
+
+        // Gate untuk Admin BKK / Kepala BKK
+        Gate::define('admin_bkk', function (User $user) {
+            return $user->role && ($user->role->name === 'admin_bkk' || $user->role->name === 'kepala_bkk');
+        });
+
+        // Gate untuk Perusahaan (Company)
+        Gate::define('company', function (User $user) {
+            return $user->role && $user->role->name === 'company';
+        });
+
+        // Gate untuk Siswa (Student)
+        Gate::define('student', function (User $user) {
+            return $user->role && $user->role->name === 'student';
+        });
     }
 }
