@@ -5,8 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ApiExampleController;
 
 use App\Http\Controllers\API\SuperAdminController;
+use App\Http\Controllers\Api\JobApplicationController; // Import baru
 
-// --- 1. Rute Publik (Bisa diakses tanpa login) ---
+// --- 1. Rute Publik ---
 Route::get('/health', function () {
     return response()->json([
         'status' => 'healthy',
@@ -14,36 +15,36 @@ Route::get('/health', function () {
     ]);
 });
 
-// Rute contoh (jika ini untuk testing publik)
+
 Route::apiResource('example', ApiExampleController::class);
 
 
 Route::get('example/search/{query}', [ApiExampleController::class, 'search']);
 
 
-// --- 2. Rute Terproteksi (Harus Login & Cek Role) ---
+// --- 2. Rute Terproteksi ---
 Route::middleware('auth:sanctum')->group(function () {
 
     // KELOMPOK SUPER ADMIN
     Route::middleware('role:super_admin')->group(function () {
-        // Resource Super Admin dimasukkan ke sini agar hanya admin yang bisa akses
+
         Route::apiResource('super-admins', SuperAdminController::class);
-        
-        // Route::get('/admin/dashboard', [AdminController::class, 'index']);
+
     });
 
     // KELOMPOK PERUSAHAAN (COMPANY)
     Route::middleware('role:company')->group(function () {
-        // Route::post('/jobs/create', [JobController::class, 'store']);
+        // Tempat route lowongan kerja nanti
     });
 
     // KELOMPOK SISWA (STUDENT)
     Route::middleware('role:student')->group(function () {
-        // Route::post('/apply', [JobApplicationController::class, 'store']);
+        // Route untuk melamar pekerjaan
+        Route::post('/applications', [JobApplicationController::class, 'store']);
     });
 
     // KELOMPOK ADMIN BKK / KEPALA BKK
     Route::middleware('role:admin_bkk')->group(function () {
-        // Route::get('/applications/review', [JobApplicationController::class, 'index']);
+        // Tempat route review lamaran nanti
     });
 });
