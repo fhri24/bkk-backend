@@ -1,39 +1,90 @@
 <?php
 
+namespace App\Http\Controllers\API;
+
+use App\Http\Controllers\Controller;
+use App\Models\Company;
+use App\Models\Job;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\ApiExampleController;
-use App\Http\Controllers\API\SuperAdminController;
-use App\Http\Controllers\Api\JobApplicationController;
-use App\Http\Controllers\Api\CompanyController; // WAJIB ADA INI
 
-// --- 1. Rute Publik ---
-Route::get('/health', function () {
-    return response()->json([
-        'status' => 'healthy',
-        'timestamp' => now(),
-    ]);
-});
+class CompanyController extends Controller
+{
+    // GET all companies
+    public function index()
+    {
+        return Company::all();
+    }
 
-// --- 2. Rute Terproteksi ---
-Route::middleware('auth:sanctum')->group(function () {
+    // CREATE
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'company_name' => 'required',
+            'industry' => 'required',
+            'address' => 'required',
+            'contact_person' => 'required',
+            'phone' => 'required',
+        ]);
 
-    // KELOMPOK SUPER ADMIN
-    Route::middleware('role:super_admin')->group(function () {
-        Route::apiResource('super-admins', SuperAdminController::class);
-    });
+        $data['is_verified'] = false;
 
-    // KELOMPOK SISWA (STUDENT)
-    Route::middleware('role:student')->group(function () {
-        // Fitur Company View (Read-Only)
-        Route::get('/companies', [CompanyController::class, 'index']);
-        Route::get('/companies/{id}', [CompanyController::class, 'show']);
-        
-        // Fitur Melamar Pekerjaan
-        Route::post('/applications', [JobApplicationController::class, 'store']);
-    });
+        return Company::create($data);
+    }
 
-    // KELOMPOK LAIN (Bisa diisi nanti)
-    Route::middleware('role:company')->group(function () { });
-    Route::middleware('role:admin_bkk')->group(function () { });
-});
+    // SHOW
+    public function show($id)
+    {
+        return Company::findOrFail($id);
+    }
+
+    // UPDATE
+    public function update(Request $request, $id)
+    {
+        $company = Company::findOrFail($id);
+
+        $company->update($request->all());
+
+        return $company;
+    }
+
+    // DELETE
+    public function destroy($id)
+    {
+        Company::destroy($id);
+
+        return response()->json(['message' => 'Deleted']);
+    }
+
+    // TOGGLE VERIFIED
+    public function toggleVerify($id)
+    {
+        $company = Company::findOrFail($id);
+
+        $company->is_verified = !$company->is_verified;
+        $company->save();
+
+        return response()->json([
+            'message' => 'Status updated',
+            'is_verified' => $company->is_verified
+        ]);
+    }
+
+    // ASSIGN COMPANY TO JOB
+    public function assignToJob(Request $request, $id)
+    {
+        $company = Company::findOrFail($id);
+
+        $request->validate([
+            'job_id' => 'required|exists:job_listings,job_id'
+        ]);
+
+        $job = Job::findOrFail($request->job_id);
+        $job->company_id = $company->company_id;
+        $job->save();
+
+        return response()->json([
+            'message' => 'Company assigned to job successfully',
+            'job' => $job
+        ]);
+    }
+}

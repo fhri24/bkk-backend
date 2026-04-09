@@ -5,8 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ApiExampleController;
 use App\Http\Controllers\API\SuperAdminController;
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\CompanyController;
 use App\Http\Controllers\Api\JobApplicationController;
-use App\Http\Controllers\Api\StudentController;
+use App\Http\Controllers\StudentController;
 
 // --- 1. Rute Publik ---
 Route::get('/health', function () {
@@ -34,9 +35,16 @@ Route::get('example/search/{query}', [ApiExampleController::class, 'search']);
 
     // KELOMPOK SUPER ADMIN
     Route::middleware('role:super_admin')->group(function () {
-
         Route::apiResource('super-admins', SuperAdminController::class);
-
+        
+        // Company Management - CRUD
+        Route::apiResource('companies', CompanyController::class);
+        
+        // Company Verification Toggle
+        Route::patch('/companies/{id}/toggle-verify', [CompanyController::class, 'toggleVerify']);
+        
+        // Assign Company to Job
+        Route::post('/companies/{id}/assign-job', [CompanyController::class, 'assignToJob']);
     });
 
     // KELOMPOK PERUSAHAAN (COMPANY)
@@ -46,6 +54,10 @@ Route::get('example/search/{query}', [ApiExampleController::class, 'search']);
 
     // KELOMPOK SISWA (STUDENT)
     Route::middleware('role:student')->group(function () {
+        // View Companies (Read-Only)
+        Route::get('/companies', [CompanyController::class, 'index']);
+        Route::get('/companies/{id}', [CompanyController::class, 'show']);
+        
         // Route untuk melamar pekerjaan
         Route::post('/applications', [JobApplicationController::class, 'store']);
     });
