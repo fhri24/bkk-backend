@@ -3,24 +3,35 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PublicController;
+use App\Http\Controllers\StudentController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\JobController as AdminJobController;
-use App\Http\Controllers\Student\HomeController as StudentHomeController;
+
 use App\Http\Controllers\Student\PageController as StudentPageController;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-| PUBLIC ROUTES
+| PUBLIC ROUTES (Bisa diakses siapa saja)
 */
 
-// Halaman Landing Page
+// Halaman Landing Page & Beranda
 Route::get('/', [PublicController::class, 'beranda'])->name('public.home');
 Route::get('/beranda', [PublicController::class, 'beranda'])->name('public.beranda');
 Route::get('/home', function () {
     return redirect('/');
 });
+
+// Fitur Publik (Daftar & Detail)
+Route::get('/lowongan-kerja', [PublicController::class, 'lowongan'])->name('public.lowongan');
+Route::get('/lowongan/{id}', [PublicController::class, 'lowonganDetail'])->name('public.lowongan.detail'); // Tambahan rute detail publik
+
+Route::get('/berita-terbaru', [PublicController::class, 'berita'])->name('public.berita');
+Route::get('/berita/{id}', [PublicController::class, 'beritaDetail'])->name('public.berita.detail'); // Tambahan rute detail publik
+
+Route::get('/acara-mendatang', [PublicController::class, 'acara'])->name('public.acara');
+Route::get('/tracer-study', [PublicController::class, 'tracer'])->name('public.tracer');
 Route::get('/tutorial', [PublicController::class, 'tutorial'])->name('public.tutorial');
 
 // Authentication Routes (Login & Register)
@@ -37,34 +48,38 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 /*
 |--------------------------------------------------------------------------
-| STUDENT/PUBLIC ROUTES (Authenticated Students Only)
+| STUDENT ROUTES (Hanya untuk Siswa yang sudah Login)
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'student'])->prefix('student')->name('student.')->group(function () {
-    Route::get('/', [StudentHomeController::class, 'index'])->name('home');
-    Route::get('/profile', [StudentHomeController::class, 'profile'])->name('profile');
-    Route::get('/applications', [StudentHomeController::class, 'applications'])->name('applications');
     
-    // Pages
+    // Beranda Student
+    Route::get('/', [StudentController::class, 'index'])->name('home');
+    
+    // Profile
+    Route::get('/profile', [StudentController::class, 'profile'])->name('profile');
+    
+    // Fitur Student
     Route::get('/lowongan', [StudentPageController::class, 'lowongan'])->name('lowongan');
     Route::get('/lowongan/{id}', [StudentPageController::class, 'lowonganDetail'])->name('lowongan.detail');
     Route::get('/berita', [StudentPageController::class, 'berita'])->name('berita');
     Route::get('/berita/{id}', [StudentPageController::class, 'beritaDetail'])->name('berita.detail');
     Route::get('/acara', [StudentPageController::class, 'acara'])->name('acara');
     Route::get('/tracer', [StudentPageController::class, 'tracer'])->name('tracer');
-    Route::get('/profil', [StudentPageController::class, 'profil'])->name('profil');
+    
+    Route::get('/profil-lengkap', [StudentPageController::class, 'profil'])->name('profil.page');
 });
 
 /*
 |--------------------------------------------------------------------------
-| ADMIN ROUTES (Authenticated Admin/Company/BKK Only)
+| ADMIN ROUTES
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     
-    // Job Management
+
     Route::prefix('jobs')->name('jobs.')->group(function () {
         Route::get('/', [AdminJobController::class, 'index'])->name('index');
         Route::get('/create', [AdminJobController::class, 'create'])->name('create');

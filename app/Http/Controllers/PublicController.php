@@ -2,36 +2,90 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Models\Job;
 use App\Models\Event;
 use App\Models\News;
 
 class PublicController extends Controller
 {
+    /**
+     * Halaman Landing Page Utama
+     */
     public function beranda()
     {
-        // Get 3 featured active jobs
-        $featured_jobs = Job::where('status', 'active')
-            ->whereNotIn('visibility', ['private'])
-            ->latest('posted_at')
-            ->take(3)
-            ->with('company')
-            ->get();
+        $featured_jobs = collect();
+        try {
+            $featured_jobs = Job::latest()->take(3)->with('company')->get();
+        } catch (\Exception $e) {}
 
-        // Get 3 featured upcoming events
-        $featured_events = Event::where('is_published', true)
-            ->where('start_date', '>=', now())
-            ->latest('start_date')
-            ->take(3)
-            ->get();
+        $featured_events = collect();
+        try {
+            $featured_events = Event::latest()->take(3)->get();
+        } catch (\Exception $e) {}
 
-        // Get 3 featured published news
-        $featured_news = News::where('is_published', true)
-            ->latest('published_at')
-            ->take(3)
-            ->get();
+        $featured_news = collect();
+        try {
+            $featured_news = News::latest()->take(3)->with('author')->get();
+        } catch (\Exception $e) {}
 
         return view('public.beranda', compact('featured_jobs', 'featured_events', 'featured_news'));
+    }
+
+    /**
+     * Halaman List Lowongan (Publik)
+     */
+    public function lowongan()
+    {
+        $jobs = Job::latest()->with('company')->paginate(10);
+        return view('public.lowongan', compact('jobs'));
+    }
+
+    /**
+     * Halaman Detail Lowongan (Publik)
+     */
+    public function lowonganDetail($id)
+    {
+        $job = Job::with('company')->findOrFail($id);
+        return view('public.lowongan-detail', compact('job'));
+    }
+
+    /**
+     * Halaman List Berita (Publik)
+     */
+    public function berita()
+    {
+        $news = News::latest()->with('author')->paginate(10);
+        return view('public.berita', compact('news'));
+    }
+
+    /**
+     * Halaman Detail Berita (Publik)
+     */
+    public function beritaDetail($id)
+    {
+        // Mencari berita berdasarkan ID atau Slug, memuat relasi author
+        // Gunakan with(['author']) agar nama penulis tampil di detail
+        $news = News::with(['author'])->findOrFail($id);
+        
+        return view('public.berita-detail', compact('news'));
+    }
+
+    /**
+     * Halaman List Acara (Publik)
+     */
+    public function acara()
+    {
+        $events = Event::latest()->paginate(10);
+        return view('public.acara', compact('events'));
+    }
+
+    /**
+     * Halaman Tambahan
+     */
+    public function tracer()
+    {
+        return view('public.tracer');
     }
 
     public function tutorial()
