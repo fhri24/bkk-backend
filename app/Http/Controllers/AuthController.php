@@ -29,6 +29,12 @@ class AuthController extends Controller
             'nis' => 'nullable|string|max:20',
             'major' => 'nullable|string|max:100',
             'graduation_year' => 'nullable|integer|min:1995|max:2100',
+        ], [
+            'email.unique' => 'Email ini sudah terdaftar. Silakan gunakan email lain atau login di akun Anda.',
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'password.confirmed' => 'Kata sandi tidak cocok.',
+            'password.min' => 'Kata sandi minimal 6 karakter.',
         ]);
 
         // Cari role 'siswa'

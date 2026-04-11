@@ -14,3 +14,4 @@ class TracerStudyController extends Controller
     return view('admin.tracer.index', compact('reports'));
 }
 }
+ 
