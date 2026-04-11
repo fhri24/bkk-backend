@@ -7,6 +7,7 @@ use App\Models\Student;
 use App\Models\Job;
 use App\Models\Event;
 use App\Models\News;
+use Illuminate\Support\Facades\Auth;
 
 class StudentController extends Controller
 {
@@ -15,37 +16,55 @@ class StudentController extends Controller
      */
     public function index()
     {
-        // 1. Ambil Lowongan (Query disederhanakan agar tidak error kolom 'status')
+
+
         $featured_jobs = collect(); 
         try {
             $featured_jobs = Job::latest()->take(3)->with('company')->get();
-        } catch (\Exception $e) {
-            // Jika error kolom status, halaman tetap tampil walau lowongan kosong
-        }
+        } catch (\Exception $e) {}
 
-        // 2. Ambil Acara Unggulan (Try-catch agar aman jika tabel belum ada)
+
+
         $featured_events = collect();
         try {
             $featured_events = Event::latest()->take(3)->get();
         } catch (\Exception $e) {}
 
-        // 3. Ambil Berita Unggulan
+
         $featured_news = collect();
         try {
             $featured_news = News::latest()->take(3)->get();
         } catch (\Exception $e) {}
 
-        // Mengarah ke resources/views/student/home.blade.php sesuai screenshot folder kamu
+        
         return view('student.beranda', compact('featured_jobs', 'featured_events', 'featured_news'));
     }
 
     /**
      * Menampilkan Halaman Profil (Web)
      */
-    public function profile()
+    public function showProfile()
     {
-        // Mengarah ke resources/views/student/profile.blade.php
-        return view('student.profil');
+        // 1. Ambil data user yang sedang login
+        $user = Auth::user();
+
+        // 2. Ambil data detail student yang terhubung
+        $student = Student::where('user_id', $user->id)->first();
+
+        // 3. Proteksi jika data student tidak ditemukan
+        if (!$student) {
+            return redirect()->route('student.home')->with('error', 'Profil siswa tidak ditemukan.');
+        }
+
+        /** * 4. Inisialisasi variabel sebagai koleksi KOSONG.
+         * Tampilan akan otomatis menunjukkan "Belum ada data" sampai 
+         * kamu membuat fitur 'Simpan Lowongan' dan 'Lamar Pekerjaan'.
+         */
+        $applications = collect(); 
+        $saved_jobs = collect();   
+
+        // 5. Kirim semua variabel ke view student/profile.blade.php
+        return view('student.profile', compact('user', 'student', 'applications', 'saved_jobs'));
     }
 
     /**

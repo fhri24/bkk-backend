@@ -1,416 +1,424 @@
 <!doctype html>
 <html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BKK SMKN 1 Garut - Profil Pengguna</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="css/style.css" />
-  </head>
-  <body class="bg-slate-100 text-slate-900" data-page="profil">
-    <!-- Navigation -->
-    <nav class="bg-[#001f3f] text-white sticky top-0 z-[100] shadow-xl">
-      <div class="container mx-auto px-4 md:px-6">
-        <div class="flex justify-between items-center h-20">
-          <!-- Logo -->
-          <div class="flex items-center space-x-3 cursor-pointer" onclick="window.location.href = 'beranda.html'">
-            <div class="w-11 h-11 bg-white rounded-xl flex items-center justify-center shadow-lg">
-              <i class="fas fa-graduation-cap text-[#001f3f] text-xl"></i>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BKK SMKN 1 Garut - Profil Pengguna</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body class="bg-slate-100 text-slate-900" data-page="profil">
+  <!-- Navigation -->
+  <nav class="bg-[#001f3f] text-white sticky top-0 z-[100] shadow-xl">
+    <div class="container mx-auto px-4 md:px-6">
+      <div class="flex justify-between items-center h-20">
+        <!-- Logo -->
+        <div class="flex items-center space-x-3 cursor-pointer" onclick="window.location.href = 'beranda.html'">
+          <div class="w-11 h-11 bg-white rounded-xl flex items-center justify-center shadow-lg">
+            <i class="fas fa-graduation-cap text-[#001f3f] text-xl"></i>
+          </div>
+          <div>
+            <h1 class="font-extrabold text-xl tracking-tight leading-none">BKK SMKN 1</h1>
+            <p class="text-[10px] uppercase tracking-widest opacity-70">Garut Bermartabat</p>
+          </div>
+        </div>
+
+        <!-- Desktop Menu -->
+        <div class="hidden lg:flex space-x-8 text-sm font-semibold">
+          <a href="beranda.html" class="nav-btn transition hover:text-blue-400" id="nav-beranda">Beranda</a>
+          <a href="lowongan.html" class="nav-btn transition hover:text-blue-400" id="nav-lowongan">Lowongan</a>
+          <a href="acara.html" class="nav-btn transition hover:text-blue-400" id="nav-acara">Acara</a>
+          <a href="berita.html" class="nav-btn transition hover:text-blue-400" id="nav-berita">Berita</a>
+          <a href="tracer.html" class="nav-btn transition hover:text-blue-400" id="nav-tracer">Tracer Study</a>
+        </div>
+
+        <!-- Auth Buttons -->
+        <div class="hidden lg:flex items-center space-x-4">
+          <button onclick="logoutUser()" class="text-sm font-bold hover:text-blue-400 transition">Keluar</button>
+          <a href="profil.html"
+            class="bg-blue-600 hover:bg-blue-700 px-7 py-2.5 rounded-full text-sm font-bold shadow-lg transition transform hover:scale-105 active:scale-95">Profil</a>
+        </div>
+
+        <!-- Mobile Toggle -->
+        <button class="lg:hidden text-2xl" onclick="toggleMobileMenu()">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden lg:hidden bg-[#001f3f] border-t border-white/10 px-6 py-6 space-y-4">
+      <a href="beranda.html" class="block w-full text-left py-2 font-semibold">Beranda</a>
+      <a href="lowongan.html" class="block w-full text-left py-2 font-semibold">Lowongan</a>
+      <a href="acara.html" class="block w-full text-left py-2 font-semibold">Acara</a>
+      <a href="berita.html" class="block w-full text-left py-2 font-semibold">Berita</a>
+      <a href="tracer.html" class="block w-full text-left py-2 font-semibold">Tracer Study</a>
+      <div class="pt-4 border-t border-white/10 flex flex-col space-y-3">
+        <button onclick="logoutUser()"
+          class="w-full bg-red-600 py-3 rounded-xl font-bold text-center hover:bg-red-700 transition">Keluar</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="page-transition container mx-auto px-4 py-12">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Sidebar Profile Card -->
+      <div class="lg:col-span-1">
+        <div class="bg-white rounded-2xl shadow-lg p-8 text-center sticky top-24">
+          <!-- Profile Picture -->
+          <div
+            class="w-24 h-24 mx-auto mb-4 rounded-full bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center text-white text-4xl shadow-lg">
+            <i class="fas fa-user"></i>
+          </div>
+
+          <!-- User Name -->
+          <h2 id="profile-name" class="text-2xl font-extrabold text-slate-900 mb-1">Alumni SMKN 1</h2>
+          <p id="profile-nik" class="text-sm text-slate-500 font-bold mb-6">NIK: -</p>
+
+          <!-- Status Badge -->
+          <div class="inline-block bg-green-100 text-green-700 px-4 py-2 rounded-full text-xs font-bold mb-6"><i
+              class="fas fa-check-circle mr-2"></i>Terverifikasi</div>
+
+          <!-- Quick Stats -->
+          <div class="space-y-3 border-t border-slate-200 pt-6">
+            <div class="text-left">
+              <p class="text-xs text-slate-500 font-bold uppercase">Lowongan Tersimpan</p>
+              <p id="saved-jobs-count" class="text-2xl font-extrabold text-blue-600">0</p>
+            </div>
+            <div class="text-left">
+              <p class="text-xs text-slate-500 font-bold uppercase">Lamaran Diajukan</p>
+              <p id="applied-count" class="text-2xl font-extrabold text-blue-600">0</p>
+            </div>
+            <div class="text-left">
+              <p class="text-xs text-slate-500 font-bold uppercase">Akun Dibuat</p>
+              <p id="created-date" class="text-sm font-bold text-slate-600">Hari ini</p>
+            </div>
+          </div>
+
+          <!-- Edit Profile Button -->
+          <button onclick="openEditModal()"
+            class="w-full mt-8 bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition"><i
+              class="fas fa-edit mr-2"></i>Edit Profil</button>
+        </div>
+      </div>
+
+      <!-- Main Profile Content -->
+      <div class="lg:col-span-2 space-y-6">
+        <!-- Personal Information -->
+        <div class="bg-white rounded-2xl shadow-lg p-8">
+          <h3 class="text-xl font-extrabold text-slate-900 mb-6 flex items-center"><i
+              class="fas fa-user-circle text-blue-600 mr-3"></i>Informasi Pribadi</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <p class="text-xs font-bold text-slate-500 uppercase mb-2">Nama Lengkap</p>
+              <p id="info-name" class="text-lg font-bold text-slate-900">Alumni SMKN 1</p>
             </div>
             <div>
-              <h1 class="font-extrabold text-xl tracking-tight leading-none">BKK SMKN 1</h1>
-              <p class="text-[10px] uppercase tracking-widest opacity-70">Garut Bermartabat</p>
+              <p class="text-xs font-bold text-slate-500 uppercase mb-2">NIK / NIS</p>
+              <p id="info-nik" class="text-lg font-bold text-slate-900">-</p>
             </div>
-          </div>
-
-          <!-- Desktop Menu -->
-          <div class="hidden lg:flex space-x-8 text-sm font-semibold">
-            <a href="beranda.html" class="nav-btn transition hover:text-blue-400" id="nav-beranda">Beranda</a>
-            <a href="lowongan.html" class="nav-btn transition hover:text-blue-400" id="nav-lowongan">Lowongan</a>
-            <a href="acara.html" class="nav-btn transition hover:text-blue-400" id="nav-acara">Acara</a>
-            <a href="berita.html" class="nav-btn transition hover:text-blue-400" id="nav-berita">Berita</a>
-            <a href="tracer.html" class="nav-btn transition hover:text-blue-400" id="nav-tracer">Tracer Study</a>
-          </div>
-
-          <!-- Auth Buttons -->
-          <div class="hidden lg:flex items-center space-x-4">
-            <button onclick="logoutUser()" class="text-sm font-bold hover:text-blue-400 transition">Keluar</button>
-            <a href="profil.html" class="bg-blue-600 hover:bg-blue-700 px-7 py-2.5 rounded-full text-sm font-bold shadow-lg transition transform hover:scale-105 active:scale-95">Profil</a>
-          </div>
-
-          <!-- Mobile Toggle -->
-          <button class="lg:hidden text-2xl" onclick="toggleMobileMenu()">
-            <i class="fas fa-bars"></i>
-          </button>
-        </div>
-      </div>
-
-      <!-- Mobile Menu -->
-      <div id="mobile-menu" class="hidden lg:hidden bg-[#001f3f] border-t border-white/10 px-6 py-6 space-y-4">
-        <a href="beranda.html" class="block w-full text-left py-2 font-semibold">Beranda</a>
-        <a href="lowongan.html" class="block w-full text-left py-2 font-semibold">Lowongan</a>
-        <a href="acara.html" class="block w-full text-left py-2 font-semibold">Acara</a>
-        <a href="berita.html" class="block w-full text-left py-2 font-semibold">Berita</a>
-        <a href="tracer.html" class="block w-full text-left py-2 font-semibold">Tracer Study</a>
-        <div class="pt-4 border-t border-white/10 flex flex-col space-y-3">
-          <a id="mobile-auth-btn" href="auth.html" class="hidden w-full bg-blue-600 py-3 rounded-xl font-bold text-center">Masuk Ke Akun</a>
-          <button id="mobile-logout-btn" onclick="logout()" class="w-full bg-red-600 py-3 rounded-xl font-bold text-center hover:bg-red-700">Logout</button>
-        </div>
-      </div>
-    </nav>
-
-    <!-- Main Content -->
-    <div class="page-transition container mx-auto px-4 py-12">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Sidebar Profile Card -->
-        <div class="lg:col-span-1">
-          <div class="bg-white rounded-2xl shadow-lg p-8 text-center sticky top-24">
-            <!-- Profile Picture -->
-            <div class="w-24 h-24 mx-auto mb-4 rounded-full bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center text-white text-4xl shadow-lg">
-              <i class="fas fa-user"></i>
+            <div>
+              <p class="text-xs font-bold text-slate-500 uppercase mb-2">Email</p>
+              <p id="info-email" class="text-lg font-bold text-slate-900">-</p>
             </div>
-
-            <!-- User Name -->
-            <h2 id="profile-name" class="text-2xl font-extrabold text-slate-900 mb-1">Alumni SMKN 1</h2>
-            <p id="profile-nik" class="text-sm text-slate-500 font-bold mb-6">NIK: -</p>
-
-            <!-- Status Badge -->
-            <div class="inline-block bg-green-100 text-green-700 px-4 py-2 rounded-full text-xs font-bold mb-6"><i class="fas fa-check-circle mr-2"></i>Terverifikasi</div>
-
-            <!-- Quick Stats -->
-            <div class="space-y-3 border-t border-slate-200 pt-6">
-              <div class="text-left">
-                <p class="text-xs text-slate-500 font-bold uppercase">Lowongan Tersimpan</p>
-                <p id="saved-jobs-count" class="text-2xl font-extrabold text-blue-600">0</p>
-              </div>
-              <div class="text-left">
-                <p class="text-xs text-slate-500 font-bold uppercase">Lamaran Diajukan</p>
-                <p id="applied-count" class="text-2xl font-extrabold text-blue-600">0</p>
-              </div>
-              <div class="text-left">
-                <p class="text-xs text-slate-500 font-bold uppercase">Akun Dibuat</p>
-                <p id="created-date" class="text-sm font-bold text-slate-600">Hari ini</p>
-              </div>
+            <div>
+              <p class="text-xs font-bold text-slate-500 uppercase mb-2">No. Handphone</p>
+              <p id="info-phone" class="text-lg font-bold text-slate-900">-</p>
             </div>
-
-            <!-- Edit Profile Button -->
-            <button onclick="openEditModal()" class="w-full mt-8 bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition"><i class="fas fa-edit mr-2"></i>Edit Profil</button>
           </div>
         </div>
 
-        <!-- Main Profile Content -->
-        <div class="lg:col-span-2 space-y-6">
-          <!-- Personal Information -->
-          <div class="bg-white rounded-2xl shadow-lg p-8">
-            <h3 class="text-xl font-extrabold text-slate-900 mb-6 flex items-center"><i class="fas fa-user-circle text-blue-600 mr-3"></i>Informasi Pribadi</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <p class="text-xs font-bold text-slate-500 uppercase mb-2">Nama Lengkap</p>
-                <p id="info-name" class="text-lg font-bold text-slate-900">Alumni SMKN 1</p>
-              </div>
-              <div>
-                <p class="text-xs font-bold text-slate-500 uppercase mb-2">NIK / NIS</p>
-                <p id="info-nik" class="text-lg font-bold text-slate-900">-</p>
-              </div>
-              <div>
-                <p class="text-xs font-bold text-slate-500 uppercase mb-2">Email</p>
-                <p id="info-email" class="text-lg font-bold text-slate-900">-</p>
-              </div>
-              <div>
-                <p class="text-xs font-bold text-slate-500 uppercase mb-2">No. Handphone</p>
-                <p id="info-phone" class="text-lg font-bold text-slate-900">-</p>
-              </div>
+        <!-- Education Information -->
+        <div class="bg-white rounded-2xl shadow-lg p-8">
+          <h3 class="text-xl font-extrabold text-slate-900 mb-6 flex items-center"><i
+              class="fas fa-graduation-cap text-blue-600 mr-3"></i>Informasi Pendidikan</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <p class="text-xs font-bold text-slate-500 uppercase mb-2">Sekolah</p>
+              <p class="text-lg font-bold text-slate-900">SMKN 1 Garut</p>
+            </div>
+            <div>
+              <p class="text-xs font-bold text-slate-500 uppercase mb-2">Jurusan</p>
+              <p id="info-jurusan" class="text-lg font-bold text-slate-900">-</p>
+            </div>
+            <div>
+              <p class="text-xs font-bold text-slate-500 uppercase mb-2">Tahun Lulus</p>
+              <p id="info-tahun" class="text-lg font-bold text-slate-900">-</p>
+            </div>
+            <div>
+              <p class="text-xs font-bold text-slate-500 uppercase mb-2">Status Pekerjaan</p>
+              <p class="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-bold">Mencari
+                Pekerjaan</p>
             </div>
           </div>
+        </div>
 
-          <!-- Education Information -->
-          <div class="bg-white rounded-2xl shadow-lg p-8">
-            <h3 class="text-xl font-extrabold text-slate-900 mb-6 flex items-center"><i class="fas fa-graduation-cap text-blue-600 mr-3"></i>Informasi Pendidikan</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <p class="text-xs font-bold text-slate-500 uppercase mb-2">Sekolah</p>
-                <p class="text-lg font-bold text-slate-900">SMKN 1 Garut</p>
-              </div>
-              <div>
-                <p class="text-xs font-bold text-slate-500 uppercase mb-2">Jurusan</p>
-                <p id="info-jurusan" class="text-lg font-bold text-slate-900">-</p>
-              </div>
-              <div>
-                <p class="text-xs font-bold text-slate-500 uppercase mb-2">Tahun Lulus</p>
-                <p id="info-tahun" class="text-lg font-bold text-slate-900">-</p>
-              </div>
-              <div>
-                <p class="text-xs font-bold text-slate-500 uppercase mb-2">Status Pekerjaan</p>
-                <p class="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-bold">Mencari Pekerjaan</p>
-              </div>
+        <!-- Job Applications -->
+        <div class="bg-white rounded-2xl shadow-lg p-8">
+          <h3 class="text-xl font-extrabold text-slate-900 mb-6 flex items-center"><i
+              class="fas fa-briefcase text-blue-600 mr-3"></i>Lamaran Pekerjaan Terbaru</h3>
+          <div id="applications-list" class="space-y-4">
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-center">
+              <p class="text-slate-500 text-sm">Belum ada lamaran pekerjaan</p>
             </div>
           </div>
+        </div>
 
-          <!-- Job Applications -->
-          <div class="bg-white rounded-2xl shadow-lg p-8">
-            <h3 class="text-xl font-extrabold text-slate-900 mb-6 flex items-center"><i class="fas fa-briefcase text-blue-600 mr-3"></i>Lamaran Pekerjaan Terbaru</h3>
-            <div id="applications-list" class="space-y-4">
-              <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-center">
-                <p class="text-slate-500 text-sm">Belum ada lamaran pekerjaan</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Saved Jobs -->
-          <div class="bg-white rounded-2xl shadow-lg p-8">
-            <h3 class="text-xl font-extrabold text-slate-900 mb-6 flex items-center"><i class="fas fa-bookmark text-blue-600 mr-3"></i>Lowongan Tersimpan</h3>
-            <div id="saved-jobs-list" class="space-y-4">
-              <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-center">
-                <p class="text-slate-500 text-sm">Belum ada lowongan tersimpan</p>
-              </div>
+        <!-- Saved Jobs -->
+        <div class="bg-white rounded-2xl shadow-lg p-8">
+          <h3 class="text-xl font-extrabold text-slate-900 mb-6 flex items-center"><i
+              class="fas fa-bookmark text-blue-600 mr-3"></i>Lowongan Tersimpan</h3>
+          <div id="saved-jobs-list" class="space-y-4">
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-center">
+              <p class="text-slate-500 text-sm">Belum ada lowongan tersimpan</p>
             </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Edit Profile Modal -->
-    <div id="editModal" class="modal">
-      <div class="modal-content max-w-2xl">
-        <div class="bg-gradient-to-r from-blue-600 to-blue-700 p-8 text-white flex justify-between items-center">
-          <h2 class="text-2xl font-extrabold">Edit Profil</h2>
-          <button onclick="closeEditModal()" class="text-white text-2xl hover:text-blue-200 transition">&times;</button>
+  <!-- Edit Profile Modal -->
+  <div id="editModal" class="modal">
+    <div class="modal-content max-w-2xl">
+      <div class="bg-gradient-to-r from-blue-600 to-blue-700 p-8 text-white flex justify-between items-center">
+        <h2 class="text-2xl font-extrabold">Edit Profil</h2>
+        <button onclick="closeEditModal()" class="text-white text-2xl hover:text-blue-200 transition">&times;</button>
+      </div>
+
+      <div class="p-8 space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">Nama
+              Lengkap</label>
+            <input type="text" id="edit-name" placeholder="Nama Lengkap"
+              class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" />
+          </div>
+          <div>
+            <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">NIK / NIS</label>
+            <input type="text" id="edit-nik" placeholder="NIK / NIS"
+              class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" />
+          </div>
+          <div>
+            <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">Email</label>
+            <input type="email" id="edit-email" placeholder="Email"
+              class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" />
+          </div>
+          <div>
+            <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">No.
+              Handphone</label>
+            <input type="tel" id="edit-phone" placeholder="No. Handphone"
+              class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" />
+          </div>
+          <div>
+            <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">Jurusan</label>
+            <select id="edit-jurusan"
+              class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600">
+              <option value="">Pilih Jurusan</option>
+              <option value="Teknik Otomotif">Teknik Otomotif</option>
+              <option value="Teknik Komputer">Teknik Komputer</option>
+              <option value="Tata Boga">Tata Boga</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">Tahun
+              Lulus</label>
+            <input type="number" id="edit-tahun" placeholder="Tahun Lulus"
+              class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" />
+          </div>
         </div>
 
-        <div class="p-8 space-y-6">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">Nama Lengkap</label>
-              <input type="text" id="edit-name" placeholder="Nama Lengkap" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" />
-            </div>
-            <div>
-              <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">NIK / NIS</label>
-              <input type="text" id="edit-nik" placeholder="NIK / NIS" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" />
-            </div>
-            <div>
-              <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">Email</label>
-              <input type="email" id="edit-email" placeholder="Email" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" />
-            </div>
-            <div>
-              <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">No. Handphone</label>
-              <input type="tel" id="edit-phone" placeholder="No. Handphone" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" />
-            </div>
-            <div>
-              <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">Jurusan</label>
-              <select id="edit-jurusan" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600">
-                <option value="">Pilih Jurusan</option>
-                <option value="Teknik Otomotif">Teknik Otomotif</option>
-                <option value="Teknik Komputer">Teknik Komputer</option>
-                <option value="Tata Boga">Tata Boga</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">Tahun Lulus</label>
-              <input type="number" id="edit-tahun" placeholder="Tahun Lulus" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" />
-            </div>
-          </div>
-
-          <div class="flex gap-3">
-            <button onclick="saveProfileChanges()" class="flex-1 bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition">Simpan Perubahan</button>
-            <button onclick="closeEditModal()" class="flex-1 bg-slate-200 text-slate-800 px-6 py-3 rounded-xl font-bold hover:bg-slate-300 transition">Batal</button>
-          </div>
+        <div class="flex gap-3">
+          <button onclick="saveProfileChanges()"
+            class="flex-1 bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition">Simpan
+            Perubahan</button>
+          <button onclick="closeEditModal()"
+            class="flex-1 bg-slate-200 text-slate-800 px-6 py-3 rounded-xl font-bold hover:bg-slate-300 transition">Batal</button>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Footer -->
-    <footer class="bg-[#001f3f] text-slate-300 pt-20 pb-10 mt-20">
-      <div class="container mx-auto px-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
-          <div>
-            <div class="flex items-center space-x-3 mb-6">
-              <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-                <i class="fas fa-briefcase text-[#001f3f]"></i>
-              </div>
-              <h2 class="text-white font-bold text-xl">BKK SMKN 1</h2>
+  <!-- Footer -->
+  <footer class="bg-[#001f3f] text-slate-300 pt-20 pb-10 mt-20">
+    <div class="container mx-auto px-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+        <div>
+          <div class="flex items-center space-x-3 mb-6">
+            <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+              <i class="fas fa-briefcase text-[#001f3f]"></i>
             </div>
-            <p class="text-sm leading-relaxed opacity-80 mb-6">Pusat pengembangan karir dan penyaluran tenaga kerja profesional khusus alumni SMKN 1 Garut menuju Indonesia Emas.</p>
-            <div class="flex space-x-4">
-              <a href="#" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-blue-600 transition"><i class="fab fa-instagram"></i></a>
-              <a href="#" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-blue-600 transition"><i class="fab fa-facebook-f"></i></a>
-              <a href="#" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-blue-600 transition"><i class="fab fa-linkedin-in"></i></a>
-            </div>
+            <h2 class="text-white font-bold text-xl">BKK SMKN 1</h2>
           </div>
-          <div>
-            <h3 class="text-white font-bold mb-6 text-lg">Tautan Cepat</h3>
-            <ul class="space-y-4 text-sm">
-              <li>
-                <a href="lowongan.html" class="hover:text-blue-400 transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i> Lowongan Kerja</a>
-              </li>
-              <li>
-                <a href="acara.html" class="hover:text-blue-400 transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i> Jadwal Rekrutmen</a>
-              </li>
-              <li>
-                <a href="tutorial-pendaftaran.html" class="hover:text-blue-400 transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i> Tutorial Pendaftaran</a>
-              </li>
-              <li>
-                <a href="tracer.html" class="hover:text-blue-400 transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i> Tracer Study</a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h3 class="text-white font-bold mb-6 text-lg">Hubungi Kami</h3>
-            <ul class="space-y-4 text-sm">
-              <li class="flex items-start">
-                <i class="fas fa-map-marker-alt mt-1 mr-3 text-blue-500"></i>
-                <span>Jl. Cimanuk No. 309 A, Tarogong Kidul, Garut, Jawa Barat 44151</span>
-              </li>
-              <li class="flex items-center">
-                <i class="fas fa-phone mr-3 text-blue-500"></i>
-                <span>(0262) 233796</span>
-              </li>
-              <li class="flex items-center">
-                <i class="fas fa-envelope mr-3 text-blue-500"></i>
-                <span>bkk@smkn1garut.sch.id</span>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h3 class="text-white font-bold mb-6 text-lg">Newsletter</h3>
-            <p class="text-xs mb-4 opacity-70">Dapatkan info lowongan terbaru langsung di email Anda.</p>
-            <div class="flex">
-              <input type="email" placeholder="Email Anda" class="bg-white/5 border border-white/10 px-4 py-2.5 rounded-l-lg w-full focus:outline-none focus:border-blue-500" />
-              <button class="bg-blue-600 px-4 rounded-r-lg hover:bg-blue-700"><i class="fas fa-paper-plane"></i></button>
-            </div>
+          <p class="text-sm leading-relaxed opacity-80 mb-6">Pusat pengembangan karir dan penyaluran tenaga kerja
+            profesional khusus alumni SMKN 1 Garut menuju Indonesia Emas.</p>
+          <div class="flex space-x-4">
+            <a href="#"
+              class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-blue-600 transition"><i
+                class="fab fa-instagram"></i></a>
+            <a href="#"
+              class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-blue-600 transition"><i
+                class="fab fa-facebook-f"></i></a>
+            <a href="#"
+              class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-blue-600 transition"><i
+                class="fab fa-linkedin-in"></i></a>
           </div>
         </div>
-        <div class="border-t border-white/10 pt-8 text-center text-xs opacity-50">&copy; 2024 Sistem Informasi BKK Sekolah Menengah Kejuruan Negeri 1 Garut. Seluruh Hak Cipta Dilindungi.</div>
+        <div>
+          <h3 class="text-white font-bold mb-6 text-lg">Tautan Cepat</h3>
+          <ul class="space-y-4 text-sm">
+            <li>
+              <a href="lowongan.html" class="hover:text-blue-400 transition flex items-center"><i
+                  class="fas fa-chevron-right text-[10px] mr-2"></i> Lowongan Kerja</a>
+            </li>
+            <li>
+              <a href="acara.html" class="hover:text-blue-400 transition flex items-center"><i
+                  class="fas fa-chevron-right text-[10px] mr-2"></i> Jadwal Rekrutmen</a>
+            </li>
+            <li>
+              <a href="auth.html" class="hover:text-blue-400 transition flex items-center"><i
+                  class="fas fa-chevron-right text-[10px] mr-2"></i> Tutorial Pendaftaran</a>
+            </li>
+            <li>
+              <a href="tracer.html" class="hover:text-blue-400 transition flex items-center"><i
+                  class="fas fa-chevron-right text-[10px] mr-2"></i> Tracer Study</a>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-white font-bold mb-6 text-lg">Hubungi Kami</h3>
+          <ul class="space-y-4 text-sm">
+            <li class="flex items-start">
+              <i class="fas fa-map-marker-alt mt-1 mr-3 text-blue-500"></i>
+              <span>Jl. Cimanuk No. 309 A, Tarogong Kidul, Garut, Jawa Barat 44151</span>
+            </li>
+            <li class="flex items-center">
+              <i class="fas fa-phone mr-3 text-blue-500"></i>
+              <span>(0262) 233796</span>
+            </li>
+            <li class="flex items-center">
+              <i class="fas fa-envelope mr-3 text-blue-500"></i>
+              <span>bkk@smkn1garut.sch.id</span>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-white font-bold mb-6 text-lg">Newsletter</h3>
+          <p class="text-xs mb-4 opacity-70">Dapatkan info lowongan terbaru langsung di email Anda.</p>
+          <div class="flex">
+            <input type="email" placeholder="Email Anda"
+              class="bg-white/5 border border-white/10 px-4 py-2.5 rounded-l-lg w-full focus:outline-none focus:border-blue-500" />
+            <button class="bg-blue-600 px-4 rounded-r-lg hover:bg-blue-700"><i class="fas fa-paper-plane"></i></button>
+          </div>
+        </div>
       </div>
-    </footer>
+      <div class="border-t border-white/10 pt-8 text-center text-xs opacity-50">&copy; 2024 Sistem Informasi BKK Sekolah
+        Menengah Kejuruan Negeri 1 Garut. Seluruh Hak Cipta Dilindungi.</div>
+    </div>
+  </footer>
 
-    <style>
-      .modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        animation: fadeIn 0.3s ease-in-out;
+  <style>
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .modal.show {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 24px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: slideUp 0.3s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
       }
 
-      .modal.show {
-        display: flex;
-        align-items: center;
-        justify-content: center;
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(50px);
+        opacity: 0;
       }
 
-      .modal-content {
-        background: white;
-        border-radius: 24px;
-        width: 90%;
-        max-width: 500px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        animation: slideUp 0.3s ease-out;
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+  </style>
+
+  <script src="js/utils.js"></script>
+  <script>
+    // Check if user is logged in
+    window.addEventListener("load", function () {
+      if (!localStorage.getItem("isLoggedIn")) {
+        window.location.href = "auth.html";
+        return;
+      }
+      loadProfileData();
+      loadSavedJobs();
+    });
+
+    function loadProfileData() {
+      const name = localStorage.getItem("userName") || "Alumni SMKN 1";
+      const nik = localStorage.getItem("userNIK") || "-";
+      const email = localStorage.getItem("userEmail") || "-";
+
+      document.getElementById("profile-name").innerText = name;
+      document.getElementById("profile-nik").innerText = `NIK: ${nik}`;
+      document.getElementById("info-name").innerText = name;
+      document.getElementById("info-nik").innerText = nik;
+      document.getElementById("info-email").innerText = email;
+      document.getElementById("info-phone").innerText = localStorage.getItem("userPhone") || "-";
+      document.getElementById("info-jurusan").innerText = localStorage.getItem("userJurusan") || "-";
+      document.getElementById("info-tahun").innerText = localStorage.getItem("userTahun") || "-";
+
+      document.getElementById("edit-name").value = name;
+      document.getElementById("edit-nik").value = nik;
+      document.getElementById("edit-email").value = email;
+      document.getElementById("edit-phone").value = localStorage.getItem("userPhone") || "";
+      document.getElementById("edit-jurusan").value = localStorage.getItem("userJurusan") || "";
+      document.getElementById("edit-tahun").value = localStorage.getItem("userTahun") || "";
+    }
+
+    function loadSavedJobs() {
+      const savedJobs = JSON.parse(localStorage.getItem("savedJobs")) || [];
+      document.getElementById("saved-jobs-count").innerText = savedJobs.length;
+
+      const savedList = document.getElementById("saved-jobs-list");
+      if (savedJobs.length === 0) {
+        savedList.innerHTML = '<div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-center"><p class="text-slate-500 text-sm">Belum ada lowongan tersimpan</p></div>';
+        return;
       }
 
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-        }
-        to {
-          opacity: 1;
-        }
-      }
-
-      @keyframes slideUp {
-        from {
-          transform: translateY(50px);
-          opacity: 0;
-        }
-        to {
-          transform: translateY(0);
-          opacity: 1;
-        }
-      }
-    </style>
-
-    <script src="js/utils.js"></script>
-    <script>
-      function logout() {
-        if (confirm("Apakah Anda yakin ingin logout?")) {
-          localStorage.removeItem("isLoggedIn");
-          localStorage.removeItem("userName");
-          localStorage.removeItem("userNIK");
-          localStorage.removeItem("userEmail");
-          localStorage.removeItem("loginProvider");
-          window.location.href = window.location.href;
-        }
-      }
-
-      function updateAuthUI() {
-        const isLoggedIn = localStorage.getItem("isLoggedIn");
-        const userName = localStorage.getItem("userName") || "-";
-        const userEmail = localStorage.getItem("userEmail") || "-";
-
-        const userMenu = document.getElementById("user-menu");
-        const mobileLogoutBtn = document.getElementById("mobile-logout-btn");
-
-        if (isLoggedIn) {
-          if (userMenu) userMenu.classList.remove("hidden");
-          if (mobileLogoutBtn) mobileLogoutBtn.classList.remove("hidden");
-          document.getElementById("user-name-nav").innerText = userName;
-          document.getElementById("user-email-nav").innerText = userEmail;
-        } else {
-          if (userMenu) userMenu.classList.add("hidden");
-          if (mobileLogoutBtn) mobileLogoutBtn.classList.add("hidden");
-        }
-      }
-
-      // Check if user is logged in
-      window.addEventListener("load", function () {
-        if (!localStorage.getItem("isLoggedIn")) {
-          window.location.href = "auth.html";
-          return;
-        }
-        loadProfileData();
-        loadSavedJobs();
-        updateAuthUI();
-      });
-
-      function loadProfileData() {
-        const name = localStorage.getItem("userName") || "Alumni SMKN 1";
-        const nik = localStorage.getItem("userNIK") || "-";
-        const email = localStorage.getItem("userEmail") || "-";
-
-        document.getElementById("profile-name").innerText = name;
-        document.getElementById("profile-nik").innerText = `NIK: ${nik}`;
-        document.getElementById("info-name").innerText = name;
-        document.getElementById("info-nik").innerText = nik;
-        document.getElementById("info-email").innerText = email;
-        document.getElementById("info-phone").innerText = localStorage.getItem("userPhone") || "-";
-        document.getElementById("info-jurusan").innerText = localStorage.getItem("userJurusan") || "-";
-        document.getElementById("info-tahun").innerText = localStorage.getItem("userTahun") || "-";
-
-        document.getElementById("edit-name").value = name;
-        document.getElementById("edit-nik").value = nik;
-        document.getElementById("edit-email").value = email;
-        document.getElementById("edit-phone").value = localStorage.getItem("userPhone") || "";
-        document.getElementById("edit-jurusan").value = localStorage.getItem("userJurusan") || "";
-        document.getElementById("edit-tahun").value = localStorage.getItem("userTahun") || "";
-      }
-
-      function loadSavedJobs() {
-        const savedJobs = JSON.parse(localStorage.getItem("savedJobs")) || [];
-        document.getElementById("saved-jobs-count").innerText = savedJobs.length;
-
-        const savedList = document.getElementById("saved-jobs-list");
-        if (savedJobs.length === 0) {
-          savedList.innerHTML = '<div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-center"><p class="text-slate-500 text-sm">Belum ada lowongan tersimpan</p></div>';
-          return;
-        }
-
-        savedList.innerHTML = savedJobs
-          .map(
-            (job) => `
+      savedList.innerHTML = savedJobs
+        .map(
+          (job) => `
           <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex justify-between items-center">
             <div>
               <p class="font-bold text-slate-900">${job}</p>
@@ -421,63 +429,64 @@
             </button>
           </div>
         `,
-          )
-          .join("");
+        )
+        .join("");
+    }
+
+    function removeSavedJob(jobName) {
+      let savedJobs = JSON.parse(localStorage.getItem("savedJobs")) || [];
+      savedJobs = savedJobs.filter((job) => job !== jobName);
+      localStorage.setItem("savedJobs", JSON.stringify(savedJobs));
+      loadSavedJobs();
+    }
+
+    function openEditModal() {
+      document.getElementById("editModal").classList.add("show");
+    }
+
+    function closeEditModal() {
+      document.getElementById("editModal").classList.remove("show");
+    }
+
+    function saveProfileChanges() {
+      const name = document.getElementById("edit-name").value;
+      const nik = document.getElementById("edit-nik").value;
+      const email = document.getElementById("edit-email").value;
+      const phone = document.getElementById("edit-phone").value;
+      const jurusan = document.getElementById("edit-jurusan").value;
+      const tahun = document.getElementById("edit-tahun").value;
+
+      if (name && nik && email) {
+        localStorage.setItem("userName", name);
+        localStorage.setItem("userNIK", nik);
+        localStorage.setItem("userEmail", email);
+        localStorage.setItem("userPhone", phone);
+        localStorage.setItem("userJurusan", jurusan);
+        localStorage.setItem("userTahun", tahun);
+
+        loadProfileData();
+        closeEditModal();
+        alert("Profil berhasil diperbarui!");
+      } else {
+        alert("Harap isi semua field yang diperlukan!");
       }
+    }
 
-      function removeSavedJob(jobName) {
-        let savedJobs = JSON.parse(localStorage.getItem("savedJobs")) || [];
-        savedJobs = savedJobs.filter((job) => job !== jobName);
-        localStorage.setItem("savedJobs", JSON.stringify(savedJobs));
-        loadSavedJobs();
+    function logoutUser() {
+      localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("userName");
+      localStorage.removeItem("userNIK");
+      localStorage.removeItem("userEmail");
+      window.location.href = "auth.html";
+    }
+
+    // Close modal when clicking outside
+    document.getElementById("editModal").addEventListener("click", function (e) {
+      if (e.target === this) {
+        closeEditModal();
       }
+    });
+  </script>
+</body>
 
-      function openEditModal() {
-        document.getElementById("editModal").classList.add("show");
-      }
-
-      function closeEditModal() {
-        document.getElementById("editModal").classList.remove("show");
-      }
-
-      function saveProfileChanges() {
-        const name = document.getElementById("edit-name").value;
-        const nik = document.getElementById("edit-nik").value;
-        const email = document.getElementById("edit-email").value;
-        const phone = document.getElementById("edit-phone").value;
-        const jurusan = document.getElementById("edit-jurusan").value;
-        const tahun = document.getElementById("edit-tahun").value;
-
-        if (name && nik && email) {
-          localStorage.setItem("userName", name);
-          localStorage.setItem("userNIK", nik);
-          localStorage.setItem("userEmail", email);
-          localStorage.setItem("userPhone", phone);
-          localStorage.setItem("userJurusan", jurusan);
-          localStorage.setItem("userTahun", tahun);
-
-          loadProfileData();
-          closeEditModal();
-          alert("Profil berhasil diperbarui!");
-        } else {
-          alert("Harap isi semua field yang diperlukan!");
-        }
-      }
-
-      function logout() {
-        localStorage.removeItem("isLoggedIn");
-        localStorage.removeItem("userName");
-        localStorage.removeItem("userNIK");
-        localStorage.removeItem("userEmail");
-        window.location.href = "auth.html";
-      }
-
-      // Close modal when clicking outside
-      document.getElementById("editModal").addEventListener("click", function (e) {
-        if (e.target === this) {
-          closeEditModal();
-        }
-      });
-    </script>
-  </body>
 </html>

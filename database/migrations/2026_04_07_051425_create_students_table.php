@@ -12,20 +12,25 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('students', function (Blueprint $table) {
-            // Kita gunakan student_id sebagai Primary Key agar sinkron dengan Job Applications
+            // Kita gunakan student_id sebagai Primary Key
             $table->id('student_id'); 
             
-            // Relasi ke tabel users (Polymorphic)
+            // Relasi ke tabel users
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             
-            // Data Identitas (Gabungan dari versi Student & Siswa)
+            // Data Identitas
             $table->string('nis')->unique();
             $table->string('full_name');
-            $table->enum('gender', ['L', 'P']); 
-            $table->string('birth_info')->nullable(); // Contoh: "Jakarta, 01-01-2005"
+
+            // --- PERBAIKAN DI SINI ---
+            // Kita ubah menjadi nullable agar tidak error jika saat daftar gender belum diisi
+            $table->string('gender')->nullable(); 
+            // Atau jika tetap ingin enum, gunakan: $table->enum('gender', ['L', 'P'])->nullable();
+            
+            $table->string('birth_info')->nullable(); 
             
             // Data Akademik
-            $table->string('major'); // Jurusan
+            $table->string('major'); 
             $table->year('graduation_year');
             $table->boolean('alumni_flag')->default(false);
             
@@ -34,8 +39,8 @@ return new class extends Migration
             $table->text('address')->nullable();
             
             // Berkas Media
-            $table->string('resume_url')->nullable(); // Untuk upload CV
-            $table->string('profile_picture')->nullable(); // Untuk foto profil
+            $table->string('resume_url')->nullable(); 
+            $table->string('profile_picture')->nullable(); 
             
             // Status Akun
             $table->enum('status', ['active', 'inactive'])->default('active');
