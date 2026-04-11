@@ -250,6 +250,23 @@
                     </div>
                 </div>
                 @endif
+
+                @if(auth()->user()->hasPermission('manage_settings'))
+                <div class="mb-2">
+                    <button type="button" class="sidebar-toggle flex items-center justify-between w-full px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white bg-transparent focus:outline-none" aria-expanded="false">
+                        <span class="flex items-center">
+                            <i class="fas fa-sliders-h"></i>
+                            <span class="ml-3">Pengaturan</span>
+                        </span>
+                        <i class="fas fa-chevron-down transition-transform duration-200"></i>
+                    </button>
+                    <div class="settings-submenu ml-8 space-y-1 hidden">
+                        <a href="{{ route('admin.settings.profile') }}" class="sidebar-link block px-3 py-2 rounded-lg text-white/80 hover:text-white {{ request()->segment(2) === 'settings' && request()->segment(3) === 'profile' ? 'active' : '' }}">Profil Sekolah</a>
+                        <a href="{{ route('admin.settings.majors.index') }}" class="sidebar-link block px-3 py-2 rounded-lg text-white/80 hover:text-white {{ request()->segment(2) === 'settings' && request()->segment(3) === 'majors' ? 'active' : '' }}">Tabel Jurusan</a>
+                        <a href="{{ route('admin.settings.years.index') }}" class="sidebar-link block px-3 py-2 rounded-lg text-white/80 hover:text-white {{ request()->segment(2) === 'settings' && request()->segment(3) === 'years' ? 'active' : '' }}">Tahun Lulus</a>
+                    </div>
+                </div>
+                @endif
             </div>
             
             <div class="nav-divider"></div>
@@ -373,6 +390,13 @@
                         <p class="text-green-700">{{ session('success') }}</p>
                     </div>
                 @endif
+
+                @if (session('error'))
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 flex items-center">
+                        <i class="fas fa-exclamation-circle text-red-500 mr-3"></i>
+                        <p class="text-red-700">{{ session('error') }}</p>
+                    </div>
+                @endif
                 
                 @yield('content')
             </div>
@@ -419,6 +443,17 @@
             }
             if (managementChevron) {
                 managementChevron.classList.add('rotate-180');
+            }
+        }
+
+        if (currentPath.includes('/admin/settings')) {
+            const settingsSubmenu = document.querySelector('.settings-submenu');
+            const settingsChevron = document.querySelector('.settings-submenu')?.previousElementSibling?.querySelector('i.fas.fa-chevron-down');
+            if (settingsSubmenu) {
+                settingsSubmenu.classList.remove('hidden');
+            }
+            if (settingsChevron) {
+                settingsChevron.classList.add('rotate-180');
             }
         }
     });
