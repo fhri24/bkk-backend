@@ -64,4 +64,14 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Company::class);
     }
+
+    public function activityLogs(): HasMany
+    {
+        return $this->hasMany(ActivityLog::class);
+    }
+
+    public function hasPermission(string $permissionName): bool
+    {
+        return $this->role && $this->role->permissions->pluck('name')->contains($permissionName);
+    }
 }

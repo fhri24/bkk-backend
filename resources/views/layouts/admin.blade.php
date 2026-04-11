@@ -28,7 +28,13 @@
             transition: all 0.3s ease;
         }
         
-        .sidebar-link:hover {
+        .sidebar-toggle {
+            border-left: 4px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-link:hover,
+        .sidebar-toggle:hover {
             background: rgba(255, 255, 255, 0.1);
             border-left-color: #3b82f6;
         }
@@ -36,6 +42,10 @@
         .sidebar-link.active {
             background: rgba(59, 130, 246, 0.2);
             border-left-color: #3b82f6;
+        }
+        
+        .rotate-180 {
+            transform: rotate(180deg);
         }
         
         .sidebar-link i { width: 20px; text-align: center; }
@@ -118,8 +128,7 @@
         .badge-info { background: #dbeafe; color: #1e40af; }
         
         .btn-action {
-            width: 36px;
-            height: 36px;
+            min-height: 36px;
             border-radius: 8px;
             display: inline-flex;
             align-items: center;
@@ -128,6 +137,9 @@
             transition: all 0.2s;
             border: 1px solid #e2e8f0;
             cursor: pointer;
+            padding: 0 0.75rem;
+            gap: 0.5rem;
+            white-space: nowrap;
         }
         
         .btn-action:hover {
@@ -189,52 +201,89 @@
             <div>
                 <h3 class="text-xs font-semibold text-blue-200 uppercase tracking-wider px-3 mb-4">Menu Utama</h3>
                 
-                <a href="{{ route('admin.dashboard') }}" class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white">
+                <a href="{{ route('admin.dashboard') }}" class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                     <i class="fas fa-chart-line"></i>
                     <span class="ml-3">Dashboard</span>
                 </a>
                 
-                <a href="{{ route('admin.jobs.index') }}" class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white">
+                @if(auth()->user()->hasPermission('manage_jobs'))
+                <a href="{{ route('admin.jobs.index') }}" class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->segment(2) === 'jobs' ? 'active' : '' }}">
                     <i class="fas fa-briefcase"></i>
                     <span class="ml-3">Lowongan Kerja</span>
                 </a>
+                @endif
                 
-                <a href="#" class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white">
+                @if(auth()->user()->hasPermission('manage_job_applications'))
+                <a href="{{ route('admin.job-applications.index') }}" class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->segment(2) === 'job-applications' ? 'active' : '' }}">
                     <i class="fas fa-file-alt"></i>
                     <span class="ml-3">Lamaran</span>
                 </a>
+                @endif
                 
-                <a href="#" class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white">
+                @if(auth()->user()->hasPermission('manage_students'))
+                <a href="{{ route('admin.students.index') }}" class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->segment(2) === 'students' ? 'active' : '' }}">
                     <i class="fas fa-users"></i>
                     <span class="ml-3">Alumni</span>
                 </a>
+                @endif
                 
-                <a href="#" class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white">
+                @if(auth()->user()->hasPermission('manage_companies'))
+                <a href="{{ route('admin.companies.index') }}" class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->segment(2) === 'companies' ? 'active' : '' }}">
                     <i class="fas fa-building"></i>
                     <span class="ml-3">Perusahaan</span>
                 </a>
+                @endif
+
+                @if(auth()->user()->hasPermission('view_reports'))
+                <div class="mb-2">
+                    <button type="button" class="sidebar-toggle flex items-center justify-between w-full px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white bg-transparent focus:outline-none" aria-expanded="false">
+                        <span class="flex items-center">
+                            <i class="fas fa-chart-line"></i>
+                            <span class="ml-3">Laporan</span>
+                        </span>
+                        <i class="fas fa-chevron-down transition-transform duration-200"></i>
+                    </button>
+                    <div class="reports-submenu ml-8 space-y-1 hidden">
+                        <a href="{{ route('admin.reports.index') }}#bmw-report" class="sidebar-link block px-3 py-2 rounded-lg text-white/80 hover:text-white {{ request()->segment(2) === 'reports' ? 'active' : '' }}">Laporan BMW</a>
+                        <a href="{{ route('admin.reports.index') }}#job-report" class="sidebar-link block px-3 py-2 rounded-lg text-white/80 hover:text-white {{ request()->segment(2) === 'reports' ? 'active' : '' }}">Rekapitulasi Lamaran</a>
+                        <a href="{{ route('admin.reports.index') }}#export-actions" class="sidebar-link block px-3 py-2 rounded-lg text-white/80 hover:text-white {{ request()->segment(2) === 'reports' ? 'active' : '' }}">Export Data</a>
+                    </div>
+                </div>
+                @endif
             </div>
             
             <div class="nav-divider"></div>
             
-            <div>
-                <h3 class="text-xs font-semibold text-blue-200 uppercase tracking-wider px-3 mb-4">Manajemen</h3>
-                
-                <a href="#" class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white">
-                    <i class="fas fa-user-check"></i>
-                    <span class="ml-3">User</span>
-                </a>
-                
-                <a href="#" class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white">
-                    <i class="fas fa-chart-bar"></i>
-                    <span class="ml-3">Laporan</span>
-                </a>
-                
-                <a href="#" class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white">
-                    <i class="fas fa-cog"></i>
-                    <span class="ml-3">Pengaturan</span>
-                </a>
+            @if(auth()->user()->hasPermission('manage_users') || auth()->user()->hasPermission('manage_settings') || auth()->user()->hasPermission('view_activity_logs'))
+            <div class="mb-2">
+                <button type="button" class="sidebar-toggle flex items-center justify-between w-full px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white bg-transparent focus:outline-none" aria-expanded="false">
+                    <span class="flex items-center">
+                        <i class="fas fa-cogs"></i>
+                        <span class="ml-3">Manajemen</span>
+                    </span>
+                    <i class="fas fa-chevron-down transition-transform duration-200"></i>
+                </button>
+                <div class="management-submenu ml-8 space-y-1 hidden">
+                    @if(auth()->user()->hasPermission('manage_users'))
+                    <a href="{{ route('admin.users.index') }}" class="sidebar-link block px-3 py-2 rounded-lg text-white/80 hover:text-white {{ request()->segment(2) === 'users' ? 'active' : '' }}">
+                        Pengguna
+                    </a>
+                    @endif
+                    
+                    @if(auth()->user()->hasPermission('manage_settings'))
+                    <a href="{{ route('admin.roles.index') }}" class="sidebar-link block px-3 py-2 rounded-lg text-white/80 hover:text-white {{ request()->segment(2) === 'roles' ? 'active' : '' }}">
+                        Hak Akses
+                    </a>
+                    @endif
+                    
+                    @if(auth()->user()->hasPermission('view_activity_logs'))
+                    <a href="{{ route('admin.activity-logs.index') }}" class="sidebar-link block px-3 py-2 rounded-lg text-white/80 hover:text-white {{ request()->segment(2) === 'activity-logs' ? 'active' : '' }}">
+                        Log Aktivitas
+                    </a>
+                    @endif
+                </div>
             </div>
+            @endif
         </nav>
         
         <!-- Footer -->
@@ -332,14 +381,46 @@
 </div>
 
 <script>
-    // Mark active sidebar link
+    // Mark active sidebar link and manage collapsible sections
     document.addEventListener('DOMContentLoaded', function() {
         const currentPath = window.location.pathname;
+
         document.querySelectorAll('.sidebar-link').forEach(link => {
             if (link.href.includes(currentPath)) {
                 link.classList.add('active');
             }
         });
+
+        document.querySelectorAll('.sidebar-toggle').forEach(button => {
+            const submenu = button.nextElementSibling;
+            button.addEventListener('click', function() {
+                if (!submenu) return;
+                submenu.classList.toggle('hidden');
+                this.querySelector('i.fas.fa-chevron-down')?.classList.toggle('rotate-180');
+            });
+        });
+
+        if (currentPath.includes('/admin/reports')) {
+            const reportsSubmenu = document.querySelector('.reports-submenu');
+            const reportChevron = document.querySelector('.reports-submenu')?.previousElementSibling?.querySelector('i.fas.fa-chevron-down');
+            if (reportsSubmenu) {
+                reportsSubmenu.classList.remove('hidden');
+            }
+            if (reportChevron) {
+                reportChevron.classList.add('rotate-180');
+            }
+        }
+
+        if (currentPath.includes('/admin/users') || currentPath.includes('/admin/roles') || currentPath.includes('/admin/activity-logs')) {
+            const managementSubmenu = document.querySelector('.management-submenu');
+            const managementChevron = document.querySelector('.management-submenu')?.previousElementSibling?.querySelector('i.fas.fa-chevron-down');
+            if (managementSubmenu) {
+                managementSubmenu.classList.remove('hidden');
+            }
+            if (managementChevron) {
+                managementChevron.classList.add('rotate-180');
+            }
+        }
     });
 </script>
 

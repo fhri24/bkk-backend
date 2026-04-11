@@ -27,7 +27,8 @@ class Student extends Model
         'resume_url',
         'profile_picture',
         'status',
-        'alumni_flag'
+        'alumni_flag',
+        'career_path'
     ];
 
     // ✅ Relasi ke User

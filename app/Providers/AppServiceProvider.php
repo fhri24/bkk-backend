@@ -21,6 +21,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Super Admin selalu diizinkan untuk semua permission
+        Gate::before(function (User $user, string $ability) {
+            return $user->role && $user->role->name === 'super_admin' ? true : null;
+        });
+
         // Gate untuk Super Admin
         Gate::define('super_admin', function (User $user) {
             return $user->role && $user->role->name === 'super_admin';
@@ -39,6 +44,11 @@ class AppServiceProvider extends ServiceProvider
         // Gate untuk Siswa (Student)
         Gate::define('student', function (User $user) {
             return $user->role && $user->role->name === 'student';
+        });
+
+        // Gate generic untuk mengecek permission berdasarkan role
+        Gate::define('permission', function (User $user, string $permission) {
+            return $user->hasPermission($permission);
         });
     }
 }

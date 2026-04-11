@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityLog;
 use App\Models\User;
 use App\Models\Student;
 use Illuminate\Http\Request;
@@ -75,6 +76,13 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
+
+            ActivityLog::create([
+                'user_id' => Auth::id(),
+                'action' => 'Login berhasil',
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
             
             $user = Auth::user();
             $adminRoles = ['super_admin', 'admin_bkk', 'kepala_bkk', 'perusahaan'];
@@ -97,6 +105,13 @@ class AuthController extends Controller
 
     public function logout(Request $request) 
     {
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'action' => 'Logout',
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

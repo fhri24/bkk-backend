@@ -4,7 +4,7 @@
 @section('page_title', 'Manajemen Lowongan Kerja')
 
 @section('content')
-<div class="flex justify-between items-center mb-6">
+<div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between mb-6">
     <div>
         <p class="text-slate-600">Kelola semua lowongan kerja yang telah dipublikasikan</p>
     </div>
@@ -12,6 +12,34 @@
         <i class="fas fa-plus"></i> Tambah Lowongan
     </a>
 </div>
+
+<form method="GET" class="mb-6 grid gap-4 lg:grid-cols-4">
+    <div>
+        <label class="block text-sm font-semibold text-slate-700">Cari</label>
+        <input type="text" name="search" value="{{ $search ?? '' }}" class="mt-2 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100" placeholder="Judul, perusahaan, atau jenis">
+    </div>
+    <div>
+        <label class="block text-sm font-semibold text-slate-700">Visibility</label>
+        <select name="visibility" class="mt-2 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100">
+            <option value="">Semua Visibility</option>
+            <option value="public" {{ ($visibility ?? '') === 'public' ? 'selected' : '' }}>Public</option>
+            <option value="alumni_only" {{ ($visibility ?? '') === 'alumni_only' ? 'selected' : '' }}>Alumni Only</option>
+            <option value="private" {{ ($visibility ?? '') === 'private' ? 'selected' : '' }}>Private</option>
+            <option value="internal" {{ ($visibility ?? '') === 'internal' ? 'selected' : '' }}>Internal</option>
+        </select>
+    </div>
+    <div>
+        <label class="block text-sm font-semibold text-slate-700">Status</label>
+        <select name="status" class="mt-2 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100">
+            <option value="">Semua Status</option>
+            <option value="active" {{ ($status ?? '') === 'active' ? 'selected' : '' }}>Active</option>
+            <option value="inactive" {{ ($status ?? '') === 'inactive' ? 'selected' : '' }}>Inactive</option>
+        </select>
+    </div>
+    <div class="flex items-end">
+        <button type="submit" class="w-full rounded-2xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-700 transition">Terapkan Filter</button>
+    </div>
+</form>
 
 @if (session('success'))
     <div class="mb-4 p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg flex items-center gap-3">
@@ -48,13 +76,21 @@
                             </td>
                             <td>{{ $job->expired_at ? $job->expired_at->format('d M Y') : '-' }}</td>
                             <td>
-                                <form action="{{ route('admin.jobs.destroy', $job->job_id) }}" method="POST" style="display:inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn-action text-red-600 hover:bg-red-50" onclick="return confirm('Yakin ingin menghapus?')" title="Hapus">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
+                                <div class="flex items-center justify-center gap-2">
+                                    <a href="{{ route('admin.jobs.show', $job->job_id) }}" class="btn-action text-slate-700 hover:bg-slate-100" title="Detail">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{{ route('admin.jobs.edit', $job->job_id) }}" class="btn-action text-blue-600 hover:bg-blue-50" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form action="{{ route('admin.jobs.destroy', $job->job_id) }}" method="POST" style="display:inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn-action text-red-600 hover:bg-red-50" onclick="return confirm('Yakin ingin menghapus?')" title="Hapus">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @endforeach

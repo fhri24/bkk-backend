@@ -6,6 +6,13 @@ use App\Http\Controllers\PublicController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\JobController as AdminJobController;
+use App\Http\Controllers\Admin\CompanyController as AdminCompanyController;
+use App\Http\Controllers\Admin\JobApplicationController as AdminJobApplicationController;
+use App\Http\Controllers\Admin\StudentController as AdminStudentController;
+use App\Http\Controllers\Admin\ReportController as AdminReportController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\RoleController as AdminRoleController;
+use App\Http\Controllers\Admin\ActivityLogController as AdminActivityLogController;
 
 use App\Http\Controllers\Student\PageController as StudentPageController;
 
@@ -80,10 +87,56 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     
 
-    Route::prefix('jobs')->name('jobs.')->group(function () {
+    Route::prefix('companies')->name('companies.')->middleware('permission:manage_companies')->group(function () {
+        Route::get('/', [AdminCompanyController::class, 'index'])->name('index');
+        Route::get('/create', [AdminCompanyController::class, 'create'])->name('create');
+        Route::post('/', [AdminCompanyController::class, 'store'])->name('store');
+        Route::get('/{company}', [AdminCompanyController::class, 'show'])->name('show');
+        Route::get('/{company}/edit', [AdminCompanyController::class, 'edit'])->name('edit');
+        Route::put('/{company}', [AdminCompanyController::class, 'update'])->name('update');
+        Route::delete('/{company}', [AdminCompanyController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('jobs')->name('jobs.')->middleware('permission:manage_jobs')->group(function () {
         Route::get('/', [AdminJobController::class, 'index'])->name('index');
         Route::get('/create', [AdminJobController::class, 'create'])->name('create');
         Route::post('/', [AdminJobController::class, 'store'])->name('store');
+        Route::get('/{job}', [AdminJobController::class, 'show'])->name('show');
+        Route::get('/{job}/edit', [AdminJobController::class, 'edit'])->name('edit');
+        Route::put('/{job}', [AdminJobController::class, 'update'])->name('update');
         Route::delete('/{job}', [AdminJobController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('job-applications')->name('job-applications.')->middleware('permission:manage_job_applications')->group(function () {
+        Route::get('/', [AdminJobApplicationController::class, 'index'])->name('index');
+        Route::get('/{id}', [AdminJobApplicationController::class, 'show'])->name('show');
+        Route::put('/{id}/status', [AdminJobApplicationController::class, 'updateStatus'])->name('update-status');
+    });
+
+    Route::prefix('students')->name('students.')->middleware('permission:manage_students')->group(function () {
+        Route::get('/', [AdminStudentController::class, 'index'])->name('index');
+        Route::get('/{id}', [AdminStudentController::class, 'show'])->name('show');
+    });
+
+    Route::prefix('users')->name('users.')->middleware('permission:manage_users')->group(function () {
+        Route::get('/', [AdminUserController::class, 'index'])->name('index');
+        Route::put('/{id}/status', [AdminUserController::class, 'updateStatus'])->name('update-status');
+    });
+
+    Route::prefix('roles')->name('roles.')->middleware('permission:manage_settings')->group(function () {
+        Route::get('/', [AdminRoleController::class, 'index'])->name('index');
+        Route::put('/{role}', [AdminRoleController::class, 'update'])->name('update');
+    });
+
+    Route::prefix('reports')->name('reports.')->middleware('permission:view_reports')->group(function () {
+        Route::get('/', [AdminReportController::class, 'index'])->name('index');
+        Route::get('/export/alumni/csv', [AdminReportController::class, 'exportAlumniCsv'])->name('export.alumni.csv');
+        Route::get('/export/jobs/csv', [AdminReportController::class, 'exportJobsCsv'])->name('export.jobs.csv');
+        Route::get('/export/alumni/print', [AdminReportController::class, 'printAlumni'])->name('export.alumni.print');
+        Route::get('/export/jobs/print', [AdminReportController::class, 'printJobs'])->name('export.jobs.print');
+    });
+
+    Route::prefix('activity-logs')->name('activity-logs.')->middleware('permission:view_activity_logs')->group(function () {
+        Route::get('/', [AdminActivityLogController::class, 'index'])->name('index');
     });
 });

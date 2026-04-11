@@ -29,6 +29,7 @@ class DashboardController extends Controller
         // Recent data
         $recent_jobs = Job::latest()->take(5)->with('company')->get();
         $recent_applications = JobApplication::latest()->take(5)->with(['job', 'student'])->get();
+        $topCompanies = Company::withCount('jobs')->orderByDesc('jobs_count')->take(5)->get();
         
         return view('admin.dashboard', compact(
             'total_jobs',
@@ -38,7 +39,8 @@ class DashboardController extends Controller
             'pending_applications',
             'active_jobs',
             'recent_jobs',
-            'recent_applications'
+            'recent_applications',
+            'topCompanies'
         ));
     }
 }

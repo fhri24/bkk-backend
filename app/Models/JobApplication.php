@@ -13,6 +13,8 @@ class JobApplication extends Model
         'job_id',
         'student_id',
         'cover_letter',
+        'additional_file',
+        'admin_notes',
         'status',
         'application_date'
     ];

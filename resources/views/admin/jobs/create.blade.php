@@ -1,6 +1,7 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'Tambah Lowongan Kerja Baru')
+@section('page_title', 'Tambah Lowongan')
 
 @section('content')
 <div class="container mx-auto px-4 py-6 max-w-2xl">
@@ -23,12 +24,18 @@
             <label for="company_id" class="block text-sm font-medium text-gray-700">Perusahaan</label>
             <select name="company_id" id="company_id" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
                 <option value="">-- Pilih Perusahaan --</option>
-                @foreach (\App\Models\Company::all() as $company)
-                    <option value="{{ $company->company_id }}" {{ old('company_id') == $company->company_id ? 'selected' : '' }}>
+                @forelse ($companies as $company)
+                    <option value="{{ $company->company_id }}"
+                        {{ old('company_id') == $company->company_id || $selectedCompanyId == $company->company_id ? 'selected' : '' }}>
                         {{ $company->company_name ?? $company->name }}
                     </option>
-                @endforeach
+                @empty
+                    <option value="">Tidak ada perusahaan, silakan tambahkan perusahaan terlebih dahulu</option>
+                @endforelse
             </select>
+            @if ($companies->isEmpty())
+                <p class="text-sm text-red-600 mt-2">Belum ada perusahaan terdaftar. <a href="{{ route('admin.companies.create') }}" class="text-blue-600 underline">Tambah perusahaan baru</a>.</p>
+            @endif
         </div>
 
         <div class="mb-4">

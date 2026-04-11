@@ -175,7 +175,28 @@
                 </div>
             </div>
         </div>
-        
+
+        <div class="bg-white rounded-xl border border-slate-200 p-6 mb-6">
+            <h3 class="text-lg font-bold text-slate-800 mb-6">
+                <i class="fas fa-building text-blue-600 mr-3"></i> Perusahaan Teratas
+            </h3>
+            <div class="space-y-3">
+                @forelse($topCompanies ?? [] as $company)
+                    <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                        <div class="flex items-center justify-between gap-3">
+                            <div>
+                                <p class="font-semibold text-slate-900">{{ $company->company_name }}</p>
+                                <p class="text-xs text-slate-500">{{ $company->industry ?? 'Industri belum diisi' }}</p>
+                            </div>
+                            <span class="badge-pill badge-info">{{ $company->jobs_count }} lowongan</span>
+                        </div>
+                    </div>
+                @empty
+                    <p class="text-sm text-slate-500">Belum ada data perusahaan.</p>
+                @endforelse
+            </div>
+        </div>
+
         <!-- Upcoming Events -->
         <div class="bg-white rounded-xl border border-slate-200 p-6">
             <h3 class="text-lg font-bold text-slate-800 mb-6">
