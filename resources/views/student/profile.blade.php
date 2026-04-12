@@ -9,9 +9,13 @@
             
             <div class="lg:col-span-1">
                 <div class="bg-white rounded-2xl shadow-lg p-8 text-center">
-                    <div class="w-24 h-24 mx-auto mb-4 rounded-full bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center text-white text-4xl shadow-lg">
-                        <i class="fas fa-user"></i>
-                    </div>
+                    @if($student->profile_picture)
+                        <img src="{{ asset('storage/' . $student->profile_picture) }}" alt="Profile Picture" class="w-24 h-24 mx-auto mb-4 rounded-full object-cover shadow-lg">
+                    @else
+                        <div class="w-24 h-24 mx-auto mb-4 rounded-full bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center text-white text-4xl shadow-lg">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    @endif
 
                     <h2 class="text-2xl font-extrabold text-slate-900 mb-1">{{ $student->full_name ?? $user->name }}</h2>
                     <p class="text-sm text-slate-500 font-bold mb-6">NIS: {{ $student->nis ?? '-' }}</p>
@@ -36,7 +40,7 @@
                         </div>
                     </div>
 
-                    <button onclick="alert('Fitur edit sedang dikembangkan')" class="w-full mt-8 bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition">
+                    <button onclick="openEditModal()" class="w-full mt-8 bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition">
                         <i class="fas fa-edit mr-2"></i>Edit Profil
                     </button>
                 </div>
@@ -150,4 +154,88 @@
         </div>
     </div>
 </div>
+
+<!-- Edit Profile Modal -->
+<div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-2xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+        <div class="bg-gradient-to-r from-blue-600 to-blue-700 p-8 text-white flex justify-between items-center">
+            <h2 class="text-2xl font-extrabold">Edit Profil</h2>
+            <button onclick="closeEditModal()" class="text-white text-2xl hover:text-blue-200 transition">&times;</button>
+        </div>
+
+        <form action="{{ route('student.profile.update') }}" method="POST" enctype="multipart/form-data" class="p-8 space-y-6">
+            @csrf
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">Nama Lengkap</label>
+                    <input type="text" name="full_name" value="{{ $student->full_name ?? $user->name }}" placeholder="Nama Lengkap" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" required />
+                </div>
+                <div>
+                    <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">NIK / NIS</label>
+                    <input type="text" name="nis" value="{{ $student->nis }}" placeholder="NIK / NIS" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" />
+                </div>
+                <div>
+                    <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">Jenis Kelamin</label>
+                    <select name="gender" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600">
+                        <option value="">Pilih Jenis Kelamin</option>
+                        <option value="L" {{ $student->gender == 'L' ? 'selected' : '' }}>Laki-laki</option>
+                        <option value="P" {{ $student->gender == 'P' ? 'selected' : '' }}>Perempuan</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">Info Kelahiran</label>
+                    <input type="text" name="birth_info" value="{{ $student->birth_info }}" placeholder="Tempat, Tanggal Lahir" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" />
+                </div>
+                <div>
+                    <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">Jurusan</label>
+                    <select name="major" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600">
+                        <option value="">Pilih Jurusan</option>
+                        <option value="Teknik Otomotif" {{ $student->major == 'Teknik Otomotif' ? 'selected' : '' }}>Teknik Otomotif</option>
+                        <option value="Teknik Komputer" {{ $student->major == 'Teknik Komputer' ? 'selected' : '' }}>Teknik Komputer</option>
+                        <option value="Tata Boga" {{ $student->major == 'Tata Boga' ? 'selected' : '' }}>Tata Boga</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">Tahun Lulus</label>
+                    <input type="number" name="graduation_year" value="{{ $student->graduation_year }}" placeholder="Tahun Lulus" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" />
+                </div>
+                <div>
+                    <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">No. Handphone</label>
+                    <input type="tel" name="phone" value="{{ $student->phone }}" placeholder="No. Handphone" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" />
+                </div>
+                <div>
+                    <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">Alamat</label>
+                    <textarea name="address" placeholder="Alamat Lengkap" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" rows="3">{{ $student->address }}</textarea>
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">Foto Profil</label>
+                    <input type="file" name="profile_picture" accept="image/*" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" />
+                    <p class="text-xs text-slate-500 mt-1">Format: JPG, PNG, GIF. Maksimal 2MB.</p>
+                </div>
+            </div>
+
+            <div class="flex gap-3">
+                <button type="submit" class="flex-1 bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition">Simpan Perubahan</button>
+                <button type="button" onclick="closeEditModal()" class="flex-1 bg-slate-200 text-slate-800 px-6 py-3 rounded-xl font-bold hover:bg-slate-300 transition">Batal</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openEditModal() {
+        document.getElementById('editModal').classList.remove('hidden');
+    }
+
+    function closeEditModal() {
+        document.getElementById('editModal').classList.add('hidden');
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('editModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeEditModal();
+        }
+    });
+</script>
 @endsection

@@ -14,8 +14,10 @@ use App\Http\Controllers\Admin\SettingController as AdminSettingController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\RoleController as AdminRoleController;
 use App\Http\Controllers\Admin\ActivityLogController as AdminActivityLogController;
+use App\Http\Controllers\Admin\AlumniStoryController as AdminAlumniStoryController;
 
 use App\Http\Controllers\Student\PageController as StudentPageController;
+use App\Http\Controllers\Student\HomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -65,10 +67,11 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware(['auth', 'student'])->prefix('student')->name('student.')->group(function () {
     
     // Beranda Student
-    Route::get('/', [StudentController::class, 'index'])->name('home');
+    Route::get('/', [HomeController::class, 'index'])->name('home');
     
     // Fitur Profil (Ini yang kita tambahkan agar tombol di Navbar jalan)
     Route::get('/profile', [StudentController::class, 'showProfile'])->name('profile');
+    Route::post('/profile', [StudentController::class, 'updateProfile'])->name('profile.update');
     
     // Fitur Student (Page Controller)
     Route::get('/lowongan', [StudentPageController::class, 'lowongan'])->name('lowongan');
@@ -164,5 +167,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     Route::prefix('activity-logs')->name('activity-logs.')->middleware('permission:view_activity_logs')->group(function () {
         Route::get('/', [AdminActivityLogController::class, 'index'])->name('index');
+    });
+
+    // Manajemen Kisah Sukses Alumni
+    Route::prefix('alumni-stories')->name('alumni-stories.')->group(function () {
+        Route::get('/', [AdminAlumniStoryController::class, 'index'])->name('index');
+        Route::delete('/{id}', [AdminAlumniStoryController::class, 'destroy'])->name('destroy');
     });
 });

@@ -52,16 +52,17 @@ class AuthController extends Controller
 
         // Create Student Profile
        
-Student::create([
-    'user_id' => $user->id,
-    'nis' => $validated['nis'] ?? null,
-    'full_name' => $validated['name'],
-    'major' => $validated['major'] ?? null,
-    'graduation_year' => $validated['graduation_year'] ?? 2024,
-    'gender' => $validated['gender'] ?? 'L', // Tambahkan ini (Contoh default 'L')
-    'status' => 'active',
-    'alumni_flag' => false,
-]);
+        $alumniFlag = ($validated['graduation_year'] ?? 2024) < date('Y');
+        Student::create([
+            'user_id' => $user->id,
+            'nis' => $validated['nis'] ?? null,
+            'full_name' => $validated['name'],
+            'major' => $validated['major'] ?? null,
+            'graduation_year' => $validated['graduation_year'] ?? 2024,
+            'gender' => $validated['gender'] ?? 'L', // Tambahkan ini (Contoh default 'L')
+            'status' => 'active',
+            'alumni_flag' => $alumniFlag,
+        ]);
 
         // Auto login after register
         Auth::login($user);

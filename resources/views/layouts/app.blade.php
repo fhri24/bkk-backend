@@ -37,15 +37,15 @@
     @yield('extra_css')
 </head>
 <body class="bg-slate-50 text-slate-900">
+    @include('layouts.navbar')
+    
     <div class="page-transition">
-        @include('layouts.navbar')
-        
         <main class="min-h-screen">
             @yield('content')
         </main>
-
-        @include('layouts.footer')
     </div>
+
+    @include('layouts.footer')
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>

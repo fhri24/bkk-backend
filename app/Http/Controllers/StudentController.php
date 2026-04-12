@@ -114,4 +114,50 @@ class StudentController extends Controller
             'data' => $student
         ]);
     }
+
+    /**
+     * Update profil via web form
+     */
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::user();
+        $student = Student::where('user_id', $user->id)->first();
+
+        if (!$student) {
+            return redirect()->back()->with('error', 'Profil tidak ditemukan.');
+        }
+
+        $validated = $request->validate([
+            'full_name' => 'required|string|max:255',
+            'nis' => 'nullable|string|max:50',
+            'gender' => 'nullable|in:L,P',
+            'birth_info' => 'nullable|string|max:255',
+            'major' => 'nullable|string|max:255',
+            'graduation_year' => 'nullable|integer|min:1995|max:2100',
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        // Handle profile picture upload
+        if ($request->hasFile('profile_picture')) {
+            $file = $request->file('profile_picture');
+            $filename = time() . '_' . $user->id . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('profile_pictures', $filename, 'public');
+            $validated['profile_picture'] = $path;
+        }
+
+        // Set alumni_flag based on graduation_year
+        $graduationYear = $validated['graduation_year'] ?? $student->graduation_year;
+        $validated['alumni_flag'] = $graduationYear < date('Y');
+
+        $student->update($validated);
+
+        // Update user name if full_name changed
+        if ($validated['full_name'] !== $user->name) {
+            $user->update(['name' => $validated['full_name']]);
+        }
+
+        return redirect()->back()->with('success', 'Profil berhasil diperbarui.');
+    }
 }

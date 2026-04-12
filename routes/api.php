@@ -7,6 +7,7 @@ use App\Http\Controllers\API\SuperAdminController;
 use App\Http\Controllers\Api\JobApplicationController;
 use App\Http\Controllers\Api\CompanyController; 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\AlumniStoryController;
 use App\Http\Controllers\StudentController;
 
 /*
@@ -26,6 +27,10 @@ Route::get('/health', function () {
 // Auth Routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+
+// Alumni Stories
+Route::get('/alumni-stories', [AlumniStoryController::class, 'index']);
+Route::post('/alumni-stories', [AlumniStoryController::class, 'store']);
 
 // Rute contoh
 Route::apiResource('example', ApiExampleController::class);

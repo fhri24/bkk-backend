@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\Company;
+use App\Models\Student;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -78,6 +79,7 @@ class UserSeeder extends Seeder
         );
 
         // Note: Students should register themselves through the registration page
+        // Alumni stories will be managed by admins
 
         $this->command->info('Users seeded successfully!');
         $this->command->info('Super Admin: superadmin@bkk.com (password: password123)');
@@ -86,5 +88,6 @@ class UserSeeder extends Seeder
         $this->command->info('Company: company@majujaya.com (password: password123)');
         $this->command->info('');
         $this->command->info('Students can register at: http://localhost:8000/register');
+        $this->command->info('Alumni stories can be managed by admins in the admin dashboard');
     }
 }

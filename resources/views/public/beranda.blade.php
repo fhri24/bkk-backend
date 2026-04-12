@@ -264,15 +264,20 @@
         <div class="relative z-10">
             <h2 class="text-4xl md:text-5xl font-extrabold mb-6">Siap Memulai Karir Profesional?</h2>
             <p class="text-blue-100 mb-12 max-w-2xl mx-auto text-lg leading-relaxed">Daftarkan diri Anda sebagai alumni untuk mendapatkan notifikasi lowongan terbaru yang sesuai dengan jurusan Anda.</p>
-            <div class="flex flex-col sm:flex-row justify-center gap-6 items-center">
+            <div class="flex flex-col sm:flex-row justify-center gap-4 items-center">
                 @auth
-                    <a href="{{ route('student.home') }}" class="bg-white text-[#1e3a8a] px-12 py-3.5 rounded-full font-extrabold shadow-xl hover:shadow-2xl hover:bg-slate-50 transition transform hover:scale-105 active:scale-95">Dashboard</a>
+                    <a href="{{ route('student.home') }}" class="inline-flex items-center justify-center gap-2 bg-white text-[#1e3a8a] px-10 py-4 rounded-full font-semibold shadow-2xl hover:shadow-[0_25px_75px_rgba(15,23,42,0.18)] transition transform hover:-translate-y-0.5 active:translate-y-0">Dashboard</a>
+                    <a href="{{ route('public.tutorial') }}" class="inline-flex items-center justify-center gap-2 border border-white bg-white/10 text-white px-10 py-4 rounded-full font-semibold hover:bg-white/20 transition transform hover:-translate-y-0.5 active:translate-y-0">Panduan Pendaftaran</a>
                 @else
-                    <a href="{{ route('register') }}" class="bg-white text-[#1e3a8a] px-12 py-3.5 rounded-full font-extrabold shadow-xl hover:shadow-2xl hover:bg-slate-50 transition transform hover:scale-105 active:scale-95">Daftar Sebagai Alumni</a>
-                    <a href="{{ route('login') }}" class="bg-[#2563eb] border-2 border-white text-white px-12 py-3.5 rounded-full font-extrabold hover:bg-[#1d4ed8] transition transform hover:scale-105 active:scale-95">Masuk</a>
+                    <a href="{{ route('register') }}" class="inline-flex items-center justify-center gap-2 bg-white text-[#1e3a8a] px-10 py-4 rounded-full font-semibold shadow-2xl hover:shadow-[0_25px_75px_rgba(15,23,42,0.18)] transition transform hover:-translate-y-0.5 active:translate-y-0">Daftar Sebagai Alumni</a>
+                    <a href="{{ route('public.tutorial') }}" class="inline-flex items-center justify-center gap-2 border border-white bg-white/10 text-white px-10 py-4 rounded-full font-semibold hover:bg-white/20 transition transform hover:-translate-y-0.5 active:translate-y-0">Panduan Pendaftaran</a>
                 @endauth
             </div>
         </div>
     </div>
 </section>
+
+<script>
+    // Scripts untuk alumni stories telah dihapus
+</script>
 @endsection
