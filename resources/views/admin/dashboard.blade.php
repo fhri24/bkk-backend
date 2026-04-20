@@ -4,270 +4,234 @@
 @section('page_title', 'Dashboard')
 
 @section('content')
-<!-- Statistics Cards -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-    <!-- Total Jobs -->
-    <div class="stat-box">
-        <div class="flex items-start justify-between">
-            <div>
-                <p class="text-slate-500 text-sm font-medium mb-1">Total Lowongan</p>
-                <div class="text-3xl font-bold text-slate-800">{{ $total_jobs ?? 0 }}</div>
-                <p class="text-xs text-slate-500 mt-2"><i class="fas fa-arrow-up text-green-500"></i> Bulan Ini</p>
-            </div>
-            <div class="stat-icon bg-blue-100 text-blue-600">
-                <i class="fas fa-briefcase"></i>
-            </div>
+<div class="space-y-8">
+    {{-- Header Dashboard --}}
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <h3 class="text-2xl font-bold text-slate-800">Dashboard Utama</h3>
+            <p class="text-slate-500">Ringkasan aktivitas sistem BKK hari ini.</p>
+        </div>
+        <div class="text-sm text-slate-400 bg-white px-4 py-2 rounded-lg border border-slate-200">
+            <i class="fas fa-calendar-alt mr-2"></i>{{ now()->format('d F Y') }}
         </div>
     </div>
-    
-    <!-- Total Applications -->
-    <div class="stat-box">
-        <div class="flex items-start justify-between">
-            <div>
-                <p class="text-slate-500 text-sm font-medium mb-1">Total Lamaran</p>
-                <div class="text-3xl font-bold text-slate-800">{{ $total_applications ?? 0 }}</div>
-                <p class="text-xs text-slate-500 mt-2"><i class="fas fa-arrow-up text-green-500"></i> Pending</p>
-            </div>
-            <div class="stat-icon bg-green-100 text-green-600">
-                <i class="fas fa-file-alt"></i>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Total Students -->
-    <div class="stat-box">
-        <div class="flex items-start justify-between">
-            <div>
-                <p class="text-slate-500 text-sm font-medium mb-1">Total Alumni</p>
-                <div class="text-3xl font-bold text-slate-800">{{ $total_students ?? 0 }}</div>
-                <p class="text-xs text-slate-500 mt-2"><i class="fas fa-flag"></i> Terserap</p>
-            </div>
-            <div class="stat-icon bg-purple-100 text-purple-600">
-                <i class="fas fa-users"></i>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Total Companies -->
-    <div class="stat-box">
-        <div class="flex items-start justify-between">
-            <div>
-                <p class="text-slate-500 text-sm font-medium mb-1">Total Perusahaan</p>
-                <div class="text-3xl font-bold text-slate-800">{{ $total_companies ?? 0 }}</div>
-                <p class="text-xs text-slate-500 mt-2"><i class="fas fa-handshake"></i> Terdata</p>
-            </div>
-            <div class="stat-icon bg-orange-100 text-orange-600">
-                <i class="fas fa-building"></i>
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- Main Content Grid -->
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-    <!-- Quick Actions + Recent Jobs -->
-    <div class="lg:col-span-2">
-        <div class="bg-white rounded-xl border border-slate-200 p-6 mb-6">
-            <h3 class="text-lg font-bold text-slate-800 mb-6 flex items-center">
-                <i class="fas fa-lightning-bolt text-yellow-500 mr-3"></i> Aksi Cepat
-            </h3>
-            <div class="grid grid-cols-2 gap-4">
-                <a href="{{ route('admin.jobs.create') }}" class="bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white p-4 rounded-lg text-center font-semibold transition">
-                    <i class="fas fa-plus mb-2 block text-lg"></i>
-                    Tambah Lowongan
-                </a>
-                <button class="bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white p-4 rounded-lg text-center font-semibold transition">
-                    <i class="fas fa-download mb-2 block text-lg"></i>
-                    Export Data
-                </button>
-                <button class="bg-gradient-to-br from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white p-4 rounded-lg text-center font-semibold transition">
-                    <i class="fas fa-chart-line mb-2 block text-lg"></i>
-                    Laporan
-                </button>
-                <button class="bg-gradient-to-br from-slate-500 to-slate-600 hover:from-slate-600 hover:to-slate-700 text-white p-4 rounded-lg text-center font-semibold transition">
-                    <i class="fas fa-envelope mb-2 block text-lg"></i>
-                    Broadcast
-                </button>
+    {{-- Statistik Utama --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Total Jobs -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:border-blue-300 transition-all">
+            <div class="flex items-start justify-between">
+                <div>
+                    <p class="text-slate-500 text-sm font-medium mb-1">Total Lowongan</p>
+                    <div class="text-3xl font-bold text-slate-800">{{ $total_jobs ?? 0 }}</div>
+                </div>
+                <div class="p-3 rounded-xl bg-blue-50 text-blue-600">
+                    <i class="fas fa-briefcase text-xl"></i>
+                </div>
             </div>
         </div>
         
-        <!-- Recent Job Listings -->
-        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
-            <div class="p-6 border-b border-slate-200">
-                <h3 class="text-lg font-bold text-slate-800 flex items-center">
-                    <i class="fas fa-list text-blue-600 mr-3"></i> Lowongan Terbaru
-                </h3>
+        <!-- Total Applications -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:border-green-300 transition-all">
+            <div class="flex items-start justify-between">
+                <div>
+                    <p class="text-slate-500 text-sm font-medium mb-1">Total Lamaran</p>
+                    <div class="text-3xl font-bold text-slate-800">{{ $total_applications ?? 0 }}</div>
+                </div>
+                <div class="p-3 rounded-xl bg-green-50 text-green-600">
+                    <i class="fas fa-file-alt text-xl"></i>
+                </div>
             </div>
-            <div class="table-custom">
-                <table class="w-full">
-                    <thead>
-                        <tr>
-                            <th>Posisi</th>
-                            <th>Perusahaan</th>
-                            <th>Status</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($recent_jobs ?? [] as $job)
+        </div>
+        
+        <!-- Total Students -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:border-purple-300 transition-all">
+            <div class="flex items-start justify-between">
+                <div>
+                    <p class="text-slate-500 text-sm font-medium mb-1">Total Alumni</p>
+                    <div class="text-3xl font-bold text-slate-800">{{ $total_students ?? 0 }}</div>
+                </div>
+                <div class="p-3 rounded-xl bg-purple-50 text-purple-600">
+                    <i class="fas fa-users text-xl"></i>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Total Companies -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:border-orange-300 transition-all">
+            <div class="flex items-start justify-between">
+                <div>
+                    <p class="text-slate-500 text-sm font-medium mb-1">Total Perusahaan</p>
+                    <div class="text-3xl font-bold text-slate-800">{{ $total_companies ?? 0 }}</div>
+                </div>
+                <div class="p-3 rounded-xl bg-orange-50 text-orange-600">
+                    <i class="fas fa-building text-xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Layout Grid: Main Content & Sidebar --}}
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        {{-- Kolom Kiri --}}
+        <div class="lg:col-span-2 space-y-8">
+            
+            {{-- Tombol Aksi Cepat Dashboard - Fitur Shortcut & Auto-Scroll --}}
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                <h3 class="text-lg font-bold text-slate-800 mb-6 flex items-center">
+                    <i class="fas fa-bolt text-yellow-500 mr-3"></i> Aksi Cepat
+                </h3>
+                <div class="grid grid-cols-2 gap-4">
+                    {{-- 1. Tambah Lowongan --}}
+                    <a href="{{ route('admin.jobs.create') }}" class="flex flex-col items-center justify-center p-6 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition active:scale-95 shadow-sm">
+                        <i class="fas fa-plus text-2xl mb-2"></i>
+                        <span class="font-bold text-center text-sm">Tambah Lowongan</span>
+                    </a>
+
+                    {{-- 2. Shortcut ke Export Data (Scroll ke id="export-data") --}}
+                    <a href="{{ route('admin.reports.index') }}#export-data" class="flex flex-col items-center justify-center p-6 bg-green-600 text-white rounded-xl hover:bg-green-700 transition active:scale-95 shadow-sm">
+                        <i class="fas fa-file-export text-2xl mb-2"></i>
+                        <span class="font-bold text-center text-sm">Export Data</span>
+                    </a>
+
+                    {{-- 3. Shortcut ke Laporan BMW (Scroll ke id="bmw-report") --}}
+                    <a href="{{ route('admin.reports.index') }}#bmw-report" class="flex flex-col items-center justify-center p-6 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition active:scale-95 shadow-sm">
+                        <i class="fas fa-chart-line text-2xl mb-2"></i>
+                        <span class="font-bold text-center text-sm">Laporan BMW</span>
+                    </a>
+
+                    {{-- 4. Broadcast (Pending) --}}
+                    <a href="#" class="flex flex-col items-center justify-center p-6 bg-slate-700 text-white rounded-xl opacity-80 cursor-not-allowed">
+                        <i class="fas fa-bullhorn text-2xl mb-2"></i>
+                        <span class="font-bold text-center text-sm">Broadcast</span>
+                    </a>
+                </div>
+            </div>
+
+            {{-- Lowongan Terbaru --}}
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+                    <h3 class="font-bold text-slate-800">Lowongan Terbaru</h3>
+                    <a href="{{ route('admin.jobs.index') }}" class="text-blue-600 text-sm font-medium hover:underline">Lihat Semua</a>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead class="bg-slate-50 text-slate-500 text-xs uppercase">
                             <tr>
-                                <td class="font-semibold">{{ $job->title ?? '-' }}</td>
-                                <td>{{ $job->company->company_name ?? '-' }}</td>
-                                <td>
-                                    <span class="badge-pill {{ $job->status == 'active' ? 'badge-success' : 'badge-warning' }}">
-                                        {{ ucfirst($job->status ?? 'Unknown') }}
+                                <th class="px-6 py-4 font-medium">Posisi</th>
+                                <th class="px-6 py-4 font-medium">Perusahaan</th>
+                                <th class="px-6 py-4 font-medium">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            @forelse($recent_jobs ?? [] as $job)
+                            <tr class="hover:bg-slate-50 transition">
+                                <td class="px-6 py-4 font-semibold text-slate-700">{{ $job->title }}</td>
+                                <td class="px-6 py-4 text-slate-600">{{ $job->company->company_name ?? '-' }}</td>
+                                <td class="px-6 py-4">
+                                    <span class="px-3 py-1 text-xs rounded-full {{ $job->status == 'active' ? 'bg-green-100 text-green-600' : 'bg-yellow-100 text-yellow-600' }}">
+                                        {{ ucfirst($job->status) }}
                                     </span>
                                 </td>
-                                <td>
-                                    <button class="btn-action" title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                </td>
+                                
                             </tr>
-                        @empty
+                            @empty
                             <tr>
-                                <td colspan="4" class="text-center text-slate-500 py-8">
-                                    <i class="fas fa-inbox text-3xl mb-2 block opacity-50"></i>
-                                    Belum ada lowongan
-                                </td>
+                                <td colspan="3" class="px-6 py-10 text-center text-slate-400">Belum ada lowongan.</td>
                             </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Right Sidebar -->
-    <div>
-        <!-- Stats Overview -->
-        <div class="bg-white rounded-xl border border-slate-200 p-6 mb-6">
-            <h3 class="text-lg font-bold text-slate-800 mb-6">
-                <i class="fas fa-chart-pie text-green-600 mr-3"></i> Ringkasan
-            </h3>
-            <div class="space-y-4">
-                <div>
-                    <div class="flex justify-between mb-2">
-                        <span class="text-sm font-medium text-slate-700">Lamaran Pending</span>
-                        <span class="text-sm font-bold text-slate-800">{{ $pending_applications ?? 0 }}</span>
-                    </div>
-                    <div class="w-full bg-slate-200 rounded-full h-2">
-                        <div class="bg-yellow-500 h-2 rounded-full" style="width: 45%"></div>
-                    </div>
-                </div>
-                <div>
-                    <div class="flex justify-between mb-2">
-                        <span class="text-sm font-medium text-slate-700">Lowongan Aktif</span>
-                        <span class="text-sm font-bold text-slate-800">{{ $active_jobs ?? 0 }}</span>
-                    </div>
-                    <div class="w-full bg-slate-200 rounded-full h-2">
-                        <div class="bg-green-500 h-2 rounded-full" style="width: 72%"></div>
-                    </div>
-                </div>
-                <div>
-                    <div class="flex justify-between mb-2">
-                        <span class="text-sm font-medium text-slate-700">Tingkat Penyaluran</span>
-                        <span class="text-sm font-bold text-slate-800">85%</span>
-                    </div>
-                    <div class="w-full bg-slate-200 rounded-full h-2">
-                        <div class="bg-blue-500 h-2 rounded-full" style="width: 85%"></div>
-                    </div>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white rounded-xl border border-slate-200 p-6 mb-6">
-            <h3 class="text-lg font-bold text-slate-800 mb-6">
-                <i class="fas fa-building text-blue-600 mr-3"></i> Perusahaan Teratas
-            </h3>
-            <div class="space-y-3">
-                @forelse($topCompanies ?? [] as $company)
-                    <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                        <div class="flex items-center justify-between gap-3">
-                            <div>
-                                <p class="font-semibold text-slate-900">{{ $company->company_name }}</p>
-                                <p class="text-xs text-slate-500">{{ $company->industry ?? 'Industri belum diisi' }}</p>
-                            </div>
-                            <span class="badge-pill badge-info">{{ $company->jobs_count }} lowongan</span>
+        {{-- Kolom Kanan --}}
+        <div class="space-y-8">
+            {{-- Ringkasan Progress --}}
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                <h3 class="font-bold text-slate-800 mb-6">Ringkasan</h3>
+                <div class="space-y-6">
+                    <div>
+                        <div class="flex justify-between mb-2 text-sm">
+                            <span class="text-slate-600">Lamaran Pending</span>
+                            <span class="font-bold text-slate-800">{{ $pending_applications ?? 0 }}</span>
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-2">
+                            <div class="bg-yellow-500 h-2 rounded-full" style="width: 45%"></div>
                         </div>
                     </div>
-                @empty
-                    <p class="text-sm text-slate-500">Belum ada data perusahaan.</p>
-                @endforelse
+                    <div>
+                        <div class="flex justify-between mb-2 text-sm">
+                            <span class="text-slate-600">Lowongan Aktif</span>
+                            <span class="font-bold text-slate-800">{{ $active_jobs ?? 0 }}</span>
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-2">
+                            <div class="bg-green-500 h-2 rounded-full" style="width: 70%"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <!-- Upcoming Events -->
-        <div class="bg-white rounded-xl border border-slate-200 p-6">
-            <h3 class="text-lg font-bold text-slate-800 mb-6">
-                <i class="fas fa-calendar text-red-600 mr-3"></i> Acara Mendatang
-            </h3>
-            <div class="space-y-3">
-                <div class="border-l-4 border-blue-500 pl-4 py-2">
-                    <p class="font-semibold text-slate-800 text-sm">Job Fair 2026</p>
-                    <p class="text-xs text-slate-500 mt-1">15-17 Maret 2026</p>
-                </div>
-                <div class="border-l-4 border-green-500 pl-4 py-2">
-                    <p class="font-semibold text-slate-800 text-sm">Workshop Interview</p>
-                    <p class="text-xs text-slate-500 mt-1">22 Februari 2026</p>
-                </div>
-                <div class="border-l-4 border-purple-500 pl-4 py-2">
-                    <p class="font-semibold text-slate-800 text-sm">Sertifikasi BNSP</p>
-                    <p class="text-xs text-slate-500 mt-1">01-30 Maret 2026</p>
+            {{-- Perusahaan Teratas --}}
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                <h3 class="font-bold text-slate-800 mb-6">Perusahaan Teratas</h3>
+                <div class="space-y-4">
+                    @forelse($topCompanies ?? [] as $company)
+                    <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
+                        <div>
+                            <p class="text-sm font-bold text-slate-800">{{ $company->company_name }}</p>
+                            <p class="text-xs text-slate-500">{{ $company->industry ?? 'Industri' }}</p>
+                        </div>
+                        <span class="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-lg font-bold">
+                            {{ $company->jobs_count }} Lowongan
+                        </span>
+                    </div>
+                    @empty
+                    <p class="text-sm text-slate-400">Tidak ada data.</p>
+                    @endforelse
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Recent Applications -->
-<div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
-    <div class="p-6 border-b border-slate-200">
-        <h3 class="text-lg font-bold text-slate-800 flex items-center">
-            <i class="fas fa-file-alt text-green-600 mr-3"></i> Lamaran Terbaru
-        </h3>
-    </div>
-    <div class="table-custom">
-        <table class="w-full">
-            <thead>
-                <tr>
-                    <th>Pelamar</th>
-                    <th>Posisi</th>
-                    <th>Tanggal Lamar</th>
-                    <th>Status</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($recent_applications ?? [] as $app)
+    {{-- Lamaran Terbaru --}}
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-slate-100">
+            <h3 class="font-bold text-slate-800">Lamaran Masuk Terbaru</h3>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+                <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
                     <tr>
-                        <td class="font-semibold">{{ $app->student->user->email ?? $app->student->full_name ?? '-' }}</td>
-                        <td>{{ $app->job->title ?? '-' }}</td>
-                        <td>{{ ($app->application_date ?? now())->format('d M Y') }}</td>
-                        <td>
-                            <span class="badge-pill {{ 
-                                $app->status == 'accepted' ? 'badge-success' : 
-                                ($app->status == 'rejected' ? 'badge-danger' : 'badge-warning')
-                            }}">
-                                {{ ucfirst($app->status ?? 'Pending') }}
+                        <th class="px-6 py-4">Pelamar</th>
+                        <th class="px-6 py-4">Posisi</th>
+                        <th class="px-6 py-4">Tanggal</th>
+                        <th class="px-6 py-4">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    @forelse($recent_applications ?? [] as $app)
+                    <tr>
+                        <td class="px-6 py-4 font-medium text-slate-800">{{ $app->student->full_name ?? 'N/A' }}</td>
+                        <td class="px-6 py-4 text-slate-600">{{ $app->job->title ?? '-' }}</td>
+                        <td class="px-6 py-4 text-slate-500">{{ \Carbon\Carbon::parse($app->created_at)->format('d/m/Y') }}</td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-1 rounded-md text-xs font-bold {{ $app->status == 'accepted' ? 'bg-green-100 text-green-600' : ($app->status == 'rejected' ? 'bg-red-100 text-red-600' : 'bg-yellow-100 text-yellow-600') }}">
+                                {{ strtoupper($app->status) }}
                             </span>
                         </td>
-                        <td>
-                            <button class="btn-action" title="Review">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </td>
+
                     </tr>
-                @empty
+                    @empty
                     <tr>
-                        <td colspan="5" class="text-center text-slate-500 py-8">
-                            <i class="fas fa-inbox text-3xl mb-2 block opacity-50"></i>
-                            Belum ada lamaran
-                        </td>
+                        <td colspan="4" class="px-6 py-10 text-center text-slate-400">Belum ada lamaran masuk.</td>
                     </tr>
-                @endforelse
-            </tbody>
-        </table>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 @endsection

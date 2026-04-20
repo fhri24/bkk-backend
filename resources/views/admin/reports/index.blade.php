@@ -5,6 +5,7 @@
 
 @section('content')
 <div class="space-y-6">
+    {{-- Statistik Atas --}}
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div class="bg-white rounded-xl border border-slate-200 p-6">
             <p class="text-sm text-slate-500">Total Alumni</p>
@@ -20,82 +21,94 @@
         </div>
     </div>
 
-    <div id="export-actions" class="bg-white rounded-xl border border-slate-200 p-6 mb-6">
-        <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-bold text-slate-800">Export Data</h3>
-            <div class="space-x-2">
-                <a href="{{ route('admin.reports.export.alumni.csv') }}" class="btn-action bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Export Alumni</a>
-                <a href="{{ route('admin.reports.export.jobs.csv') }}" class="btn-action bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Export Lowongan</a>
-                <a href="{{ route('admin.reports.export.alumni.print') }}" target="_blank" class="btn-action bg-slate-600 text-white px-4 py-2 rounded-lg hover:bg-slate-700">Cetak Alumni</a>
-                <a href="{{ route('admin.reports.export.jobs.print') }}" target="_blank" class="btn-action bg-slate-600 text-white px-4 py-2 rounded-lg hover:bg-slate-700">Cetak Lowongan</a>
+    {{-- BAGIAN EXPORT DATA --}}
+    {{-- Beri id="export-data" agar bisa di-scroll otomatis dari Dashboard --}}
+    <div id="export-data" class="bg-white rounded-xl border border-slate-200 p-6 scroll-mt-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4">
+            <div>
+                <h3 class="text-lg font-bold text-slate-800">Export Data</h3>
+                <p class="text-sm text-slate-500">Unduh atau cetak laporan alumni dan lowongan.</p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                <a href="{{ route('admin.reports.export.alumni.csv') }}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm font-medium transition">Export Alumni</a>
+                <a href="{{ route('admin.reports.export.jobs.csv') }}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm font-medium transition">Export Lowongan</a>
+                <a href="{{ route('admin.reports.export.alumni.print') }}" target="_blank" class="bg-slate-600 text-white px-4 py-2 rounded-lg hover:bg-slate-700 text-sm font-medium transition">Cetak Alumni</a>
+                <a href="{{ route('admin.reports.export.jobs.print') }}" target="_blank" class="bg-slate-600 text-white px-4 py-2 rounded-lg hover:bg-slate-700 text-sm font-medium transition">Cetak Lowongan</a>
             </div>
         </div>
-        <p class="text-sm text-slate-500">Gunakan tombol ini untuk mengunduh dan mencetak laporan alumni serta rekapitulasi lowongan.</p>
+        
     </div>
 
-    <div id="bmw-report" class="bg-white rounded-xl border border-slate-200 p-6">
-        <div class="flex items-center justify-between mb-6">
+    {{-- BAGIAN LAPORAN BMW --}}
+    {{-- Beri id="bmw-report" agar bisa di-scroll otomatis dari Dashboard --}}
+    <div id="bmw-report" class="bg-white rounded-xl border border-slate-200 p-6 scroll-mt-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
             <div>
                 <h3 class="text-lg font-bold text-slate-800">Laporan BMW</h3>
                 <p class="text-sm text-slate-500">Statistik alumni berdasarkan status karir saat ini.</p>
             </div>
-            <div class="space-x-2">
-                <a href="{{ route('admin.reports.export.alumni.csv') }}" class="btn-action bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Export Alumni</a>
-                <a href="{{ route('admin.reports.export.alumni.print') }}" target="_blank" class="btn-action bg-slate-600 text-white px-4 py-2 rounded-lg hover:bg-slate-700">Cetak PDF</a>
+            <div class="flex gap-2">
+                <a href="{{ route('admin.reports.export.alumni.csv') }}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm font-medium transition">Export CSV</a>
+                <a href="{{ route('admin.reports.export.alumni.print') }}" target="_blank" class="bg-slate-600 text-white px-4 py-2 rounded-lg hover:bg-slate-700 text-sm font-medium transition">Cetak PDF</a>
             </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="rounded-2xl border border-slate-200 p-4">
-                <p class="text-sm text-slate-500">Bekerja</p>
+            <div class="rounded-2xl border border-slate-200 p-4 bg-slate-50/50">
+                <p class="text-sm text-slate-500 mb-1">Bekerja</p>
                 <p class="text-2xl font-bold text-slate-800">{{ $alumniCareerCounts['bekerja'] ?? 0 }}</p>
             </div>
-            <div class="rounded-2xl border border-slate-200 p-4">
-                <p class="text-sm text-slate-500">Melanjutkan</p>
+            <div class="rounded-2xl border border-slate-200 p-4 bg-slate-50/50">
+                <p class="text-sm text-slate-500 mb-1">Melanjutkan</p>
                 <p class="text-2xl font-bold text-slate-800">{{ $alumniCareerCounts['melanjutkan'] ?? 0 }}</p>
             </div>
-            <div class="rounded-2xl border border-slate-200 p-4">
-                <p class="text-sm text-slate-500">Wirausaha</p>
+            <div class="rounded-2xl border border-slate-200 p-4 bg-slate-50/50">
+                <p class="text-sm text-slate-500 mb-1">Wirausaha</p>
                 <p class="text-2xl font-bold text-slate-800">{{ $alumniCareerCounts['wirausaha'] ?? 0 }}</p>
             </div>
         </div>
     </div>
 
-    <div id="job-report" class="bg-white rounded-xl border border-slate-200 p-6">
-        <div class="flex items-center justify-between mb-6">
+    {{-- REKAPITULASI LAMARAN --}}
+    <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
             <div>
                 <h3 class="text-lg font-bold text-slate-800">Rekapitulasi Lamaran</h3>
-                <p class="text-sm text-slate-500">Jumlah lamaran dan diterima per bulan, serta perusahaan tujuan.</p>
+                <p class="text-sm text-slate-500">Jumlah lamaran dan diterima per bulan.</p>
             </div>
-            <div class="space-x-2">
-                <a href="{{ route('admin.reports.export.jobs.csv') }}" class="btn-action bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Export Lowongan</a>
-                <a href="{{ route('admin.reports.export.jobs.print') }}" target="_blank" class="btn-action bg-slate-600 text-white px-4 py-2 rounded-lg hover:bg-slate-700">Cetak PDF</a>
+            <div class="flex gap-2">
+                <a href="{{ route('admin.reports.export.jobs.csv') }}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm font-medium transition">Export CSV</a>
+                <a href="{{ route('admin.reports.export.jobs.print') }}" target="_blank" class="bg-slate-600 text-white px-4 py-2 rounded-lg hover:bg-slate-700 text-sm font-medium transition">Cetak PDF</a>
             </div>
         </div>
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
-                    <tr class="bg-slate-100">
-                        <th class="p-3">Bulan</th>
-                        <th class="p-3">Total Lamaran</th>
-                        <th class="p-3">Diterima</th>
-                        <th class="p-3">Perusahaan</th>
+                    <tr class="bg-slate-50 text-slate-600 text-sm">
+                        <th class="p-4 font-semibold border-b border-slate-100">Bulan</th>
+                        <th class="p-4 font-semibold border-b border-slate-100">Total Lamaran</th>
+                        <th class="p-4 font-semibold border-b border-slate-100">Diterima</th>
+                        <th class="p-4 font-semibold border-b border-slate-100">Perusahaan</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="text-slate-700">
                     @forelse($applicationMonthly as $row)
-                        <tr class="border-t border-slate-200">
-                            <td class="p-3">{{ \Carbon\Carbon::createFromFormat('Y-m', $row['month'])->format('F Y') }}</td>
-                            <td class="p-3">{{ $row['total'] }}</td>
-                            <td class="p-3">{{ $row['accepted'] }}</td>
-                            <td class="p-3 text-sm text-slate-700">
-                                @foreach($row['by_company'] as $company => $count)
-                                    <div>{{ $company }}: {{ $count }}</div>
-                                @endforeach
+                        <tr class="border-b border-slate-50 hover:bg-slate-50/50 transition">
+                            <td class="p-4">{{ \Carbon\Carbon::createFromFormat('Y-m', $row['month'])->format('F Y') }}</td>
+                            <td class="p-4"><span class="font-bold text-slate-800">{{ $row['total'] }}</span></td>
+                            <td class="p-4"><span class="text-green-600 font-bold">{{ $row['accepted'] }}</span></td>
+                            <td class="p-4">
+                                <div class="space-y-1">
+                                    @foreach($row['by_company'] as $company => $count)
+                                        <div class="text-xs bg-white border border-slate-200 px-2 py-1 rounded-md inline-block mr-1">
+                                            <span class="font-semibold">{{ $company }}</span>: {{ $count }}
+                                        </div>
+                                    @endforeach
+                                </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="p-6 text-center text-slate-500">Belum ada data lamaran.</td>
+                            <td colspan="4" class="p-10 text-center text-slate-400 italic">Belum ada data lamaran.</td>
                         </tr>
                     @endforelse
                 </tbody>

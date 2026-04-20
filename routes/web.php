@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PublicController;
-use App\Http\Controllers\StudentController; // Import Controller Student
+use App\Http\Controllers\StudentController; 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\JobController as AdminJobController;
 use App\Http\Controllers\Admin\CompanyController as AdminCompanyController;
@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\RoleController as AdminRoleController;
 use App\Http\Controllers\Admin\ActivityLogController as AdminActivityLogController;
 use App\Http\Controllers\Admin\AlumniStoryController as AdminAlumniStoryController;
+use App\Http\Controllers\Admin\DashboardActionController;
 
 use App\Http\Controllers\Student\PageController as StudentPageController;
 use App\Http\Controllers\Student\HomeController;
@@ -28,7 +29,7 @@ use App\Http\Controllers\Student\HomeController;
 
 
 /**
- * PUBLIC ROUTES (Bisa diakses siapa saja)
+ * PUBLIC ROUTES
  */
 Route::get('/', [PublicController::class, 'beranda'])->name('public.home');
 Route::get('/beranda', [PublicController::class, 'beranda'])->name('public.beranda');
@@ -36,7 +37,7 @@ Route::get('/home', function () {
     return redirect('/');
 });
 
-// Fitur Publik (Daftar & Detail)
+
 Route::get('/lowongan-kerja', [PublicController::class, 'lowongan'])->name('public.lowongan');
 Route::get('/lowongan/{id}', [PublicController::class, 'lowonganDetail'])->name('public.lowongan.detail');
 
@@ -48,12 +49,12 @@ Route::get('/tracer-study', [PublicController::class, 'tracer'])->name('public.t
 Route::get('/tutorial', [PublicController::class, 'tutorial'])->name('public.tutorial');
 
 /**
- * AUTH ROUTES (Login & Register)
+ * AUTH ROUTES
  */
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'index'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.process');
-    
+
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AuthController::class, 'register'])->name('register.process');
 });
@@ -62,35 +63,42 @@ Route::middleware('guest')->group(function () {
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 /**
- * STUDENT ROUTES (Hanya untuk Siswa yang sudah Login)
+ * STUDENT ROUTES
  */
 Route::middleware(['auth', 'student'])->prefix('student')->name('student.')->group(function () {
     
-    // Beranda Student
+
+
     Route::get('/', [HomeController::class, 'index'])->name('home');
-    
-    // Fitur Profil (Ini yang kita tambahkan agar tombol di Navbar jalan)
+
     Route::get('/profile', [StudentController::class, 'showProfile'])->name('profile');
     Route::post('/profile', [StudentController::class, 'updateProfile'])->name('profile.update');
+
     
-    // Fitur Student (Page Controller)
     Route::get('/lowongan', [StudentPageController::class, 'lowongan'])->name('lowongan');
     Route::get('/lowongan/{id}', [StudentPageController::class, 'lowonganDetail'])->name('lowongan.detail');
     Route::get('/berita', [StudentPageController::class, 'berita'])->name('berita');
     Route::get('/berita/{id}', [StudentPageController::class, 'beritaDetail'])->name('berita.detail');
     Route::get('/acara', [StudentPageController::class, 'acara'])->name('acara');
     Route::get('/tracer', [StudentPageController::class, 'tracer'])->name('tracer');
+
     
-    // Halaman profil versi lain (jika diperlukan)
     Route::get('/profil-lengkap', [StudentPageController::class, 'profil'])->name('profil.page');
 });
 
 /**
- * ADMIN ROUTES (Super Admin, Admin BKK, dll)
+ * ADMIN ROUTES
  */
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    
+    // Dashboard Utama
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+    
+    // Tombol Aksi Cepat Dashboard
+    Route::get('/export-data', [DashboardActionController::class, 'export'])->name('export');
+    Route::get('/laporan-cepat', [DashboardActionController::class, 'laporan'])->name('laporan');
+    Route::get('/broadcast', [DashboardActionController::class, 'broadcast'])->name('broadcast');
     
     // Manajemen Perusahaan
     Route::prefix('companies')->name('companies.')->middleware('permission:manage_companies')->group(function () {
