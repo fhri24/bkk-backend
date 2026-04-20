@@ -113,15 +113,20 @@
                             <tr>
                                 <td class="font-semibold">{{ $job->title ?? '-' }}</td>
                                 <td>{{ $job->company->company_name ?? '-' }}</td>
+                                <td><span class="badge-pill {{ $job->status == 'active' ? 'badge-success' : 'badge-warning' }}">{{ ucfirst($job->status) }}</span></td>
                                 <td>
-                                    <span class="badge-pill {{ $job->status == 'active' ? 'badge-success' : 'badge-warning' }}">
-                                        {{ ucfirst($job->status ?? 'Unknown') }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <button class="btn-action" title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
+                                    <div class="flex gap-2">
+                                        <a href="{{ route('admin.jobs.edit', $job->job_id) }}" class="btn-action" title="Edit" data-tooltip="Edit Lowongan">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form action="{{ route('admin.jobs.destroy', $job->job_id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus lowongan ini?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn-action text-red-600 hover:text-red-800" title="Hapus">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @empty
