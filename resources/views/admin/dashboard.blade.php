@@ -71,37 +71,29 @@
         </div>
     </div>
 
-    {{-- Layout Grid: Main Content & Sidebar --}}
+    {{-- Layout Grid --}}
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
         {{-- Kolom Kiri --}}
         <div class="lg:col-span-2 space-y-8">
-            
-            {{-- Tombol Aksi Cepat Dashboard - Fitur Shortcut & Auto-Scroll --}}
+            {{-- Aksi Cepat --}}
             <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                 <h3 class="text-lg font-bold text-slate-800 mb-6 flex items-center">
                     <i class="fas fa-bolt text-yellow-500 mr-3"></i> Aksi Cepat
                 </h3>
                 <div class="grid grid-cols-2 gap-4">
-                    {{-- 1. Tambah Lowongan --}}
                     <a href="{{ route('admin.jobs.create') }}" class="flex flex-col items-center justify-center p-6 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition active:scale-95 shadow-sm">
                         <i class="fas fa-plus text-2xl mb-2"></i>
                         <span class="font-bold text-center text-sm">Tambah Lowongan</span>
                     </a>
-
-                    {{-- 2. Shortcut ke Export Data (Scroll ke id="export-data") --}}
                     <a href="{{ route('admin.reports.index') }}#export-data" class="flex flex-col items-center justify-center p-6 bg-green-600 text-white rounded-xl hover:bg-green-700 transition active:scale-95 shadow-sm">
                         <i class="fas fa-file-export text-2xl mb-2"></i>
                         <span class="font-bold text-center text-sm">Export Data</span>
                     </a>
-
-                    {{-- 3. Shortcut ke Laporan BMW (Scroll ke id="bmw-report") --}}
                     <a href="{{ route('admin.reports.index') }}#bmw-report" class="flex flex-col items-center justify-center p-6 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition active:scale-95 shadow-sm">
                         <i class="fas fa-chart-line text-2xl mb-2"></i>
                         <span class="font-bold text-center text-sm">Laporan BMW</span>
                     </a>
-
-                    {{-- 4. Broadcast (Pending) --}}
                     <a href="#" class="flex flex-col items-center justify-center p-6 bg-slate-700 text-white rounded-xl opacity-80 cursor-not-allowed">
                         <i class="fas fa-bullhorn text-2xl mb-2"></i>
                         <span class="font-bold text-center text-sm">Broadcast</span>
@@ -122,6 +114,7 @@
                                 <th class="px-6 py-4 font-medium">Posisi</th>
                                 <th class="px-6 py-4 font-medium">Perusahaan</th>
                                 <th class="px-6 py-4 font-medium">Status</th>
+                                <th class="px-6 py-4 font-medium text-right">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
@@ -134,11 +127,23 @@
                                         {{ ucfirst($job->status) }}
                                     </span>
                                 </td>
-                                
+                                <td class="px-6 py-4 text-right">
+                                    <div class="flex justify-end gap-2">
+                                        <a href="{{ route('admin.jobs.edit', $job->job_id) }}" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form action="{{ route('admin.jobs.destroy', $job->job_id) }}" method="POST" class="inline" onsubmit="return confirm('Hapus lowongan ini?')">
+                                            @csrf @method('DELETE')
+                                            <button type="submit" class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="3" class="px-6 py-10 text-center text-slate-400">Belum ada lowongan.</td>
+                                <td colspan="4" class="px-6 py-10 text-center text-slate-400">Belum ada lowongan.</td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -149,7 +154,6 @@
 
         {{-- Kolom Kanan --}}
         <div class="space-y-8">
-            {{-- Ringkasan Progress --}}
             <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                 <h3 class="font-bold text-slate-800 mb-6">Ringkasan</h3>
                 <div class="space-y-6">
@@ -174,7 +178,6 @@
                 </div>
             </div>
 
-            {{-- Perusahaan Teratas --}}
             <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                 <h3 class="font-bold text-slate-800 mb-6">Perusahaan Teratas</h3>
                 <div class="space-y-4">
@@ -208,7 +211,7 @@
                         <th class="px-6 py-4">Pelamar</th>
                         <th class="px-6 py-4">Posisi</th>
                         <th class="px-6 py-4">Tanggal</th>
-                        <th class="px-6 py-4">Status</th>
+                        <th class="px-6 py-4 text-center">Status</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
@@ -217,12 +220,11 @@
                         <td class="px-6 py-4 font-medium text-slate-800">{{ $app->student->full_name ?? 'N/A' }}</td>
                         <td class="px-6 py-4 text-slate-600">{{ $app->job->title ?? '-' }}</td>
                         <td class="px-6 py-4 text-slate-500">{{ \Carbon\Carbon::parse($app->created_at)->format('d/m/Y') }}</td>
-                        <td class="px-6 py-4">
-                            <span class="px-2 py-1 rounded-md text-xs font-bold {{ $app->status == 'accepted' ? 'bg-green-100 text-green-600' : ($app->status == 'rejected' ? 'bg-red-100 text-red-600' : 'bg-yellow-100 text-yellow-600') }}">
+                        <td class="px-6 py-4 text-center">
+                            <span class="px-2 py-1 rounded-md text-[10px] font-bold {{ $app->status == 'accepted' ? 'bg-green-100 text-green-600' : ($app->status == 'rejected' ? 'bg-red-100 text-red-600' : 'bg-yellow-100 text-yellow-600') }}">
                                 {{ strtoupper($app->status) }}
                             </span>
                         </td>
-
                     </tr>
                     @empty
                     <tr>
