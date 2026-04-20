@@ -1,9 +1,15 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Models\User;
+
+// Import Controllers
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PublicController;
-use App\Http\Controllers\StudentController; 
+use App\Http\Controllers\StudentController;
+use App\Http\Controllers\SearchController;
+
+// Admin Controllers
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\JobController as AdminJobController;
 use App\Http\Controllers\Admin\CompanyController as AdminCompanyController;
@@ -17,6 +23,7 @@ use App\Http\Controllers\Admin\ActivityLogController as AdminActivityLogControll
 use App\Http\Controllers\Admin\AlumniStoryController as AdminAlumniStoryController;
 use App\Http\Controllers\Admin\DashboardActionController;
 
+// Student Controllers
 use App\Http\Controllers\Student\PageController as StudentPageController;
 use App\Http\Controllers\Student\HomeController;
 
@@ -26,24 +33,17 @@ use App\Http\Controllers\Student\HomeController;
 |--------------------------------------------------------------------------
 */
 
-
-
 /**
  * PUBLIC ROUTES
  */
 Route::get('/', [PublicController::class, 'beranda'])->name('public.home');
 Route::get('/beranda', [PublicController::class, 'beranda'])->name('public.beranda');
-Route::get('/home', function () {
-    return redirect('/');
-});
-
+Route::get('/home', fn() => redirect('/'));
 
 Route::get('/lowongan-kerja', [PublicController::class, 'lowongan'])->name('public.lowongan');
 Route::get('/lowongan/{id}', [PublicController::class, 'lowonganDetail'])->name('public.lowongan.detail');
-
 Route::get('/berita-terbaru', [PublicController::class, 'berita'])->name('public.berita');
 Route::get('/berita/{id}', [PublicController::class, 'beritaDetail'])->name('public.berita.detail');
-
 Route::get('/acara-mendatang', [PublicController::class, 'acara'])->name('public.acara');
 Route::get('/tracer-study', [PublicController::class, 'tracer'])->name('public.tracer');
 Route::get('/tutorial', [PublicController::class, 'tutorial'])->name('public.tutorial');
@@ -54,11 +54,9 @@ Route::get('/tutorial', [PublicController::class, 'tutorial'])->name('public.tut
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'index'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.process');
-
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AuthController::class, 'register'])->name('register.process');
 });
-
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
@@ -66,40 +64,37 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
  * STUDENT ROUTES
  */
 Route::middleware(['auth', 'student'])->prefix('student')->name('student.')->group(function () {
-    
-
-
     Route::get('/', [HomeController::class, 'index'])->name('home');
 
+    // Profil
     Route::get('/profile', [StudentController::class, 'showProfile'])->name('profile');
     Route::post('/profile', [StudentController::class, 'updateProfile'])->name('profile.update');
+    Route::get('/profil-lengkap', [StudentPageController::class, 'profil'])->name('profil.page');
 
-    
+    // Pages
     Route::get('/lowongan', [StudentPageController::class, 'lowongan'])->name('lowongan');
     Route::get('/lowongan/{id}', [StudentPageController::class, 'lowonganDetail'])->name('lowongan.detail');
     Route::get('/berita', [StudentPageController::class, 'berita'])->name('berita');
     Route::get('/berita/{id}', [StudentPageController::class, 'beritaDetail'])->name('berita.detail');
     Route::get('/acara', [StudentPageController::class, 'acara'])->name('acara');
     Route::get('/tracer', [StudentPageController::class, 'tracer'])->name('tracer');
-
-    
-    Route::get('/profil-lengkap', [StudentPageController::class, 'profil'])->name('profil.page');
 });
 
 /**
  * ADMIN ROUTES
  */
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    
-    // Dashboard Utama
+
+    // Dashboard Utama & Search
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
-    
-    // Tombol Aksi Cepat Dashboard
+    Route::get('/search', [SearchController::class, 'search'])->name('search');
+
+    // Tombol Aksi Cepat Dashboard (Fitur dari HEAD lu)
     Route::get('/export-data', [DashboardActionController::class, 'export'])->name('export');
     Route::get('/laporan-cepat', [DashboardActionController::class, 'laporan'])->name('laporan');
     Route::get('/broadcast', [DashboardActionController::class, 'broadcast'])->name('broadcast');
-    
+
     // Manajemen Perusahaan
     Route::prefix('companies')->name('companies.')->middleware('permission:manage_companies')->group(function () {
         Route::get('/', [AdminCompanyController::class, 'index'])->name('index');
@@ -151,17 +146,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::get('/profile', [AdminSettingController::class, 'profile'])->name('profile');
         Route::put('/profile', [AdminSettingController::class, 'updateProfile'])->name('profile.update');
 
-        Route::get('/majors', [AdminSettingController::class, 'majorsIndex'])->name('majors.index');
-        Route::post('/majors', [AdminSettingController::class, 'storeMajor'])->name('majors.store');
-        Route::get('/majors/{major}/edit', [AdminSettingController::class, 'editMajor'])->name('majors.edit');
-        Route::put('/majors/{major}', [AdminSettingController::class, 'updateMajor'])->name('majors.update');
-        Route::delete('/majors/{major}', [AdminSettingController::class, 'destroyMajor'])->name('majors.destroy');
-
-        Route::get('/years', [AdminSettingController::class, 'yearsIndex'])->name('years.index');
-        Route::post('/years', [AdminSettingController::class, 'storeYear'])->name('years.store');
-        Route::get('/years/{year}/edit', [AdminSettingController::class, 'editYear'])->name('years.edit');
-        Route::put('/years/{year}', [AdminSettingController::class, 'updateYear'])->name('years.update');
-        Route::delete('/years/{year}', [AdminSettingController::class, 'destroyYear'])->name('years.destroy');
+        // Majors & Years
+        Route::resource('majors', AdminSettingController::class)->except(['show']);
+        Route::resource('years', AdminSettingController::class)->except(['show']);
     });
 
     // Laporan & Log
@@ -173,13 +160,21 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::get('/export/jobs/print', [AdminReportController::class, 'printJobs'])->name('export.jobs.print');
     });
 
-    Route::prefix('activity-logs')->name('activity-logs.')->middleware('permission:view_activity_logs')->group(function () {
-        Route::get('/', [AdminActivityLogController::class, 'index'])->name('index');
-    });
+    Route::get('/activity-logs', [AdminActivityLogController::class, 'index'])->name('activity-logs.index')->middleware('permission:view_activity_logs');
 
-    // Manajemen Kisah Sukses Alumni
+    // Alumni Stories
     Route::prefix('alumni-stories')->name('alumni-stories.')->group(function () {
         Route::get('/', [AdminAlumniStoryController::class, 'index'])->name('index');
         Route::delete('/{id}', [AdminAlumniStoryController::class, 'destroy'])->name('destroy');
     });
+
+    // JSON Notifications
+    Route::get('/notifications', function () {
+        $users = User::latest()->limit(5)->get();
+        return response()->json($users->map(fn($u) => [
+            'title' => 'User baru: ' . $u->email,
+            'time'  => $u->created_at->diffForHumans(),
+            'link'  => route('admin.users.index')
+        ]));
+    })->name('notifications');
 });

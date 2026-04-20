@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('job_applications', function (Blueprint $table) {
-        $table->id('job_application_id'); 
+        $table->id('job_application_id');
 
         // Relasi ke Lowongan
         $table->unsignedBigInteger('job_id');
@@ -20,20 +20,20 @@ return new class extends Migration
         $table->foreign('student_id')->references('student_id')->on('students')->onDelete('cascade');
 
         // Detail Lamaran
-        $table->text('cover_letter')->nullable(); 
-        $table->string('additional_file')->nullable(); 
-        $table->text('admin_notes')->nullable(); 
-        
+        $table->text('cover_letter')->nullable();
+        $table->string('additional_file')->nullable();
+        $table->text('admin_notes')->nullable();
+
         // --- UBAH BAGIAN INI AGAR SESUAI TUGAS ENDPOINT ---
         $table->enum('status', [
-            'pending', 
-            'review', 
-            'accepted', 
+            'pending',
+            'review',
+            'accepted',
             'rejected'
         ])->default('pending');
         // --------------------------------------------------
 
-        $table->timestamp('application_date')->useCurrent(); 
+        $table->timestamp('application_date')->useCurrent();
         $table->timestamps();
     });
 }
@@ -42,5 +42,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('job_applications');
+    }
+   public function student()
+    {
+    return $this->belongsTo(Student::class, 'student_id', 'student_id');
     }
 };

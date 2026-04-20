@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    
+
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
@@ -15,14 +15,14 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            
+
             // Relasi ke tabel Roles (Menggantikan ENUM)
             $table->foreignId('role_id')->constrained('roles')->onDelete('restrict');
-            
+
             // Polymorphic Relationship (Tugas Utama Kamu)
             $table->unsignedBigInteger('userable_id')->nullable();
             $table->string('userable_type')->nullable();
-            
+
             $table->boolean('is_active')->default(true);
             $table->rememberToken();
             $table->timestamps();
@@ -45,11 +45,15 @@ return new class extends Migration
         });
     }
 
-    
+
     public function down(): void
     {
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+    }
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
     }
 };

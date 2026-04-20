@@ -16,8 +16,13 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        // Ensure required roles exist (create if not)
+        $superAdminRole = Role::firstOrCreate(['name' => 'super_admin'], ['description' => 'Super Administrator']);
+        $adminBkkRole = Role::firstOrCreate(['name' => 'admin_bkk'], ['description' => 'Admin BKK']);
+        $kepalaBkkRole = Role::firstOrCreate(['name' => 'kepala_bkk'], ['description' => 'Kepala BKK']);
+        $perusahaanRole = Role::firstOrCreate(['name' => 'perusahaan'], ['description' => 'Perusahaan']);
+
         // 1. Create Super Admin
-        $superAdminRole = Role::where('name', 'super_admin')->first();
         $superAdmin = User::firstOrCreate(
             ['email' => 'superadmin@bkk.com'],
             [
@@ -29,7 +34,6 @@ class UserSeeder extends Seeder
         );
 
         // 2. Create Admin BKK
-        $adminBkkRole = Role::where('name', 'admin_bkk')->first();
         $adminBkk = User::firstOrCreate(
             ['email' => 'admin@bkk.com'],
             [
@@ -41,7 +45,6 @@ class UserSeeder extends Seeder
         );
 
         // 3. Create Kepala BKK
-        $kepalaBkkRole = Role::where('name', 'kepala_bkk')->first();
         $kepalaBkk = User::firstOrCreate(
             ['email' => 'kepala@bkk.com'],
             [
@@ -53,7 +56,6 @@ class UserSeeder extends Seeder
         );
 
         // 4. Create Sample Company with Company Account
-        $perusahaanRole = Role::where('name', 'perusahaan')->first();
         $companyUser = User::firstOrCreate(
             ['email' => 'company@majujaya.com'],
             [
