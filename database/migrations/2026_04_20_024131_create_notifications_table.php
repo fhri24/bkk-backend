@@ -1,31 +1,31 @@
 <?php
 
-namespace App\Notifications;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
-
-class UserRegistered extends Notification
+return new class extends Migration
 {
-    use Queueable;
-
-    protected $user;
-
-    public function __construct($user)
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
     {
-        $this->user = $user;
+        Schema::create('notifications', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('type');
+            $table->morphs('notifiable');
+            $table->text('data');
+            $table->timestamp('read_at')->nullable();
+            $table->timestamps();
+        });
     }
 
-    public function via($notifiable)
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
     {
-        return ['database'];
+        Schema::dropIfExists('notifications');
     }
-
-    public function toDatabase($notifiable)
-    {
-        return [
-            'message' => $this->user->name . ' baru mendaftar',
-            'user_id' => $this->user->id
-        ];
-    }
-}
+};

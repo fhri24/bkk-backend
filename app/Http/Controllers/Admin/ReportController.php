@@ -7,6 +7,7 @@ use App\Models\Company;
 use App\Models\Job;
 use App\Models\JobApplication;
 use App\Models\Student;
+use App\Models\SchoolProfile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Schema;
@@ -82,7 +83,7 @@ class ReportController extends Controller
                     $student->graduation_year,
                     $student->phone,
                     $student->address,
-                    ucfirst($student->career_path ?? 'belum'),
+                    $student->career_path ?? 'belum',
                     $student->user->email ?? '-',
                 ]);
             }
@@ -125,15 +126,29 @@ class ReportController extends Controller
         return Response::stream($callback, 200, $headers);
     }
 
+    /**
+     * Cetak Laporan Alumni dengan Profil Sekolah
+     */
     public function printAlumni()
     {
         $alumni = Student::where('alumni_flag', true)->with('user')->get();
-        return view('admin.reports.print-alumni', compact('alumni'));
+        
+        // Mengambil data profil sekolah yang terakhir diupdate
+        $profile = SchoolProfile::latest()->first(); 
+
+        return view('admin.reports.print-alumni', compact('alumni', 'profile'));
     }
 
+    /**
+     * Cetak Laporan Lowongan dengan Profil Sekolah
+     */
     public function printJobs()
     {
         $jobs = Job::with('company')->get();
-        return view('admin.reports.print-jobs', compact('jobs'));
+        
+        // Mengambil data profil sekolah yang terakhir diupdate
+        $profile = SchoolProfile::latest()->first();
+
+        return view('admin.reports.print-jobs', compact('jobs', 'profile'));
     }
 }
