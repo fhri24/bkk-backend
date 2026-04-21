@@ -32,6 +32,7 @@ class PublicController extends Controller
         return view('public.beranda', compact('featured_jobs', 'featured_events', 'featured_news'));
     }
 
+
     /**
      * Halaman List Lowongan (Publik)
      */
@@ -67,7 +68,7 @@ class PublicController extends Controller
         // Mencari berita berdasarkan ID atau Slug, memuat relasi author
         // Gunakan with(['author']) agar nama penulis tampil di detail
         $news = News::with(['author'])->findOrFail($id);
-        
+
         return view('public.berita-detail', compact('news'));
     }
 
@@ -83,13 +84,23 @@ class PublicController extends Controller
     /**
      * Halaman Tambahan
      */
-    public function tracer()
+   public function tracer(Request $request)
     {
-        return view('public.tracer');
+    // Ambil data Alumni
+    $alumni = \App\Models\Student::where('alumni_flag', true)
+                ->orderBy('graduation_year', 'desc')
+                ->get();
+
+    // Ambil data Siswa Aktif (Bukan Alumni)
+    $siswaAktif = \App\Models\Student::where('alumni_flag', false)
+                ->get();
+
+    return view('public.tracer', compact('alumni', 'siswaAktif'));
     }
 
     public function tutorial()
     {
         return view('public.tutorial');
     }
+
 }
