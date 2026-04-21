@@ -68,6 +68,7 @@
           </div>
         @endif
 
+        <!-- Nama Lengkap -->
         <div class="space-y-1">
           <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-3">👤 Nama Lengkap <span class="text-red-500">*</span></label>
           <input type="text" name="name" placeholder="Nama Anda" value="{{ old('name') }}" class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100 @error('name') border-red-500 @enderror" required />
@@ -77,6 +78,7 @@
         </div>
 
         <div class="grid grid-cols-2 gap-3">
+          <!-- NIS -->
           <div class="space-y-1">
             <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-3">🎓 NIS</label>
             <input type="text" name="nis" placeholder="2024001" value="{{ old('nis') }}" class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100 @error('nis') border-red-500 @enderror" />
@@ -84,9 +86,16 @@
               <span class="text-red-600 text-xs mt-2 block"><i class="fas fa-times-circle mr-1"></i>{{ $message }}</span>
             @enderror
           </div>
+
+          <!-- Jurusan (Dropdown) -->
           <div class="space-y-1">
-            <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-3">📚 Jurusan</label>
-            <input type="text" name="major" placeholder="RPL" value="{{ old('major') }}" class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100 @error('major') border-red-500 @enderror" />
+            <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-3">📚 Jurusan <span class="text-red-500">*</span></label>
+            <select name="major" class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100 @error('major') border-red-500 @enderror" required>
+                <option value="">Pilih Jurusan</option>
+                @foreach($majors as $major)
+                    <option value="{{ $major->name }}" {{ old('major') == $major->name ? 'selected' : '' }}>{{ $major->name }}</option>
+                @endforeach
+            </select>
             @error('major')
               <span class="text-red-600 text-xs mt-2 block"><i class="fas fa-times-circle mr-1"></i>{{ $message }}</span>
             @enderror
@@ -94,6 +103,7 @@
         </div>
 
         <div class="grid grid-cols-2 gap-3">
+          <!-- Email -->
           <div class="space-y-1">
             <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-3">📧 Email <span class="text-red-500">*</span></label>
             <input type="email" name="email" placeholder="anda@gmail.com" value="{{ old('email') }}" class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100 @error('email') border-red-500 @enderror" required />
@@ -101,15 +111,23 @@
               <span class="text-red-600 text-xs mt-2 block"><i class="fas fa-times-circle mr-1"></i>{{ $message }}</span>
             @enderror
           </div>
+
+          <!-- Tahun Lulus (Dropdown) -->
           <div class="space-y-1">
-            <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-3">📅 Tahun Lulus</label>
-            <input type="number" name="graduation_year" placeholder="2024" value="{{ old('graduation_year', date('Y')) }}" min="1995" max="2100" class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100 @error('graduation_year') border-red-500 @enderror" />
+            <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-3">📅 Tahun Lulus <span class="text-red-500">*</span></label>
+            <select name="graduation_year" class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100 @error('graduation_year') border-red-500 @enderror" required>
+                <option value="">Pilih Tahun</option>
+                @foreach($years as $year)
+                    <option value="{{ $year->year }}" {{ old('graduation_year') == $year->year ? 'selected' : '' }}>{{ $year->year }}</option>
+                @endforeach
+            </select>
             @error('graduation_year')
               <span class="text-red-600 text-xs mt-2 block"><i class="fas fa-times-circle mr-1"></i>{{ $message }}</span>
             @enderror
           </div>
         </div>
 
+        <!-- Password -->
         <div class="space-y-1">
           <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-3">🔐 Kata Sandi <span class="text-red-500">*</span></label>
           <input type="password" name="password" placeholder="Minimal 6 karakter" class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100 @error('password') border-red-500 @enderror" required />
@@ -118,6 +136,7 @@
           @enderror
         </div>
 
+        <!-- Confirm Password -->
         <div class="space-y-1">
           <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-3">✔️ Konfirmasi Kata Sandi <span class="text-red-500">*</span></label>
           <input type="password" name="password_confirmation" placeholder="Ulangi kata sandi" class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100" required />

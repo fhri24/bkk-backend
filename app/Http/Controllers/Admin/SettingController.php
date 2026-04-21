@@ -13,6 +13,17 @@ use Illuminate\Support\Facades\Storage;
 
 class SettingController extends Controller
 {
+    /**
+     * Pintu masuk utama settings, diarahkan ke Profile
+     */
+    public function index()
+    {
+        return $this->profile();
+    }
+
+    /**
+     * Helper untuk cek tabel
+     */
     protected function tableExists(string $table): bool
     {
         return Schema::hasTable($table);
@@ -22,6 +33,8 @@ class SettingController extends Controller
     {
         return Redirect::route($route)->with('error', "Tabel {$table} belum dibuat. Jalankan php artisan migrate.");
     }
+
+    /* --- PROFIL SEKOLAH --- */
 
     public function profile()
     {
@@ -48,11 +61,7 @@ class SettingController extends Controller
             return $this->missingTableResponse('school_profiles');
         }
 
-        $profile = SchoolProfile::first();
-
-        if (! $profile) {
-            $profile = new SchoolProfile();
-        }
+        $profile = SchoolProfile::first() ?: new SchoolProfile();
 
         $data = $request->validate([
             'school_name' => 'required|string|max:255',
@@ -74,6 +83,8 @@ class SettingController extends Controller
         return Redirect::route('admin.settings.profile')->with('success', 'Profil sekolah berhasil diperbarui.');
     }
 
+    /* --- MANAJEMEN JURUSAN (MAJORS) --- */
+
     public function majorsIndex()
     {
         if (! $this->tableExists('majors')) {
@@ -81,6 +92,7 @@ class SettingController extends Controller
         }
 
         $majors = Major::orderBy('name')->get();
+        // Memanggil folder settings/majors/index.blade.php
         return view('admin.settings.majors.index', compact('majors'));
     }
 
@@ -124,6 +136,8 @@ class SettingController extends Controller
         return Redirect::route('admin.settings.majors.index')->with('success', 'Jurusan berhasil dihapus.');
     }
 
+    /* --- MANAJEMEN TAHUN LULUS (YEARS) --- */
+
     public function yearsIndex()
     {
         if (! $this->tableExists('graduation_years')) {
@@ -131,6 +145,7 @@ class SettingController extends Controller
         }
 
         $years = GraduationYear::orderByDesc('year')->get();
+        // Memanggil folder settings/years/index.blade.php
         return view('admin.settings.years.index', compact('years'));
     }
 
@@ -163,8 +178,8 @@ class SettingController extends Controller
         ]);
 
         $year->update($data);
-
-        return Redirect::route('admin.settings.years.index')->with('success', 'Tahun lulus berhasil diperbarui.');
+        return Redirect::route('adm
+        in.settings.years.index')->with('success', 'Tahun lulus berhasil diperbarui.');
     }
 
     public function destroyYear(GraduationYear $year)

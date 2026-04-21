@@ -6,6 +6,8 @@ use App\Models\ActivityLog;
 use App\Models\User;
 use App\Models\Student;
 use App\Models\Role;
+use App\Models\Major; // Import model Major
+use App\Models\GraduationYear; // Import model GraduationYear
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -17,9 +19,16 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
+    /**
+     * Menampilkan halaman registrasi dengan data jurusan dan tahun dari database
+     */
     public function showRegister()
     {
-        return view('auth.register');
+        // Ambil data jurusan (A-Z) dan tahun lulus (Terbaru ke Lama) dari database
+        $majors = Major::orderBy('name', 'asc')->get();
+        $years = GraduationYear::orderBy('year', 'desc')->get();
+
+        return view('auth.register', compact('majors', 'years'));
     }
 
     public function register(Request $request)
@@ -29,8 +38,8 @@ class AuthController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6|confirmed',
             'nis' => 'nullable|string|max:20',
-            'major' => 'required|string|max:100', // Major jadi required biar data alumni lengkap
-            'graduation_year' => 'required|integer|min:1995|max:2100', // Wajib diisi untuk nentuin alumni
+            'major' => 'required|string|max:100', 
+            'graduation_year' => 'required|integer', 
             'gender' => 'nullable|string|in:L,P',
         ], [
             'email.unique' => 'Email ini sudah terdaftar.',
@@ -64,7 +73,7 @@ class AuthController extends Controller
             'graduation_year' => $validated['graduation_year'],
             'gender' => $validated['gender'] ?? 'L',
             'status' => 'active',
-            'alumni_flag' => $alumniFlag, // OTOMATIS MASUK DAFTAR ALUMNI JIKA TAHUNNYA COCOK
+            'alumni_flag' => $alumniFlag, 
         ]);
 
         // Auto login

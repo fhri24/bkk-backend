@@ -7,6 +7,7 @@
     <div class="container mx-auto px-4 py-12">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             
+            <!-- Sidebar Profil -->
             <div class="lg:col-span-1">
                 <div class="bg-white rounded-2xl shadow-lg p-8 text-center">
                     @if($student->profile_picture)
@@ -46,8 +47,9 @@
                 </div>
             </div>
 
+            <!-- Detail Informasi -->
             <div class="lg:col-span-2 space-y-6">
-                
+                <!-- Informasi Pribadi -->
                 <div class="bg-white rounded-2xl shadow-lg p-8">
                     <h3 class="text-xl font-extrabold text-slate-900 mb-6 flex items-center">
                         <i class="fas fa-user-circle text-blue-600 mr-3"></i>Informasi Pribadi
@@ -72,6 +74,7 @@
                     </div>
                 </div>
 
+                <!-- Informasi Pendidikan -->
                 <div class="bg-white rounded-2xl shadow-lg p-8">
                     <h3 class="text-xl font-extrabold text-slate-900 mb-6 flex items-center">
                         <i class="fas fa-graduation-cap text-blue-600 mr-3"></i>Informasi Pendidikan
@@ -98,6 +101,7 @@
                     </div>
                 </div>
 
+                <!-- Bagian Lamaran & Bookmark tetap sama -->
                 <div class="bg-white rounded-2xl shadow-lg p-8">
                     <h3 class="text-xl font-extrabold text-slate-900 mb-6 flex items-center">
                         <i class="fas fa-briefcase text-blue-600 mr-3"></i>Lamaran Pekerjaan Terbaru
@@ -121,28 +125,7 @@
                     </div>
                 </div>
 
-                <div class="bg-white rounded-2xl shadow-lg p-8">
-                    <h3 class="text-xl font-extrabold text-slate-900 mb-6 flex items-center">
-                        <i class="fas fa-bookmark text-blue-600 mr-3"></i>Lowongan Tersimpan
-                    </h3>
-                    <div class="space-y-4">
-                        @forelse($saved_jobs as $job)
-                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex justify-between items-center">
-                                <div>
-                                    <p class="font-bold text-slate-900">{{ $job->title }}</p>
-                                    <p class="text-xs text-slate-500">{{ $job->company_name ?? 'Perusahaan Terkait' }}</p>
-                                </div>
-                                <button class="text-red-500 hover:text-red-700 transition">
-                                    <i class="fas fa-trash-alt"></i>
-                                </button>
-                            </div>
-                        @empty
-                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-center">
-                                <p class="text-slate-500 text-sm">Belum ada lowongan tersimpan</p>
-                            </div>
-                        @endforelse
-                    </div>
-                </div>
+
 
                 <div class="flex justify-end">
                     <a href="{{ route('student.home') }}" class="bg-slate-200 text-slate-800 px-6 py-3 rounded-xl font-bold hover:bg-slate-300 transition">
@@ -186,19 +169,33 @@
                     <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">Info Kelahiran</label>
                     <input type="text" name="birth_info" value="{{ $student->birth_info }}" placeholder="Tempat, Tanggal Lahir" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" />
                 </div>
+
+                <!-- PERUBAHAN JURUSAN DI SINI -->
                 <div>
                     <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">Jurusan</label>
                     <select name="major" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600">
                         <option value="">Pilih Jurusan</option>
-                        <option value="Teknik Otomotif" {{ $student->major == 'Teknik Otomotif' ? 'selected' : '' }}>Teknik Otomotif</option>
-                        <option value="Teknik Komputer" {{ $student->major == 'Teknik Komputer' ? 'selected' : '' }}>Teknik Komputer</option>
-                        <option value="Tata Boga" {{ $student->major == 'Tata Boga' ? 'selected' : '' }}>Tata Boga</option>
+                        @foreach($majors as $major)
+                            <option value="{{ $major->name }}" {{ $student->major == $major->name ? 'selected' : '' }}>
+                                {{ $major->name }}
+                            </option>
+                        @endforeach
                     </select>
                 </div>
+
+                <!-- PERUBAHAN TAHUN LULUS DI SINI -->
                 <div>
                     <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">Tahun Lulus</label>
-                    <input type="number" name="graduation_year" value="{{ $student->graduation_year }}" placeholder="Tahun Lulus" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" />
+                    <select name="graduation_year" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600">
+                        <option value="">Pilih Tahun Lulus</option>
+                        @foreach($years as $year)
+                            <option value="{{ $year->year }}" {{ $student->graduation_year == $year->year ? 'selected' : '' }}>
+                                {{ $year->year }}
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
+
                 <div>
                     <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">No. Handphone</label>
                     <input type="tel" name="phone" value="{{ $student->phone }}" placeholder="No. Handphone" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" />
@@ -231,7 +228,7 @@
         document.getElementById('editModal').classList.add('hidden');
     }
 
-    // Close modal when clicking outside
+
     document.getElementById('editModal').addEventListener('click', function(e) {
         if (e.target === this) {
             closeEditModal();

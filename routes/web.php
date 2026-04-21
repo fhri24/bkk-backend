@@ -90,7 +90,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::get('/search', [SearchController::class, 'search'])->name('search');
 
-    // Tombol Aksi Cepat Dashboard (Fitur dari HEAD lu)
+    // Tombol Aksi Cepat Dashboard
     Route::get('/export-data', [DashboardActionController::class, 'export'])->name('export');
     Route::get('/laporan-cepat', [DashboardActionController::class, 'laporan'])->name('laporan');
     Route::get('/broadcast', [DashboardActionController::class, 'broadcast'])->name('broadcast');
@@ -141,14 +141,24 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::put('/{role}', [AdminRoleController::class, 'update'])->name('update');
     });
 
-    // Pengaturan Sistem
+    // Pengaturan Sistem (Bagian yang Diperbaiki)
     Route::prefix('settings')->name('settings.')->middleware('permission:manage_settings')->group(function () {
         Route::get('/profile', [AdminSettingController::class, 'profile'])->name('profile');
         Route::put('/profile', [AdminSettingController::class, 'updateProfile'])->name('profile.update');
 
-        // Majors & Years
-        Route::resource('majors', AdminSettingController::class)->except(['show']);
-        Route::resource('years', AdminSettingController::class)->except(['show']);
+        // Route Manual untuk Majors (Jurusan)
+        Route::get('/majors', [AdminSettingController::class, 'majorsIndex'])->name('majors.index');
+        Route::post('/majors', [AdminSettingController::class, 'storeMajor'])->name('majors.store');
+        Route::get('/majors/{major}/edit', [AdminSettingController::class, 'editMajor'])->name('majors.edit');
+        Route::put('/majors/{major}', [AdminSettingController::class, 'updateMajor'])->name('majors.update');
+        Route::delete('/majors/{major}', [AdminSettingController::class, 'destroyMajor'])->name('majors.destroy');
+
+        // Route Manual untuk Graduation Years (Tahun Lulus)
+        Route::get('/years', [AdminSettingController::class, 'yearsIndex'])->name('years.index');
+        Route::post('/years', [AdminSettingController::class, 'storeYear'])->name('years.store');
+        Route::get('/years/{year}/edit', [AdminSettingController::class, 'editYear'])->name('years.edit');
+        Route::put('/years/{year}', [AdminSettingController::class, 'updateYear'])->name('years.update');
+        Route::delete('/years/{year}', [AdminSettingController::class, 'destroyYear'])->name('years.destroy');
     });
 
     // Laporan & Log

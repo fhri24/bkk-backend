@@ -7,116 +7,63 @@ use App\Models\Student;
 use App\Models\Job;
 use App\Models\Event;
 use App\Models\News;
+use App\Models\Major;
+use App\Models\GraduationYear;
 use Illuminate\Support\Facades\Auth;
 
 class StudentController extends Controller
 {
     /**
-     * Menampilkan Halaman Beranda Siswa (Web)
+     * Menampilkan Halaman Beranda
      */
     public function index()
     {
+        $featured_jobs = Job::latest()->take(3)->with('company')->get();
+        $featured_events = Event::latest()->take(3)->get();
+        $featured_news = News::latest()->take(3)->get();
 
-
-        $featured_jobs = collect(); 
-        try {
-            $featured_jobs = Job::latest()->take(3)->with('company')->get();
-        } catch (\Exception $e) {}
-
-
-
-        $featured_events = collect();
-        try {
-            $featured_events = Event::latest()->take(3)->get();
-        } catch (\Exception $e) {}
-
-
-        $featured_news = collect();
-        try {
-            $featured_news = News::latest()->take(3)->get();
-        } catch (\Exception $e) {}
-
-        
         return view('student.beranda', compact('featured_jobs', 'featured_events', 'featured_news'));
     }
 
     /**
-     * Menampilkan Halaman Profil (Web)
+     * Menampilkan Halaman Profil
+     * Lokasi: resources/views/student/profile.blade.php
      */
     public function showProfile()
     {
-        // 1. Ambil data user yang sedang login
+        // 1. Ambil user yang login
         $user = Auth::user();
 
-        // 2. Ambil data detail student yang terhubung
+        // 2. Ambil data student. 
+        // Menggunakan where agar lebih pasti meskipun relasi di model belum diset.
         $student = Student::where('user_id', $user->id)->first();
 
-        // 3. Proteksi jika data student tidak ditemukan
+        // 3. Proteksi jika data student tidak ada di database
         if (!$student) {
             return redirect()->route('student.home')->with('error', 'Profil siswa tidak ditemukan.');
         }
 
-        /** * 4. Inisialisasi variabel sebagai koleksi KOSONG.
-         * Tampilan akan otomatis menunjukkan "Belum ada data" sampai 
-         * kamu membuat fitur 'Simpan Lowongan' dan 'Lamar Pekerjaan'.
-         */
+        // 4. AMBIL DATA UNTUK DROPDOWN (Ini wajib agar @foreach di view tidak error)
+        $majors = Major::orderBy('name', 'asc')->get();
+        $years = GraduationYear::orderBy('year', 'desc')->get();
+
+        // 5. Inisialisasi variabel kosong agar view tidak error saat panggil ->count()
         $applications = collect(); 
-        $saved_jobs = collect();   
+        $saved_jobs = collect();
 
-        // 5. Kirim semua variabel ke view student/profile.blade.php
-        return view('student.profile', compact('user', 'student', 'applications', 'saved_jobs'));
+        // 6. Kirim SEMUA variabel ke view
+        return view('student.profile', compact(
+            'user', 
+            'student', 
+            'majors', 
+            'years', 
+            'applications', 
+            'saved_jobs'
+        ));
     }
 
     /**
-     * Mendapatkan data profil saya (API)
-     */
-    public function me(Request $request)
-    {
-        $student = Student::where('user_id', $request->user()->id)->first();
-
-        if (!$student) {
-            return response()->json(['message' => 'Student profile not found'], 404);
-        }
-
-        return response()->json($student);
-    }
-
-    /**
-     * Update profil saya (API)
-     */
-    public function updateMe(Request $request)
-    {
-        $student = $request->user()->student;
-
-        if (!$student) {
-            return response()->json(['message' => 'Student profile not found'], 404);
-        }
-
-        $validated = $request->validate([
-            'full_name' => 'required|string|max:255',
-            'nis' => 'nullable|string|max:50',
-            'gender' => 'nullable|in:L,P',
-            'birth_info' => 'nullable|string|max:255',
-            'major' => 'nullable|string|max:255',
-            'graduation_year' => 'nullable|integer',
-            'phone' => 'nullable|string|max:20',
-            'address' => 'nullable|string',
-            'resume_url' => 'nullable|url',
-            'profile_picture' => 'nullable|string',
-            'status' => 'nullable|string|max:50',
-            'alumni_flag' => 'required|boolean',
-        ]);
-
-        $student->update($validated);
-
-        return response()->json([
-            'message' => 'Profile updated successfully',
-            'data' => $student
-        ]);
-    }
-
-    /**
-     * Update profil via web form
+     * Proses Update Profil
      */
     public function updateProfile(Request $request)
     {
@@ -124,7 +71,7 @@ class StudentController extends Controller
         $student = Student::where('user_id', $user->id)->first();
 
         if (!$student) {
-            return redirect()->back()->with('error', 'Profil tidak ditemukan.');
+            return redirect()->back()->with('error', 'Profil gagal diperbarui.');
         }
 
         $validated = $request->validate([
@@ -132,32 +79,28 @@ class StudentController extends Controller
             'nis' => 'nullable|string|max:50',
             'gender' => 'nullable|in:L,P',
             'birth_info' => 'nullable|string|max:255',
-            'major' => 'nullable|string|max:255',
-            'graduation_year' => 'nullable|integer|min:1995|max:2100',
+            'major' => 'required|string',
+            'graduation_year' => 'required|integer',
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string',
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Handle profile picture upload
+        // Handle Upload Foto
         if ($request->hasFile('profile_picture')) {
-            $file = $request->file('profile_picture');
-            $filename = time() . '_' . $user->id . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs('profile_pictures', $filename, 'public');
+            $path = $request->file('profile_picture')->store('profile_pictures', 'public');
             $validated['profile_picture'] = $path;
         }
 
-        // Set alumni_flag based on graduation_year
-        $graduationYear = $validated['graduation_year'] ?? $student->graduation_year;
-        $validated['alumni_flag'] = $graduationYear < date('Y');
+        // Set status alumni otomatis
+        $validated['alumni_flag'] = ($request->graduation_year <= date('Y'));
 
+        // Update data student
         $student->update($validated);
 
-        // Update user name if full_name changed
-        if ($validated['full_name'] !== $user->name) {
-            $user->update(['name' => $validated['full_name']]);
-        }
+        // Update nama di table users agar sinkron
+        $user->update(['name' => $request->full_name]);
 
-        return redirect()->back()->with('success', 'Profil berhasil diperbarui.');
+        return redirect()->back()->with('success', 'Profil berhasil diperbarui!');
     }
 }

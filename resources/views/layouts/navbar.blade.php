@@ -3,7 +3,9 @@
         <div class="flex justify-between items-center h-20">
             
             {{-- Logo --}}
-            <div class="flex items-center space-x-3 cursor-pointer hover:opacity-80 transition" onclick="window.location.href = '{{ route(auth()->check() && auth()->user()->role->name === 'siswa' ? 'student.home' : 'public.home') }}'">
+            {{-- Logic: Jika login ke home student, jika tidak ke home public --}}
+            <div class="flex items-center space-x-3 cursor-pointer hover:opacity-80 transition" 
+                 onclick="window.location.href = '{{ auth()->check() ? route('student.home') : route('public.home') }}'">
                 <div class="w-11 h-11 bg-white rounded-xl flex items-center justify-center shadow-lg">
                     <i class="fas fa-graduation-cap text-[#001f3f] text-xl"></i>
                 </div>
@@ -16,46 +18,46 @@
             {{-- Menu Tengah (Desktop) --}}
             <div class="hidden lg:flex space-x-8 text-sm font-semibold">
                 @auth
-                    @if(auth()->user()->role->name === 'siswa')
-                        <a href="{{ route('student.home') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('student.home') ? 'active-link' : '' }}">Beranda</a>
-                        <a href="{{ route('student.lowongan') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('student.lowongan*') ? 'active-link' : '' }}">Lowongan</a>
-                        <a href="{{ route('student.berita') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('student.berita*') ? 'active-link' : '' }}">Berita</a>
-                        <a href="{{ route('student.acara') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('student.acara*') ? 'active-link' : '' }}">Acara</a>
-                        <a href="{{ route('student.tracer') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('student.tracer*') ? 'active-link' : '' }}">Tracer Study</a>
-                    @else
-                        <a href="{{ route('admin.dashboard') }}" class="nav-btn transition hover:text-blue-400">Admin Dashboard</a>
-                    @endif
+                    {{-- Menu Khusus Siswa --}}
+                    <a href="{{ route('student.home') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('student.home') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Beranda</a>
+                    <a href="{{ route('student.lowongan') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('student.lowongan*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Lowongan</a>
+                    <a href="{{ route('student.berita') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('student.berita*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Berita</a>
+                    <a href="{{ route('student.acara') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('student.acara*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Acara</a>
+                    <a href="{{ route('student.tracer') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('student.tracer*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Tracer Study</a>
                 @else
-                    <a href="{{ route('public.home') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.home') ? 'active-link' : '' }}">Beranda</a>
-                    <a href="{{ route('public.lowongan') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.lowongan') ? 'active-link' : '' }}">Lowongan</a>
-                    <a href="{{ route('public.berita') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.berita') ? 'active-link' : '' }}">Berita</a>
-                    <a href="{{ route('public.acara') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.acara') ? 'active-link' : '' }}">Acara</a>
-                    <a href="{{ route('public.tracer') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.tracer') ? 'active-link' : '' }}">Tracer Study</a>
+                    {{-- Menu Publik (Muncul Sebelum Login) --}}
+                    <a href="{{ route('public.home') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.home') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Beranda</a>
+                    <a href="{{ route('public.lowongan') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.lowongan*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Lowongan</a>
+                    <a href="{{ route('public.berita') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.berita*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Berita</a>
+                    <a href="{{ route('public.acara') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.acara*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Acara</a>
+                    <a href="{{ route('public.tracer') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.tracer*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Tracer Study</a>
                 @endauth
             </div>
 
             {{-- Menu Kanan (Desktop) --}}
             <div class="hidden lg:flex items-center space-x-6">
                 @auth
-                    {{-- Nama User Sekarang Bisa Diklik Ke Profil --}}
+
                     <div class="flex items-center gap-4">
                         <a href="{{ route('student.profile') }}" class="flex items-center gap-2 text-sm font-semibold hover:text-blue-300 transition group">
                             <i class="fas fa-user-circle text-lg group-hover:scale-110 transition"></i>
-                            <span>{{ auth()->user()->name }}</span>
+                            <span>{{ Auth::user()->name }}</span>
                         </a>
-
-                        @if(in_array(auth()->user()->role->name, ['super_admin', 'admin_bkk', 'kepala_bkk', 'perusahaan']))
-                            <a href="{{ route('admin.dashboard') }}" class="text-sm font-bold hover:text-blue-400 transition">Admin</a>
-                        @endif
+                        
 
                         <form method="POST" action="{{ route('logout') }}" class="inline">
                             @csrf
-                            <button type="submit" class="bg-red-600 hover:bg-red-700 px-7 py-2.5 rounded-full text-sm font-bold shadow-lg transition transform hover:scale-105 active:scale-95">Logout</button>
+                            <button type="submit" class="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-full text-sm font-bold shadow-lg transition transform hover:scale-105 active:scale-95">
+                                Logout
+                            </button>
                         </form>
                     </div>
                 @else
+                    {{-- Tombol Sebelum Login --}}
                     <a href="{{ route('register') }}" class="text-sm font-bold hover:text-blue-400 transition">Daftar</a>
-                    <a href="{{ route('login') }}" class="bg-blue-600 hover:bg-blue-700 px-7 py-2.5 rounded-full text-sm font-bold shadow-lg transition transform hover:scale-105 active:scale-95">Masuk</a>
+                    <a href="{{ route('login') }}" class="bg-blue-600 hover:bg-blue-700 px-8 py-2.5 rounded-full text-sm font-bold shadow-lg transition transform hover:scale-105 active:scale-95">
+                        Masuk
+                    </a>
                 @endauth
             </div>
 
@@ -67,38 +69,29 @@
     </div>
 
     {{-- Mobile Menu --}}
-    <div id="mobile-menu" class="hidden lg:hidden bg-[#001f3f] border-t border-white/10 px-6 py-6 space-y-4">
+    <div id="mobile-menu" class="hidden lg:hidden bg-[#001f3f] border-t border-white/10 px-6 py-6 space-y-4 shadow-inner">
         @auth
-            @if(auth()->user()->role->name === 'siswa')
-                {{-- Link Profil di Mobile --}}
-                <a href="{{ route('student.profile') }}" class="block w-full text-left py-2 font-bold text-blue-300 border-b border-white/10" onclick="closeMobileMenu()">
-                    <i class="fas fa-user-circle mr-2"></i>Profil Saya
-                </a>
-                <a href="{{ route('student.home') }}" class="block w-full text-left py-2 font-semibold hover:text-blue-400" onclick="closeMobileMenu()">Beranda</a>
-                <a href="{{ route('student.lowongan') }}" class="block w-full text-left py-2 font-semibold hover:text-blue-400" onclick="closeMobileMenu()">Lowongan</a>
-                <a href="{{ route('student.berita') }}" class="block w-full text-left py-2 font-semibold hover:text-blue-400" onclick="closeMobileMenu()">Berita</a>
-                <a href="{{ route('student.acara') }}" class="block w-full text-left py-2 font-semibold hover:text-blue-400" onclick="closeMobileMenu()">Acara</a>
-                <a href="{{ route('student.tracer') }}" class="block w-full text-left py-2 font-semibold hover:text-blue-400" onclick="closeMobileMenu()">Tracer Study</a>
-            @else
-                <a href="{{ route('admin.dashboard') }}" class="block w-full text-left py-2 font-semibold hover:text-blue-400">Admin Dashboard</a>
-            @endif
+            {{-- Mobile Logged In --}}
+            <a href="{{ route('student.profile') }}" class="block py-2 font-bold text-blue-300 border-b border-white/10" onclick="toggleMobileMenu()">
+                <i class="fas fa-user-circle mr-2"></i>Profil Saya
+            </a>
+            <a href="{{ route('student.home') }}" class="block py-2" onclick="toggleMobileMenu()">Beranda</a>
+            <a href="{{ route('student.lowongan') }}" class="block py-2" onclick="toggleMobileMenu()">Lowongan</a>
+            <a href="{{ route('student.berita') }}" class="block py-2" onclick="toggleMobileMenu()">Berita</a>
+            <a href="{{ route('student.tracer') }}" class="block py-2" onclick="toggleMobileMenu()">Tracer Study</a>
+            <form method="POST" action="{{ route('logout') }}" class="pt-4">
+                @csrf
+                <button type="submit" class="w-full bg-red-600 py-3 rounded-xl font-bold">Logout</button>
+            </form>
         @else
-            {{-- Menu Public Mobile Tetap Sama --}}
-            <a href="{{ route('public.home') }}" class="block w-full text-left py-2 font-semibold hover:text-blue-400" onclick="closeMobileMenu()">Beranda</a>
-            ...
+            {{-- Mobile Guest --}}
+            <a href="{{ route('public.home') }}" class="block py-2" onclick="toggleMobileMenu()">Beranda</a>
+            <a href="{{ route('public.lowongan') }}" class="block py-2" onclick="toggleMobileMenu()">Lowongan</a>
+            <a href="{{ route('public.berita') }}" class="block py-2" onclick="toggleMobileMenu()">Berita</a>
+            <div class="pt-4 flex flex-col space-y-3">
+                <a href="{{ route('login') }}" class="w-full bg-blue-600 py-3 rounded-xl font-bold text-center">Masuk</a>
+                <a href="{{ route('register') }}" class="w-full border border-white/30 py-3 rounded-xl font-bold text-center">Daftar</a>
+            </div>
         @endauth
-
-        <div class="pt-4 border-t border-white/10 flex flex-col space-y-3">
-            @auth
-            
-                <form method="POST" action="{{ route('logout') }}" class="w-full">
-                    @csrf
-                    <button type="submit" class="w-full bg-red-600 py-3 rounded-xl font-bold">Logout</button>
-                </form>
-            @else
-                <a href="{{ route('login') }}" class="w-full bg-blue-600 py-3 rounded-xl font-bold text-center" onclick="closeMobileMenu()">Masuk Ke Akun</a>
-                <a href="{{ route('register') }}" class="w-full bg-green-600 py-3 rounded-xl font-bold text-center" onclick="closeMobileMenu()">Daftar</a>
-            @endauth
-        </div>
     </div>
 </nav>
