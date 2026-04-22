@@ -13,7 +13,8 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
-     * The attributes that are mass assignable.
+     * Atribut yang dapat diisi (Mass Assignable).
+     * Pastikan role_id juga ada jika kamu menggunakan relasi role.
      *
      * @var array<int, string>
      */
@@ -21,10 +22,11 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role_id', // Tambahkan ini jika kolom role_id ada di tabel users
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
+     * Atribut yang disembunyikan saat serialisasi (API/JSON).
      *
      * @var array<int, string>
      */
@@ -34,26 +36,39 @@ class User extends Authenticatable
     ];
 
     /**
-     * The attributes that should be cast.
-     *
-     * @var array<int, string>
+     * Penanganan Casting Atribut.
+     * Laravel 11+ merekomendasikan penggunaan method casts() daripada property $casts.
+     * 
+     * @return array<string, string>
      */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'password' => 'password',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed', // PERBAIKAN: Gunakan 'hashed' bukan 'password'
+        ];
+    }
 
+    /**
+     * Relasi One-to-One ke Student.
+     */
     public function student()
     {
         // Menghubungkan user_id di tabel students dengan id di tabel users
         return $this->hasOne(Student::class, 'user_id', 'id');
     }
 
+    /**
+     * Relasi Many-to-One ke Role.
+     */
     public function role()
     {
         return $this->belongsTo(Role::class, 'role_id', 'id');
     }
 
+    /**
+     * Relasi One-to-Many ke SavedJob (Lowongan Tersimpan).
+     */
     public function savedJobs()
     {
         return $this->hasMany(SavedJob::class, 'user_id', 'id');

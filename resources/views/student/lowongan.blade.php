@@ -206,10 +206,11 @@
           Akses lowongan resmi dari portal Karirhub Kemnaker RI langsung
           dari sini.
         </p>
-        <a href="https://karirhub.kemnaker.go.id" target="_blank" 
-           class="inline-block bg-white text-blue-600 px-6 py-2 rounded-xl font-bold hover:bg-gray-100 transition shadow-lg">
+        <button
+          class="bg-white text-blue-600 px-4 py-2 rounded-lg text-xs font-bold hover:bg-blue-50"
+        >
           Buka Karirhub
-        </a>
+        </button>
       </div>
     </aside>
 

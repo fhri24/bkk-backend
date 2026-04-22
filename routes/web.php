@@ -63,8 +63,13 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 /**
  * STUDENT ROUTES
  */
+// PERBAIKAN: Middleware disesuaikan dengan AuthController (student)
 Route::middleware(['auth', 'student'])->prefix('student')->name('student.')->group(function () {
-    Route::get('/', [HomeController::class, 'index'])->name('home');
+    
+    // Ubah dari '/' menjadi '/home' agar URL-nya menjadi /student/home
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
+    // Opsional: Redirect /student ke /student/home agar tidak 404 jika hanya akses prefix
+    Route::get('/', fn() => redirect()->route('student.home'));
 
     // Profil
     Route::get('/profile', [StudentController::class, 'showProfile'])->name('profile');
@@ -100,7 +105,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/laporan-cepat', [DashboardActionController::class, 'laporan'])->name('laporan');
     Route::get('/broadcast', [DashboardActionController::class, 'broadcast'])->name('broadcast');
 
-    
     Route::prefix('companies')->name('companies.')->middleware('permission:manage_companies')->group(function () {
         Route::get('/', [AdminCompanyController::class, 'index'])->name('index');
         Route::get('/create', [AdminCompanyController::class, 'create'])->name('create');
@@ -111,7 +115,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::delete('/{company}', [AdminCompanyController::class, 'destroy'])->name('destroy');
     });
 
-
+    
     Route::prefix('jobs')->name('jobs.')->middleware('permission:manage_jobs')->group(function () {
         Route::get('/', [AdminJobController::class, 'index'])->name('index');
         Route::get('/create', [AdminJobController::class, 'create'])->name('create');

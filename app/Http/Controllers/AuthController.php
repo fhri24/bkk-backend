@@ -6,8 +6,8 @@ use App\Models\ActivityLog;
 use App\Models\User;
 use App\Models\Student;
 use App\Models\Role;
-use App\Models\Major; // Import model Major
-use App\Models\GraduationYear; // Import model GraduationYear
+use App\Models\Major;
+use App\Models\GraduationYear;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -16,6 +16,10 @@ class AuthController extends Controller
 {
     public function index()
     {
+        // Jika sudah login, langsung lempar ke dashboard masing-masing
+        if (Auth::check()) {
+            return $this->redirectUserByRole(Auth::user());
+        }
         return view('auth.login');
     }
 
@@ -24,13 +28,16 @@ class AuthController extends Controller
      */
     public function showRegister()
     {
-        // Ambil data jurusan (A-Z) dan tahun lulus (Terbaru ke Lama) dari database
+        
         $majors = Major::orderBy('name', 'asc')->get();
         $years = GraduationYear::orderBy('year', 'desc')->get();
 
         return view('auth.register', compact('majors', 'years'));
     }
 
+    /**
+     * Proses Registrasi Siswa/Alumni
+     */
     public function register(Request $request)
     {
         $validated = $request->validate([
@@ -47,8 +54,12 @@ class AuthController extends Controller
             'graduation_year.required' => 'Tahun lulus wajib diisi untuk pendataan alumni.',
         ]);
 
-        // 1. Ambil Role 'siswa'
+        // 1. Ambil Role 'siswa' (Pastikan di database nama role-nya adalah 'siswa')
         $siswas_role = Role::where('name', 'siswa')->first();
+
+        if (!$siswas_role) {
+            return back()->with('error', 'Role siswa tidak ditemukan di database.');
+        }
 
         // 2. Create User
         $user = User::create([
@@ -60,7 +71,7 @@ class AuthController extends Controller
         ]);
 
         // 3. LOGIKA OTOMATIS ALUMNI
-        // Jika tahun lulus <= tahun sekarang, maka dia adalah ALUMNI
+
         $currentYear = date('Y');
         $alumniFlag = ($validated['graduation_year'] <= $currentYear);
 
@@ -79,9 +90,13 @@ class AuthController extends Controller
         // Auto login
         Auth::login($user);
 
-        return redirect()->route('student.home')->with('success', 'Registrasi berhasil! Data Anda telah masuk sistem.');
+        // Menggunakan redirectUserByRole agar konsisten
+        return $this->redirectUserByRole($user)->with('success', 'Registrasi berhasil!');
     }
 
+    /**
+     * Proses Login
+     */
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -92,6 +107,7 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
+            // Log aktivitas login
             ActivityLog::create([
                 'user_id' => Auth::id(),
                 'action' => 'Login berhasil',
@@ -99,23 +115,41 @@ class AuthController extends Controller
                 'user_agent' => $request->userAgent(),
             ]);
 
-            $user = Auth::user();
-            $adminRoles = ['super_admin', 'admin_bkk', 'kepala_bkk', 'perusahaan'];
-
-            if (in_array($user->role->name, $adminRoles)) {
-                return redirect()->route('admin.dashboard');
-            }
-
-            if ($user->role->name === 'siswa') {
-                return redirect()->route('student.home');
-            }
-
-            return redirect('/');
+            return $this->redirectUserByRole(Auth::user());
         }
 
-        return back()->withErrors(['email' => 'Email atau password salah!']);
+        return back()->withErrors([
+            'email' => 'Email atau password salah!',
+        ])->onlyInput('email');
     }
 
+    /**
+     * Helper function untuk mengalihkan user berdasarkan role
+     * PERBAIKAN: Menggunakan Named Routes (route()) alih-alih path manual
+     */
+    private function redirectUserByRole($user)
+    {
+        $adminRoles = ['super_admin', 'admin_bkk', 'kepala_bkk', 'perusahaan'];
+        
+        // Memuat relasi role jika belum ada
+        $roleName = $user->role->name ?? '';
+
+        if (in_array($roleName, $adminRoles)) {
+            // Mengarah ke route('admin.dashboard') sesuai web.php
+            return redirect()->intended(route('admin.dashboard'));
+        }
+
+        if ($roleName === 'siswa') {
+            // Mengarah ke route('student.home') sesuai web.php
+            return redirect()->intended(route('student.home'));
+        }
+
+        return redirect('/');
+    }
+
+    /**
+     * Proses Logout
+     */
     public function logout(Request $request)
     {
         if (Auth::check()) {
@@ -125,11 +159,13 @@ class AuthController extends Controller
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent(),
             ]);
+            
             Auth::logout();
         }
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+        
         return redirect('/');
     }
 }

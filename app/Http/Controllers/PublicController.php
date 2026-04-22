@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Job;
 use App\Models\Event;
 use App\Models\News;
+use App\Models\Student;
 
 class PublicController extends Controller
 {
@@ -31,24 +32,57 @@ class PublicController extends Controller
 
         return view('public.beranda', compact('featured_jobs', 'featured_events', 'featured_news'));
     }
-
+    
 
     /**
      * Halaman List Lowongan (Publik)
+     * Ditambahkan fitur Search dan Filter agar View berfungsi maksimal
      */
-    public function lowongan()
+    public function lowongan(Request $request)
     {
-        $jobs = Job::latest()->with('company')->paginate(10);
+        $query = Job::latest()->with('company');
+
+        // Filter Pencarian Kata Kunci
+        if ($request->filled('search')) {
+            $query->where('title', 'like', '%' . $request->search . '%')
+                  ->orWhereHas('company', function($q) use ($request) {
+                      $q->where('company_name', 'like', '%' . $request->search . '%');
+                  });
+        }
+
+        // Filter Tipe Pekerjaan (Full-time, Magang, dll)
+        if ($request->filled('type')) {
+            $query->where('job_type', $request->type);
+        }
+
+        // Filter Berdasarkan Bidang/Jurusan (Jika ada kolom major/category)
+        if ($request->filled('major')) {
+            $query->where('description', 'like', '%' . $request->major . '%');
+        }
+
+        $jobs = $query->paginate(10);
+        
         return view('public.lowongan', compact('jobs'));
     }
 
     /**
      * Halaman Detail Lowongan (Publik)
+     * Memperbaiki error Undefined variable $similarJobs
      */
     public function lowonganDetail($id)
     {
+        // 1. Ambil data lowongan utama berdasarkan ID
         $job = Job::with('company')->findOrFail($id);
-        return view('public.lowongan-detail', compact('job'));
+
+        // 2. Ambil data lowongan serupa untuk sidebar
+        // Mengambil 3 lowongan terbaru selain yang sedang dibuka
+        $similarJobs = Job::with('company')
+            ->where('job_id', '!=', $id)
+            ->latest()
+            ->take(3)
+            ->get();
+
+        return view('public.lowongan-detail', compact('job', 'similarJobs'));
     }
 
     /**
@@ -65,8 +99,7 @@ class PublicController extends Controller
      */
     public function beritaDetail($id)
     {
-        // Mencari berita berdasarkan ID atau Slug, memuat relasi author
-        // Gunakan with(['author']) agar nama penulis tampil di detail
+
         $news = News::with(['author'])->findOrFail($id);
 
         return view('public.berita-detail', compact('news'));
@@ -82,22 +115,25 @@ class PublicController extends Controller
     }
 
     /**
-     * Halaman Tambahan
+     * Halaman Tracer Alumni
      */
-   public function tracer(Request $request)
+    public function tracer(Request $request)
     {
-    // Ambil data Alumni
-    $alumni = \App\Models\Student::where('alumni_flag', true)
-                ->orderBy('graduation_year', 'desc')
-                ->get();
+        // Ambil data Alumni
+        $alumni = Student::where('alumni_flag', true)
+                    ->orderBy('graduation_year', 'desc')
+                    ->get();
 
-    // Ambil data Siswa Aktif (Bukan Alumni)
-    $siswaAktif = \App\Models\Student::where('alumni_flag', false)
-                ->get();
+        // Ambil data Siswa Aktif (Bukan Alumni)
+        $siswaAktif = Student::where('alumni_flag', false)
+                    ->get();
 
-    return view('public.tracer', compact('alumni', 'siswaAktif'));
+        return view('public.tracer', compact('alumni', 'siswaAktif'));
     }
 
+    /**
+     * Halaman Tutorial / Panduan
+     */
     public function tutorial()
     {
         return view('public.tutorial');
