@@ -11,21 +11,20 @@ use App\Models\GraduationYear;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB; // WAJIB TAMBAHKAN INI
 
 class AuthController extends Controller
 {
     public function index()
     {
-        // Jika sudah login, langsung lempar ke dashboard masing-masing
+        
         if (Auth::check()) {
             return $this->redirectUserByRole(Auth::user());
         }
         return view('auth.login');
     }
 
-    /**
-     * Menampilkan halaman registrasi dengan data jurusan dan tahun dari database
-     */
+
     public function showRegister()
     {
         
@@ -36,67 +35,70 @@ class AuthController extends Controller
     }
 
     /**
-     * Proses Registrasi Siswa/Alumni
+     * Proses Registrasi dengan Database Transaction & Validasi NIS Unik
      */
     public function register(Request $request)
     {
+        // 1. Validasi Input termasuk NIS unik di tabel students
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6|confirmed',
-            'nis' => 'nullable|string|max:20',
+            'nis' => 'nullable|string|max:20|unique:students,nis', 
             'major' => 'required|string|max:100', 
             'graduation_year' => 'required|integer', 
             'gender' => 'nullable|string|in:L,P',
         ], [
             'email.unique' => 'Email ini sudah terdaftar.',
+            'nis.unique' => 'NIS ini sudah terdaftar, silakan gunakan NIS lain.',
             'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
-            'graduation_year.required' => 'Tahun lulus wajib diisi untuk pendataan alumni.',
+            'graduation_year.required' => 'Tahun lulus wajib diisi.',
         ]);
 
-        // 1. Ambil Role 'siswa' (Pastikan di database nama role-nya adalah 'siswa')
-        $siswas_role = Role::where('name', 'siswa')->first();
+        // 2. Gunakan Transaction agar jika salah satu gagal, semua dibatalkan
+        return DB::transaction(function () use ($validated) {
+            
+            // Ambil Role 'siswa'
+            $siswas_role = Role::where('name', 'siswa')->first();
 
-        if (!$siswas_role) {
-            return back()->with('error', 'Role siswa tidak ditemukan di database.');
-        }
+            if (!$siswas_role) {
+                // Ini akan memicu rollback otomatis jika error
+                throw new \Exception('Role siswa tidak ditemukan di database.');
+            }
 
-        // 2. Create User
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
-            'role_id' => $siswas_role->id,
-            'is_active' => true,
-        ]);
+            // Simpan User
+            $user = User::create([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'password' => Hash::make($validated['password']),
+                'role_id' => $siswas_role->id,
+                'is_active' => true,
+            ]);
 
-        // 3. LOGIKA OTOMATIS ALUMNI
+            // Logika Alumni
+            $currentYear = date('Y');
+            $alumniFlag = ($validated['graduation_year'] <= $currentYear);
 
-        $currentYear = date('Y');
-        $alumniFlag = ($validated['graduation_year'] <= $currentYear);
+            // Simpan Profil Student
+            Student::create([
+                'user_id' => $user->id,
+                'nis' => $validated['nis'] ?? null,
+                'full_name' => $validated['name'],
+                'major' => $validated['major'],
+                'graduation_year' => $validated['graduation_year'],
+                'gender' => $validated['gender'] ?? 'L',
+                'status' => 'active',
+                'alumni_flag' => $alumniFlag, 
+            ]);
 
-        // 4. Create Student Profile
-        Student::create([
-            'user_id' => $user->id,
-            'nis' => $validated['nis'] ?? null,
-            'full_name' => $validated['name'],
-            'major' => $validated['major'],
-            'graduation_year' => $validated['graduation_year'],
-            'gender' => $validated['gender'] ?? 'L',
-            'status' => 'active',
-            'alumni_flag' => $alumniFlag, 
-        ]);
+            // Auto login setelah sukses
+            Auth::login($user);
 
-        // Auto login
-        Auth::login($user);
-
-        // Menggunakan redirectUserByRole agar konsisten
-        return $this->redirectUserByRole($user)->with('success', 'Registrasi berhasil!');
+            return $this->redirectUserByRole($user)->with('success', 'Registrasi berhasil!');
+        });
     }
 
-    /**
-     * Proses Login
-     */
+
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -107,7 +109,7 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            // Log aktivitas login
+            
             ActivityLog::create([
                 'user_id' => Auth::id(),
                 'action' => 'Login berhasil',
@@ -123,33 +125,28 @@ class AuthController extends Controller
         ])->onlyInput('email');
     }
 
-    /**
-     * Helper function untuk mengalihkan user berdasarkan role
-     * PERBAIKAN: Menggunakan Named Routes (route()) alih-alih path manual
-     */
+
     private function redirectUserByRole($user)
     {
         $adminRoles = ['super_admin', 'admin_bkk', 'kepala_bkk', 'perusahaan'];
         
-        // Memuat relasi role jika belum ada
+
         $roleName = $user->role->name ?? '';
 
         if (in_array($roleName, $adminRoles)) {
-            // Mengarah ke route('admin.dashboard') sesuai web.php
+            
             return redirect()->intended(route('admin.dashboard'));
         }
 
         if ($roleName === 'siswa') {
-            // Mengarah ke route('student.home') sesuai web.php
+
             return redirect()->intended(route('student.home'));
         }
 
         return redirect('/');
     }
 
-    /**
-     * Proses Logout
-     */
+
     public function logout(Request $request)
     {
         if (Auth::check()) {
