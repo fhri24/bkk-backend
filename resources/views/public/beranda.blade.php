@@ -4,10 +4,10 @@
 
 @section('extra_css')
 <style>
-    body { 
-        font-family: 'Poppins', sans-serif; 
+    body {
+        font-family: 'Poppins', sans-serif;
     }
-    
+
     @keyframes zoomInUp {
         from { opacity: 0; transform: scale(0.85) translateY(20px); }
         to { opacity: 1; transform: scale(1) translateY(0); }
@@ -24,7 +24,7 @@
     .job-card:nth-child(1) { animation-delay: 0.1s; }
     .job-card:nth-child(2) { animation-delay: 0.2s; }
     .job-card:nth-child(3) { animation-delay: 0.3s; }
-    
+
     .section-header { position: relative; padding: 16px 0; }
     .section-header::before {
         content: '';
@@ -76,7 +76,6 @@
 @endsection
 
 @section('content')
-<!-- Hero Section -->
 <section class="hero-bg h-[600px] flex items-center justify-center text-center text-white relative">
     <div class="container mx-auto px-6 z-10">
         <h2 class="text-5xl md:text-7xl font-extrabold mb-6 leading-tight">Sistem Informasi <br /><span class="text-blue-500">Bursa Kerja</span></h2>
@@ -95,7 +94,6 @@
     </div>
 </section>
 
-<!-- Stats Section -->
 <section class="container mx-auto px-6 -mt-16 relative z-20">
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div class="bg-white p-8 rounded-2xl shadow-xl text-center border border-slate-100 stat-card">
@@ -117,7 +115,6 @@
     </div>
 </section>
 
-<!-- Lowongan Unggulan Section -->
 <section class="container mx-auto px-6 py-20">
     <div class="flex justify-between items-end mb-12">
         <div class="section-header">
@@ -130,20 +127,24 @@
         @forelse($featured_jobs as $job)
         <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl transition group card-zoom job-card">
             <div class="flex items-center mb-6">
-                <div class="w-14 h-14 bg-slate-50 rounded-xl flex items-center justify-center border group-hover:bg-blue-50 transition">
-                    <i class="fas fa-industry text-blue-600 text-2xl"></i>
+                <div class="w-14 h-14 bg-slate-50 rounded-xl flex items-center justify-center border group-hover:bg-blue-50 transition overflow-hidden">
+                    @if($job->company && $job->company->logo)
+                        <img src="{{ asset('storage/' . $job->company->logo) }}" class="w-full h-full object-cover">
+                    @else
+                        <i class="fas fa-industry text-blue-600 text-2xl"></i>
+                    @endif
                 </div>
                 <div class="ml-4">
-                    <h4 class="font-bold text-lg">{{ $job->title }}</h4>
+                    <h4 class="font-bold text-lg truncate w-48">{{ $job->title }}</h4>
                     <p class="text-xs text-slate-500">{{ $job->company->company_name ?? 'Perusahaan' }}</p>
                 </div>
             </div>
             <div class="space-y-3 mb-8 text-sm text-slate-600 font-medium">
                 <div class="flex items-center"><i class="fas fa-map-marker-alt w-5 text-slate-400"></i> {{ $job->location }}</div>
                 <div class="flex items-center"><i class="fas fa-graduation-cap w-5 text-slate-400"></i> {{ $job->job_type }}</div>
-                <div class="flex items-center"><i class="fas fa-calendar-alt w-5 text-slate-400"></i> Tutup: {{ $job->expired_at->format('d M Y') }}</div>
+                <div class="flex items-center"><i class="fas fa-calendar-alt w-5 text-slate-400"></i> Tutup: {{ \Carbon\Carbon::parse($job->expired_at)->format('d M Y') }}</div>
             </div>
-            <a href="{{ route('student.lowongan.detail', $job->job_id) }}" class="w-full bg-slate-100 py-3 rounded-xl font-bold text-slate-800 hover:bg-blue-600 hover:text-white transition text-center block">Lamar Sekarang</a>
+            <a href="{{ route('student.lowongan.detail', $job->id) }}" class="w-full bg-slate-100 py-3 rounded-xl font-bold text-slate-800 hover:bg-blue-600 hover:text-white transition text-center block">Lamar Sekarang</a>
         </div>
         @empty
         <div class="col-span-full text-center py-12"><p class="text-slate-600">Belum ada lowongan unggulan</p></div>
@@ -151,12 +152,6 @@
     </div>
 </section>
 
-<!-- Divider -->
-<div class="container mx-auto px-6 py-8">
-    <div class="divider-line"></div>
-</div>
-
-<!-- Acara Unggulan Section -->
 <section class="bg-gradient-to-b from-slate-50 to-white py-20">
     <div class="container mx-auto px-6">
         <div class="flex justify-between items-end mb-12">
@@ -174,13 +169,13 @@
                         <i class="fas fa-briefcase text-blue-600 text-2xl"></i>
                     </div>
                     <div class="ml-4">
-                        <h4 class="font-bold text-lg">{{ $event->title }}</h4>
+                        <h4 class="font-bold text-lg truncate w-48">{{ $event->title }}</h4>
                         <p class="text-xs text-slate-500">{{ $event->category }}</p>
                     </div>
                 </div>
                 <div class="space-y-3 mb-8 text-sm text-slate-600 font-medium">
                     <div class="flex items-center"><i class="fas fa-map-marker-alt w-5 text-slate-400"></i> {{ $event->location }}</div>
-                    <div class="flex items-center"><i class="fas fa-calendar-alt w-5 text-slate-400"></i> {{ $event->start_date->format('d M Y') }}</div>
+                    <div class="flex items-center"><i class="fas fa-calendar-alt w-5 text-slate-400"></i> {{ \Carbon\Carbon::parse($event->start_date)->format('d M Y') }}</div>
                     <div class="flex items-center"><i class="fas fa-users w-5 text-slate-400"></i> {{ $event->capacity }} Peserta</div>
                 </div>
                 <a href="{{ route('student.acara') }}" class="w-full bg-slate-100 py-3 rounded-xl font-bold text-slate-800 hover:bg-blue-600 hover:text-white transition text-center block">Daftar Peserta</a>
@@ -192,12 +187,6 @@
     </div>
 </section>
 
-<!-- Divider -->
-<div class="container mx-auto px-6 py-8">
-    <div class="divider-line"></div>
-</div>
-
-<!-- Berita Unggulan Section -->
 <section class="py-20">
     <div class="container mx-auto px-6">
         <div class="flex justify-between items-end mb-12">
@@ -208,19 +197,26 @@
             <a href="{{ route('student.berita') }}" class="text-blue-600 font-bold hover:underline">Lihat Semua <i class="fas fa-arrow-right ml-2 text-xs"></i></a>
         </div>
         <div class="grid md:grid-cols-3 gap-8">
-            @forelse($featured_news as $news)
+            {{-- PERBAIKAN: Gunakan variabel $news dan panggil asset storage untuk gambar --}}
+            @forelse($news as $item)
             <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-xl transition card-zoom job-card">
-                <div class="h-40 bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
-                    <i class="fas fa-newspaper text-white text-5xl opacity-20"></i>
+                <div class="h-48 overflow-hidden relative">
+                    @if($item->image)
+                        <img src="{{ asset('storage/' . $item->image) }}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    @else
+                        <div class="w-full h-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
+                            <i class="fas fa-newspaper text-white text-5xl opacity-20"></i>
+                        </div>
+                    @endif
                 </div>
                 <div class="p-6">
                     <div class="mb-4">
-                        <span class="inline-block bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full mb-3">{{ $news->category }}</span>
-                        <h4 class="font-bold text-lg text-slate-800 leading-tight">{{ $news->title }}</h4>
+                        <span class="inline-block bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full mb-3">{{ $item->category ?? 'Warta' }}</span>
+                        <h4 class="font-bold text-lg text-slate-800 leading-tight line-clamp-2 h-14">{{ $item->title }}</h4>
                     </div>
-                    <p class="text-xs text-slate-500 mb-4">{{ $news->published_at->format('d M Y') }}</p>
-                    <p class="text-sm text-slate-600 leading-relaxed line-clamp-2">{{ $news->excerpt }}</p>
-                    <a href="{{ route('student.berita.detail', $news->id) }}" class="w-full mt-6 bg-slate-100 py-2.5 rounded-lg font-bold text-slate-800 hover:bg-blue-600 hover:text-white transition text-sm text-center block">Baca Selengkapnya</a>
+                    <p class="text-xs text-slate-500 mb-4">{{ $item->created_at->translatedFormat('d M Y') }}</p>
+                    {{-- PERBAIKAN: Gunakan ID item untuk link detail --}}
+                    <a href="{{ route('student.berita.detail', $item->id) }}" class="w-full mt-6 bg-slate-100 py-2.5 rounded-lg font-bold text-slate-800 hover:bg-blue-600 hover:text-white transition text-sm text-center block">Baca Selengkapnya</a>
                 </div>
             </div>
             @empty
@@ -230,12 +226,6 @@
     </div>
 </section>
 
-<!-- Divider -->
-<div class="container mx-auto px-6 py-8">
-    <div class="divider-line"></div>
-</div>
-
-<!-- Partner Companies Section -->
 <section class="bg-gradient-to-b from-white to-slate-100 py-20">
     <div class="container mx-auto px-6 text-center">
         <div class="section-header inline-block mb-10">
@@ -252,12 +242,6 @@
     </div>
 </section>
 
-<!-- Divider -->
-<div class="container mx-auto px-6 py-8">
-    <div class="divider-line"></div>
-</div>
-
-<!-- CTA Section -->
 <section class="container mx-auto px-6 py-24">
     <div class="bg-gradient-to-br from-[#1e3a8a] to-[#001f3f] rounded-[60px] p-12 md:p-24 text-center text-white shadow-2xl overflow-hidden relative">
         <div class="absolute top-0 right-0 w-96 h-96 bg-blue-500/15 rounded-full -mr-48 -mt-48 blur-3xl"></div>
@@ -276,8 +260,4 @@
         </div>
     </div>
 </section>
-
-<script>
-    // Scripts untuk alumni stories telah dihapus
-</script>
 @endsection
