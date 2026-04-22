@@ -12,6 +12,7 @@ use App\Models\GraduationYear;
 use App\Models\JobApplication; 
 use App\Models\SavedJob; 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class StudentController extends Controller
 {
@@ -20,12 +21,79 @@ class StudentController extends Controller
      */
     public function index()
     {
-        
+
         $featured_jobs = Job::latest()->take(3)->with('company')->get();
         $featured_events = Event::latest()->take(3)->get();
         $featured_news = News::latest()->take(3)->get();
 
         return view('student.beranda', compact('featured_jobs', 'featured_events', 'featured_news'));
+    }
+
+    /**
+     * Menampilkan Halaman Daftar Lowongan (DENGAN PENCARIAN & FILTER)
+     */
+    public function lowongan(Request $request)
+    {
+        $query = Job::with('company');
+
+        if ($request->has('search')) {
+            $query->where('title', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->has('type') && $request->type != '') {
+            $query->where('job_type', $request->type);
+        }
+
+        if ($request->has('major') && $request->major != 'Semua Jurusan') {
+            $query->where('major', $request->major);
+        }
+
+        $jobs = $query->latest()->get();
+        
+        return view('student.lowongan', compact('jobs'));
+    }
+
+    /**
+     * Menampilkan Detail Lowongan
+     */
+    public function detailLowongan($id)
+    {
+        $job = Job::with('company')->where('job_id', $id)->firstOrFail();
+        
+        $similarJobs = Job::with('company')
+                        ->where('job_id', '!=', $id)
+                        ->where(function($query) use ($job) {
+                            $query->where('job_type', $job->job_type)
+                                  ->orWhereHas('company', function($q) use ($job) {
+                                      $q->where('company_id', $job->company_id);
+                                  });
+                        })
+                        ->latest()
+                        ->limit(5)
+                        ->get();
+        
+        return view('student.lowongan-detail', compact('job', 'similarJobs'));
+    }
+
+    /**
+     * Fitur Simpan/Bookmark Lowongan
+     */
+    public function saveJob($id)
+    {
+        $userId = auth()->id();
+        $existing = SavedJob::where('user_id', $userId)->where('job_id', $id)->first();
+
+        if ($existing) {
+            $existing->delete();
+            return redirect()->back()->with('success', 'Lowongan dihapus dari daftar simpan.');
+        }
+
+        SavedJob::create([
+            'user_id' => $userId,
+            'job_id' => $id
+        ]);
+
+        return redirect()->back()->with('success', 'Lowongan berhasil disimpan!');
     }
 
     /**
@@ -49,13 +117,12 @@ class StudentController extends Controller
         $majors = Major::orderBy('name', 'asc')->get();
         $years = GraduationYear::orderBy('year', 'desc')->get();
 
-        // Data Lamaran
-        $applications = JobApplication::where('student_id', $student->id)
+        $applications = JobApplication::where('student_id', $student->student_id)
             ->with(['job.company']) 
             ->latest()
             ->get();
 
-        // Data Tersimpan
+
         $saved_jobs = SavedJob::where('user_id', $user->id)
             ->with(['job.company']) 
             ->latest()
@@ -114,10 +181,64 @@ class StudentController extends Controller
 
 
         $student->update($validated);
-
+        
 
         $user->update(['name' => $request->full_name]);
 
         return redirect()->back()->with('success', 'Profil berhasil diperbarui!');
+    }
+
+    /**
+     * Proses Melamar Lowongan (UPDATE FULL: Mendukung Upload CV & Form Modal)
+     */
+    public function applyJob(Request $request, $id)
+    {
+        // 1. Ambil data User & Student
+        $user = auth()->user();
+        $student = Student::where('user_id', $user->id)->first();
+
+        if (!$student) {
+            return back()->with('error', 'Profil siswa tidak ditemukan. Silahkan lengkapi profil terlebih dahulu.');
+        }
+
+        // 2. Validasi input dari formulir modal
+        $request->validate([
+            'cv_file' => 'required|mimes:pdf|max:5120', // Wajib PDF, max 5MB
+            'cover_letter' => 'nullable|string|max:2000',
+        ]);
+
+        // 3. Cek apakah sudah pernah melamar
+        $existing = JobApplication::where('student_id', $student->student_id)
+                                    ->where('job_id', $id)
+                                    ->first();
+
+        if ($existing) {
+            return back()->with('warning', 'Anda sudah melamar lowongan ini sebelumnya.');
+        }
+
+        try {
+            // 4. Proses Upload file CV ke storage
+            $fileName = null;
+            if ($request->hasFile('cv_file')) {
+                // Nama file unik: waktu_idstudent.pdf
+                $fileName = time() . '_' . $student->student_id . '.' . $request->file('cv_file')->getClientOriginalExtension();
+                $request->file('cv_file')->storeAs('public/cv_applications', $fileName);
+            }
+
+            // 5. Simpan record lamaran ke database
+            JobApplication::create([
+                'student_id'       => $student->student_id,
+                'job_id'           => $id,
+                'status'           => 'pending',
+                'application_date' => now(),
+                'cover_letter'     => $request->cover_letter,
+                'additional_file'  => $fileName, 
+            ]);
+
+            return back()->with('success', 'Lamaran berhasil terkirim! Silahkan cek status di profil Anda.');
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal mengirim lamaran: ' . $e->getMessage());
+        }
     }
 }

@@ -2,76 +2,60 @@
 
 namespace App\Models;
 
-use Laravel\Sanctum\HasApiTokens;
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    // HasApiTokens sudah digabung di sini bersama trait lainnya
     use HasApiTokens, HasFactory, Notifiable;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'name',
         'email',
         'password',
-        'role_id',
-        'userable_id',
-        'userable_type',
-        'is_active',
     ];
 
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<int, string>
+     */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed',
-        'is_active' => 'boolean',
+        'password' => 'password',
     ];
 
-    public function role(): BelongsTo
+    public function student()
     {
-        return $this->belongsTo(Role::class);
+        // Menghubungkan user_id di tabel students dengan id di tabel users
+        return $this->hasOne(Student::class, 'user_id', 'id');
     }
 
-    public function userable(): MorphTo
+    public function role()
     {
-        return $this->morphTo();
+        return $this->belongsTo(Role::class, 'role_id', 'id');
     }
 
-    // Relasi ke Job (User/Admin yang posting job)
-    public function postedJobs(): HasMany
+    public function savedJobs()
     {
-        return $this->hasMany(Job::class, 'admin_id');
-    }
-
-    // Relasi ke Student (User yang merupakan siswa)
-    public function studentProfile(): HasOne
-    {
-        return $this->hasOne(Student::class);
-    }
-
-    // Relasi ke Company (User yang pemilik perusahaan)
-    public function company(): BelongsTo
-    {
-        return $this->belongsTo(Company::class);
-    }
-
-    public function activityLogs(): HasMany
-    {
-        return $this->hasMany(ActivityLog::class);
-    }
-
-    public function hasPermission(string $permissionName): bool
-    {
-        return $this->role && $this->role->permissions->pluck('name')->contains($permissionName);
+        return $this->hasMany(SavedJob::class, 'user_id', 'id');
     }
 }

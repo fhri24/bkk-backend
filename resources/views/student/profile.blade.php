@@ -107,35 +107,47 @@
                     </h3>
                     
                     <div class="space-y-4">
-                        @forelse($saved_jobs as $saved)
-                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-transparent hover:border-blue-200 transition group">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-blue-600 shadow-sm">
-                                        <i class="fas fa-briefcase"></i>
+                        @forelse(Auth::user()->savedJobs()->with('job')->get() as $saved)
+                            @if($saved->job)
+                                <div class="group flex items-center justify-between p-4 hover:bg-slate-50 transition-all border-b border-slate-100 last:border-0">
+                                    <div class="flex items-center space-x-4">
+                                        <!-- Icon/Logo Placeholder -->
+                                        <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                                            <i class="fas fa-briefcase text-lg"></i>
+                                        </div>
+                                        
+                                        <!-- Info Lowongan -->
+                                        <div class="flex flex-col">
+                                            <h4 class="font-bold text-slate-800 text-sm line-clamp-1 group-hover:text-blue-600 transition-colors">
+                                                {{ $saved->job->title ?? 'Judul Lowongan' }}
+                                            </h4>
+                                            <p class="text-xs text-slate-500 flex items-center mt-1">
+                                                <i class="far fa-building mr-1"></i>
+                                                {{ $saved->job->company->name ?? 'Nama Perusahaan' }}
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <p class="font-bold text-gray-800 group-hover:text-blue-600 transition">{{ $saved->job->title }}</p>
-                                        <p class="text-xs text-gray-500">{{ $saved->job->company->name ?? 'Perusahaan' }}</p>
+
+                                    <!-- Action Buttons -->
+                                    <div class="flex items-center space-x-2">
+                                        <a href="{{ route('student.lowongan.detail', $saved->job_id) }}" 
+                                           class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all" 
+                                           title="Lihat Detail">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <form action="{{ route('student.lowongan.save', $saved->job_id) }}" method="POST" class="inline">
+                                            @csrf
+                                            <button type="submit" 
+                                                    class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all" 
+                                                    title="Hapus">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
                                     </div>
                                 </div>
-                                <div class="flex items-center gap-3">
-                                    <a href="{{ route('student.lowongan.detail', $saved->job->id) }}" class="text-blue-600 text-sm font-bold hover:underline">
-                                        Lihat
-                                    </a>
-                                    <form action="{{ route('student.lowongan.unsave', $saved->job->id) }}" method="POST" onsubmit="return confirm('Hapus dari simpanan?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-red-400 hover:text-red-600 transition">
-                                            <i class="fas fa-trash-alt text-sm"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
+                            @endif
                         @empty
-                            <div class="text-center py-6">
-                                <p class="text-gray-400 text-sm italic">Belum ada lowongan tersimpan.</p>
-                                <a href="{{ route('student.lowongan') }}" class="text-blue-500 text-xs font-bold mt-2 inline-block">Cari Lowongan Sekarang</a>
-                            </div>
+                            <p class="text-sm text-slate-500">Tidak ada lowongan tersimpan</p>
                         @endforelse
                     </div>
                 </div>

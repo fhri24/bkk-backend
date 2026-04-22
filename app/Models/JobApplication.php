@@ -25,13 +25,12 @@ class JobApplication extends Model
     public $incrementing = true;
 
     protected $fillable = [
-        'job_id',
-        'student_id',
-        'cover_letter',
-        'additional_file',
-        'admin_notes',
-        'status',
-        'application_date'
+        'job_id', 
+        'student_id', 
+        'status', 
+        'application_date', 
+        'cover_letter', 
+        'additional_file'
     ];
 
     /**

@@ -10,20 +10,19 @@ return new class extends Migration
     {
         Schema::create('saved_jobs', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             
-            // Relasi ke User
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-
-            // Relasi ke Job Listings (Sesuai nama tabel di project kamu)
+            // PASTIKAN BAGIAN INI SAMA DENGAN PRIMARY KEY DI JOB_LISTINGS
+            // Kalau di job_listings pakai job_id, maka di sini harus pakai:
             $table->unsignedBigInteger('job_listing_id'); 
             
-            $table->timestamps();
-
-            // Setup Foreign Key manual ke tabel job_listings
+            
             $table->foreign('job_listing_id')
-                  ->references('job_listing_id') // Kolom PK di tabel job_listings
-                  ->on('job_listings')          // Nama tabel tujuan
+                  ->references('job_id') // Nama kolom primary di job_listings
+                  ->on('job_listings')
                   ->onDelete('cascade');
+                  
+            $table->timestamps();
         });
     }
 

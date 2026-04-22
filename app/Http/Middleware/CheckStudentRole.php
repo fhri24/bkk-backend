@@ -10,12 +10,14 @@ class CheckStudentRole
 {
     /**
      * Handle an incoming request.
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
         if (auth()->check()) {
-            $user = auth()->user();
-            if ($user->role->name !== 'siswa') {
+            $user = auth()->user()->load('role'); // Load relasi role
+            if (!$user->role || $user->role->name !== 'siswa') {
                 return redirect()->route('admin.dashboard');
             }
         }
