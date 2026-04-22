@@ -71,6 +71,9 @@ Route::middleware(['auth', 'student'])->prefix('student')->name('student.')->gro
     Route::post('/profile', [StudentController::class, 'updateProfile'])->name('profile.update');
     Route::get('/profil-lengkap', [StudentPageController::class, 'profil'])->name('profil.page');
 
+    // Lowongan Tersimpan (Fitur Baru)
+    Route::get('/lowongan-tersimpan', [StudentController::class, 'savedJobs'])->name('saved-jobs');
+
     // Pages
     Route::get('/lowongan', [StudentPageController::class, 'lowongan'])->name('lowongan');
     Route::get('/lowongan/{id}', [StudentPageController::class, 'lowonganDetail'])->name('lowongan.detail');
@@ -141,19 +144,19 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::put('/{role}', [AdminRoleController::class, 'update'])->name('update');
     });
 
-    // Pengaturan Sistem (Bagian yang Diperbaiki)
+    // Pengaturan Sistem
     Route::prefix('settings')->name('settings.')->middleware('permission:manage_settings')->group(function () {
         Route::get('/profile', [AdminSettingController::class, 'profile'])->name('profile');
         Route::put('/profile', [AdminSettingController::class, 'updateProfile'])->name('profile.update');
 
-        // Route Manual untuk Majors (Jurusan)
+        // Majors (Jurusan)
         Route::get('/majors', [AdminSettingController::class, 'majorsIndex'])->name('majors.index');
         Route::post('/majors', [AdminSettingController::class, 'storeMajor'])->name('majors.store');
         Route::get('/majors/{major}/edit', [AdminSettingController::class, 'editMajor'])->name('majors.edit');
         Route::put('/majors/{major}', [AdminSettingController::class, 'updateMajor'])->name('majors.update');
         Route::delete('/majors/{major}', [AdminSettingController::class, 'destroyMajor'])->name('majors.destroy');
 
-        // Route Manual untuk Graduation Years (Tahun Lulus)
+        // Graduation Years (Tahun Lulus)
         Route::get('/years', [AdminSettingController::class, 'yearsIndex'])->name('years.index');
         Route::post('/years', [AdminSettingController::class, 'storeYear'])->name('years.store');
         Route::get('/years/{year}/edit', [AdminSettingController::class, 'editYear'])->name('years.edit');

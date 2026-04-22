@@ -7,7 +7,7 @@
     <div class="container mx-auto px-4 py-12">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             
-            <!-- Sidebar Profil -->
+
             <div class="lg:col-span-1">
                 <div class="bg-white rounded-2xl shadow-lg p-8 text-center">
                     @if($student->profile_picture)
@@ -47,9 +47,9 @@
                 </div>
             </div>
 
-            <!-- Detail Informasi -->
+            
             <div class="lg:col-span-2 space-y-6">
-                <!-- Informasi Pribadi -->
+
                 <div class="bg-white rounded-2xl shadow-lg p-8">
                     <h3 class="text-xl font-extrabold text-slate-900 mb-6 flex items-center">
                         <i class="fas fa-user-circle text-blue-600 mr-3"></i>Informasi Pribadi
@@ -74,7 +74,7 @@
                     </div>
                 </div>
 
-                <!-- Informasi Pendidikan -->
+
                 <div class="bg-white rounded-2xl shadow-lg p-8">
                     <h3 class="text-xl font-extrabold text-slate-900 mb-6 flex items-center">
                         <i class="fas fa-graduation-cap text-blue-600 mr-3"></i>Informasi Pendidikan
@@ -101,54 +101,55 @@
                     </div>
                 </div>
 
-                <!-- LOWONGAN TERSIMPAN (FITUR BARU) -->
-                <div class="bg-white rounded-2xl shadow-lg p-8">
+                <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
                     <h3 class="text-xl font-extrabold text-slate-900 mb-6 flex items-center">
-                        <i class="fas fa-bookmark text-yellow-500 mr-3"></i>Lowongan Tersimpan
+                        <i class="fas fa-bookmark mr-3 text-blue-500"></i> Lowongan yang Saya Simpan
                     </h3>
+                    
                     <div class="space-y-4">
                         @forelse($saved_jobs as $saved)
-                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex justify-between items-center group hover:border-blue-300 transition">
+                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-transparent hover:border-blue-200 transition group">
                                 <div class="flex items-center gap-4">
-                                    <div class="w-12 h-12 bg-white rounded-lg border border-slate-200 flex items-center justify-center text-blue-600 shadow-sm">
-                                        <i class="fas fa-building text-xl"></i>
+                                    <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-blue-600 shadow-sm">
+                                        <i class="fas fa-briefcase"></i>
                                     </div>
                                     <div>
-                                        <p class="font-bold text-slate-900">{{ $saved->job->title }}</p>
-                                        <p class="text-xs text-slate-500">{{ $saved->job->company->company_name ?? 'Perusahaan' }} • {{ $saved->job->location ?? 'Lokasi tidak dicantumkan' }}</p>
+                                        <p class="font-bold text-gray-800 group-hover:text-blue-600 transition">{{ $saved->job->title }}</p>
+                                        <p class="text-xs text-gray-500">{{ $saved->job->company->name ?? 'Perusahaan' }}</p>
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-3">
-                                    <a href="{{ route('jobs.show', $saved->job->id) }}" class="text-xs bg-white border border-slate-300 text-slate-700 px-3 py-2 rounded-lg font-bold hover:bg-slate-100 transition shadow-sm">
+                                    <a href="{{ route('student.lowongan.detail', $saved->job->id) }}" class="text-blue-600 text-sm font-bold hover:underline">
                                         Lihat
                                     </a>
-                                    <form action="{{ route('student.jobs.unsave', $saved->job->id) }}" method="POST" onsubmit="return confirm('Hapus dari simpanan?')">
+                                    <form action="{{ route('student.lowongan.unsave', $saved->job->id) }}" method="POST" onsubmit="return confirm('Hapus dari simpanan?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="text-red-500 hover:text-red-700 p-2 transition">
-                                            <i class="fas fa-trash-alt"></i>
+                                        <button type="submit" class="text-red-400 hover:text-red-600 transition">
+                                            <i class="fas fa-trash-alt text-sm"></i>
                                         </button>
                                     </form>
                                 </div>
                             </div>
                         @empty
-                            <div class="bg-slate-50 p-6 rounded-xl border border-dashed border-slate-300 text-center">
-                                <p class="text-slate-500 text-sm italic">Belum ada lowongan yang disimpan</p>
+                            <div class="text-center py-6">
+                                <p class="text-gray-400 text-sm italic">Belum ada lowongan tersimpan.</p>
+                                <a href="{{ route('student.lowongan') }}" class="text-blue-500 text-xs font-bold mt-2 inline-block">Cari Lowongan Sekarang</a>
                             </div>
                         @endforelse
                     </div>
                 </div>
 
-                <!-- Lamaran Pekerjaan Terbaru -->
+
                 <div class="bg-white rounded-2xl shadow-lg p-8">
                     <h3 class="text-xl font-extrabold text-slate-900 mb-6 flex items-center">
-                        <i class="fas fa-briefcase text-blue-600 mr-3"></i>Lamaran Pekerjaan Terbaru
+                        <i class="fas fa-paper-plane text-blue-600 mr-3"></i>Lamaran Pekerjaan Terbaru
                     </h3>
                     <div class="space-y-4">
                         @forelse($applications as $app)
                             <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex justify-between items-center">
                                 <div>
-                                    <p class="font-bold text-slate-900">{{ $app->job_title }}</p>
+                                    <p class="font-bold text-slate-900">{{ $app->job->title ?? 'Pekerjaan' }}</p>
                                     <p class="text-xs text-slate-500">Dikirim pada: {{ $app->created_at->format('d M Y') }}</p>
                                 </div>
                                 <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold uppercase">
@@ -162,7 +163,7 @@
                         @endforelse
                     </div>
                 </div>
-                
+
 
                 <div class="flex justify-end">
                     <a href="{{ route('student.home') }}" class="bg-slate-200 text-slate-800 px-6 py-3 rounded-xl font-bold hover:bg-slate-300 transition">
@@ -175,9 +176,12 @@
     </div>
 </div>
 
-<!-- Edit Profile Modal tetep sama di bawah sini ... -->
 
-<!-- Edit Profile Modal -->
+
+
+
+
+
 <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
     <div class="bg-white rounded-2xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
         <div class="bg-gradient-to-r from-blue-600 to-blue-700 p-8 text-white flex justify-between items-center">
@@ -209,7 +213,7 @@
                     <input type="text" name="birth_info" value="{{ $student->birth_info }}" placeholder="Tempat, Tanggal Lahir" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" />
                 </div>
 
-                <!-- PERUBAHAN JURUSAN DI SINI -->
+
                 <div>
                     <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">Jurusan</label>
                     <select name="major" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600">
@@ -222,7 +226,7 @@
                     </select>
                 </div>
 
-                <!-- PERUBAHAN TAHUN LULUS DI SINI -->
+
                 <div>
                     <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">Tahun Lulus</label>
                     <select name="graduation_year" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600">

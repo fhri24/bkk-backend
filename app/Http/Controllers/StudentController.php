@@ -20,7 +20,7 @@ class StudentController extends Controller
      */
     public function index()
     {
-        // Pastikan model Job punya relasi 'company'
+        
         $featured_jobs = Job::latest()->take(3)->with('company')->get();
         $featured_events = Event::latest()->take(3)->get();
         $featured_news = News::latest()->take(3)->get();
@@ -36,8 +36,8 @@ class StudentController extends Controller
     {
 
         $user = Auth::user();
-        
-        // Ambil data student berdasarkan user yang login
+
+
         $student = Student::where('user_id', $user->id)->first();
 
 
@@ -49,27 +49,34 @@ class StudentController extends Controller
         $majors = Major::orderBy('name', 'asc')->get();
         $years = GraduationYear::orderBy('year', 'desc')->get();
 
-        // 1. Ambil data lamaran pekerjaan (Gunakan student_id hasil tinker tadi)
+        // Data Lamaran
         $applications = JobApplication::where('student_id', $student->id)
             ->with(['job.company']) 
             ->latest()
             ->get();
 
-        // 2. Ambil data lowongan tersimpan (PERBAIKAN DI SINI)
-        // Kita panggil relasi 'job' yang sudah kita buat di Model SavedJob
+        // Data Tersimpan
         $saved_jobs = SavedJob::where('user_id', $user->id)
             ->with(['job.company']) 
             ->latest()
             ->get();
 
         return view('student.profile', compact(
-            'user', 
-            'student', 
-            'majors', 
-            'years', 
-            'applications', 
-            'saved_jobs'
+            'user', 'student', 'majors', 'years', 'applications', 'saved_jobs'
         ));
+    }
+
+    /**
+     * Menampilkan Halaman Khusus Lowongan Tersimpan
+     */
+    public function savedJobs()
+    {
+        $saved_jobs = SavedJob::where('user_id', auth()->id())
+                    ->with(['job.company']) 
+                    ->latest()
+                    ->get();
+
+        return view('student.saved-jobs', compact('saved_jobs'));
     }
 
     /**
@@ -105,10 +112,10 @@ class StudentController extends Controller
 
         $validated['alumni_flag'] = ($request->graduation_year <= date('Y'));
 
-        // Simpan perubahan ke tabel students
+
         $student->update($validated);
 
-        // Update nama di table users agar sinkron (opsional)
+
         $user->update(['name' => $request->full_name]);
 
         return redirect()->back()->with('success', 'Profil berhasil diperbarui!');

@@ -3,7 +3,7 @@
         <div class="flex justify-between items-center h-20">
             
             {{-- Logo --}}
-            {{-- Logic: Jika login ke home student, jika tidak ke home public --}}
+
             <div class="flex items-center space-x-3 cursor-pointer hover:opacity-80 transition" 
                  onclick="window.location.href = '{{ auth()->check() ? route('student.home') : route('public.home') }}'">
                 <div class="w-11 h-11 bg-white rounded-xl flex items-center justify-center shadow-lg">
@@ -16,16 +16,16 @@
             </div>
 
             {{-- Menu Tengah (Desktop) --}}
-            <div class="hidden lg:flex space-x-8 text-sm font-semibold">
+            <div class="hidden lg:flex items-center space-x-8 text-sm font-semibold">
                 @auth
-                    {{-- Menu Khusus Siswa --}}
+
                     <a href="{{ route('student.home') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('student.home') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Beranda</a>
                     <a href="{{ route('student.lowongan') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('student.lowongan*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Lowongan</a>
                     <a href="{{ route('student.berita') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('student.berita*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Berita</a>
                     <a href="{{ route('student.acara') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('student.acara*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Acara</a>
                     <a href="{{ route('student.tracer') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('student.tracer*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Tracer Study</a>
                 @else
-                    {{-- Menu Publik (Muncul Sebelum Login) --}}
+
                     <a href="{{ route('public.home') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.home') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Beranda</a>
                     <a href="{{ route('public.lowongan') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.lowongan*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Lowongan</a>
                     <a href="{{ route('public.berita') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.berita*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Berita</a>
@@ -37,14 +37,31 @@
             {{-- Menu Kanan (Desktop) --}}
             <div class="hidden lg:flex items-center space-x-6">
                 @auth
+                    <div class="flex items-center gap-6">
+                        
+                        {{-- TOMBOL TERSIMPAN (Trigger Modal) --}}
+                        @php
+                            $savedCount = \App\Models\SavedJob::where('user_id', auth()->id())->count();
+                        @endphp
+                        
+                        <button onclick="openSavedModal()" class="flex items-center space-x-2 bg-white/10 px-4 py-2 rounded-lg hover:bg-white/20 transition relative group nav-link-custom">
+                            <i class="fas fa-bookmark text-blue-400 group-hover:shake transition"></i>
+                            <span class="text-sm font-semibold">Tersimpan</span>
+                            
+                            @if($savedCount > 0)
+                                <span class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-[#001f3f] badge-saved">
+                                    {{ $savedCount }}
+                                </span>
+                            @endif
+                        </button>
 
-                    <div class="flex items-center gap-4">
+                        {{-- Profil User --}}
                         <a href="{{ route('student.profile') }}" class="flex items-center gap-2 text-sm font-semibold hover:text-blue-300 transition group">
-                            <i class="fas fa-user-circle text-lg group-hover:scale-110 transition"></i>
+                            <i class="fas fa-user-circle text-xl group-hover:scale-110 transition"></i>
                             <span>{{ Auth::user()->name }}</span>
                         </a>
-                        
 
+                        {{-- Logout --}}
                         <form method="POST" action="{{ route('logout') }}" class="inline">
                             @csrf
                             <button type="submit" class="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-full text-sm font-bold shadow-lg transition transform hover:scale-105 active:scale-95">
@@ -53,7 +70,7 @@
                         </form>
                     </div>
                 @else
-                    {{-- Tombol Sebelum Login --}}
+
                     <a href="{{ route('register') }}" class="text-sm font-bold hover:text-blue-400 transition">Daftar</a>
                     <a href="{{ route('login') }}" class="bg-blue-600 hover:bg-blue-700 px-8 py-2.5 rounded-full text-sm font-bold shadow-lg transition transform hover:scale-105 active:scale-95">
                         Masuk
@@ -71,27 +88,31 @@
     {{-- Mobile Menu --}}
     <div id="mobile-menu" class="hidden lg:hidden bg-[#001f3f] border-t border-white/10 px-6 py-6 space-y-4 shadow-inner">
         @auth
-            {{-- Mobile Logged In --}}
-            <a href="{{ route('student.profile') }}" class="block py-2 font-bold text-blue-300 border-b border-white/10" onclick="toggleMobileMenu()">
+            <a href="{{ route('student.profile') }}" class="block py-2 font-bold text-blue-300 border-b border-white/10">
                 <i class="fas fa-user-circle mr-2"></i>Profil Saya
             </a>
-            <a href="{{ route('student.home') }}" class="block py-2" onclick="toggleMobileMenu()">Beranda</a>
-            <a href="{{ route('student.lowongan') }}" class="block py-2" onclick="toggleMobileMenu()">Lowongan</a>
-            <a href="{{ route('student.berita') }}" class="block py-2" onclick="toggleMobileMenu()">Berita</a>
-            <a href="{{ route('student.tracer') }}" class="block py-2" onclick="toggleMobileMenu()">Tracer Study</a>
+            
+            <button onclick="openSavedModal(); toggleMobileMenu();" class="w-full text-left py-2 text-blue-400 font-bold flex items-center">
+                <i class="fas fa-bookmark mr-2"></i> Tersimpan ({{ $savedCount }})
+            </button>
+
+            <a href="{{ route('student.home') }}" class="block py-2">Beranda</a>
+            <a href="{{ route('student.lowongan') }}" class="block py-2">Lowongan</a>
+            <a href="{{ route('student.berita') }}" class="block py-2">Berita</a>
+            
             <form method="POST" action="{{ route('logout') }}" class="pt-4">
                 @csrf
                 <button type="submit" class="w-full bg-red-600 py-3 rounded-xl font-bold">Logout</button>
             </form>
-        @else
-            {{-- Mobile Guest --}}
-            <a href="{{ route('public.home') }}" class="block py-2" onclick="toggleMobileMenu()">Beranda</a>
-            <a href="{{ route('public.lowongan') }}" class="block py-2" onclick="toggleMobileMenu()">Lowongan</a>
-            <a href="{{ route('public.berita') }}" class="block py-2" onclick="toggleMobileMenu()">Berita</a>
-            <div class="pt-4 flex flex-col space-y-3">
-                <a href="{{ route('login') }}" class="w-full bg-blue-600 py-3 rounded-xl font-bold text-center">Masuk</a>
-                <a href="{{ route('register') }}" class="w-full border border-white/30 py-3 rounded-xl font-bold text-center">Daftar</a>
-            </div>
+            
         @endauth
     </div>
 </nav>
+
+{{-- Pastikan script toggle menu mobile ada --}}
+<script>
+    function toggleMobileMenu() {
+        const menu = document.getElementById('mobile-menu');
+        menu.classList.toggle('hidden');
+    }
+</script>
