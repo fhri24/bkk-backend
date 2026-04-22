@@ -101,7 +101,45 @@
                     </div>
                 </div>
 
-                <!-- Bagian Lamaran & Bookmark tetap sama -->
+                <!-- LOWONGAN TERSIMPAN (FITUR BARU) -->
+                <div class="bg-white rounded-2xl shadow-lg p-8">
+                    <h3 class="text-xl font-extrabold text-slate-900 mb-6 flex items-center">
+                        <i class="fas fa-bookmark text-yellow-500 mr-3"></i>Lowongan Tersimpan
+                    </h3>
+                    <div class="space-y-4">
+                        @forelse($saved_jobs as $saved)
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex justify-between items-center group hover:border-blue-300 transition">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-12 h-12 bg-white rounded-lg border border-slate-200 flex items-center justify-center text-blue-600 shadow-sm">
+                                        <i class="fas fa-building text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-slate-900">{{ $saved->job->title }}</p>
+                                        <p class="text-xs text-slate-500">{{ $saved->job->company->company_name ?? 'Perusahaan' }} • {{ $saved->job->location ?? 'Lokasi tidak dicantumkan' }}</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <a href="{{ route('jobs.show', $saved->job->id) }}" class="text-xs bg-white border border-slate-300 text-slate-700 px-3 py-2 rounded-lg font-bold hover:bg-slate-100 transition shadow-sm">
+                                        Lihat
+                                    </a>
+                                    <form action="{{ route('student.jobs.unsave', $saved->job->id) }}" method="POST" onsubmit="return confirm('Hapus dari simpanan?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-500 hover:text-red-700 p-2 transition">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="bg-slate-50 p-6 rounded-xl border border-dashed border-slate-300 text-center">
+                                <p class="text-slate-500 text-sm italic">Belum ada lowongan yang disimpan</p>
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
+
+                <!-- Lamaran Pekerjaan Terbaru -->
                 <div class="bg-white rounded-2xl shadow-lg p-8">
                     <h3 class="text-xl font-extrabold text-slate-900 mb-6 flex items-center">
                         <i class="fas fa-briefcase text-blue-600 mr-3"></i>Lamaran Pekerjaan Terbaru
@@ -124,8 +162,7 @@
                         @endforelse
                     </div>
                 </div>
-
-
+                
 
                 <div class="flex justify-end">
                     <a href="{{ route('student.home') }}" class="bg-slate-200 text-slate-800 px-6 py-3 rounded-xl font-bold hover:bg-slate-300 transition">
@@ -137,6 +174,8 @@
         </div>
     </div>
 </div>
+
+<!-- Edit Profile Modal tetep sama di bawah sini ... -->
 
 <!-- Edit Profile Modal -->
 <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">

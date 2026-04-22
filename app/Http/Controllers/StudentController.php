@@ -9,6 +9,8 @@ use App\Models\Event;
 use App\Models\News;
 use App\Models\Major;
 use App\Models\GraduationYear;
+use App\Models\JobApplication; 
+use App\Models\SavedJob; 
 use Illuminate\Support\Facades\Auth;
 
 class StudentController extends Controller
@@ -18,6 +20,7 @@ class StudentController extends Controller
      */
     public function index()
     {
+        // Pastikan model Job punya relasi 'company'
         $featured_jobs = Job::latest()->take(3)->with('company')->get();
         $featured_events = Event::latest()->take(3)->get();
         $featured_news = News::latest()->take(3)->get();
@@ -27,31 +30,38 @@ class StudentController extends Controller
 
     /**
      * Menampilkan Halaman Profil
-     * Lokasi: resources/views/student/profile.blade.php
+     * 
      */
     public function showProfile()
     {
-        // 1. Ambil user yang login
-        $user = Auth::user();
 
-        // 2. Ambil data student. 
-        // Menggunakan where agar lebih pasti meskipun relasi di model belum diset.
+        $user = Auth::user();
+        
+        // Ambil data student berdasarkan user yang login
         $student = Student::where('user_id', $user->id)->first();
 
-        // 3. Proteksi jika data student tidak ada di database
+
         if (!$student) {
             return redirect()->route('student.home')->with('error', 'Profil siswa tidak ditemukan.');
         }
 
-        // 4. AMBIL DATA UNTUK DROPDOWN (Ini wajib agar @foreach di view tidak error)
+
         $majors = Major::orderBy('name', 'asc')->get();
         $years = GraduationYear::orderBy('year', 'desc')->get();
 
-        // 5. Inisialisasi variabel kosong agar view tidak error saat panggil ->count()
-        $applications = collect(); 
-        $saved_jobs = collect();
+        // 1. Ambil data lamaran pekerjaan (Gunakan student_id hasil tinker tadi)
+        $applications = JobApplication::where('student_id', $student->id)
+            ->with(['job.company']) 
+            ->latest()
+            ->get();
 
-        // 6. Kirim SEMUA variabel ke view
+        // 2. Ambil data lowongan tersimpan (PERBAIKAN DI SINI)
+        // Kita panggil relasi 'job' yang sudah kita buat di Model SavedJob
+        $saved_jobs = SavedJob::where('user_id', $user->id)
+            ->with(['job.company']) 
+            ->latest()
+            ->get();
+
         return view('student.profile', compact(
             'user', 
             'student', 
@@ -86,19 +96,19 @@ class StudentController extends Controller
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Handle Upload Foto
+
         if ($request->hasFile('profile_picture')) {
             $path = $request->file('profile_picture')->store('profile_pictures', 'public');
             $validated['profile_picture'] = $path;
         }
 
-        // Set status alumni otomatis
+
         $validated['alumni_flag'] = ($request->graduation_year <= date('Y'));
 
-        // Update data student
+        // Simpan perubahan ke tabel students
         $student->update($validated);
 
-        // Update nama di table users agar sinkron
+        // Update nama di table users agar sinkron (opsional)
         $user->update(['name' => $request->full_name]);
 
         return redirect()->back()->with('success', 'Profil berhasil diperbarui!');
