@@ -11,6 +11,7 @@ use App\Models\Major;
 use App\Models\GraduationYear;
 use App\Models\JobApplication; 
 use App\Models\SavedJob; 
+use App\Models\EventRegistration;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -240,5 +241,56 @@ class StudentController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal mengirim lamaran: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Menampilkan Detail Acara (Event)
+     */
+    public function detailAcara($id)
+    {
+        $event = Event::findOrFail($id);
+        $user = auth()->user();
+        $student = Student::where('user_id', $user->id)->first();
+
+        // Cek apakah siswa sudah mendaftar (berdasarkan slug event_id dan email)
+        $isRegistered = EventRegistration::where('event_id', $event->slug)
+            ->where('email', $user->email)
+            ->exists();
+
+        return view('student.acara-detail', compact('event', 'user', 'student', 'isRegistered'));
+    }
+
+    /**
+     * Proses Mendaftar Acara
+     */
+    public function daftarAcara(Request $request, $id)
+    {
+        $event = Event::findOrFail($id);
+        $user = auth()->user();
+        $student = Student::where('user_id', $user->id)->first();
+
+        $request->validate([
+            'phone' => 'required|string|max:20',
+            'institution' => 'nullable|string|max:255',
+            'position' => 'nullable|string|max:255',
+        ]);
+
+        // Validasi jika sudah terdaftar sebelumnya
+        if (EventRegistration::where('event_id', $event->slug)->where('email', $user->email)->exists()) {
+            return back()->with('error', 'Anda sudah terdaftar untuk acara ini sebelumnya.');
+        }
+
+        EventRegistration::create([
+            'event_id' => $event->slug,
+            'name' => $user->name,
+            'email' => $user->email,
+            'phone' => $request->phone,
+            'institution' => $request->institution ?? 'SMKN 1 Garut',
+            'position' => $request->position ?? ($student->major ?? 'Siswa / Alumni'),
+            'status' => 'pending',
+            'registered_at' => now()
+        ]);
+
+        return back()->with('success', 'Berhasil mendaftar acara! Silakan tunggu konfirmasi selanjutnya.');
     }
 }

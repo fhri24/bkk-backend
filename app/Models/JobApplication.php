@@ -30,7 +30,8 @@ class JobApplication extends Model
         'status', 
         'application_date', 
         'cover_letter', 
-        'additional_file'
+        'additional_file',
+        'admin_notes'
     ];
 
     /**

@@ -5,13 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Admin Dashboard - BKK SMKN 1 Garut')</title>
 
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
@@ -190,9 +187,7 @@
 </head>
 <body>
 <div class="flex h-screen bg-gray-50">
-    <!-- Sidebar -->
     <aside class="sidebar w-64 text-white flex flex-col fixed h-full lg:relative z-40 lg:z-10">
-        <!-- Logo -->
         <div class="p-6 border-b border-white/10">
             <div class="flex items-center">
                 <div class="w-12 h-12 bg-blue-400 rounded-lg flex items-center justify-center font-bold text-lg">BKK</div>
@@ -203,7 +198,6 @@
             </div>
         </div>
 
-        <!-- Menu -->
         <nav class="flex-1 overflow-y-auto px-4 py-6">
             <div>
                 <h3 class="text-xs font-semibold text-blue-200 uppercase tracking-wider px-3 mb-4">Menu Utama</h3>
@@ -240,6 +234,12 @@
                     <span class="ml-3">Perusahaan</span>
                 </a>
                 @endif
+
+                {{-- MENU BERITA DITAMBAHKAN DI SINI --}}
+                <a href="{{ route('admin.news.index') }}" class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->segment(2) === 'news' ? 'active' : '' }}">
+                    <i class="fas fa-newspaper"></i>
+                    <span class="ml-3">Berita</span>
+                </a>
 
                 @if(auth()->user()->hasPermission('view_reports'))
                 <div class="mb-2">
@@ -310,7 +310,6 @@
             @endif
         </nav>
 
-        <!-- Footer -->
         <div class="p-4 border-t border-white/10">
             <button class="w-full flex items-center px-3 py-2.5 rounded-lg text-white/80 hover:text-white text-left text-sm" onclick="document.getElementById('logoutForm').submit();">
                 <i class="fas fa-sign-out-alt"></i>
@@ -322,9 +321,7 @@
         </div>
     </aside>
 
-    <!-- Main Content -->
     <div class="flex-1 flex flex-col overflow-hidden">
-        <!-- Header -->
         <header class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
             <div class="flex items-center">
                 <button class="mobile-menu-btn lg:hidden mr-4" onclick="document.querySelector('.sidebar').classList.toggle('mobile-active')">
@@ -340,32 +337,26 @@
                 </div>
             </div>
 
-            <!-- Top Right -->
-<div class="flex items-center gap-4">
+            <div class="flex items-center gap-4">
 
-    <!-- SEARCH -->
     <div class="relative hidden md:block">
         <div class="flex items-center bg-slate-100 rounded-lg px-3 py-2">
             <i class="fas fa-search text-slate-400 mr-2"></i>
             <input id="search" type="text" placeholder="Cari..." class="bg-transparent text-sm focus:outline-none text-slate-700" />
         </div>
 
-        <!-- HASIL SEARCH -->
         <div id="searchResult" class="absolute bg-white shadow rounded w-72 mt-2 hidden z-50 max-h-64 overflow-auto"></div>
     </div>
 
-    <!-- NOTIF -->
     <div class="relative">
         <button id="notifBtn" class="relative w-10 h-10 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-700">
             <i class="fas fa-bell"></i>
             <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
         </button>
 
-        <!-- DROPDOWN NOTIF -->
         <div id="notifDropdown" class="hidden absolute right-0 mt-2 w-64 bg-white shadow rounded z-50 max-h-64 overflow-auto"></div>
     </div>
 
-    <!-- PROFILE -->
     <div class="flex items-center gap-3">
         <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">
             {{ substr(auth()->user()->email, 0, 1) }}
@@ -385,7 +376,6 @@
 </div>
         </header>
 
-        <!-- Content -->
         <main class="flex-1 overflow-auto">
             <div class="p-6">
                 @if ($errors->any())
