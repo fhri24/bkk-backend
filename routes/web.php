@@ -92,6 +92,8 @@ Route::middleware(['auth', 'student'])->prefix('student')->name('student.')->gro
 
     // Fitur Lainnya
     Route::get('/acara', [StudentPageController::class, 'acara'])->name('acara');
+    Route::get('/acara/{id}', [StudentController::class, 'detailAcara'])->name('acara.detail');
+    Route::post('/acara/{id}/daftar', [StudentController::class, 'daftarAcara'])->name('acara.daftar');
     Route::get('/tracer', [StudentPageController::class, 'tracer'])->name('tracer');
 });
 
@@ -106,6 +108,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // News (Berita) - Full CRUD Admin
     Route::resource('news', AdminNewsController::class);
+
+    // Events (Acara) - Full CRUD Admin
+    Route::resource('events', \App\Http\Controllers\Admin\EventController::class);
 
     Route::get('/export-data', [DashboardActionController::class, 'export'])->name('export');
     Route::get('/laporan-cepat', [DashboardActionController::class, 'laporan'])->name('laporan');
@@ -138,6 +143,13 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::get('/', [AdminJobApplicationController::class, 'index'])->name('index');
         Route::get('/{id}', [AdminJobApplicationController::class, 'show'])->name('show');
         Route::put('/{id}/status', [AdminJobApplicationController::class, 'updateStatus'])->name('update-status');
+    });
+
+    // Event Registrations (Panel Admin)
+    Route::prefix('event-registrations')->name('event-registrations.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\EventRegistrationController::class, 'index'])->name('index');
+        Route::put('/{id}', [\App\Http\Controllers\Admin\EventRegistrationController::class, 'update'])->name('update');
+        Route::delete('/{id}', [\App\Http\Controllers\Admin\EventRegistrationController::class, 'destroy'])->name('destroy');
     });
 
     // Students
