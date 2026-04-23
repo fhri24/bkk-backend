@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ApiExampleController;
 use App\Http\Controllers\API\SuperAdminController;
@@ -47,6 +46,10 @@ Route::middleware('auth:sanctum')->group(function () {
     // Logout
     Route::post('/logout', [AuthController::class, 'logout']);
 
+    // Job Applications (Lamaran Pekerjaan) - CRUD untuk Siswa dan Admin
+    Route::apiResource('applications', JobApplicationController::class)
+        ->only(['index', 'show', 'store', 'update', 'destroy']);
+
     // KELOMPOK SUPER ADMIN
     Route::middleware('role:super_admin')->group(function () {
         Route::apiResource('super-admins', SuperAdminController::class);
@@ -64,9 +67,6 @@ Route::middleware('auth:sanctum')->group(function () {
         // View Companies (Hanya Melihat)
         Route::get('/companies', [CompanyController::class, 'index']);
         Route::get('/companies/{id}', [CompanyController::class, 'show']);
-        
-        // Route untuk melamar pekerjaan
-        Route::post('/applications', [JobApplicationController::class, 'store']);
     });
 
     // KELOMPOK PERUSAHAAN (Bisa diisi nanti)
