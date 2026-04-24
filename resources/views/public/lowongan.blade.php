@@ -1,5 +1,10 @@
 @extends('layouts.app')
 
+@php
+    $isStudent = auth()->check() && auth()->user()->role && auth()->user()->role->name === 'siswa' && request()->is('student/*');
+    $routeLowongan = $isStudent ? route('student.lowongan') : route('public.lowongan');
+@endphp
+
 @section('content')
 
 <style>
@@ -35,7 +40,7 @@
     <p class="text-lg md:text-xl opacity-90 mb-10">
       Temukan pekerjaan terbaik sesuai keahlianmu
     </p>
-    <form action="{{ route('public.lowongan') }}" method="GET" class="flex flex-col md:flex-row justify-center items-center gap-3 max-w-xl mx-auto">
+    <form action="{{ $routeLowongan }}" method="GET" class="flex flex-col md:flex-row justify-center items-center gap-3 max-w-xl mx-auto">
       <input
         type="text"
         name="search"
@@ -72,7 +77,7 @@
         <h4 class="font-bold mb-4 flex items-center text-slate-800">
           <i class="fas fa-filter mr-2 text-blue-500"></i> Filter
         </h4>
-        <form action="{{ route('public.lowongan') }}" method="GET">
+        <form action="{{ $routeLowongan }}" method="GET">
           <div class="mb-4">
             <p class="font-bold mb-2 text-sm">Tipe Pekerjaan</p>
             <div class="space-y-2">
@@ -95,7 +100,7 @@
             </select>
           </div>
 
-          <a href="{{ route('public.lowongan') }}" class="block text-center text-xs text-blue-600 mt-4 hover:underline">Reset Semua Filter</a>
+          <a href="{{ $routeLowongan }}" class="block text-center text-xs text-blue-600 mt-4 hover:underline">Reset Semua Filter</a>
         </form>
       </div>
 
@@ -142,19 +147,21 @@
             </p>
             <div class="flex gap-3">
               <a
-                href="{{ route('public.lowongan.detail', $job->job_id) }}"
+                href="{{ route($isStudent ? 'student.lowongan.detail' : 'public.lowongan.detail', $job->job_id) }}"
                 class="bg-blue-600 text-white px-8 py-2.5 rounded-xl font-bold text-sm hover:bg-blue-700 transition inline-flex items-center"
               >
                 Detail Lowongan
               </a>
               @auth
+                @if(auth()->user()->role && auth()->user()->role->name === 'siswa')
               <form action="{{ route('student.lowongan.save', $job->job_id) }}" method="POST" class="inline">
                 @csrf
                 <button type="submit" class="border border-slate-200 text-slate-600 px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-slate-50 transition">
-                  <i class="{{ Auth::user()->savedJobs->contains('job_id', $job->job_id) ? 'fas text-blue-600' : 'far' }} fa-bookmark mr-2"></i>
-                  {{ Auth::user()->savedJobs->contains('job_id', $job->job_id) ? 'Tersimpan' : 'Simpan' }}
+                  <i class="{{ auth()->user()->savedJobs->contains('job_id', $job->job_id) ? 'fas text-blue-600' : 'far' }} fa-bookmark mr-2"></i>
+                  {{ auth()->user()->savedJobs->contains('job_id', $job->job_id) ? 'Tersimpan' : 'Simpan' }}
                 </button>
               </form>
+                @endif
               @else
               <a href="{{ route('login') }}" class="border border-slate-200 text-slate-600 px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-slate-50 transition inline-flex items-center">
                 <i class="far fa-bookmark mr-2"></i> Simpan

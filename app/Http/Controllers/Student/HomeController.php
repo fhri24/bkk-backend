@@ -21,11 +21,11 @@ class HomeController extends Controller
                     ->latest()
                     ->paginate(6);
         
-        $featured_news = News::where('is_published', true)
+        $news = News::where('is_published', true)
                     ->latest('published_at')
                     ->paginate(6);
         
-        return view('student.Beranda', compact('user', 'featured_jobs', 'featured_events', 'featured_news'));
+        return view('public.beranda', compact('user', 'featured_jobs', 'featured_events', 'news'));
     }
 
     public function profile()

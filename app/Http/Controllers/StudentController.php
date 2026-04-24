@@ -25,9 +25,9 @@ class StudentController extends Controller
 
         $featured_jobs = Job::latest()->take(3)->with('company')->get();
         $featured_events = Event::latest()->take(3)->get();
-        $featured_news = News::latest()->take(3)->get();
+        $news = News::latest()->take(3)->get();
 
-        return view('student.beranda', compact('featured_jobs', 'featured_events', 'featured_news'));
+        return view('public.beranda', compact('featured_jobs', 'featured_events', 'news'));
     }
 
     /**
@@ -51,7 +51,7 @@ class StudentController extends Controller
 
         $jobs = $query->latest()->get();
         
-        return view('student.lowongan', compact('jobs'));
+        return view('public.lowongan', compact('jobs'));
     }
 
     /**
@@ -73,7 +73,7 @@ class StudentController extends Controller
                         ->limit(5)
                         ->get();
         
-        return view('student.lowongan-detail', compact('job', 'similarJobs'));
+        return view('public.lowongan-detail', compact('job', 'similarJobs'));
     }
 
     /**

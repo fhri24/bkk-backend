@@ -76,6 +76,12 @@
 @endsection
 
 @section('content')
+@php
+    $isStudent = auth()->check() && auth()->user()->role && auth()->user()->role->name === 'siswa' && request()->is('student/*');
+    $routeLowongan = $isStudent ? route('student.lowongan') : route('public.lowongan');
+    $routeAcara = $isStudent ? route('student.acara') : route('public.acara');
+    $routeBerita = $isStudent ? route('student.berita') : route('public.berita');
+@endphp
 <section class="hero-bg h-[600px] flex items-center justify-center text-center text-white relative">
     <div class="container mx-auto px-6 z-10">
         <h2 class="text-5xl md:text-7xl font-extrabold mb-6 leading-tight">Sistem Informasi <br /><span class="text-blue-500">Bursa Kerja</span></h2>
@@ -89,7 +95,7 @@
                 <i class="fas fa-location-arrow text-slate-400 mr-3"></i>
                 <input type="text" placeholder="Lokasi..." class="w-full text-slate-800 focus:outline-none font-medium" />
             </div>
-            <a href="{{ route('student.lowongan') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-xl font-bold transition">CARI KERJA</a>
+        <a href="{{ $routeLowongan }}" class="bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-xl font-bold transition">CARI KERJA</a>
         </div>
     </div>
 </section>
@@ -121,7 +127,7 @@
             <h2 class="text-3xl font-extrabold text-[#001f3f] pl-6">Lowongan Unggulan</h2>
             <p class="text-slate-500 mt-2 pl-6">Peluang kerja terbaru khusus untuk Anda</p>
         </div>
-        <a href="{{ route('student.lowongan') }}" class="text-blue-600 font-bold hover:underline">Lihat Semua <i class="fas fa-arrow-right ml-2 text-xs"></i></a>
+        <a href="{{ $routeLowongan }}" class="text-blue-600 font-bold hover:underline">Lihat Semua <i class="fas fa-arrow-right ml-2 text-xs"></i></a>
     </div>
     <div class="grid md:grid-cols-3 gap-8">
         @forelse($featured_jobs as $job)
@@ -144,7 +150,7 @@
                 <div class="flex items-center"><i class="fas fa-graduation-cap w-5 text-slate-400"></i> {{ $job->job_type }}</div>
                 <div class="flex items-center"><i class="fas fa-calendar-alt w-5 text-slate-400"></i> Tutup: {{ \Carbon\Carbon::parse($job->expired_at)->format('d M Y') }}</div>
             </div>
-            <a href="{{ route('student.lowongan.detail', $job->id) }}" class="w-full bg-slate-100 py-3 rounded-xl font-bold text-slate-800 hover:bg-blue-600 hover:text-white transition text-center block">Lamar Sekarang</a>
+            <a href="{{ route($isStudent ? 'student.lowongan.detail' : 'public.lowongan.detail', $job->job_id ?? $job->id) }}" class="w-full bg-slate-100 py-3 rounded-xl font-bold text-slate-800 hover:bg-blue-600 hover:text-white transition text-center block">Lamar Sekarang</a>
         </div>
         @empty
         <div class="col-span-full text-center py-12"><p class="text-slate-600">Belum ada lowongan unggulan</p></div>
@@ -159,7 +165,7 @@
                 <h2 class="text-3xl font-extrabold text-[#001f3f] pl-6">Acara Unggulan</h2>
                 <p class="text-slate-500 mt-2 pl-6">Bergabunglah dalam kegiatan pengembangan karir</p>
             </div>
-            <a href="{{ route('student.acara') }}" class="text-blue-600 font-bold hover:underline">Lihat Semua <i class="fas fa-arrow-right ml-2 text-xs"></i></a>
+        <a href="{{ $routeAcara }}" class="text-blue-600 font-bold hover:underline">Lihat Semua <i class="fas fa-arrow-right ml-2 text-xs"></i></a>
         </div>
         <div class="grid md:grid-cols-3 gap-8">
             @forelse($featured_events as $event)
@@ -178,7 +184,7 @@
                     <div class="flex items-center"><i class="fas fa-calendar-alt w-5 text-slate-400"></i> {{ \Carbon\Carbon::parse($event->start_date)->format('d M Y') }}</div>
                     <div class="flex items-center"><i class="fas fa-users w-5 text-slate-400"></i> {{ $event->capacity }} Peserta</div>
                 </div>
-                <a href="{{ route('student.acara') }}" class="w-full bg-slate-100 py-3 rounded-xl font-bold text-slate-800 hover:bg-blue-600 hover:text-white transition text-center block">Daftar Peserta</a>
+                <a href="{{ route($isStudent ? 'student.acara.detail' : 'public.acara', $event->id) }}" class="w-full bg-slate-100 py-3 rounded-xl font-bold text-slate-800 hover:bg-blue-600 hover:text-white transition text-center block">Daftar Peserta</a>
             </div>
             @empty
             <div class="col-span-full text-center py-12"><p class="text-slate-600">Belum ada acara unggulan</p></div>
@@ -194,10 +200,9 @@
                 <h2 class="text-3xl font-extrabold text-[#001f3f] pl-6">Berita Unggulan</h2>
                 <p class="text-slate-500 mt-2 pl-6">Informasi terkini dari dunia karir dan industri</p>
             </div>
-            <a href="{{ route('student.berita') }}" class="text-blue-600 font-bold hover:underline">Lihat Semua <i class="fas fa-arrow-right ml-2 text-xs"></i></a>
+        <a href="{{ $routeBerita }}" class="text-blue-600 font-bold hover:underline">Lihat Semua <i class="fas fa-arrow-right ml-2 text-xs"></i></a>
         </div>
         <div class="grid md:grid-cols-3 gap-8">
-            {{-- PERBAIKAN: Gunakan variabel $news dan panggil asset storage untuk gambar --}}
             @forelse($news as $item)
             <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-xl transition card-zoom job-card">
                 <div class="h-48 overflow-hidden relative">
@@ -215,8 +220,7 @@
                         <h4 class="font-bold text-lg text-slate-800 leading-tight line-clamp-2 h-14">{{ $item->title }}</h4>
                     </div>
                     <p class="text-xs text-slate-500 mb-4">{{ $item->created_at->translatedFormat('d M Y') }}</p>
-                    {{-- PERBAIKAN: Gunakan ID item untuk link detail --}}
-                    <a href="{{ route('student.berita.detail', $item->id) }}" class="w-full mt-6 bg-slate-100 py-2.5 rounded-lg font-bold text-slate-800 hover:bg-blue-600 hover:text-white transition text-sm text-center block">Baca Selengkapnya</a>
+                    <a href="{{ route($isStudent ? 'student.berita.detail' : 'public.berita', $item->id) }}" class="w-full mt-6 bg-slate-100 py-2.5 rounded-lg font-bold text-slate-800 hover:bg-blue-600 hover:text-white transition text-sm text-center block">Baca Selengkapnya</a>
                 </div>
             </div>
             @empty

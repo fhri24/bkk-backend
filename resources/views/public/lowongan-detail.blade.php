@@ -1,5 +1,7 @@
 @extends('layouts.app')
-
+@php
+    $isStudent = auth()->check() && auth()->user()->role && auth()->user()->role->name === 'siswa' && request()->is('student/*');
+@endphp
 @section('title', $job->title . ' - BKK SMKN 1 Garut')
 
 @section('extra_css')
@@ -346,7 +348,7 @@
 
         <div class="mt-8 space-y-3">
           @auth
-            @if(Auth::user()->role === 'student')
+            @if(auth()->user()->role && auth()->user()->role->name === 'siswa')
               <form action="{{ route('student.lowongan.apply', $job->job_id) }}" method="POST">
                 @csrf
                 <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-4 rounded-xl font-bold transition flex items-center justify-center shadow-lg shadow-blue-200">
@@ -357,8 +359,8 @@
               <form action="{{ route('student.lowongan.save', $job->job_id) }}" method="POST">
                 @csrf
                 <button type="submit" class="w-full border-2 border-slate-200 hover:border-blue-400 hover:text-blue-600 text-slate-600 px-6 py-3 rounded-xl font-bold transition flex items-center justify-center mt-3">
-                  <i class="{{ Auth::user()->savedJobs->contains('job_id', $job->job_id) ? 'fas text-blue-600' : 'far' }} fa-bookmark mr-2"></i>
-                  {{ Auth::user()->savedJobs->contains('job_id', $job->job_id) ? 'Tersimpan' : 'Simpan' }}
+                  <i class="{{ auth()->user()->savedJobs->contains('job_id', $job->job_id) ? 'fas text-blue-600' : 'far' }} fa-bookmark mr-2"></i>
+                  {{ auth()->user()->savedJobs->contains('job_id', $job->job_id) ? 'Tersimpan' : 'Simpan' }}
                 </button>
               </form>
             @endif
@@ -386,7 +388,7 @@
             <h4>{{ $similar->title }}</h4>
             <p>{{ $similar->company->company_name ?? 'Perusahaan' }}</p>
             <!-- Arahkan ke route public juga -->
-            <a href="{{ route('public.lowongan.detail', $similar->job_id) }}" class="font-bold text-blue-600 hover:text-blue-800">
+            <a href="{{ route($isStudent ? 'student.lowongan.detail' : 'public.lowongan.detail', $similar->job_id) }}" class="font-bold text-blue-600 hover:text-blue-800">
               Detail <i class="fas fa-arrow-right ml-1"></i>
             </a>
           </div>
