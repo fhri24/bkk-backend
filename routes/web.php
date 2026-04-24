@@ -54,6 +54,7 @@ Route::get('/berita/{slug}', [AdminNewsController::class, 'show'])->name('studen
 
 Route::get('/acara-mendatang', [PublicController::class, 'acara'])->name('public.acara');
 Route::get('/tracer-study', [PublicController::class, 'tracer'])->name('public.tracer');
+Route::post('/tracer-study', [PublicController::class, 'storeTracer'])->name('public.tracer.store');
 Route::get('/tutorial', [PublicController::class, 'tutorial'])->name('public.tutorial');
 
 /**

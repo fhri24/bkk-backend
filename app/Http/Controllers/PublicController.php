@@ -7,6 +7,7 @@ use App\Models\Job;
 use App\Models\Event;
 use App\Models\News;
 use App\Models\Student;
+use App\Models\TracerStudy;
 
 class PublicController extends Controller
 {
@@ -222,7 +223,30 @@ class PublicController extends Controller
 
     }
 
+    /**
+     * Store Tracer Study Data
+     */
+    public function storeTracer(Request $request)
+    {
+        $request->validate([
+            'status_kerja' => 'required|string',
+            'company' => 'nullable|string',
+            'position' => 'nullable|string',
+            'salary' => 'nullable|string',
+        ]);
 
+        $student = auth()->user(); // Assuming user is student
+
+        TracerStudy::create([
+            'student_id' => $student->student_id,
+            'status_saat_ini' => $request->status_kerja,
+            'nama_instansi' => $request->company,
+            'pendapatan_bulanan' => $request->salary,
+            'keselarasan_jurusan' => $request->position, // Using position as alignment for now
+        ]);
+
+        return back()->with('success', 'Tracer Study berhasil disimpan!');
+    }
 
     /**
 
