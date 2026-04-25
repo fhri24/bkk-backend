@@ -1,5 +1,4 @@
-<!-- Footer -->
-<footer class="bg-[#001f3f] text-slate-300 pt-20 pb-10">
+<footer class="bg-[#001f3f] text-slate-300 pt-20 pb-10"> 
   <div class="container mx-auto px-6">
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
       <div>
@@ -16,23 +15,25 @@
           <a href="#" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-blue-600 transition"><i class="fab fa-linkedin-in"></i></a>
         </div>
       </div>
+
       <div>
         <h3 class="text-white font-bold mb-6 text-lg">Tautan Cepat</h3>
         <ul class="space-y-4 text-sm">
           <li>
-            <a href="{{ route('student.lowongan') }}" class="hover:text-blue-400 transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i> Lowongan Kerja</a>
+            <a href="{{ route('public.lowongan') }}" class="hover:text-blue-400 transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i> Lowongan Kerja</a>
           </li>
           <li>
-            <a href="{{ route('student.acara') }}" class="hover:text-blue-400 transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i> Jadwal Rekrutmen</a>
+            <a href="{{ route('public.acara') }}" class="hover:text-blue-400 transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i> Jadwal Rekrutmen</a>
           </li>
           <li>
             <a href="{{ route('public.tutorial') }}" class="hover:text-blue-400 transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i> Tutorial Pendaftaran</a>
           </li>
           <li>
-            <a href="{{ route('student.tracer') }}" class="hover:text-blue-400 transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i> Tracer Study</a>
+            <a href="{{ route('public.tracer') }}" class="hover:text-blue-400 transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i> Tracer Study</a>
           </li>
         </ul>
       </div>
+
       <div>
         <h3 class="text-white font-bold mb-6 text-lg">Hubungi Kami</h3>
         <ul class="space-y-4 text-sm">
@@ -50,6 +51,7 @@
           </li>
         </ul>
       </div>
+
       <div>
         <h3 class="text-white font-bold mb-6 text-lg">Newsletter</h3>
         <p class="text-xs mb-4 opacity-70">Dapatkan info lowongan terbaru langsung di email Anda.</p>
@@ -61,4 +63,4 @@
     </div>
     <div class="border-t border-white/10 pt-8 text-center text-xs opacity-50">&copy; 2026 Sistem Informasi BKK Sekolah Menengah Kejuruan Negeri 1 Garut. Seluruh Hak Cipta Dilindungi.</div>
   </div>
-</footer>
+</footer> 

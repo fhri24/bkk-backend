@@ -24,12 +24,15 @@ class NewsController extends Controller
      * Tampilan List Berita di Halaman Depan (Public/Student)
      * Mengarah ke: resources/views/public/berita.blade.php
      */
-    public function index_student()
-    {
-        $news = News::where('is_published', true)->latest()->paginate(6);
-        return view('public.berita', compact('news'));
-    }
+   public function index_student()
+{
+    // Mengambil berita yang dipublikasikan dengan pagination
+    $newsItems = News::where('is_published', true)
+                ->latest()
+                ->paginate(6); // atau gunakan get() jika tidak ingin pagination
 
+    return view('public.berita', compact('newsItems'));
+}
     /**
      * Tampilan Form Tambah Berita (Admin)
      */
@@ -113,7 +116,7 @@ class NewsController extends Controller
                             ->take(2)
                             ->get();
 
-        return view('public.berita_detail', compact('news', 'relatedNews'));
+        return view('public.berita-detail', compact('news', 'relatedNews'));
     }
 
     public function destroy($id)

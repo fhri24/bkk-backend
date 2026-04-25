@@ -27,21 +27,5 @@ class HomeController extends Controller
         
         return view('public.beranda', compact('user', 'featured_jobs', 'featured_events', 'news'));
     }
-
-    public function profile()
-    {
-        $user = auth()->user();
-        $student = $user->studentProfile;
-        
-        return view('student.profile', compact('user', 'student'));
-    }
-
-    public function applications()
-    {
-        $user = auth()->user();
-        $student = $user->studentProfile;
-        $applications = $student->jobApplications()->with('job')->get();
-        
-        return view('student.applications', compact('user', 'applications'));
-    }
+ 
 }

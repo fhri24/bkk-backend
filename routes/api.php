@@ -39,10 +39,6 @@ Route::get('example/search/{query}', [ApiExampleController::class, 'search']);
 
 // --- 2. RUTE TERPROTEKSI (Harus Login / Pakai Token) ---
 Route::middleware('auth:sanctum')->group(function () {
-    
-    // Rute Profile Siswa
-    Route::get('/students/me', [StudentController::class, 'me']);
-    Route::put('/students/me', [StudentController::class, 'updateMe']);
 
     // Logout
     Route::post('/logout', [AuthController::class, 'logout']);

@@ -5,11 +5,12 @@
 @section('content')
 <div class="bg-slate-100 text-slate-900 min-h-screen">
     <div class="container mx-auto px-4 py-12">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {{-- PERBAIKAN: Menambahkan items-start agar kolom kiri tidak dipaksa memanjang, sehingga sticky berfungsi --}}
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
             
-
+            {{-- Kolom Kiri: Profil Card --}}
             <div class="lg:col-span-1">
-                <div class="bg-white rounded-2xl shadow-lg p-8 text-center">
+                <div class="bg-white rounded-2xl shadow-lg p-8 text-center sticky top-24">
                     @if($student->profile_picture)
                         <img src="{{ asset('storage/' . $student->profile_picture) }}" alt="Profile Picture" class="w-24 h-24 mx-auto mb-4 rounded-full object-cover shadow-lg">
                     @else
@@ -19,7 +20,7 @@
                     @endif
 
                     <h2 class="text-2xl font-extrabold text-slate-900 mb-1">{{ $student->full_name ?? $user->name }}</h2>
-                    <p class="text-sm text-slate-500 font-bold mb-6">NIS: {{ $student->nis ?? '-' }}</p>
+                    <p class="text-sm text-slate-500 font-bold mb-4">{{ $user->email }}</p>
 
                     <div class="inline-block bg-green-100 text-green-700 px-4 py-2 rounded-full text-xs font-bold mb-6">
                         <i class="fas fa-check-circle mr-2"></i>
@@ -27,27 +28,35 @@
                     </div>
 
                     <div class="space-y-3 border-t border-slate-200 pt-6">
-                        <div class="text-left">
-                            <p class="text-xs text-slate-500 font-bold uppercase">Lowongan Tersimpan</p>
-                            <p class="text-2xl font-extrabold text-blue-600">{{ $saved_jobs->count() }}</p>
+                        <div class="flex items-center justify-between p-3 bg-blue-50 rounded-xl">
+                            <div class="text-left">
+                                <p class="text-xs text-slate-500 font-bold uppercase">NIS</p>
+                                <p class="text-lg font-extrabold text-blue-600">{{ $student->nis ?? '-' }}</p>
+                            </div>
+                            <i class="fas fa-id-card text-blue-200 text-2xl"></i>
                         </div>
-                        <div class="text-left">
-                            <p class="text-xs text-slate-500 font-bold uppercase">Lamaran Diajukan</p>
-                            <p class="text-2xl font-extrabold text-blue-600">{{ $applications->count() }}</p>
+                        
+                        <div class="flex items-center justify-between p-3 bg-purple-50 rounded-xl">
+                            <div class="text-left">
+                                <p class="text-xs text-slate-500 font-bold uppercase">Lamaran Diajukan</p>
+                                <p class="text-lg font-extrabold text-purple-600">{{ $applications->count() }}</p>
+                            </div>
+                            <i class="fas fa-paper-plane text-purple-200 text-2xl"></i>
                         </div>
-                        <div class="text-left">
+
+                        <div class="text-left px-2">
                             <p class="text-xs text-slate-500 font-bold uppercase">Akun Dibuat</p>
                             <p class="text-sm font-bold text-slate-600">{{ $user->created_at->format('d M Y') }}</p>
                         </div>
                     </div>
 
-                    <button onclick="openEditModal()" class="w-full mt-8 bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition">
+                    <button onclick="openEditModal()" class="w-full mt-8 bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-200">
                         <i class="fas fa-edit mr-2"></i>Edit Profil
                     </button>
                 </div>
             </div>
 
-            
+            {{-- Kolom Kanan: Detail Informasi --}}
             <div class="lg:col-span-2 space-y-6">
 
                 <div class="bg-white rounded-2xl shadow-lg p-8">
@@ -56,24 +65,23 @@
                     </h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <p class="text-xs font-bold text-slate-500 uppercase mb-2">Nama Lengkap</p>
+                            <p class="text-xs font-bold text-slate-500 uppercase mb-1">Nama Lengkap</p>
                             <p class="text-lg font-bold text-slate-900">{{ $student->full_name ?? $user->name }}</p>
                         </div>
                         <div>
-                            <p class="text-xs font-bold text-slate-500 uppercase mb-2">NIK / NIS</p>
-                            <p class="text-lg font-bold text-slate-900">{{ $student->nis ?? '-' }}</p>
+                            <p class="text-xs font-bold text-slate-500 uppercase mb-1">Jenis Kelamin</p>
+                            <p class="text-lg font-bold text-slate-900">{{ $student->gender === 'L' ? 'Laki-laki' : ($student->gender === 'P' ? 'Perempuan' : '-') }}</p>
                         </div>
                         <div>
-                            <p class="text-xs font-bold text-slate-500 uppercase mb-2">Email</p>
+                            <p class="text-xs font-bold text-slate-500 uppercase mb-1">Email</p>
                             <p class="text-lg font-bold text-slate-900 text-break">{{ $user->email }}</p>
                         </div>
                         <div>
-                            <p class="text-xs font-bold text-slate-500 uppercase mb-2">No. Handphone</p>
+                            <p class="text-xs font-bold text-slate-500 uppercase mb-1">No. Handphone</p>
                             <p class="text-lg font-bold text-slate-900">{{ $student->phone ?? '-' }}</p>
                         </div>
                     </div>
-                </div>
-
+                </div> 
 
                 <div class="bg-white rounded-2xl shadow-lg p-8">
                     <h3 class="text-xl font-extrabold text-slate-900 mb-6 flex items-center">
@@ -81,19 +89,19 @@
                     </h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <p class="text-xs font-bold text-slate-500 uppercase mb-2">Sekolah</p>
+                            <p class="text-xs font-bold text-slate-500 uppercase mb-1">Sekolah</p>
                             <p class="text-lg font-bold text-slate-900">SMKN 1 Garut</p>
                         </div>
                         <div>
-                            <p class="text-xs font-bold text-slate-500 uppercase mb-2">Jurusan</p>
+                            <p class="text-xs font-bold text-slate-500 uppercase mb-1">Jurusan</p>
                             <p class="text-lg font-bold text-slate-900">{{ $student->major ?? '-' }}</p>
                         </div>
                         <div>
-                            <p class="text-xs font-bold text-slate-500 uppercase mb-2">Tahun Lulus</p>
+                            <p class="text-xs font-bold text-slate-500 uppercase mb-1">Tahun Lulus / Angkatan</p>
                             <p class="text-lg font-bold text-slate-900">{{ $student->graduation_year ?? '-' }}</p>
                         </div>
                         <div>
-                            <p class="text-xs font-bold text-slate-500 uppercase mb-2">Status Pekerjaan</p>
+                            <p class="text-xs font-bold text-slate-500 uppercase mb-1">Status Pekerjaan</p>
                             <p class="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-bold">
                                 {{ ucfirst($student->status ?? 'Mencari Kerja') }}
                             </p>
@@ -110,13 +118,10 @@
                         @forelse(Auth::user()->savedJobs()->with('job')->get() as $saved)
                             @if($saved->job)
                                 <div class="group flex items-center justify-between p-4 hover:bg-slate-50 transition-all border-b border-slate-100 last:border-0">
-                                    <div class="flex items-center space-x-4">
-                                        <!-- Icon/Logo Placeholder -->
+                                    <div class="flex items-center space-x-4"> 
                                         <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-colors">
                                             <i class="fas fa-briefcase text-lg"></i>
-                                        </div>
-                                        
-                                        <!-- Info Lowongan -->
+                                        </div> 
                                         <div class="flex flex-col">
                                             <h4 class="font-bold text-slate-800 text-sm line-clamp-1 group-hover:text-blue-600 transition-colors">
                                                 {{ $saved->job->title ?? 'Judul Lowongan' }}
@@ -126,9 +131,7 @@
                                                 {{ $saved->job->company->name ?? 'Nama Perusahaan' }}
                                             </p>
                                         </div>
-                                    </div>
-
-                                    <!-- Action Buttons -->
+                                    </div> 
                                     <div class="flex items-center space-x-2">
                                         <a href="{{ route('student.lowongan.detail', $saved->job_id) }}" 
                                            class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all" 
@@ -137,9 +140,7 @@
                                         </a>
                                         <form action="{{ route('student.lowongan.save', $saved->job_id) }}" method="POST" class="inline">
                                             @csrf
-                                            <button type="submit" 
-                                                    class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all" 
-                                                    title="Hapus">
+                                            <button type="submit" class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all" title="Hapus">
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
                                         </form>
@@ -150,8 +151,7 @@
                             <p class="text-sm text-slate-500">Tidak ada lowongan tersimpan</p>
                         @endforelse
                     </div>
-                </div>
-
+                </div> 
 
                 <div class="bg-white rounded-2xl shadow-lg p-8">
                     <h3 class="text-xl font-extrabold text-slate-900 mb-6 flex items-center">
@@ -174,8 +174,7 @@
                             </div>
                         @endforelse
                     </div>
-                </div>
-
+                </div> 
 
                 <div class="flex justify-end">
                     <a href="{{ route('student.home') }}" class="bg-slate-200 text-slate-800 px-6 py-3 rounded-xl font-bold hover:bg-slate-300 transition">
@@ -186,16 +185,11 @@
             </div>
         </div>
     </div>
-</div>
+</div> 
 
-
-
-
-
-
-
+{{-- Modal Edit Profil --}}
 <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-    <div class="bg-white rounded-2xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+    <div class="bg-white rounded-2xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto shadow-2xl">
         <div class="bg-gradient-to-r from-blue-600 to-blue-700 p-8 text-white flex justify-between items-center">
             <h2 class="text-2xl font-extrabold">Edit Profil</h2>
             <button onclick="closeEditModal()" class="text-white text-2xl hover:text-blue-200 transition">&times;</button>
@@ -223,9 +217,7 @@
                 <div>
                     <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">Info Kelahiran</label>
                     <input type="text" name="birth_info" value="{{ $student->birth_info }}" placeholder="Tempat, Tanggal Lahir" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" />
-                </div>
-
-
+                </div> 
                 <div>
                     <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">Jurusan</label>
                     <select name="major" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600">
@@ -236,9 +228,7 @@
                             </option>
                         @endforeach
                     </select>
-                </div>
-
-
+                </div> 
                 <div>
                     <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">Tahun Lulus</label>
                     <select name="graduation_year" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600">
@@ -249,8 +239,7 @@
                             </option>
                         @endforeach
                     </select>
-                </div>
-
+                </div> 
                 <div>
                     <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">No. Handphone</label>
                     <input type="tel" name="phone" value="{{ $student->phone }}" placeholder="No. Handphone" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" />
@@ -266,7 +255,7 @@
                 </div>
             </div>
 
-            <div class="flex gap-3">
+            <div class="flex gap-3 pt-4">
                 <button type="submit" class="flex-1 bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition">Simpan Perubahan</button>
                 <button type="button" onclick="closeEditModal()" class="flex-1 bg-slate-200 text-slate-800 px-6 py-3 rounded-xl font-bold hover:bg-slate-300 transition">Batal</button>
             </div>
@@ -277,12 +266,13 @@
 <script>
     function openEditModal() {
         document.getElementById('editModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden'; 
     }
 
     function closeEditModal() {
         document.getElementById('editModal').classList.add('hidden');
-    }
-
+        document.body.style.overflow = 'auto'; 
+    } 
 
     document.getElementById('editModal').addEventListener('click', function(e) {
         if (e.target === this) {
@@ -290,4 +280,4 @@
         }
     });
 </script>
-@endsection
+@endsection 

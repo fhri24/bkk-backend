@@ -3,9 +3,8 @@
         <div class="flex justify-between items-center h-20">
             
             {{-- Logo --}}
-
-            <div class="flex items-center space-x-3 cursor-pointer hover:opacity-80 transition" 
-                 onclick="window.location.href = '{{ auth()->check() ? route('student.home') : route('public.home') }}'">
+            <div class="flex items-center space-x-3 cursor-pointer hover:opacity-80 transition"  
+                 onclick="window.location.href = '{{ auth()->check() ? route('student.home') : route('public.beranda') }}'">
                 <div class="w-11 h-11 bg-white rounded-xl flex items-center justify-center shadow-lg">
                     <i class="fas fa-graduation-cap text-[#001f3f] text-xl"></i>
                 </div>
@@ -18,15 +17,15 @@
             {{-- Menu Tengah (Desktop) --}}
             <div class="hidden lg:flex items-center space-x-8 text-sm font-semibold">
                 @auth
-
+                    {{-- Menu untuk Siswa yang Login --}}
                     <a href="{{ route('student.home') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('student.home') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Beranda</a>
-                    <a href="{{ route('student.lowongan') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('student.lowongan*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Lowongan</a>
-                    <a href="{{ route('student.berita') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('student.berita*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Berita</a>
-                    <a href="{{ route('student.acara') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('student.acara*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Acara</a>
-                    <a href="{{ route('student.tracer') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('student.tracer*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Tracer Study</a>
+                    <a href="{{ route('public.lowongan') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.lowongan*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Lowongan</a>
+                    <a href="{{ route('public.berita') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.berita*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Berita</a>
+                    <a href="{{ route('public.acara') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.acara*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Acara</a>
+                    <a href="{{ route('public.tracer') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.tracer*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Tracer Study</a>
                 @else
-
-                    <a href="{{ route('public.home') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.home') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Beranda</a>
+                    {{-- Menu untuk Publik/Tamu --}}
+                    <a href="{{ route('public.beranda') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.beranda') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Beranda</a>
                     <a href="{{ route('public.lowongan') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.lowongan*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Lowongan</a>
                     <a href="{{ route('public.berita') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.berita*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Berita</a>
                     <a href="{{ route('public.acara') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.acara*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Acara</a>
@@ -37,9 +36,7 @@
             {{-- Menu Kanan (Desktop) --}}
             <div class="hidden lg:flex items-center space-x-6">
                 @auth
-                    <div class="flex items-center gap-6">
-                        
-                        {{-- TOMBOL TERSIMPAN (Trigger Modal) --}}
+                    <div class="flex items-center gap-6"> 
                         @php
                             $savedCount = \App\Models\SavedJob::where('user_id', auth()->id())->count();
                         @endphp
@@ -54,14 +51,12 @@
                                 </span>
                             @endif
                         </button>
-
-                        {{-- Profil User --}}
+ 
                         <a href="{{ route('student.profile') }}" class="flex items-center gap-2 text-sm font-semibold hover:text-blue-300 transition group">
                             <i class="fas fa-user-circle text-xl group-hover:scale-110 transition"></i>
                             <span>{{ Auth::user()->name }}</span>
                         </a>
-
-                        {{-- Logout --}}
+ 
                         <form method="POST" action="{{ route('logout') }}" class="inline">
                             @csrf
                             <button type="submit" class="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-full text-sm font-bold shadow-lg transition transform hover:scale-105 active:scale-95">
@@ -69,8 +64,7 @@
                             </button>
                         </form>
                     </div>
-                @else
-
+                @else 
                     <a href="{{ route('register') }}" class="text-sm font-bold hover:text-blue-400 transition">Daftar</a>
                     <a href="{{ route('login') }}" class="bg-blue-600 hover:bg-blue-700 px-8 py-2.5 rounded-full text-sm font-bold shadow-lg transition transform hover:scale-105 active:scale-95">
                         Masuk
@@ -93,23 +87,28 @@
             </a>
             
             <button onclick="openSavedModal(); toggleMobileMenu();" class="w-full text-left py-2 text-blue-400 font-bold flex items-center">
-                <i class="fas fa-bookmark mr-2"></i> Tersimpan ({{ $savedCount }})
+                <i class="fas fa-bookmark mr-2"></i> Tersimpan ({{ \App\Models\SavedJob::where('user_id', auth()->id())->count() }})
             </button>
 
             <a href="{{ route('student.home') }}" class="block py-2">Beranda</a>
-            <a href="{{ route('student.lowongan') }}" class="block py-2">Lowongan</a>
-            <a href="{{ route('student.berita') }}" class="block py-2">Berita</a>
+            <a href="{{ route('public.lowongan') }}" class="block py-2">Lowongan</a>
+            <a href="{{ route('public.berita') }}" class="block py-2">Berita</a>
+            <a href="{{ route('public.acara') }}" class="block py-2">Acara</a>
+            <a href="{{ route('public.tracer') }}" class="block py-2">Tracer Study</a>
             
             <form method="POST" action="{{ route('logout') }}" class="pt-4">
                 @csrf
                 <button type="submit" class="w-full bg-red-600 py-3 rounded-xl font-bold">Logout</button>
             </form>
-            
+        @else
+            <a href="{{ route('public.beranda') }}" class="block py-2">Beranda</a>
+            <a href="{{ route('public.lowongan') }}" class="block py-2">Lowongan</a>
+            <a href="{{ route('public.berita') }}" class="block py-2">Berita</a>
+            <a href="{{ route('login') }}" class="block py-2 text-blue-400 font-bold">Masuk</a>
         @endauth
     </div>
 </nav>
-
-{{-- Pastikan script toggle menu mobile ada --}}
+ 
 <script>
     function toggleMobileMenu() {
         const menu = document.getElementById('mobile-menu');
