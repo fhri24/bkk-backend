@@ -147,7 +147,8 @@
             {{-- Sidebar Column --}}
             <div class="lg:col-span-1">
                 {{-- Registration Box --}}
-                <div class="sidebar-box sticky top-24 z-10 border-t-4 border-t-blue-600">
+                {{-- PERBAIKAN: Menghapus class 'sticky' dan 'top-24' agar tombol tidak ikut saat scroll --}}
+                <div class="sidebar-box border-t-4 border-t-blue-600">
                     <h3><i class="fas fa-ticket-alt"></i> Registrasi</h3>
 
                     @php

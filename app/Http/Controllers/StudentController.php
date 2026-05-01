@@ -6,16 +6,17 @@ use Illuminate\Http\Request;
 use App\Models\Student;
 use App\Models\Job;
 use App\Models\Event;
-use App\Models\Major; 
+use App\Models\Major;
 use App\Models\GraduationYear;
-use App\Models\JobApplication; 
-use App\Models\SavedJob; 
+use App\Models\JobApplication;
+use App\Models\SavedJob;
 use App\Models\EventRegistration;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class StudentController extends Controller
-{ 
+{
     /**
      * Menampilkan Halaman Daftar Lowongan (Student)
      */
@@ -23,6 +24,7 @@ class StudentController extends Controller
     {
         $query = Job::with('company');
 
+        // Filter pencarian
         if ($request->filled('search')) {
             $query->where('title', 'like', '%' . $request->search . '%');
         }
@@ -36,8 +38,24 @@ class StudentController extends Controller
         }
 
         $jobs = $query->latest()->paginate(12);
-        
-        return view('student.lowongan', compact('jobs'));
+
+        // --- PERBAIKAN: Ambil ID dan Count untuk konsistensi UI ---
+        $savedJobIds = [];
+        $savedCount = 0;
+
+        if (Auth::check()) {
+            $userId = Auth::id();
+            
+            // Untuk indikator warna merah di tombol
+            $savedJobIds = SavedJob::where('user_id', $userId)
+                ->pluck('job_id')
+                ->toArray();
+
+            // Untuk angka notifikasi di badge "Tersimpan"
+            $savedCount = SavedJob::where('user_id', $userId)->count();
+        }
+
+        return view('student.lowongan', compact('jobs', 'savedJobIds', 'savedCount'));
     }
 
     /**
@@ -45,94 +63,127 @@ class StudentController extends Controller
      */
     public function detailLowongan($id)
     {
-        $job = Job::with('company')->where('job_id', $id)->firstOrFail();
-        
+        $job = Job::with('company')
+            ->where('job_id', $id)
+            ->firstOrFail();
+
         $similarJobs = Job::with('company')
-                        ->where('job_id', '!=', $id)
-                        ->where(function($query) use ($job) {
-                            $query->where('job_type', $job->job_type)
-                                  ->orWhere('company_id', $job->company_id);
-                        })
-                        ->latest()
-                        ->limit(5)
-                        ->get();
-        
+            ->where('job_id', '!=', $id)
+            ->where(function ($query) use ($job) {
+                $query->where('job_type', $job->job_type)
+                    ->orWhere('company_id', $job->company_id);
+            })
+            ->latest()
+            ->limit(5)
+            ->get();
+
         return view('student.lowongan-detail', compact('job', 'similarJobs'));
     }
 
     /**
-     * Fitur Simpan/Bookmark Lowongan
+     * Fitur Simpan / Bookmark Lowongan (Toggle via AJAX)
      */
-    public function saveJob($id)
+    public function saveJob(Request $request, $id)
     {
         $userId = auth()->id();
-        $existing = SavedJob::where('user_id', $userId)->where('job_id', $id)->first();
+        $job = Job::where('job_id', $id)->firstOrFail();
 
-        if ($existing) {
-            $existing->delete();
-            return redirect()->back()->with('success', 'Lowongan dihapus dari daftar simpan.');
+        $saved = SavedJob::where('user_id', $userId)
+            ->where('job_id', $job->job_id)
+            ->first();
+
+        if ($saved) {
+            $saved->delete();
+            return response()->json([
+                'status' => 'removed',
+                'saved' => false,
+                'message' => 'Lowongan dihapus dari daftar simpan.',
+                'count' => SavedJob::where('user_id', $userId)->count()
+            ]);
         }
 
         SavedJob::create([
             'user_id' => $userId,
-            'job_id' => $id
+            'job_id' => $job->job_id,
         ]);
 
-        return redirect()->back()->with('success', 'Lowongan berhasil disimpan!');
+        return response()->json([
+            'status' => 'added',
+            'saved' => true,
+            'message' => 'Lowongan berhasil disimpan!',
+            'count' => SavedJob::where('user_id', $userId)->count()
+        ]);
+    }
+
+    /**
+     * Hapus Lowongan dari Tersimpan (Fungsi Tambahan)
+     */
+    public function unsaveJob(Request $request, $id)
+    {
+        $userId = auth()->id();
+        $deleted = SavedJob::where('user_id', $userId)
+                           ->where('job_id', $id)
+                           ->delete();
+
+        if ($deleted) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Lowongan dihapus dari tersimpan.',
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Lowongan tidak ditemukan.',
+        ], 404);
+    }
+
+    /**
+     * Halaman Khusus Lowongan Tersimpan
+     */
+    public function savedJobs()
+    {
+        // Mengambil data Job melalui relasi dari table saved_jobs
+        $savedJobs = SavedJob::where('user_id', auth()->id())
+            ->with(['job.company'])
+            ->latest()
+            ->get()
+            ->pluck('job')
+            ->filter(); // Menghapus item jika relasi job-nya null
+
+        return view('student.saved-jobs', compact('savedJobs'));
     }
 
     /**
      * Menampilkan Halaman Profil Utama
      */
     public function showProfile()
-    { 
-        $user = Auth::user(); 
-        $student = Student::where('user_id', $user->id)->first(); 
+    {
+        $user = Auth::user();
+        $student = Student::where('user_id', $user->id)->first();
 
         if (!$student) {
-            return redirect()->route('student.home')->with('error', 'Profil siswa tidak ditemukan.');
-        } 
+            return redirect()->route('student.home')
+                ->with('error', 'Profil siswa tidak ditemukan.');
+        }
 
+        $savedCount = SavedJob::where('user_id', $user->id)->count();
         $majors = Major::orderBy('name', 'asc')->get();
         $years = GraduationYear::orderBy('year', 'desc')->get();
 
         $applications = JobApplication::where('student_id', $student->student_id)
-            ->with(['job.company']) 
+            ->with(['job.company'])
             ->latest()
             ->get();
- 
-        $saved_jobs = SavedJob::where('user_id', $user->id)
-            ->with(['job.company']) 
+
+        $savedJobs = SavedJob::where('user_id', $user->id)
+            ->with(['job.company'])
             ->latest()
             ->get();
 
         return view('student.profile', compact(
-            'user', 'student', 'majors', 'years', 'applications', 'saved_jobs'
+            'user', 'student', 'majors', 'years', 'applications', 'savedJobs', 'savedCount'
         ));
-    }
-
-    /**
-     * Menampilkan Halaman Profil Lengkap
-     */
-    public function profileDetail()
-    {
-        $user = auth()->user();
-        $student = Student::where('user_id', $user->id)->first();
-        
-        return view('student.profile-detail', compact('user', 'student'));
-    }
-
-    /**
-     * Menampilkan Halaman Khusus Lowongan Tersimpan
-     */
-    public function savedJobs()
-    {
-        $saved_jobs = SavedJob::where('user_id', auth()->id())
-                    ->with(['job.company']) 
-                    ->latest()
-                    ->get();
-
-        return view('student.saved-jobs', compact('saved_jobs'));
     }
 
     /**
@@ -157,21 +208,22 @@ class StudentController extends Controller
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string',
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]); 
+        ]);
 
-        if ($request->hasFile('profile_picture')) {
-            // Hapus foto lama jika ada
+        if ($request->hasFile('profile_picture')) { 
             if ($student->profile_picture) {
                 Storage::disk('public')->delete($student->profile_picture);
             }
             $path = $request->file('profile_picture')->store('profile_pictures', 'public');
             $validated['profile_picture'] = $path;
-        } 
+        }
 
-        $validated['alumni_flag'] = ($request->graduation_year <= date('Y')); 
+        $validated['alumni_flag'] = ($request->graduation_year <= date('Y'));
 
-        $student->update($validated); 
-        $user->update(['name' => $request->full_name]);
+        DB::transaction(function () use ($student, $user, $validated, $request) {
+            $student->update($validated);
+            $user->update(['name' => $request->full_name]);
+        });
 
         return redirect()->back()->with('success', 'Profil berhasil diperbarui!');
     }
@@ -180,45 +232,44 @@ class StudentController extends Controller
      * Proses Melamar Lowongan
      */
     public function applyJob(Request $request, $id)
-    { 
-        $user = auth()->user();
-        $student = Student::where('user_id', $user->id)->first();
+    {
+        $student = Student::where('user_id', auth()->id())->first();
 
         if (!$student) {
             return back()->with('error', 'Silahkan lengkapi profil terlebih dahulu.');
         }
- 
+
         $request->validate([
             'cv_file' => 'required|mimes:pdf|max:5120',
             'cover_letter' => 'nullable|string|max:2000',
         ]);
- 
+
         $existing = JobApplication::where('student_id', $student->student_id)
-                                    ->where('job_id', $id)
-                                    ->first();
+            ->where('job_id', $id)
+            ->exists();
 
         if ($existing) {
             return back()->with('warning', 'Anda sudah melamar lowongan ini.');
         }
 
-        try { 
+        try {
             $fileName = null;
-            if ($request->hasFile('cv_file')) { 
-                $fileName = time() . '_' . $student->student_id . '.' . $request->file('cv_file')->getClientOriginalExtension();
+            if ($request->hasFile('cv_file')) {
+                $fileName = time() . '_' . $student->student_id . '.' .
+                    $request->file('cv_file')->getClientOriginalExtension();
                 $request->file('cv_file')->storeAs('public/cv_applications', $fileName);
             }
- 
+
             JobApplication::create([
-                'student_id'       => $student->student_id,
-                'job_id'           => $id,
-                'status'           => 'pending',
+                'student_id' => $student->student_id,
+                'job_id' => $id,
+                'status' => 'pending',
                 'application_date' => now(),
-                'cover_letter'     => $request->cover_letter,
-                'additional_file'  => $fileName, 
+                'cover_letter' => $request->cover_letter,
+                'additional_file' => $fileName,
             ]);
 
-            return back()->with('success', 'Lamaran berhasil terkirim!');
-
+            return back()->with('success', 'Lamaran berhasil terkirim!'); 
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal: ' . $e->getMessage());
         }
@@ -230,40 +281,45 @@ class StudentController extends Controller
     public function acara()
     {
         $events = Event::where('is_published', true)
-                     ->where('start_date', '>=', now())
-                     ->latest('start_date')
-                     ->paginate(12);
-        
+            ->where('start_date', '>=', now())
+            ->latest('start_date')
+            ->paginate(12);
+
         return view('student.acara', compact('events'));
     }
 
     /**
-     * Detail Acara & Cek Status Registrasi
+     * Detail Acara
      */
     public function detailAcara($id)
     {
         $event = Event::findOrFail($id);
         $user = auth()->user();
         $student = Student::where('user_id', $user->id)->first();
- 
+
         $isRegistered = EventRegistration::where('event_id', $event->slug)
             ->where('email', $user->email)
             ->exists();
 
         return view('student.acara-detail', compact('event', 'user', 'student', 'isRegistered'));
     }
- 
+
+    /**
+     * Pendaftaran Acara
+     */
     public function daftarAcara(Request $request, $id)
     {
         $event = Event::findOrFail($id);
         $user = auth()->user();
         $student = Student::where('user_id', $user->id)->first();
 
-        $request->validate([
-            'phone' => 'required|string|max:20', 
-        ]);
- 
-        if (EventRegistration::where('event_id', $event->slug)->where('email', $user->email)->exists()) {
+        $request->validate(['phone' => 'required|string|max:20']);
+
+        $isRegistered = EventRegistration::where('event_id', $event->slug)
+            ->where('email', $user->email)
+            ->exists();
+
+        if ($isRegistered) {
             return back()->with('error', 'Anda sudah terdaftar.');
         }
 

@@ -39,24 +39,26 @@ use App\Http\Controllers\Student\HomeController;
 /**
  * PUBLIC ROUTES
  */
-Route::get('/home-redirect', function() {
+Route::get('/home-redirect', function () {
     return auth()->check() ? redirect()->route('student.home') : redirect()->route('public.beranda');
 })->name('home');
-Route::get('/', [PublicController::class, 'beranda'])->name('public.beranda'); 
+
+Route::get('/', [PublicController::class, 'beranda'])->name('public.beranda');
+
+// --- LOWONGAN PUBLIC ---
 Route::get('/lowongan', [PublicController::class, 'lowongan'])->name('public.lowongan');
 Route::get('/lowongan/{id}', [PublicController::class, 'lowonganDetail'])->name('public.lowongan.detail');
- 
+
+// --- BERITA ---
 Route::get('/berita', [PublicController::class, 'berita'])->name('public.berita');
 Route::get('/berita/{slug}', [PublicController::class, 'beritaDetail'])->name('public.berita.detail');
 
-// Acara & Detail Acara (BARU)
+// --- ACARA ---
 Route::get('/acara-mendatang', [PublicController::class, 'acara'])->name('public.acara');
-Route::get('/acara/{id}', [PublicController::class, 'acaraDetail'])->name('public.acara.detail');
-
-// Event Registration (BARU)
+Route::get('/acara/{id}', [PublicController::class, 'acaraDetail'])->name('public.acara.detail'); 
 Route::post('/acara/{id}/register', [PublicController::class, 'storeEventRegistration'])->name('public.event.register');
 
-// TRACER STUDY (SENTRALISASI)
+// --- TRACER STUDY ---
 Route::get('/tracer-study', [PublicController::class, 'tracer'])->name('public.tracer');
 Route::post('/tracer-study/store', [PublicController::class, 'storeTracer'])
     ->middleware(['auth', 'student'])
@@ -77,56 +79,56 @@ Route::middleware('guest')->group(function () {
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 /**
- * STUDENT ROUTES (Wajib Login)
+ * STUDENT ROUTES
  */
 Route::middleware(['auth', 'student'])->prefix('student')->name('student.')->group(function () {
 
     Route::get('/home', [HomeController::class, 'index'])->name('home');
-    Route::get('/', fn() => redirect()->route('student.home'));
+    Route::get('/', fn () => redirect()->route('student.home'));
 
-    // Fitur Profile
+    // Profile
     Route::get('/profile', [StudentController::class, 'showProfile'])->name('profile');
     Route::post('/profile', [StudentController::class, 'updateProfile'])->name('profile.update');
     Route::get('/profile-detail', [StudentController::class, 'profileDetail'])->name('profile.detail');
 
-    // Lowongan & Apply (BARU ditambahkan ke grup ini)
+    // --- LOWONGAN STUDENT ---
     Route::get('/daftar-lowongan', [StudentController::class, 'lowongan'])->name('lowongan');
-    Route::get('/lowongan/{id}', [StudentController::class, 'detailLowongan'])->name('lowongan.detail');
-    Route::post('/lowongan/save/{id}', [StudentController::class, 'saveJob'])->name('lowongan.save');
-    Route::post('/lowongan/{id}/apply', [StudentController::class, 'applyJob'])->name('lowongan.apply');
-    
-    // Route Apply Tambahan (Sesuai instruksi BARU)
-    Route::post('/jobs/{id}/apply', [StudentController::class, 'applyJob'])->name('job.apply');
-
-    // Lowongan Tersimpan
     Route::get('/lowongan-tersimpan', [StudentController::class, 'savedJobs'])->name('saved-jobs');
+    
+    // PERBAIKAN DI SINI: Sesuaikan dengan pemanggilan fetch JavaScript agar sinkron ({id}/save)
+    Route::post('/lowongan/{id}/save', [StudentController::class, 'saveJob'])->name('lowongan.save');
+    Route::delete('/lowongan/unsave/{id}', [StudentController::class, 'unsaveJob'])->name('lowongan.unsave');
+    
+    Route::post('/lowongan/{id}/apply', [StudentController::class, 'applyJob'])->name('lowongan.apply');
 
-    // Fitur Acara (Redirect ke detail publik agar konsisten)
+    // Detail lowongan diletakkan paling bawah agar tidak membenturkan parameter {id} dengan route static
+    Route::get('/lowongan/{id}', [StudentController::class, 'detailLowongan'])->name('lowongan.detail');
+
+    // --- ACARA STUDENT ---
     Route::get('/acara', [StudentController::class, 'acara'])->name('acara');
     Route::get('/acara/{id}', [StudentController::class, 'detailAcara'])->name('acara.detail');
     Route::post('/acara/{id}/daftar', [StudentController::class, 'daftarAcara'])->name('acara.daftar');
-    
-    // REDIRECT TRACER (Mengalihkan sisa link lama ke halaman tracer publik yang baru)
-    Route::get('/tracer', fn() => redirect()->route('public.tracer'))->name('tracer');
 
-    // Halaman Informasional
+    // Redirects
+    Route::get('/tracer', fn () => redirect()->route('public.tracer'))->name('tracer');
+    Route::get('/berita', fn () => redirect('/berita'))->name('berita');
+    Route::get('/berita/{slug}', fn ($slug) => redirect('/berita/' . $slug))->name('berita.detail');
+
+    // Informasional
     Route::get('/bantuan', [StudentPageController::class, 'bantuan'])->name('bantuan');
     Route::get('/tentang', [StudentPageController::class, 'tentang'])->name('tentang');
-
-    // Berita Redirect
-    Route::get('/berita', fn() => redirect('/berita'))->name('berita');
-    Route::get('/berita/{slug}', fn($slug) => redirect('/berita/'.$slug))->name('berita.detail');
 });
 
 /**
- * ADMIN ROUTES (Wajib Login & Role Admin)
+ * ADMIN ROUTES
  */
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/', [AdminDashboardController::class, 'index']); 
+
+    Route::get('/', [AdminDashboardController::class, 'index']);
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::get('/search', [SearchController::class, 'search'])->name('search');
- 
-    Route::resource('news', AdminNewsController::class); 
+
+    Route::resource('news', AdminNewsController::class);
     Route::resource('events', AdminEventController::class);
 
     Route::get('/export-data', [DashboardActionController::class, 'export'])->name('export');
@@ -164,6 +166,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // Event Registrations
     Route::prefix('event-registrations')->name('event-registrations.')->group(function () {
+        // ... (sisanya sama seperti code awal kamu)
         Route::get('/', [AdminEventRegistrationController::class, 'index'])->name('index');
         Route::put('/{id}', [AdminEventRegistrationController::class, 'update'])->name('update');
         Route::delete('/{id}', [AdminEventRegistrationController::class, 'destroy'])->name('destroy');
@@ -214,7 +217,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::get('/export/jobs/print', [AdminReportController::class, 'printJobs'])->name('export.jobs.print');
     });
 
-    Route::get('/activity-logs', [AdminActivityLogController::class, 'index'])->name('activity-logs.index')->middleware('permission:view_activity_logs');
+    Route::get('/activity-logs', [AdminActivityLogController::class, 'index'])
+        ->name('activity-logs.index')
+        ->middleware('permission:view_activity_logs');
 
     // Alumni Stories
     Route::prefix('alumni-stories')->name('alumni-stories.')->group(function () {
@@ -225,10 +230,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Notifications
     Route::get('/notifications', function () {
         $users = User::latest()->limit(5)->get();
-        return response()->json($users->map(fn($u) => [
+        return response()->json($users->map(fn ($u) => [
             'title' => 'User baru: ' . $u->email,
             'time'  => $u->created_at->diffForHumans(),
-            'link'  => route('admin.users.index')
+            'link'  => route('admin.users.index'),
         ]));
     })->name('notifications');
-}); 
+});

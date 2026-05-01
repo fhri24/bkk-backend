@@ -11,64 +11,67 @@ class Job extends Model
 {
     protected $table = 'job_listings';
     protected $primaryKey = 'job_id';
-
-    // Agar kolom bisa diisi lewat form
+ 
     protected $fillable = [
-        'company_id', 
-        'admin_id', 
-        'title', 
+        'company_id',
+        'admin_id',
+        'title',
         'description',
         'requirements',
+        'responsibilities',
+        'benefits',
         'location',
+        'salary',
         'job_type',
-        'status', 
+        'source',
+        'skill_required',
+        'logo',
+        'status',
         'visibility',
         'is_active',
         'posted_at',
-        'expired_at'
+        'expired_at',
     ];
-
-    // Cast date columns to Carbon objects
+ 
     protected $casts = [
         'expired_at' => 'datetime',
-        'posted_at' => 'datetime',
+        'posted_at'  => 'datetime',
     ];
 
     // --- RELASI ---
-
-    // Menghubungkan Job ke Perusahaan
+ 
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class, 'company_id', 'company_id');
     }
-
-    // Menghubungkan Job ke Admin yang posting
+ 
     public function admin(): BelongsTo
     {
         return $this->belongsTo(User::class, 'admin_id');
     }
-
-    // Job ke Job Applications (satu lowongan bisa punya banyak lamaran)
+ 
     public function applications(): HasMany
     {
         return $this->hasMany(JobApplication::class, 'job_id', 'job_id');
     }
 
-    // --- VISIBILITY SCOPES (Filter Otomatis) ---
+    public function savedByStudents(): HasMany
+    {
+        return $this->hasMany(SavedJob::class, 'job_id', 'job_id');
+    }
 
-    // Mengambil yang statusnya 'active'
+    // --- SCOPES ---
+ 
     public function scopeActive(Builder $query)
     {
         return $query->where('status', 'active');
     }
-
-    // Mengambil yang visibility-nya 'public'
+ 
     public function scopePublic(Builder $query)
     {
         return $query->where('visibility', 'public');
     }
-
-    // Mengambil yang khusus 'alumni_only'
+ 
     public function scopeAlumniOnly(Builder $query)
     {
         return $query->where('visibility', 'alumni_only');
@@ -76,17 +79,36 @@ class Job extends Model
 
     public function scopeVisibleFor(Builder $query, $user)
     {
-    // Kalau belum login → hanya public
-    if (!$user) {
+        if (!$user) {
+            return $query->public();
+        }
+        if ($user->alumni_flag ?? false) {
+            return $query;
+        }
         return $query->public();
     }
 
-    // Kalau user adalah alumni → bisa lihat semua
-    if ($user->alumni_flag) {
-        return $query;
+    // --- HELPERS ---
+
+    public function getIsActiveJobAttribute(): bool
+    {
+        return $this->status === 'active'
+            && ($this->expired_at === null || $this->expired_at->isFuture());
     }
 
-    // Selain alumni → hanya public
-    return $query->public();
-}
+    public function getCompanyNameAttribute(): string
+    {
+        return $this->company->company_name ?? '-';
+    }
+
+    public function getLogoUrlAttribute(): ?string
+    {
+        if ($this->logo) {
+            return \Illuminate\Support\Facades\Storage::url($this->logo);
+        }
+        if ($this->company && $this->company->logo) {
+            return \Illuminate\Support\Facades\Storage::url($this->company->logo);
+        }
+        return null;
+    }
 }

@@ -22,6 +22,7 @@
                             'Tips Karir'=> 'bg-green-100 text-green-600',
                             'Industri'  => 'bg-red-100 text-red-600',
                             'Umum'      => 'bg-slate-100 text-slate-600',
+                            'Kesempatan'=> 'bg-indigo-100 text-indigo-600',
                         ];
                         $catStyle = $catBgColors[$news->category] ?? 'bg-blue-100 text-blue-600';
                     @endphp
@@ -37,10 +38,9 @@
                 
                 <div class="flex items-center gap-6 text-slate-600 text-sm border-y border-slate-200 py-4">
                     <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 bg-blue-50 rounded-full flex items-center justify-center">
-                            <i class="fas fa-user text-blue-600 text-xs"></i>
-                        </div>
-                        <span class="font-medium">{{ $news->author ?? 'BKK SMKN 1 Garut' }}</span>
+                        <i class="fas fa-user text-blue-600"></i>
+                        {{-- PERBAIKAN: Mengambil properti 'name' jika author adalah objek --}}
+                        <span class="font-medium">{{ is_object($news->author) ? $news->author->name : ($news->author ?? 'BKK SMKN 1 Garut') }}</span>
                     </div>
                     @if($news->read_time)
                         <div class="flex items-center gap-2">
@@ -64,16 +64,19 @@
             </div>
 
             {{-- Tags --}}
-            @if($news->tags && count($news->tags) > 0)
+            {{-- PERBAIKAN: Memastikan pengecekan tags lebih aman --}}
+            @if(isset($news->tags) && (is_array($news->tags) || is_object($news->tags)) && count($news->tags) > 0)
                 <div class="border-t border-slate-200 pt-8 mt-12">
-                    <p class="text-sm text-slate-600 mb-3 font-bold">Tags:</p>
-                    <div class="flex gap-2 flex-wrap">
-                        @foreach($news->tags as $tag)
-                            <a href="{{ route('public.berita') }}?tag={{ $tag }}"
-                               class="bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-700 px-4 py-1.5 rounded-full text-xs font-semibold transition-all">
-                                #{{ $tag }}
-                            </a>
-                        @endforeach
+                    <div class="flex items-center gap-3">
+                        <p class="text-sm text-slate-600 font-bold">Tags:</p>
+                        <div class="flex gap-2 flex-wrap">
+                            @foreach($news->tags as $tag)
+                                <a href="{{ route('public.berita') }}?tag={{ $tag }}"
+                                   class="bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-700 px-4 py-1.5 rounded-full text-xs font-semibold transition-all">
+                                    #{{ $tag }}
+                                </a>
+                            @endforeach
+                        </div>
                     </div>
                 </div>
             @endif
@@ -85,21 +88,24 @@
                         <span class="w-8 h-1 bg-blue-600 rounded-full mr-3"></span>
                         Artikel Terkait
                     </h3>
-                    <div class="grid md:grid-cols-2 gap-8">
+                    {{-- Grid diperbaiki agar tidak ada margin/padding aneh di pinggir --}}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         @foreach($relatedNews as $related)
                             @php
                                 $relFallback = 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=500&q=80';
                                 $relImage = $related->image ? Storage::url($related->image) : $relFallback;
                             @endphp
-                            <article class="group cursor-pointer bg-white p-4 rounded-2xl border border-transparent hover:border-blue-100 hover:shadow-xl transition-all duration-300" 
+                            <article class="group cursor-pointer bg-white rounded-2xl border border-transparent hover:border-blue-100 hover:shadow-xl transition-all duration-300 overflow-hidden" 
                                      onclick="window.location.href='{{ route('public.berita.detail', $related->slug) }}'">
-                                <div class="aspect-[16/10] overflow-hidden rounded-xl bg-slate-200 mb-4">
-                                    <img src="{{ $relImage }}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" alt="{{ $related->title }}" />
+                                <div class="aspect-[16/10] overflow-hidden bg-slate-200">
+                                    <img src="{{ $relImage }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="{{ $related->title }}" />
                                 </div>
-                                <h4 class="font-bold text-slate-800 group-hover:text-blue-600 transition line-clamp-2">{{ $related->title }}</h4>
-                                <div class="flex items-center text-xs text-slate-400 mt-3 font-semibold">
-                                    <i class="far fa-calendar-alt mr-2"></i>
-                                    {{ \Carbon\Carbon::parse($related->published_at ?? $related->created_at)->translatedFormat('d F Y') }}
+                                <div class="p-5">
+                                    <h4 class="font-bold text-slate-800 group-hover:text-blue-600 transition line-clamp-2">{{ $related->title }}</h4>
+                                    <div class="flex items-center text-xs text-slate-400 mt-3 font-semibold">
+                                        <i class="far fa-calendar-alt mr-2"></i>
+                                        {{ \Carbon\Carbon::parse($related->published_at ?? $related->created_at)->translatedFormat('d F Y') }}
+                                    </div>
                                 </div>
                             </article>
                         @endforeach
@@ -108,8 +114,4 @@
             @endif
         </article>
     </div>
-@endsection
-
-@section('extra_js')
-    {{-- Custom JS for detail page --}}
-@endsection
+@endsection 
