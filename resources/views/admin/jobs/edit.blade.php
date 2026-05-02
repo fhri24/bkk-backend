@@ -15,7 +15,7 @@
         </a>
     </div>
 
-    <form action="{{ route('admin.jobs.update', $job->job_id) }}" method="POST" class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
+    <form action="{{ route('admin.jobs.update', $job->job_id) }}" method="POST" enctype="multipart/form-data" class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
         @csrf
         @method('PUT')
 
@@ -30,6 +30,8 @@
         @endif
 
         <div class="grid gap-6">
+
+            {{-- Perusahaan --}}
             <div>
                 <label for="company_id" class="block text-sm font-medium text-slate-700">Perusahaan</label>
                 <select name="company_id" id="company_id" class="mt-2 block w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100" required>
@@ -42,25 +44,77 @@
                 </select>
             </div>
 
+            {{-- Judul Posisi --}}
             <div>
                 <label for="title" class="block text-sm font-medium text-slate-700">Judul Posisi</label>
-                <input type="text" name="title" id="title" value="{{ old('title', $job->title) }}" class="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100" required>
+                <input type="text" name="title" id="title" value="{{ old('title', $job->title) }}"
+                    class="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100" required>
             </div>
 
+            {{-- Poster / Banner --}}
             <div>
-                <label for="description" class="block text-sm font-medium text-slate-700">Deskripsi</label>
-                <textarea name="description" id="description" rows="5" class="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100" required>{{ old('description', $job->description) }}</textarea>
+                <label for="image" class="block text-sm font-medium text-slate-700">Poster / Banner Lowongan <span class="text-slate-400">(Opsional)</span></label>
+                @if ($job->image)
+                    <div class="mt-2 mb-2">
+                        <img src="{{ asset('storage/' . $job->image) }}" alt="Poster Lowongan" class="h-32 w-auto rounded-xl border border-slate-200 object-cover">
+                        <p class="text-xs text-slate-400 mt-1">Poster saat ini. Upload baru untuk mengganti.</p>
+                    </div>
+                @endif
+                <div class="mt-2 flex items-center gap-3 rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3">
+                    <input type="file" name="image" id="image" accept=".jpg,.jpeg,.png"
+                        class="block w-full text-sm text-slate-500 file:mr-4 file:py-1.5 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                </div>
+                <p class="text-xs text-slate-400 mt-1 italic">*Format: JPG, PNG (Max 2MB)</p>
             </div>
 
+            {{-- Deskripsi --}}
+            <div>
+                <label for="description" class="block text-sm font-medium text-slate-700">Deskripsi Pekerjaan</label>
+                <textarea name="description" id="description" rows="4"
+                    class="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100" required>{{ old('description', $job->description) }}</textarea>
+            </div>
+
+            {{-- Tanggung Jawab --}}
+            <div>
+                <label for="responsibilities" class="block text-sm font-medium text-slate-700">Tanggung Jawab</label>
+                <textarea name="responsibilities" id="responsibilities" rows="4" placeholder="Daftar tanggung jawab pekerjaan (pisahkan tiap baris)..."
+                    class="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100">{{ old('responsibilities', $job->responsibilities) }}</textarea>
+            </div>
+
+            {{-- Persyaratan --}}
             <div>
                 <label for="requirements" class="block text-sm font-medium text-slate-700">Persyaratan</label>
-                <textarea name="requirements" id="requirements" rows="3" class="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100">{{ old('requirements', $job->requirements) }}</textarea>
+                <textarea name="requirements" id="requirements" rows="3"
+                    class="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100">{{ old('requirements', $job->requirements) }}</textarea>
             </div>
 
+            {{-- Benefit & Tunjangan --}}
+            <div>
+                <label for="benefits" class="block text-sm font-medium text-slate-700">Benefit & Tunjangan</label>
+                <textarea name="benefits" id="benefits" rows="3" placeholder="Contoh: BPJS, Tunjangan Makan, Asuransi..."
+                    class="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100">{{ old('benefits', $job->benefits) }}</textarea>
+            </div>
+
+            {{-- Lokasi & Pengalaman --}}
             <div class="grid gap-4 lg:grid-cols-2">
                 <div>
                     <label for="location" class="block text-sm font-medium text-slate-700">Lokasi</label>
-                    <input type="text" name="location" id="location" value="{{ old('location', $job->location) }}" class="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100">
+                    <input type="text" name="location" id="location" value="{{ old('location', $job->location) }}"
+                        class="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100">
+                </div>
+                <div>
+                    <label for="experience" class="block text-sm font-medium text-slate-700">Pengalaman</label>
+                    <input type="text" name="experience" id="experience" value="{{ old('experience', $job->experience) }}" placeholder="Contoh: 1-2 Tahun"
+                        class="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100">
+                </div>
+            </div>
+
+            {{-- Gaji & Jenis Pekerjaan --}}
+            <div class="grid gap-4 lg:grid-cols-2">
+                <div>
+                    <label for="salary" class="block text-sm font-medium text-slate-700">Gaji</label>
+                    <input type="text" name="salary" id="salary" value="{{ old('salary', $job->salary) }}" placeholder="Contoh: Kompetitif / Rp 5.000.000"
+                        class="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100">
                 </div>
                 <div>
                     <label for="job_type" class="block text-sm font-medium text-slate-700">Jenis Pekerjaan</label>
@@ -73,6 +127,7 @@
                 </div>
             </div>
 
+            {{-- Visibility & Kadaluarsa --}}
             <div class="grid gap-4 lg:grid-cols-2">
                 <div>
                     <label for="visibility" class="block text-sm font-medium text-slate-700">Visibility</label>
@@ -84,15 +139,20 @@
                 </div>
                 <div>
                     <label for="expired_at" class="block text-sm font-medium text-slate-700">Tanggal Kadaluarsa</label>
-                    <input type="date" name="expired_at" id="expired_at" value="{{ old('expired_at', $job->expired_at?->format('Y-m-d')) }}" class="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100" required>
+                    <input type="date" name="expired_at" id="expired_at" value="{{ old('expired_at', $job->expired_at?->format('Y-m-d')) }}"
+                        class="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100" required>
                 </div>
             </div>
 
+            {{-- Tombol --}}
             <div class="flex flex-wrap gap-3 pt-2">
-                <button type="submit" class="inline-flex items-center rounded-2xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-700 transition">Simpan Perubahan</button>
+                <button type="submit" class="inline-flex items-center rounded-2xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-700 transition">
+                    <i class="fas fa-save mr-2"></i> Simpan Perubahan
+                </button>
                 <a href="{{ route('admin.jobs.index') }}" class="inline-flex items-center rounded-2xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">Batal</a>
             </div>
+
         </div>
     </form>
 </div>
-@endsection
+@endsection 
