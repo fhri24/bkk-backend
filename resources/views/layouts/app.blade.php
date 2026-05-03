@@ -2,6 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'BKK SMKN 1 Garut')</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -43,15 +44,14 @@
                 <button onclick="closeSavedModal()" class="hover:text-red-400 transition text-2xl">&times;</button>
             </div>
             
-            <div class="max-h-[60vh] overflow-y-auto p-4 space-y-3 hide-scrollbar">
-                @php
-                    // Mengambil data jobs yang disimpan oleh user yang login
+            <div id="modal-saved-list" class="max-h-[60vh] overflow-y-auto p-4 space-y-3 hide-scrollbar">
+                @php 
                     $saved_jobs = \App\Models\SavedJob::where('user_id', auth()->id())->with('job.company')->get();
                 @endphp
 
                 @forelse($saved_jobs as $saved)
                     @if($saved->job)
-                        <div class="group flex items-center justify-between p-4 hover:bg-slate-50 transition-all border-b border-slate-100 last:border-0">
+                        <div id="modal-item-{{ $saved->job_id }}" class="group flex items-center justify-between p-4 hover:bg-slate-50 transition-all border-b border-slate-100 last:border-0">
                             <div class="flex items-center space-x-4"> 
                                 <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-colors">
                                     <i class="fas fa-briefcase text-lg"></i>
@@ -67,24 +67,21 @@
                                     </p>
                                 </div>
                             </div>
- 
+
                             <div class="flex items-center space-x-2">
                                 <a href="{{ route('public.lowongan.detail', $saved->job_id) }}" 
                                    class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                {{-- Gunakan route save/unsave Anda --}}
-                                <form action="{{ route('student.lowongan.save', $saved->job_id) }}" method="POST" class="inline">
-                                    @csrf
-                                    <button type="submit" class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </form>
+                                {{-- Tombol hapus modal menggunakan AJAX agar angka navbar sinkron --}}
+                                <button onclick="removeSavedJob({{ $saved->job_id }}, 'modal')" class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
                             </div>
                         </div>
                     @endif
                 @empty
-                    <div class="text-center py-10">
+                    <div id="modal-empty-state" class="text-center py-10">
                         <i class="fas fa-folder-open text-slate-200 text-5xl mb-3"></i>
                         <p class="text-sm text-slate-500">Belum ada lowongan tersimpan</p>
                     </div>
@@ -92,8 +89,8 @@
             </div>
 
             <div class="p-4 border-t border-slate-100 bg-slate-50 flex justify-center">
-                <a href="{{ route('student.profile') }}" class="text-sm font-bold text-blue-600 hover:underline">
-                    Lihat Semua di Profil
+                <a href="{{ route('student.saved-jobs') }}" class="text-sm font-bold text-blue-600 hover:underline">
+                    Lihat Semua Lowongan
                 </a>
             </div>
         </div>
@@ -104,13 +101,118 @@
     @include('layouts.footer')
  
     <script>
-        // Fungsi Menu Mobile
+        const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        // 1. Fungsi Update Angka di Navbar (Badge)
+        function updateNavbarBadge(count) {
+            // Update semua elemen dengan class .badge-saved
+            const badges = document.querySelectorAll('.badge-saved'); 
+            badges.forEach(badge => {
+                if (count > 0) {
+                    badge.innerText = count;
+                    badge.classList.remove('hidden');
+                    badge.style.display = 'inline-block';
+                } else {
+                    badge.classList.add('hidden');
+                    badge.style.display = 'none';
+                }
+            });
+
+            // Update elemen dengan ID spesifik (sesuai code baru Anda)
+            const specificBadge = document.getElementById('saved-count-badge');
+            if (specificBadge) {
+                specificBadge.innerText = count;
+                specificBadge.style.display = count > 0 ? 'inline-block' : 'none';
+            }
+        }
+
+        // 2. Fungsi Toggle Simpan (AJAX Terintegrasi)
+        function toggleSaveJob(btn, jobId) {
+            fetch(`/student/lowongan/${jobId}/save`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': CSRF_TOKEN,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                const icon = btn.querySelector('i');
+                
+                if (data.status === 'added' || data.saved === true) {
+                    // Tampilan MERAH (Saved)
+                    btn.classList.remove('bg-gray-100', 'bg-gray-50', 'text-gray-400', 'border-slate-200');
+                    btn.classList.add('bg-red-50', 'text-red-500', 'border-red-200');
+                    if(icon) {
+                        icon.classList.remove('fa-regular');
+                        icon.classList.add('fa-solid');
+                    }
+                } else {
+                    // Tampilan ABU-ABU (Unsaved)
+                    btn.classList.remove('bg-red-50', 'text-red-500', 'border-red-200');
+                    btn.classList.add('bg-gray-50', 'text-gray-400', 'border-slate-200');
+                    if(icon) {
+                        icon.classList.remove('fa-solid');
+                        icon.classList.add('fa-regular');
+                    }
+                }
+
+                // Update angka notifikasi tanpa refresh
+                if (data.count !== undefined) {
+                    updateNavbarBadge(data.count);
+                }
+                
+                // Show toast if available
+                if(typeof showToast === 'function') showToast(data.message);
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        // 3. Fungsi Hapus di Modal / Page
+        function removeSavedJob(jobId, context = 'page') {
+            if(!confirm('Hapus dari simpanan?')) return;
+
+            fetch(`/student/lowongan/${jobId}/save`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': CSRF_TOKEN,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === 'removed' || data.saved === false) {
+                    // Hapus elemen di modal
+                    const modalItem = document.getElementById(`modal-item-${jobId}`);
+                    if(modalItem) modalItem.remove();
+
+                    // Hapus elemen di halaman saved-jobs (jika ada)
+                    const pageItem = document.getElementById(`saved-card-${jobId}`);
+                    if(pageItem) {
+                        pageItem.classList.add('opacity-0');
+                        setTimeout(() => {
+                            pageItem.remove();
+                            if (document.querySelectorAll('[id^="saved-card-"]').length === 0) {
+                                location.reload();
+                            }
+                        }, 300);
+                    }
+                    
+                    updateNavbarBadge(data.count);
+                    if(typeof showToast === 'function') showToast(data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        // Fungsi UI Lainnya
         function toggleMobileMenu() {
             const menu = document.getElementById("mobile-menu");
             if(menu) menu.classList.toggle("hidden");
         }
-
-        // FUNGSI MODAL TERSIMPAN
+ 
         function openSavedModal() {
             const modal = document.getElementById('modal-tersimpan');
             if (modal) {
@@ -128,10 +230,9 @@
                 document.body.style.overflow = 'auto';
             }
         }
-
-        // Tutup modal jika klik di area luar modal
+ 
         window.onclick = function(event) {
-            const modal = document.getElementById('modal-tersimpan');
+            const modal = document.getElementById('modal-tersimpan')
             if (event.target == modal) {
                 closeSavedModal();
             }
@@ -139,4 +240,4 @@
     </script>
     @yield('extra_js')
 </body>
-</html> 
+</html>

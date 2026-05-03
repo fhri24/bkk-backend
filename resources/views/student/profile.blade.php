@@ -44,7 +44,17 @@
                             <i class="fas fa-paper-plane text-purple-200 text-2xl"></i>
                         </div>
 
-                        <div class="text-left px-2">
+                        {{-- TAMBAHAN: Tombol Lowongan Tersimpan --}}
+                        <a href="{{ route('student.saved-jobs') }}" class="flex items-center justify-between p-4 bg-blue-50 rounded-2xl border border-blue-100 hover:bg-blue-100 transition">
+                            <span class="font-bold text-blue-700 text-sm">
+                                <i class="fas fa-bookmark mr-2"></i> Lowongan Tersimpan
+                            </span>
+                            <span class="bg-blue-600 text-white text-xs font-black px-3 py-1 rounded-full">
+                                {{ $savedCount }}
+                            </span>
+                        </a>
+
+                        <div class="text-left px-2 pt-2">
                             <p class="text-xs text-slate-500 font-bold uppercase">Akun Dibuat</p>
                             <p class="text-sm font-bold text-slate-600">{{ $user->created_at->format('d M Y') }}</p>
                         </div>
@@ -280,4 +290,4 @@
         }
     });
 </script>
-@endsection 
+@endsection
