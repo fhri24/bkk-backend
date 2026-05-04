@@ -45,7 +45,7 @@ class StudentController extends Controller
 
         if (Auth::check()) {
             $userId = Auth::id();
-            
+
             // Untuk indikator warna merah di tombol
             $savedJobIds = SavedJob::where('user_id', $userId)
                 ->pluck('job_id')
@@ -210,7 +210,7 @@ class StudentController extends Controller
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        if ($request->hasFile('profile_picture')) { 
+        if ($request->hasFile('profile_picture')) {
             if ($student->profile_picture) {
                 Storage::disk('public')->delete($student->profile_picture);
             }
@@ -267,9 +267,12 @@ class StudentController extends Controller
                 'application_date' => now(),
                 'cover_letter' => $request->cover_letter,
                 'additional_file' => $fileName,
+                'full_name' => $request->full_name ?? $student->full_name,
+                'email' => $request->email ?? $user->email,
+                'phone_number' => $request->phone_number ?? $student->phone,
             ]);
 
-            return back()->with('success', 'Lamaran berhasil terkirim!'); 
+            return back()->with('success', 'Lamaran berhasil terkirim!');
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal: ' . $e->getMessage());
         }
@@ -335,5 +338,56 @@ class StudentController extends Controller
         ]);
 
         return back()->with('success', 'Berhasil mendaftar!');
+    }
+
+    /**
+     * Halaman Lamaran Saya
+     */
+    public function myApplications()
+    {
+        $user = Auth::user();
+        $student = Student::where('user_id', $user->id)->first();
+
+        if (!$student) {
+            return redirect()->route('student.home')
+                ->with('error', 'Profil siswa tidak ditemukan.');
+        }
+
+        $applications = JobApplication::where('student_id', $student->student_id)
+            ->with(['job.company'])
+            ->latest('application_date')
+            ->get();
+
+        return view('student.applications', compact('applications'));
+    }
+
+    /**
+     * Hapus Lamaran
+     */
+    public function deleteApplication($id)
+    {
+        $user = Auth::user();
+        $student = Student::where('user_id', $user->id)->first();
+
+        if (!$student) {
+            return redirect()->back()->with('error', 'Profil tidak ditemukan.');
+        }
+
+        $application = JobApplication::where('job_application_id', $id)
+            ->where('student_id', $student->student_id)
+            ->first();
+
+        if (!$application) {
+            return redirect()->back()->with('error', 'Lamaran tidak ditemukan.');
+        }
+
+        // Hapus file jika ada
+        if ($application->additional_file) {
+            Storage::delete('public/cv_applications/' . $application->additional_file);
+        }
+
+        $application->delete();
+
+        return redirect()->back()->with('success', 'Lamaran berhasil dihapus.');
     }
 }
