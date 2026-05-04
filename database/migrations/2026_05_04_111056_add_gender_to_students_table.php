@@ -6,23 +6,22 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::table('students', function (Blueprint $table) {
-            $table->enum('gender', ['L', 'P'])->nullable()->after('graduation_year');
+            // Cek dulu, kalau belum ada kolom gender, baru bikin
+            if (!Schema::hasColumn('students', 'gender')) {
+                $table->enum('gender', ['L', 'P'])->nullable()->after('graduation_year');
+            }
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('students', function (Blueprint $table) {
-            $table->dropColumn('gender');
+            if (Schema::hasColumn('students', 'gender')) {
+                $table->dropColumn('gender');
+            }
         });
     }
 };

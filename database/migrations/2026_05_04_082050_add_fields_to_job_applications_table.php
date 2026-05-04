@@ -6,25 +6,22 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::table('job_applications', function (Blueprint $table) {
-            $table->string('full_name')->nullable()->after('additional_file');
-            $table->string('email')->nullable()->after('full_name');
-            $table->string('phone_number')->nullable()->after('email');
+            // Kita bungkus pake check biar ga error duplicate lagi
+            if (!Schema::hasColumn('job_applications', 'full_name')) {
+                $table->string('full_name')->nullable()->after('additional_file');
+            }
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('job_applications', function (Blueprint $table) {
-            $table->dropColumn(['full_name', 'email', 'phone_number']);
+             if (Schema::hasColumn('job_applications', 'full_name')) {
+                $table->dropColumn('full_name');
+            }
         });
     }
 };
