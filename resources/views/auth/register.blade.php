@@ -106,7 +106,7 @@
           <div class="grid grid-cols-2 gap-3">
             <label class="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 has-[:checked]:ring-2 has-[:checked]:ring-blue-100 @error('gender') border-red-500 @enderror">
               <input type="radio" name="gender" value="L" class="accent-blue-600" {{ old('gender') == 'L' ? 'checked' : '' }} required />
-              <span class="text-sm font-semibold text-slate-700">PRIA</span>
+              <span class="text-sm font-semibold text-slate-700">Laki-laki</span>
             </label>
             <label class="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 has-[:checked]:ring-2 has-[:checked]:ring-blue-100 @error('gender') border-red-500 @enderror">
               <input type="radio" name="gender" value="P" class="accent-blue-600" {{ old('gender') == 'P' ? 'checked' : '' }} />
