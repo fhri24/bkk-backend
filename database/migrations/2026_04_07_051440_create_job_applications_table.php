@@ -22,6 +22,9 @@ return new class extends Migration
         // Detail Lamaran
         $table->text('cover_letter')->nullable();
         $table->string('additional_file')->nullable();
+        $table->string('full_name')->nullable();
+        $table->string('email')->nullable();
+        $table->string('phone_number')->nullable();
         $table->text('admin_notes')->nullable();
 
         // --- UBAH BAGIAN INI AGAR SESUAI TUGAS ENDPOINT ---

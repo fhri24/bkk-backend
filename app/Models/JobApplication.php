@@ -13,24 +13,27 @@ class JobApplication extends Model
     protected $table = 'job_applications';
 
     /**
-     * PERBAIKAN: Beritahu Laravel bahwa Primary Key kamu 
+     * PERBAIKAN: Beritahu Laravel bahwa Primary Key kamu
      * bukan 'id', tapi 'job_application_id'
      */
     protected $primaryKey = 'job_application_id';
 
     /**
-     * Jika Primary Key kamu bukan integer auto-increment, 
+     * Jika Primary Key kamu bukan integer auto-increment,
      * set ini ke false. Tapi biasanya tetap true untuk ID.
      */
     public $incrementing = true;
 
     protected $fillable = [
-        'job_id', 
-        'student_id', 
-        'status', 
-        'application_date', 
-        'cover_letter', 
+        'job_id',
+        'student_id',
+        'status',
+        'application_date',
+        'cover_letter',
         'additional_file',
+        'full_name',
+        'email',
+        'phone_number',
         'admin_notes'
     ];
 

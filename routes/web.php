@@ -55,7 +55,7 @@ Route::get('/berita/{slug}', [PublicController::class, 'beritaDetail'])->name('p
 
 // --- ACARA ---
 Route::get('/acara-mendatang', [PublicController::class, 'acara'])->name('public.acara');
-Route::get('/acara/{id}', [PublicController::class, 'acaraDetail'])->name('public.acara.detail'); 
+Route::get('/acara/{id}', [PublicController::class, 'acaraDetail'])->name('public.acara.detail');
 Route::post('/acara/{id}/register', [PublicController::class, 'storeEventRegistration'])->name('public.event.register');
 
 // --- TRACER STUDY ---
@@ -94,11 +94,11 @@ Route::middleware(['auth', 'student'])->prefix('student')->name('student.')->gro
     // --- LOWONGAN STUDENT ---
     Route::get('/daftar-lowongan', [StudentController::class, 'lowongan'])->name('lowongan');
     Route::get('/lowongan-tersimpan', [StudentController::class, 'savedJobs'])->name('saved-jobs');
-    
+
     // PERBAIKAN DI SINI: Sesuaikan dengan pemanggilan fetch JavaScript agar sinkron ({id}/save)
     Route::post('/lowongan/{id}/save', [StudentController::class, 'saveJob'])->name('lowongan.save');
     Route::delete('/lowongan/unsave/{id}', [StudentController::class, 'unsaveJob'])->name('lowongan.unsave');
-    
+
     Route::post('/lowongan/{id}/apply', [StudentController::class, 'applyJob'])->name('lowongan.apply');
 
     // Detail lowongan diletakkan paling bawah agar tidak membenturkan parameter {id} dengan route static
@@ -108,6 +108,10 @@ Route::middleware(['auth', 'student'])->prefix('student')->name('student.')->gro
     Route::get('/acara', [StudentController::class, 'acara'])->name('acara');
     Route::get('/acara/{id}', [StudentController::class, 'detailAcara'])->name('acara.detail');
     Route::post('/acara/{id}/daftar', [StudentController::class, 'daftarAcara'])->name('acara.daftar');
+
+    // --- LAMARAN STUDENT ---
+    Route::get('/lamaran', [StudentController::class, 'myApplications'])->name('applications');
+    Route::delete('/lamaran/{id}', [StudentController::class, 'deleteApplication'])->name('applications.delete');
 
     // Redirects
     Route::get('/tracer', fn () => redirect()->route('public.tracer'))->name('tracer');
