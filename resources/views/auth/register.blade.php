@@ -15,7 +15,6 @@
 @endsection
 
 @section('content')
-<!-- Main Content -->
 <div class="page-transition flex items-center justify-center py-12 md:py-20 bg-gradient-to-br from-slate-50 to-blue-50 px-4 md:px-6 min-h-screen pt-24">
   <div class="bg-white/95 backdrop-blur w-full max-w-4xl rounded-3xl md:rounded-[40px] shadow-2xl overflow-hidden flex flex-col md:flex-row border border-white/40">
     <!-- Left Side - Branding -->
@@ -48,7 +47,6 @@
         <button type="button" onclick="switchTab('register')" class="flex-1 pb-4 text-sm font-bold border-b-2 border-blue-600 text-blue-600">Daftar</button>
       </div>
 
-      <!-- Register Form -->
       <form method="POST" action="{{ route('register.process') }}" class="space-y-4">
         @csrf
 
@@ -87,7 +85,7 @@
             @enderror
           </div>
 
-          <!-- Jurusan (Dropdown) -->
+          <!-- Jurusan -->
           <div class="space-y-1">
             <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-3">📚 Jurusan <span class="text-red-500">*</span></label>
             <select name="major" class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100 @error('major') border-red-500 @enderror" required>
@@ -102,6 +100,25 @@
           </div>
         </div>
 
+        <!-- ===== JENIS KELAMIN ===== -->
+        <div class="space-y-1">
+          <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-3">⚧ Jenis Kelamin <span class="text-red-500">*</span></label>
+          <div class="grid grid-cols-2 gap-3">
+            <label class="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 has-[:checked]:ring-2 has-[:checked]:ring-blue-100 @error('gender') border-red-500 @enderror">
+              <input type="radio" name="gender" value="L" class="accent-blue-600" {{ old('gender') == 'L' ? 'checked' : '' }} required />
+              <span class="text-sm font-semibold text-slate-700">Laki-laki</span>
+            </label>
+            <label class="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 has-[:checked]:ring-2 has-[:checked]:ring-blue-100 @error('gender') border-red-500 @enderror">
+              <input type="radio" name="gender" value="P" class="accent-blue-600" {{ old('gender') == 'P' ? 'checked' : '' }} />
+              <span class="text-sm font-semibold text-slate-700">Perempuan</span>
+            </label>
+          </div>
+          @error('gender')
+            <span class="text-red-600 text-xs mt-2 block"><i class="fas fa-times-circle mr-1"></i>{{ $message }}</span>
+          @enderror
+        </div>
+        <!-- ===== END JENIS KELAMIN ===== -->
+
         <div class="grid grid-cols-2 gap-3">
           <!-- Email -->
           <div class="space-y-1">
@@ -112,7 +129,7 @@
             @enderror
           </div>
 
-          <!-- Tahun Lulus (Dropdown) -->
+          <!-- Tahun Lulus -->
           <div class="space-y-1">
             <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-3">📅 Tahun Lulus <span class="text-red-500">*</span></label>
             <select name="graduation_year" class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100 @error('graduation_year') border-red-500 @enderror" required>
@@ -178,4 +195,4 @@
     }
   }
 </script>
-@endsection
+@endsection 

@@ -22,6 +22,7 @@ class Student extends Model
         'birth_info',
         'major',
         'graduation_year',
+        'gender',
         'phone',
         'address',
         'resume_url',
