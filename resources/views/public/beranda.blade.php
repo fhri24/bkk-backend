@@ -77,7 +77,9 @@
 
 @section('content')
 @php
-    $isStudent = auth()->check() && auth()->user()->role && auth()->user()->role->name === 'siswa' && request()->is('student/*');
+    // Logic deteksi role siswa untuk penentuan route
+    $isStudent = auth()->check() && auth()->user()->role && auth()->user()->role->name === 'siswa';
+
     $routeLowongan = $isStudent ? route('student.lowongan') : route('public.lowongan');
     $routeAcara = $isStudent ? route('student.acara') : route('public.acara');
     $routeBerita = $isStudent ? route('student.berita') : route('public.berita');
@@ -95,7 +97,7 @@
                 <i class="fas fa-location-arrow text-slate-400 mr-3"></i>
                 <input type="text" placeholder="Lokasi..." class="w-full text-slate-800 focus:outline-none font-medium" />
             </div>
-        <a href="{{ $routeLowongan }}" class="bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-xl font-bold transition">CARI KERJA</a>
+        <a href="{{ $routeLowongan }}" class="bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-xl font-bold transition text-center flex items-center justify-center">CARI KERJA</a>
         </div>
     </div>
 </section>
@@ -184,7 +186,7 @@
                     <div class="flex items-center"><i class="fas fa-calendar-alt w-5 text-slate-400"></i> {{ \Carbon\Carbon::parse($event->start_date)->format('d M Y') }}</div>
                     <div class="flex items-center"><i class="fas fa-users w-5 text-slate-400"></i> {{ $event->capacity }} Peserta</div>
                 </div>
-                <a href="{{ route($isStudent ? 'student.acara.detail' : 'public.acara', $event->id) }}" class="w-full bg-slate-100 py-3 rounded-xl font-bold text-slate-800 hover:bg-blue-600 hover:text-white transition text-center block">Daftar Peserta</a>
+                <a href="{{ route($isStudent ? 'student.acara.detail' : 'public.acara.detail', $event->id) }}" class="w-full bg-slate-100 py-3 rounded-xl font-bold text-slate-800 hover:bg-blue-600 hover:text-white transition text-center block">Daftar Peserta</a>
             </div>
             @empty
             <div class="col-span-full text-center py-12"><p class="text-slate-600">Belum ada acara unggulan</p></div>
@@ -220,7 +222,9 @@
                         <h4 class="font-bold text-lg text-slate-800 leading-tight line-clamp-2 h-14">{{ $item->title }}</h4>
                     </div>
                     <p class="text-xs text-slate-500 mb-4">{{ $item->created_at->translatedFormat('d M Y') }}</p>
-                    <a href="{{ route($isStudent ? 'student.berita.detail' : 'public.berita', $item->id) }}" class="w-full mt-6 bg-slate-100 py-2.5 rounded-lg font-bold text-slate-800 hover:bg-blue-600 hover:text-white transition text-sm text-center block">Baca Selengkapnya</a>
+
+                    {{-- FIXED LINK: Pakai slug dan target route detail yang bener --}}
+                    <a href="{{ route($isStudent ? 'student.berita.detail' : 'public.berita.detail', $item->slug) }}" class="w-full mt-6 bg-slate-100 py-2.5 rounded-lg font-bold text-slate-800 hover:bg-blue-600 hover:text-white transition text-sm text-center block">Baca Selengkapnya</a>
                 </div>
             </div>
             @empty

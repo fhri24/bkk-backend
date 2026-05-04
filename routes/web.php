@@ -49,9 +49,9 @@ Route::get('/', [PublicController::class, 'beranda'])->name('public.beranda');
 Route::get('/lowongan', [PublicController::class, 'lowongan'])->name('public.lowongan');
 Route::get('/lowongan/{id}', [PublicController::class, 'lowonganDetail'])->name('public.lowongan.detail');
 
-// --- BERITA ---
-Route::get('/berita', [PublicController::class, 'berita'])->name('public.berita');
-Route::get('/berita/{slug}', [PublicController::class, 'beritaDetail'])->name('public.berita.detail');
+// --- BERITA PUBLIC (FIXED: Mengarah ke AdminNewsController agar fungsi detail jalan) ---
+Route::get('/berita', [AdminNewsController::class, 'index_student'])->name('public.berita');
+Route::get('/berita/{slug}', [AdminNewsController::class, 'show'])->name('public.berita.detail');
 
 // --- ACARA ---
 Route::get('/acara-mendatang', [PublicController::class, 'acara'])->name('public.acara');
@@ -94,14 +94,9 @@ Route::middleware(['auth', 'student'])->prefix('student')->name('student.')->gro
     // --- LOWONGAN STUDENT ---
     Route::get('/daftar-lowongan', [StudentController::class, 'lowongan'])->name('lowongan');
     Route::get('/lowongan-tersimpan', [StudentController::class, 'savedJobs'])->name('saved-jobs');
-
-    // PERBAIKAN DI SINI: Sesuaikan dengan pemanggilan fetch JavaScript agar sinkron ({id}/save)
     Route::post('/lowongan/{id}/save', [StudentController::class, 'saveJob'])->name('lowongan.save');
     Route::delete('/lowongan/unsave/{id}', [StudentController::class, 'unsaveJob'])->name('lowongan.unsave');
-
     Route::post('/lowongan/{id}/apply', [StudentController::class, 'applyJob'])->name('lowongan.apply');
-
-    // Detail lowongan diletakkan paling bawah agar tidak membenturkan parameter {id} dengan route static
     Route::get('/lowongan/{id}', [StudentController::class, 'detailLowongan'])->name('lowongan.detail');
 
     // --- ACARA STUDENT ---
@@ -113,10 +108,10 @@ Route::middleware(['auth', 'student'])->prefix('student')->name('student.')->gro
     Route::get('/lamaran', [StudentController::class, 'myApplications'])->name('applications');
     Route::delete('/lamaran/{id}', [StudentController::class, 'deleteApplication'])->name('applications.delete');
 
-    // Redirects
+    // --- BERITA STUDENT (FIXED: Biar sinkron sama tombol di beranda) ---
     Route::get('/tracer', fn () => redirect()->route('public.tracer'))->name('tracer');
-    Route::get('/berita', fn () => redirect('/berita'))->name('berita');
-    Route::get('/berita/{slug}', fn ($slug) => redirect('/berita/' . $slug))->name('berita.detail');
+    Route::get('/berita', [AdminNewsController::class, 'index_student'])->name('berita');
+    Route::get('/berita/{slug}', [AdminNewsController::class, 'show'])->name('berita.detail');
 
     // Informasional
     Route::get('/bantuan', [StudentPageController::class, 'bantuan'])->name('bantuan');
@@ -170,7 +165,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // Event Registrations
     Route::prefix('event-registrations')->name('event-registrations.')->group(function () {
-        // ... (sisanya sama seperti code awal kamu)
         Route::get('/', [AdminEventRegistrationController::class, 'index'])->name('index');
         Route::put('/{id}', [AdminEventRegistrationController::class, 'update'])->name('update');
         Route::delete('/{id}', [AdminEventRegistrationController::class, 'destroy'])->name('destroy');

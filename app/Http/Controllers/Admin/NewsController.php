@@ -12,7 +12,6 @@ class NewsController extends Controller
 {
     /**
      * Tampilan List Berita di Admin Panel
-     * Mengarah ke: resources/views/admin/news/index.blade.php
      */
     public function index()
     {
@@ -22,17 +21,17 @@ class NewsController extends Controller
 
     /**
      * Tampilan List Berita di Halaman Depan (Public/Student)
-     * Mengarah ke: resources/views/public/berita.blade.php
      */
-   public function index_student()
-{
-    // Mengambil berita yang dipublikasikan dengan pagination
-    $newsItems = News::where('is_published', true)
-                ->latest()
-                ->paginate(6); // atau gunakan get() jika tidak ingin pagination
+    public function index_student()
+    {
+        // Mengambil berita yang dipublikasikan dengan pagination
+        $newsItems = News::where('is_published', true)
+                    ->latest()
+                    ->paginate(6);
 
-    return view('public.berita', compact('newsItems'));
-}
+        return view('public.berita', compact('newsItems'));
+    }
+
     /**
      * Tampilan Form Tambah Berita (Admin)
      */
@@ -51,6 +50,7 @@ class NewsController extends Controller
         ]);
 
         $data = $request->all();
+        // Generate Slug dari Title
         $data['slug'] = Str::slug($request->title);
         $data['author_id'] = auth()->id();
         $data['excerpt'] = Str::limit(strip_tags($request->content), 150);
@@ -87,6 +87,7 @@ class NewsController extends Controller
         ]);
 
         $data = $request->all();
+        // Update Slug jika judul berubah
         $data['slug'] = Str::slug($request->title);
         $data['excerpt'] = Str::limit(strip_tags($request->content), 150);
 
@@ -103,20 +104,23 @@ class NewsController extends Controller
     }
 
     /**
-     * Tampilan Detail Berita (Public)
-     * Mengarah ke: resources/views/public/berita_detail.blade.php
+     * Tampilan Detail Berita (Public/Student)
+     * Menggunakan slug untuk pencarian agar SEO Friendly dan tidak 404
      */
     public function show($slug)
     {
+        // Cari berdasarkan slug, kalau tidak ada otomatis 404
         $news = News::where('slug', $slug)->firstOrFail();
 
+        // Ambil berita lain sebagai rekomendasi
         $relatedNews = News::where('id', '!=', $news->id)
                             ->where('is_published', true)
                             ->latest()
                             ->take(2)
                             ->get();
 
-        return view('public.berita-detail', compact('news', 'relatedNews'));
+        // Mengarah ke file: resources/views/public/berita_detail.blade.php
+        return view('public.berita_detail', compact('news', 'relatedNews'));
     }
 
     public function destroy($id)
