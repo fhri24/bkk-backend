@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('position')->nullable(); // Posisi/Program Studi
             
             // Registration status
-            $table->enum('status', ['pending', 'confirmed', 'attended', 'cancelled'])->default('pending');
+            $table->enum('status', ['registered', 'confirmed', 'attended', 'cancelled'])->default('registered');
             
             // Admin notes
             $table->text('admin_notes')->nullable();

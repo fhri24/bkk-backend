@@ -9,6 +9,7 @@ use App\Models\News;
 use App\Models\Student;
 use App\Models\Company;
 use App\Models\TracerStudy;
+use App\Models\EventRegistration;
 
 class PublicController extends Controller
 {
@@ -19,7 +20,7 @@ class PublicController extends Controller
     {
         $news           = News::where('is_published', true)->latest()->take(3)->get();
         $featured_jobs = Job::with('company')->latest()->take(3)->get();
-        $featured_events = Event::where('is_published', true)->latest()->take(3)->get();
+        $featured_events = Event::with('registrations')->where('is_published', true)->latest()->take(3)->get();
 
         return view('public.beranda', compact('news', 'featured_jobs', 'featured_events'));
     }
@@ -147,7 +148,7 @@ class PublicController extends Controller
      */
     public function acaraDetail($id)
     {
-        $event = Event::where('is_published', true)->findOrFail($id);
+        $event = Event::with('registrations')->where('is_published', true)->findOrFail($id);
 
         $relatedEvents = Event::where('is_published', true)
                               ->where('id', '!=', $id)
@@ -156,6 +157,50 @@ class PublicController extends Controller
                               ->get();
 
         return view('public.acara-detail', compact('event', 'relatedEvents'));
+    }
+
+    /**
+     * Simpan Registrasi Acara
+     */
+    public function storeEventRegistration(Request $request, $id)
+    {
+        $event = Event::where('is_published', true)->findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'required|string|max:20',
+            'institution' => 'nullable|string|max:255',
+            'position' => 'nullable|string|max:255',
+        ]);
+
+        // Cek apakah sudah terdaftar dengan email yang sama
+        $existingRegistration = EventRegistration::where('event_id', $id)
+                                                  ->where('email', $validated['email'])
+                                                  ->first();
+
+        if ($existingRegistration) {
+            return back()->with('error', 'Email ini sudah terdaftar untuk acara ini!');
+        }
+
+        // Cek kuota
+        $registeredCount = EventRegistration::where('event_id', $id)->count();
+        if ($event->capacity && $registeredCount >= $event->capacity) {
+            return back()->with('error', 'Maaf, kuota pendaftaran sudah penuh!');
+        }
+
+        EventRegistration::create([
+            'event_id' => $id,
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'phone' => $validated['phone'],
+            'institution' => $validated['institution'] ?? null,
+            'position' => $validated['position'] ?? null,
+            'status' => 'registered',
+            'registered_at' => now(),
+        ]);
+
+        return back()->with('registration_success', 'Terima kasih! Pendaftaran acara Anda telah berhasil disimpan. Kami akan mengirimkan informasi lebih lanjut ke email Anda.');
     }
 
     /**

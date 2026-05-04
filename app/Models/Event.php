@@ -31,4 +31,20 @@ class Event extends Model
         'is_published' => 'boolean',
         'capacity' => 'integer',
     ];
+
+    /**
+     * Relationship: Event memiliki banyak registrations
+     */
+    public function registrations()
+    {
+        return $this->hasMany(EventRegistration::class, 'event_id', 'id');
+    }
+
+    /**
+     * Accessor: Hitung jumlah registrasi
+     */
+    public function getRegistrationCountAttribute()
+    {
+        return $this->registrations()->count();
+    }
 }

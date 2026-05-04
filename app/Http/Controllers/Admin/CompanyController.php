@@ -49,6 +49,13 @@ class CompanyController extends Controller
 
         $company = Company::create(array_merge($validated, ['is_verified' => false]));
 
+        $action = $request->input('action', 'save_and_create');
+
+        if ($action === 'save') {
+            return redirect()->route('admin.companies.index')
+                ->with('success', 'Perusahaan berhasil ditambahkan!');
+        }
+
         return redirect()->route('admin.jobs.create', ['company_id' => $company->company_id])
             ->with('success', 'Perusahaan berhasil ditambahkan. Sekarang lanjut tambah lowongan untuk perusahaan ini.');
     }
