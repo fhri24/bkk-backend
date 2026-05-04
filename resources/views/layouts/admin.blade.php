@@ -235,12 +235,12 @@
                 </a>
                 @endif
 
-                <a href="{{ route('admin.events.index') }}" class="flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-gray-700 rounded-lg {{ request()->routeIs('admin.events.*') ? 'bg-gray-700' : '' }}">
-    <i class="fas fa-calendar-alt w-5 text-center"></i>
-    <span class="mx-4 font-medium">Manajemen Acara</span>
-</a>
+                <a href="{{ route('admin.events.index') }}" class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->routeIs('admin.events.*') ? 'active' : '' }}">
+                    <i class="fas fa-calendar-alt w-5 text-center"></i>
+                    <span class="mx-4 font-medium">Manajemen Acara</span>
+                </a>
 
-<a href="{{ route('admin.event-registrations.index') }}" class="flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-gray-700 rounded-lg {{ request()->routeIs('admin.event-registrations.*') ? 'bg-gray-700' : '' }}">
+                <a href="{{ route('admin.event-registrations.index') }}" class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->routeIs('admin.event-registrations.*') ? 'active' : '' }}">
     <i class="fas fa-users w-5 text-center"></i>
     <span class="mx-4 font-medium">Peserta Acara</span>
 </a>

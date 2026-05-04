@@ -184,7 +184,7 @@
                     <div class="flex items-center"><i class="fas fa-calendar-alt w-5 text-slate-400"></i> {{ \Carbon\Carbon::parse($event->start_date)->format('d M Y') }}</div>
                     <div class="flex items-center"><i class="fas fa-users w-5 text-slate-400"></i> {{ $event->capacity }} Peserta</div>
                 </div>
-                <a href="{{ route($isStudent ? 'student.acara.detail' : 'public.acara', $event->id) }}" class="w-full bg-slate-100 py-3 rounded-xl font-bold text-slate-800 hover:bg-blue-600 hover:text-white transition text-center block">Daftar Peserta</a>
+                <a href="{{ route($isStudent ? 'student.acara.detail' : 'public.acara.detail', $event->id) }}" class="w-full bg-slate-100 py-3 rounded-xl font-bold text-slate-800 hover:bg-blue-600 hover:text-white transition text-center block">Detail Acara</a>
             </div>
             @empty
             <div class="col-span-full text-center py-12"><p class="text-slate-600">Belum ada acara unggulan</p></div>
