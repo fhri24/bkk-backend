@@ -161,6 +161,7 @@
         <div class="space-y-1">
           <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-2">⚧ Jenis Kelamin <span class="text-red-500">*</span></label>
           <div class="grid grid-cols-2 gap-3">
+
             <label class="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 has-[:checked]:ring-2 has-[:checked]:ring-blue-100">
               <input type="radio" name="jenis_kelamin" value="L" class="accent-blue-600" {{ old('jenis_kelamin') == 'L' ? 'checked' : '' }} required />
               <span class="text-sm font-semibold text-slate-700">Laki-laki</span>

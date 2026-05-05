@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::table('job_applications', function (Blueprint $table) {
 <<<<<<< HEAD
+<<<<<<< HEAD
             if (!Schema::hasColumn('job_applications', 'full_name')) {
                 $table->string('full_name')->nullable()->after('additional_file');
             }
@@ -20,10 +21,15 @@ return new class extends Migration
                 $table->string('phone_number')->nullable()->after('email');
             }
 =======
+=======
+>>>>>>> 91f523ad5fbadeb80d7a2fe7f7dc3ea89ff5884c
             // Kita bungkus pake check biar ga error duplicate lagi
             if (!Schema::hasColumn('job_applications', 'full_name')) {
                 $table->string('full_name')->nullable()->after('additional_file');
             }
+<<<<<<< HEAD
+>>>>>>> 91f523ad5fbadeb80d7a2fe7f7dc3ea89ff5884c
+=======
 >>>>>>> 91f523ad5fbadeb80d7a2fe7f7dc3ea89ff5884c
         });
     }
