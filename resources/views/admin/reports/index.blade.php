@@ -53,7 +53,6 @@
                 <p class="text-sm text-slate-500">Persentase keterserapan alumni di dunia kerja.</p>
             </div>
             <div class="flex gap-2">
-                {{-- Gunakan route print alumni untuk laporan BMW --}}
                 <a href="{{ route('admin.reports.export.alumni.print') }}" target="_blank" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 text-sm font-medium transition">
                     <i class="fas fa-file-pdf mr-2"></i> Cetak Laporan BMW
                 </a>
@@ -81,12 +80,6 @@
             <div>
                 <h3 class="text-lg font-bold text-slate-800">Rekapitulasi Lamaran Bulanan</h3>
                 <p class="text-sm text-slate-500">Monitoring aktivitas pelamaran siswa per periode.</p>
-            </div>
-            <div class="flex gap-2">
-                {{-- Tombol Cetak PDF yang mengarah ke laporan khusus lamaran --}}
-                <a href="{{ route('admin.reports.export.jobs.print') }}" target="_blank" class="bg-slate-800 text-white px-4 py-2 rounded-lg hover:bg-black text-sm font-medium transition">
-                    <i class="fas fa-print mr-2"></i> Cetap Rekap PDF
-                </a>
             </div>
         </div>
         <div class="overflow-x-auto">

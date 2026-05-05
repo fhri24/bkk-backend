@@ -10,23 +10,23 @@ use Illuminate\Support\Facades\Auth;
 class JobApplicationController extends Controller
 {
     /**
-     * Menampilkan daftar lamaran (Admin/Kepala BKK lihat semua, Student lihat punya dia)
+     * Menampilkan daftar lamaran
      */
     public function index(Request $request)
     {
         $user = Auth::user();
-        
+
         // Filter berdasarkan role
         if ($user->role->name === 'student') {
-            // Siswa hanya bisa lihat lamaran mereka sendiri
+            // Siswa lihat lamaran sendiri + data lowongan & jurusannya
             $student = $user->userable;
             $applications = JobApplication::where('student_id', $student->student_id)
-                ->with(['student', 'job'])
+                ->with(['student', 'job.major', 'job.company']) // Ditambah job.major
                 ->latest('application_date')
                 ->get();
         } else {
-            // Admin/Kepala BKK bisa lihat semua lamaran
-            $applications = JobApplication::with(['student', 'job.company'])
+            // Admin lihat semua + data lowongan & jurusannya
+            $applications = JobApplication::with(['student.major', 'job.major', 'job.company'])
                 ->latest('application_date')
                 ->get();
         }
@@ -38,15 +38,15 @@ class JobApplicationController extends Controller
     }
 
     /**
-     * Menampilkan detail satu lamaran (GET /applications/{id})
+     * Menampilkan detail satu lamaran
      */
     public function show($id)
     {
         try {
-            $application = JobApplication::with(['student', 'job.company'])
+            // Load relasi major di dalam job
+            $application = JobApplication::with(['student.major', 'job.major', 'job.company'])
                 ->findOrFail($id);
 
-            // Cek otorisasi: hanya pemilik lamaran atau admin/kepala bkk
             $user = Auth::user();
             if ($user->role->name === 'student') {
                 $student = $user->userable;
@@ -70,26 +70,25 @@ class JobApplicationController extends Controller
     }
 
     /**
-     * Siswa melamar ke sebuah lowongan (POST /applications)
+     * Siswa melamar ke sebuah lowongan
      */
     public function store(Request $request)
     {
-        // 1. Validasi input
         $request->validate([
             'job_id' => 'required|exists:job_listings,job_id',
             'cover_letter' => 'nullable|string|max:1000',
             'additional_file' => 'nullable|string|max:255',
         ]);
 
-        // 2. Ambil data siswa yang sedang login
         $user = Auth::user();
         $student = $user->userable;
 
-        if (!$student || get_class($student) !== 'App\Models\Student') {
+        // Cek apakah user benar-benar student
+        if (!$student || !($student instanceof \App\Models\Student)) {
             return response()->json(['message' => 'Hanya siswa yang bisa melamar.'], 403);
         }
 
-        // 3. CEK: Sudah pernah apply ke job yang sama belum?
+        // Cek duplikasi lamaran
         $alreadyApplied = JobApplication::where('student_id', $student->student_id)
             ->where('job_id', $request->job_id)
             ->exists();
@@ -100,7 +99,7 @@ class JobApplicationController extends Controller
             ], 400);
         }
 
-        // 4. Simpan lamaran baru
+        // Simpan lamaran
         $application = JobApplication::create([
             'job_id' => $request->job_id,
             'student_id' => $student->student_id,
@@ -110,6 +109,9 @@ class JobApplicationController extends Controller
             'status' => 'pending',
         ]);
 
+        // Load data lengkap untuk respon
+        $application->load(['job.major', 'job.company']);
+
         return response()->json([
             'message' => 'Lamaran berhasil dikirim!',
             'data' => $application
@@ -117,7 +119,7 @@ class JobApplicationController extends Controller
     }
 
     /**
-     * Update lamaran (Admin/Kepala BKK ubah status, Student edit lampiran)
+     * Update lamaran (Status oleh Admin, File oleh Student)
      */
     public function update(Request $request, $id)
     {
@@ -126,12 +128,9 @@ class JobApplicationController extends Controller
             $user = Auth::user();
 
             if ($user->role->name === 'student') {
-                // Siswa hanya bisa edit lamaran mereka sendiri dan hanya field tertentu
                 $student = $user->userable;
                 if ($application->student_id !== $student->student_id) {
-                    return response()->json([
-                        'message' => 'Anda tidak berhak mengedit lamaran ini'
-                    ], 403);
+                    return response()->json(['message' => 'Akses ditolak'], 403);
                 }
 
                 $request->validate([
@@ -139,13 +138,10 @@ class JobApplicationController extends Controller
                     'additional_file' => 'nullable|string|max:255',
                 ]);
 
-                $application->update([
-                    'cover_letter' => $request->cover_letter ?? $application->cover_letter,
-                    'additional_file' => $request->additional_file ?? $application->additional_file,
-                ]);
+                $application->update($request->only(['cover_letter', 'additional_file']));
 
             } else {
-                // Admin/Kepala BKK bisa ubah status dan catatan
+                // Admin/Kepala BKK update status
                 $request->validate([
                     'status' => 'required|in:pending,review,accepted,rejected',
                     'admin_notes' => 'nullable|string|max:1000',
@@ -159,18 +155,16 @@ class JobApplicationController extends Controller
 
             return response()->json([
                 'message' => 'Lamaran berhasil diperbarui',
-                'data' => $application
+                'data' => $application->load(['job.major', 'job.company'])
             ], 200);
 
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'message' => 'Lamaran tidak ditemukan'
-            ], 404);
+            return response()->json(['message' => 'Lamaran tidak ditemukan'], 404);
         }
     }
 
     /**
-     * Hapus lamaran (Admin/Kepala BKK atau Student pemilik lamaran)
+     * Hapus lamaran
      */
     public function destroy($id)
     {
@@ -178,26 +172,18 @@ class JobApplicationController extends Controller
             $application = JobApplication::findOrFail($id);
             $user = Auth::user();
 
-            // Cek otorisasi: hanya pemilik atau admin/kepala bkk
             if ($user->role->name === 'student') {
                 $student = $user->userable;
                 if ($application->student_id !== $student->student_id) {
-                    return response()->json([
-                        'message' => 'Anda tidak berhak menghapus lamaran ini'
-                    ], 403);
+                    return response()->json(['message' => 'Akses ditolak'], 403);
                 }
             }
 
             $application->delete();
-
-            return response()->json([
-                'message' => 'Lamaran berhasil dihapus'
-            ], 200);
+            return response()->json(['message' => 'Lamaran berhasil dihapus'], 200);
 
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'message' => 'Lamaran tidak ditemukan'
-            ], 404);
+            return response()->json(['message' => 'Lamaran tidak ditemukan'], 404);
         }
     }
 }

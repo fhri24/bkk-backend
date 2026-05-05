@@ -30,8 +30,10 @@ class PublicController extends Controller
      */
     public function lowongan(Request $request)
     {
-        $query = Job::with('company')->latest();
+        // 1. Ambil query utama job dengan relasi company dan major (biar ga berat panggil database-nya)
+        $query = Job::with(['company', 'major'])->latest();
 
+        // 2. Filter Pencarian Teks
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -42,14 +44,17 @@ class PublicController extends Controller
             });
         }
 
+        // 3. Eksekusi ambil data lowongan
         $jobs = $query->get();
 
-        return view('public.lowongan', compact('jobs'));
+        // 4. INI YANG PENTING: Ambil data jurusan dari Model Major untuk Sidebar Filter
+        // Pastikan lu punya Model Major. Kalau namanya beda, sesuaikan.
+        $majors = \App\Models\Major::all();
+
+        // 5. Kirim $jobs DAN $majors ke view
+        return view('public.lowongan', compact('jobs', 'majors'));
     }
 
-    /**
-     * Halaman Detail Lowongan (Publik)
-     */
     public function lowonganDetail($id)
     {
         $job = Job::with('company')->findOrFail($id);
@@ -102,7 +107,7 @@ class PublicController extends Controller
     public function companyDetail($id)
     {
         $company = Company::findOrFail($id);
-        
+
         // Lowongan aktif dari perusahaan tersebut
         $activeJobs = Job::where('company_id', $id)->latest()->get();
 
