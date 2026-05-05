@@ -23,7 +23,7 @@
   
   <div class="bg-white/95 backdrop-blur w-full max-w-4xl rounded-3xl md:rounded-[40px] shadow-2xl overflow-hidden flex flex-col md:flex-row border border-white/40">
 
-    <!-- Left Side - Branding -->
+    <!-- Left Side -->
     <div class="md:w-1/2 bg-[#001f3f] p-12 text-white flex flex-col justify-between relative overflow-hidden">
       <div class="absolute top-0 right-0 w-64 h-64 bg-blue-500/20 rounded-full -mr-20 -mt-20 blur-3xl"></div>
       <div>
@@ -69,7 +69,6 @@
         </div>
       @endif
 
-      <!-- ===== STEP 1: PILIH ROLE ===== -->
       <div id="step-role">
         <p class="text-xs font-extrabold text-slate-500 uppercase tracking-widest mb-4">Daftar Sebagai</p>
         <div class="grid grid-cols-2 gap-4 mb-6">
@@ -78,15 +77,12 @@
               <i class="fas fa-user-graduate text-2xl text-blue-600"></i>
             </div>
             <p class="font-extrabold text-slate-700 text-sm">Alumni</p>
-            <p class="text-xs text-slate-400 mt-1">Lulusan SMKN 1 Garut</p>
           </div>
-
           <div class="role-card border-2 border-slate-200 rounded-2xl p-5 text-center {{ old('role') == 'publik' ? 'active' : '' }}" onclick="selectRole('publik')">
             <div class="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
               <i class="fas fa-users text-2xl text-green-600"></i>
             </div>
             <p class="font-extrabold text-slate-700 text-sm">Publik</p>
-            <p class="text-xs text-slate-400 mt-1">Pencari kerja umum</p>
           </div>
         </div>
       </div>
@@ -95,56 +91,53 @@
         @csrf
         <input type="hidden" name="role" id="input_role" value="{{ old('role', '') }}" />
 
-        <!-- Username & Nama -->
+        <!-- User Info -->
         <div class="space-y-4">
             <div class="space-y-1">
               <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-2">👤 Username <span class="text-red-500">*</span></label>
-              <input type="text" name="name" placeholder="Username untuk login" value="{{ old('name') }}"
-                class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100" required />
+              <input type="text" name="name" placeholder="Username login" value="{{ old('name') }}"
+                class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:bg-white" required />
             </div>
 
             <div class="space-y-1">
               <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-2">📝 Nama Lengkap <span class="text-red-500">*</span></label>
               <input type="text" name="nama_lengkap" placeholder="Sesuai Ijazah" value="{{ old('nama_lengkap') }}"
-                class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100" required />
+                class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:bg-white" required />
             </div>
         </div>
 
-        <!-- NISN & Kelamin -->
         <div class="grid grid-cols-2 gap-3">
             <div class="space-y-1">
                 <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-2">🎓 NISN/NIK <span class="text-red-500">*</span></label>
                 <input type="text" name="nisn" placeholder="Nomor Identitas" value="{{ old('nisn') }}"
-                  class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100" required />
+                  class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" required />
             </div>
             <div class="space-y-1">
                 <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-2">⚧ Kelamin <span class="text-red-500">*</span></label>
-                <select name="jenis_kelamin" class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100" required>
+                <select name="jenis_kelamin" class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" required>
                     <option value="L" {{ old('jenis_kelamin') == 'L' ? 'selected' : '' }}>Laki-laki</option>
                     <option value="P" {{ old('jenis_kelamin') == 'P' ? 'selected' : '' }}>Perempuan</option>
                 </select>
             </div>
         </div>
 
-        <!-- TTL -->
         <div class="grid grid-cols-2 gap-3">
           <div class="space-y-1">
             <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-2">📍 Tempat Lahir</label>
             <input type="text" name="tempat_lahir" placeholder="Kota" value="{{ old('tempat_lahir') }}"
-              class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100" required />
+              class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" required />
           </div>
           <div class="space-y-1">
             <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-2">📅 Tgl Lahir</label>
             <input type="date" name="tanggal_lahir" value="{{ old('tanggal_lahir') }}"
-              class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100" required />
+              class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" required />
           </div>
         </div>
 
-        <!-- Tahun Lulus & Jurusan (Dynamic) -->
         <div class="grid grid-cols-2 gap-3">
           <div class="space-y-1">
             <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-2">🏫 Tahun Lulus</label>
-            <select name="tahun_lulus" class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100" required>
+            <select name="tahun_lulus" class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" required>
               @foreach($years as $year)
                 <option value="{{ $year->year }}" {{ old('tahun_lulus') == $year->year ? 'selected' : '' }}>{{ $year->year }}</option>
               @endforeach
@@ -152,7 +145,7 @@
           </div>
           <div id="field_jurusan" class="space-y-1" style="display: {{ old('role') == 'alumni' ? 'block' : 'none' }};">
             <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-2">📚 Jurusan <span class="text-red-500">*</span></label>
-            <select name="jurusan" id="input_jurusan" class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100">
+            <select name="jurusan" id="input_jurusan" class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600">
               <option value="">Pilih Jurusan</option>
               @foreach($majors as $major)
                 <option value="{{ $major->name }}" {{ old('jurusan') == $major->name ? 'selected' : '' }}>{{ $major->name }}</option>
@@ -161,30 +154,39 @@
           </div>
         </div>
 
-        <!-- Contact Info -->
-        <div class="space-y-1">
-            <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-2">📧 Email <span class="text-red-500">*</span></label>
-            <input type="email" name="email" placeholder="anda@gmail.com" value="{{ old('email') }}"
-              class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100" required />
-        </div>
+        <!-- Contact & Alamat -->
+        <div class="space-y-4">
+            <div class="space-y-1">
+                <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-2">📧 Email <span class="text-red-500">*</span></label>
+                <input type="email" name="email" placeholder="anda@gmail.com" value="{{ old('email') }}"
+                  class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" required />
+            </div>
 
-        <div class="space-y-1">
-            <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-2">📱 No. WhatsApp <span class="text-red-500">*</span></label>
-            <div class="relative">
-              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-bold">+62</span>
-              <input type="tel" name="phone" id="phoneInput" placeholder="812xxxxxxxx" 
-                value="{{ old('phone') }}" oninput="formatPhone(this)"
-                class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl pl-14 pr-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100" required />
+            <div class="space-y-1">
+                <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-2">📱 No. WhatsApp <span class="text-red-500">*</span></label>
+                <div class="relative">
+                  <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-bold">+62</span>
+                  <!-- Diganti dari phone menjadi no_hp -->
+                  <input type="tel" name="no_hp" id="phoneInput" placeholder="812xxxxxxxx" 
+                    value="{{ old('no_hp') }}" oninput="formatPhone(this)"
+                    class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl pl-14 pr-4 py-3 text-sm focus:outline-none focus:border-blue-600" required />
+                </div>
+            </div>
+
+            <div class="space-y-1">
+                <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-2">🏠 Alamat Lengkap <span class="text-red-500">*</span></label>
+                <textarea name="alamat" placeholder="Jl. Nama Jalan, Desa, Kecamatan" rows="2"
+                    class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" required>{{ old('alamat') }}</textarea>
             </div>
         </div>
 
-        <!-- Passwords -->
+        <!-- Security -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div class="space-y-1">
             <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-2">🔐 Sandi</label>
             <div class="relative">
-                <input type="password" name="password" id="regPassword" placeholder="Min 8 Karakter"
-                  class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:bg-white" required />
+                <input type="password" name="password" id="regPassword" placeholder="Min 6 Karakter"
+                  class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" required />
                 <button type="button" onclick="toggleRegPwd('regPassword','eye1')" class="absolute right-3 top-3 text-slate-400"><i id="eye1" class="fas fa-eye"></i></button>
             </div>
           </div>
@@ -192,28 +194,24 @@
             <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-2">✔️ Konfirmasi</label>
             <div class="relative">
                 <input type="password" name="password_confirmation" id="regPasswordConf" placeholder="Ulangi Sandi"
-                  class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:bg-white" required />
+                  class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" required />
                 <button type="button" onclick="toggleRegPwd('regPasswordConf','eye2')" class="absolute right-3 top-3 text-slate-400"><i id="eye2" class="fas fa-eye"></i></button>
             </div>
           </div>
         </div>
         <p id="pwdMatchHint" class="text-xs mt-1 hidden"></p>
 
+        <!-- Foto Profile -->
+        <div class="space-y-1">
+            <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-2">📸 Foto Profil (Opsional)</label>
+            <input type="file" name="foto_profile" class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" accept="image/*" />
+        </div>
+
         <button type="submit" id="btn-submit" 
           class="btn-submit w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 rounded-xl font-extrabold shadow-xl hover:shadow-2xl transition transform active:scale-95 mt-4 disabled:opacity-50"
           {{ old('role') ? '' : 'disabled' }}>
           <i class="fas fa-user-plus mr-2"></i>DAFTAR SEKARANG
         </button>
-
-        <div class="text-center text-slate-400 text-xs py-2">Atau daftar dengan</div>
-        <div class="grid grid-cols-2 gap-4">
-          <a href="{{ route('auth.google') }}" class="flex items-center justify-center border border-slate-200 py-3 rounded-xl hover:bg-red-50 transition font-semibold text-sm text-slate-600">
-            <i class="fab fa-google mr-2 text-red-500"></i> Google
-          </a>
-          <a href="{{ route('auth.facebook') }}" class="flex items-center justify-center border border-slate-200 py-3 rounded-xl hover:bg-blue-50 transition font-semibold text-sm text-slate-600">
-            <i class="fab fa-facebook-f mr-2 text-blue-600"></i> Facebook
-          </a>
-        </div>
       </form>
 
       <p class="text-center text-slate-500 text-sm mt-6">

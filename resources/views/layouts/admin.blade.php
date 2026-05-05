@@ -327,14 +327,17 @@
         </nav>
 
         <div class="p-4 border-t border-white/10">
-            <button class="w-full flex items-center px-3 py-2.5 rounded-lg text-white/80 hover:text-white text-left text-sm" onclick="document.getElementById('logoutForm').submit();">
-                <i class="fas fa-sign-out-alt"></i>
-                <span class="ml-3">Logout</span>
-            </button>
-            <form id="logoutForm" action="{{ route('logout') }}" method="POST" style="display:none;">
-                @csrf
-            </form>
-        </div>
+    <a href="{{ route('logout') }}"
+       class="w-full flex items-center px-3 py-2.5 rounded-lg text-white/80 hover:text-white text-left text-sm"
+       onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+        <i class="fas fa-sign-out-alt"></i>
+        <span class="ml-3">Logout</span>
+    </a>
+
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:none;">
+        @csrf
+    </form>
+</div>
     </aside>
 
     <div class="flex-1 flex flex-col overflow-hidden">

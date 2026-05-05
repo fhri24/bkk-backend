@@ -91,6 +91,7 @@ Route::middleware('guest')->group(function () {
         Route::post('/reset', [OtpController::class, 'resetPassword'])->name('password.reset.update');
     });
 
+    // SOCIAL LOGIN ROUTES
     Route::get('/auth/google', [SocialAuthController::class, 'redirectToGoogle'])->name('auth.google');
     Route::get('/auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
 
@@ -166,8 +167,9 @@ Route::middleware(['auth', 'role:siswa'])->prefix('student')->name('student.')->
     Route::get('/lowongan-tersimpan', [StudentController::class, 'savedJobs'])->name('saved-jobs');
     Route::post('/lowongan/save/{id}', [StudentController::class, 'saveJob'])->name('lowongan.save');
     Route::delete('/lowongan/unsave/{id}', [StudentController::class, 'unsaveJob'])->name('lowongan.unsave');
-    Route::post('/lowongan/apply/{id}', [\App\Http\Controllers\Api\JobApplicationController::class, 'store'])->name('lowongan.apply');
-    // Note: detailLowongan diarahkan ke controller detail yang konsisten
+    
+    // Perbaikan: Pastikan JobApplicationController API atau Web dipanggil dengan benar
+    Route::post('/lowongan/apply/{id}', [StudentController::class, 'applyJob'])->name('lowongan.apply');
     Route::get('/lowongan/{id}', [StudentController::class, 'detailLowongan'])->name('lowongan.detail');
 
     Route::get('/acara', [StudentController::class, 'acara'])->name('acara');
@@ -292,4 +294,4 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
             'link'  => route('admin.users.index'),
         ]));
     })->name('notifications');
-});
+}); 

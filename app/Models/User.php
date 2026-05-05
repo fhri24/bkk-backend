@@ -30,9 +30,9 @@ class User extends Authenticatable
         'gender',
         'graduation_year',
         'phone',
-        'social_id',
-        'social_provider',
-        'avatar',
+        'social_id',       // Sudah masuk
+        'social_provider', // Sudah masuk
+        'avatar',          // Sudah masuk
         'email_verified_at',
     ];
 
@@ -128,8 +128,14 @@ class User extends Authenticatable
         $adminRoles = ['admin_bkk', 'kepala_bkk', 'perusahaan'];
 
         if (in_array($this->role->name, $adminRoles)) {
-            if (isset($this->role->permissions) && is_array($this->role->permissions)) {
-                return in_array($permission, $this->role->permissions);
+            // Cek jika permissions dalam bentuk array atau json
+            $perms = $this->role->permissions;
+            if (is_string($perms)) {
+                $perms = json_decode($perms, true);
+            }
+            
+            if (is_array($perms)) {
+                return in_array($permission, $perms);
             }
             return true;
         }

@@ -7,7 +7,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Laravel\Socialite\Facades\Socialite;
+use Laravel\Socialite\Facades\Socialite; // Pastikan ini ada
+use Exception;
 
 class SocialAuthController extends Controller
 {
@@ -26,11 +27,10 @@ class SocialAuthController extends Controller
     {
         try {
             $socialUser = Socialite::driver('google')->user();
-        } catch (\Exception $e) {
-            return redirect()->route('login')->with('error', 'Login dengan Google gagal. Coba lagi.');
+            return $this->loginOrRegisterUser($socialUser, 'google');
+        } catch (Exception $e) {
+            return redirect()->route('login')->with('error', 'Login dengan Google gagal: ' . $e->getMessage());
         }
-
-        return $this->loginOrRegisterUser($socialUser, 'google');
     }
 
     /**
@@ -48,11 +48,10 @@ class SocialAuthController extends Controller
     {
         try {
             $socialUser = Socialite::driver('facebook')->user();
-        } catch (\Exception $e) {
-            return redirect()->route('login')->with('error', 'Login dengan Facebook gagal. Coba lagi.');
+            return $this->loginOrRegisterUser($socialUser, 'facebook');
+        } catch (Exception $e) {
+            return redirect()->route('login')->with('error', 'Login dengan Facebook gagal: ' . $e->getMessage());
         }
-
-        return $this->loginOrRegisterUser($socialUser, 'facebook');
     }
 
     /**
@@ -60,43 +59,52 @@ class SocialAuthController extends Controller
      */
     private function loginOrRegisterUser($socialUser, string $provider)
     {
-        // Cek apakah user sudah ada berdasarkan social_id + provider
+        // Validasi jika email tidak ditemukan dari provider
+        if (!$socialUser->getEmail()) {
+            return redirect()->route('login')->with('error', 'Email tidak ditemukan dari akun ' . ucfirst($provider));
+        }
+
+        // 1. Cek apakah user sudah pernah login pakai provider ini sebelumnya
         $user = User::where('social_provider', $provider)
                     ->where('social_id', $socialUser->getId())
                     ->first();
 
         if (!$user) {
-            // Coba cari user berdasarkan email (mungkin sudah daftar manual)
+            // 2. Cek apakah email sudah terdaftar di sistem (mungkin daftar manual)
             $user = User::where('email', $socialUser->getEmail())->first();
 
             if ($user) {
-                // Update social info ke akun yang sudah ada
+                // Update info social ke akun yang sudah ada
                 $user->update([
                     'social_id'       => $socialUser->getId(),
                     'social_provider' => $provider,
                     'avatar'          => $socialUser->getAvatar(),
                 ]);
             } else {
-                // Buat akun baru
+                // 3. Jika benar-benar belum ada, buat user baru
                 $user = User::create([
-                    'name'            => $socialUser->getName(),
-                    'email'           => $socialUser->getEmail(),
-                    'password'        => Hash::make(Str::random(24)), // password random, user login via social
-                    'social_id'       => $socialUser->getId(),
-                    'social_provider' => $provider,
-                    'avatar'          => $socialUser->getAvatar(),
-                    'email_verified_at' => now(), // anggap sudah terverifikasi via social
+                    'name'              => $socialUser->getName() ?? $socialUser->getNickname(),
+                    'email'             => $socialUser->getEmail(),
+                    'password'          => Hash::make(Str::random(24)),
+                    'social_id'         => $socialUser->getId(),
+                    'social_provider'   => $provider,
+                    'avatar'            => $socialUser->getAvatar(),
+                    'email_verified_at' => now(),
                 ]);
             }
         }
 
-        Auth::login($user, true); // remember = true
+        // Login user
+        Auth::login($user, true);
 
-        // Redirect berdasarkan role
-        if ($user->hasRole('admin')) {
+        // Redirect berdasarkan role (Pastikan method hasRole tersedia di model User)
+        // Jika kamu menggunakan Spatie Permission, gunakan hasRole. 
+        // Jika pakai kolom manual, sesuaikan logikanya.
+        if (method_exists($user, 'hasRole') && $user->hasRole('admin')) {
             return redirect()->intended(route('admin.dashboard'));
         }
 
-        return redirect()->intended(route('student.dashboard'));
+        // Default redirect ke student dashboard
+        return redirect()->intended(route('student.home'));
     }
 }

@@ -172,16 +172,14 @@ class AuthController extends Controller
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $request->session()->regenerate();
-
-            // Cek apakah akun aktif
+ 
             if (!Auth::user()->is_active) {
                 Auth::logout();
                 return back()->withErrors([
                     'email' => 'Akun Anda telah dinonaktifkan. Hubungi admin.',
                 ])->onlyInput('email');
             }
-
-            // Catat activity log
+ 
             ActivityLog::create([
                 'user_id'    => Auth::id(),
                 'action'     => 'Login berhasil',
@@ -196,8 +194,7 @@ class AuthController extends Controller
             'email' => 'Email atau password salah!',
         ])->onlyInput('email');
     }
-
-    // ===== REDIRECT SESUAI ROLE =====
+ 
     private function redirectUserByRole($user)
     {
         $roleName = $user->role->name ?? '';
@@ -223,21 +220,21 @@ class AuthController extends Controller
     }
 
     public function logout(Request $request)
-    {
-        if (Auth::check()) {
-            ActivityLog::create([
-                'user_id'    => Auth::id(),
-                'action'     => 'Logout',
-                'ip_address' => $request->ip(),
-                'user_agent' => $request->userAgent(),
-            ]);
+{
+    if (Auth::check()) {
+        ActivityLog::create([
+            'user_id'    => Auth::id(),
+            'action'     => 'Logout',
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
 
-            Auth::logout();
-        }
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return redirect('/');
+        Auth::logout();
     }
+
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    return redirect('/');
+}
 }
