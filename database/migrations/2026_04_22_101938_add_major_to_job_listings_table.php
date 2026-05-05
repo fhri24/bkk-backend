@@ -12,8 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('job_listings', function (Blueprint $table) {
-            // Tambahkan kolom 'major' setelah kolom 'title'
-            $table->string('major')->nullable()->after('title');
+            // Kita pakai foreignId supaya nembak ke ID di tabel majors
+            // constrained('majors') artinya dia wajib ada di tabel majors
+            $table->foreignId('major_id')
+                  ->nullable()
+                  ->after('company_id') // Gue simpen setelah company_id biar rapi
+                  ->constrained('majors')
+                  ->onDelete('set null'); // Kalau jurusannya dihapus, lowongannya jangan ikutan ilang, set null aja
         });
     }
 
@@ -23,7 +28,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('job_listings', function (Blueprint $table) {
-            $table->dropColumn('major');
+            // Hapus foreign key dulu baru hapus kolomnya
+            $table->dropForeign(['major_id']);
+            $table->dropColumn('major_id');
         });
     }
 };

@@ -5,26 +5,33 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Support\Facades\Gate;
+
 
 class RoleMiddleware
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @param  string  $role  (Nama Gate yang ingin dicek)
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
     public function handle(Request $request, Closure $next, string $role): Response
     {
-        // Pastikan user sudah login terlebih dahulu sebelum cek Gate
-        if (!$request->user() || !Gate::allows($role)) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Akses ditolak. Anda tidak memiliki izin untuk role: ' . $role
-            ], 403);
+        // Pastikan user sudah login
+        if (!$request->user()) {
+            return redirect()->route('login');
+        }
+
+        $userRole = $request->user()->role->name ?? '';
+
+        // Support multiple role dipisah | contoh: role:alumni|publik|siswa
+        $allowedRoles = explode('|', $role);
+
+        // Tambahkan alias untuk group role
+        if (in_array('any_admin', $allowedRoles)) {
+            $allowedRoles = array_merge($allowedRoles, ['super_admin', 'admin_bkk', 'kepala_bkk', 'kepala_sekolah']);
+        }
+        if (in_array('any_user', $allowedRoles)) {
+            $allowedRoles = array_merge($allowedRoles, ['siswa', 'alumni', 'publik']);
+        }
+
+        // Cek apakah role user ada di daftar yang diizinkan
+        if (!in_array($userRole, $allowedRoles)) {
+            abort(403, 'Anda tidak memiliki akses ke halaman ini.');
         }
 
         return $next($request);

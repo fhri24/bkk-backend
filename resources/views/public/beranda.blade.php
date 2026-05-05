@@ -225,7 +225,6 @@
                     </div>
                     <p class="text-xs text-slate-500 mb-4">{{ $item->created_at->translatedFormat('d M Y') }}</p>
 
-                    {{-- FIXED LINK: Pakai slug dan target route detail yang bener --}}
                     <a href="{{ route($isStudent ? 'student.berita.detail' : 'public.berita.detail', $item->slug) }}" class="w-full mt-6 bg-slate-100 py-2.5 rounded-lg font-bold text-slate-800 hover:bg-blue-600 hover:text-white transition text-sm text-center block">Baca Selengkapnya</a>
                 </div>
             </div>
@@ -261,10 +260,8 @@
             <div class="flex flex-col sm:flex-row justify-center gap-4 items-center">
                 @auth
                     <a href="{{ route('student.home') }}" class="inline-flex items-center justify-center gap-2 bg-white text-[#1e3a8a] px-10 py-4 rounded-full font-semibold shadow-2xl hover:shadow-[0_25px_75px_rgba(15,23,42,0.18)] transition transform hover:-translate-y-0.5 active:translate-y-0">Dashboard</a>
-                    <a href="{{ route('public.tutorial') }}" class="inline-flex items-center justify-center gap-2 border border-white bg-white/10 text-white px-10 py-4 rounded-full font-semibold hover:bg-white/20 transition transform hover:-translate-y-0.5 active:translate-y-0">Panduan Pendaftaran</a>
                 @else
                     <a href="{{ route('register') }}" class="inline-flex items-center justify-center gap-2 bg-white text-[#1e3a8a] px-10 py-4 rounded-full font-semibold shadow-2xl hover:shadow-[0_25px_75px_rgba(15,23,42,0.18)] transition transform hover:-translate-y-0.5 active:translate-y-0">Daftar Sebagai Alumni</a>
-                    <a href="{{ route('public.tutorial') }}" class="inline-flex items-center justify-center gap-2 border border-white bg-white/10 text-white px-10 py-4 rounded-full font-semibold hover:bg-white/20 transition transform hover:-translate-y-0.5 active:translate-y-0">Panduan Pendaftaran</a>
                 @endauth
             </div>
         </div>

@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // DI SINI TEMPAT GABUNGINNYA:
         // Kita mendaftarkan middleware alias agar bisa dipakai di file routes
         $middleware->alias([
+            'role' => \App\Http\Middleware\RoleMiddleware::class,
             'admin' => \App\Http\Middleware\CheckAdminRole::class,
             'student' => \App\Http\Middleware\CheckStudentRole::class,
             'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,

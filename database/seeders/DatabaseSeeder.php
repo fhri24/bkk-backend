@@ -12,10 +12,8 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            // 1. Jalankan ini pertama agar Role & Permission tersedia di database
-            RolePermissionSeeder::class,
-
-            // 2. Baru jalankan seeder lainnya
+            RoleSeeder::class,
+            // RolePermissionSeeder::class, // hapus dulu sampai dikonversi
             UserSeeder::class,
             NewsSeeder::class,
             EventSeeder::class,

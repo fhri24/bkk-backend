@@ -30,23 +30,34 @@
 
         <div class="grid gap-6">
 
-            {{-- Perusahaan --}}
+            {{-- TAMBAHAN: Pilih Perusahaan --}}
             <div>
-                <label for="company_id" class="block text-sm font-medium text-slate-700">Perusahaan</label>
+                <label for="company_id" class="block text-sm font-medium text-slate-700">Pilih Perusahaan</label>
                 <select name="company_id" id="company_id" class="mt-2 block w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100" required>
                     <option value="">-- Pilih Perusahaan --</option>
-                    @forelse ($companies as $company)
-                        <option value="{{ $company->company_id }}"
-                            {{ old('company_id') == $company->company_id || $selectedCompanyId == $company->company_id ? 'selected' : '' }}>
-                            {{ $company->company_name ?? $company->name }}
+                    @foreach ($companies as $company)
+                        <option value="{{ $company->company_id }}" {{ (old('company_id') == $company->company_id || $selectedCompanyId == $company->company_id) ? 'selected' : '' }}>
+                            {{ $company->company_name }}
                         </option>
-                    @empty
-                        <option value="">Tidak ada perusahaan terdaftar</option>
-                    @endforelse
+                    @endforeach
                 </select>
-                @if ($companies->isEmpty())
-                    <p class="text-sm text-red-600 mt-2">Belum ada perusahaan terdaftar. <a href="{{ route('admin.companies.create') }}" class="text-blue-600 underline">Tambah perusahaan baru</a>.</p>
-                @endif
+                @error('company_id')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            {{-- Bidang Keahlian (Jurusan) --}}
+            <div>
+                <label for="major_id" class="block text-sm font-medium text-slate-700">Bidang Keahlian (Jurusan)</label>
+                <select name="major_id" id="major_id" class="mt-2 block w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100">
+                    <option value="">-- Semua Jurusan / Umum --</option>
+                    @foreach ($majors as $major)
+                        <option value="{{ $major->id }}" {{ old('major_id') == $major->id ? 'selected' : '' }}>
+                            {{ $major->name }}
+                        </option>
+                    @endforeach
+                </select>
+                <p class="text-xs text-slate-400 mt-1 italic">*Kosongkan jika lowongan untuk semua jurusan</p>
             </div>
 
             {{-- Judul Posisi --}}
@@ -150,8 +161,8 @@
                 </button>
                 <a href="{{ route('admin.jobs.index') }}" class="inline-flex items-center rounded-2xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">Batal</a>
             </div>
- 
+
         </div>
     </form>
 </div>
-@endsection 
+@endsection

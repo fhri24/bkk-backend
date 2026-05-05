@@ -228,6 +228,13 @@
                 </a>
                 @endif
 
+                @if(auth()->user()->hasPermission('manage_publik'))
+                <a href="{{ route('admin.publik.index') }}" class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->segment(2) === 'publik' ? 'active' : '' }}">
+                    <i class="fas fa-users"></i>
+                    <span class="ml-3">Public</span>
+                </a>
+                @endif
+
                 @if(auth()->user()->hasPermission('manage_companies'))
                 <a href="{{ route('admin.companies.index') }}" class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->segment(2) === 'companies' ? 'active' : '' }}">
                     <i class="fas fa-building"></i>
@@ -387,7 +394,7 @@
 
         <main class="flex-1 overflow-auto">
             <div class="p-6">
-                @if ($errors->any())
+                @if (isset($errors) && $errors->any())
                     <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
                         <div class="flex items-start">
                             <i class="fas fa-exclamation-circle text-red-500 mt-0.5 mr-3"></i>

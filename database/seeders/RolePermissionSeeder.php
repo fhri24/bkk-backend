@@ -3,47 +3,65 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
-use App\Models\User;
+use App\Models\Role;
 
-class RolePermissionSeeder extends Seeder
+class RoleSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Reset cache Spatie (Penting!)
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
-
-        // 2. Definisi Permission (Hak Akses)
-        $permissions = [
-            'manage-users',
-            'manage-jobs',
-            'apply-jobs',
-            'view-dashboard',
+        $roles = [
+            [
+                'name'         => 'super_admin',
+                'display_name' => 'Super Admin',
+                'description'  => 'Administrator utama sistem',
+            ],
+            [
+                'name'         => 'admin_bkk',
+                'display_name' => 'Admin BKK',
+                'description'  => 'Administrator BKK',
+            ],
+            [
+                'name'         => 'kepala_bkk',
+                'display_name' => 'Kepala BKK',
+                'description'  => 'Kepala Bursa Kerja Khusus',
+            ],
+            [
+                'name'         => 'kepala_sekolah',
+                'display_name' => 'Kepala Sekolah',
+                'description'  => 'Kepala Sekolah',
+            ],
+            [
+                'name'         => 'siswa',
+                'display_name' => 'Siswa',
+                'description'  => 'Siswa sekolah',
+            ],
+            [
+                'name'         => 'perusahaan',
+                'display_name' => 'Perusahaan',
+                'description'  => 'Perusahaan mitra',
+            ],
+            [
+                'name'         => 'alumni',
+                'display_name' => 'Alumni',
+                'description'  => 'Alumni sekolah',
+            ],
+            [
+                'name'         => 'publik',
+                'display_name' => 'Publik',
+                'description'  => 'Pengguna umum',
+            ],
         ];
 
-        foreach ($permissions as $permission) {
-            Permission::firstOrCreate(['name' => $permission]);
+        foreach ($roles as $role) {
+            Role::updateOrCreate(
+                ['name' => $role['name']],
+                [
+                    'display_name' => $role['display_name'],
+                    'description'  => $role['description'],
+                ]
+            );
         }
 
-        // 3. Buat Role dan Berikan Permission
-        
-        // Super Admin (Bisa semua)
-        $roleSuperAdmin = Role::firstOrCreate(['name' => 'super_admin']);
-        $roleSuperAdmin->givePermissionTo(Permission::all());
-
-        // Admin BKK
-        $roleAdminBkk = Role::firstOrCreate(['name' => 'admin_bkk']);
-        $roleAdminBkk->givePermissionTo(['manage-jobs', 'view-dashboard']);
-
-        // Siswa / Alumni
-        $roleSiswa = Role::firstOrCreate(['name' => 'siswa']);
-        $roleSiswa->givePermissionTo(['apply-jobs', 'view-dashboard']);
-
-        // Perusahaan
-        $rolePerusahaan = Role::firstOrCreate(['name' => 'perusahaan']);
-        $rolePerusahaan->givePermissionTo(['manage-jobs', 'view-dashboard']);
-
-        $this->command->info('Roles dan Permissions berhasil dibuat!');
+        $this->command->info('Roles berhasil dibuat!');
     }
 }

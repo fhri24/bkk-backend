@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('job_applications', function (Blueprint $table) {
-            // Cek satu per satu apakah kolom sudah ada di tabel
+            // Cek satu per satu apakah kolom sudah ada untuk menghindari error duplicate
             if (!Schema::hasColumn('job_applications', 'full_name')) {
                 $table->string('full_name')->nullable()->after('additional_file');
             }
@@ -36,4 +36,4 @@ return new class extends Migration
             $table->dropColumn(['full_name', 'email', 'phone_number']);
         });
     }
-}; 
+};

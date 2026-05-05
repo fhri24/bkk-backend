@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -10,11 +9,10 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * Atribut yang dapat diisi (Mass Assignable). 
@@ -24,15 +22,17 @@ class User extends Authenticatable
         'email',
         'password',
         'role_id',
+        'userable_id', 
+        'userable_type',
         'is_active',
         'nis',
         'major',
         'gender',
         'graduation_year',
-        'phone',           // Untuk OTP via WhatsApp
-        'social_id',       // Untuk Google/Facebook login
-        'social_provider', // 'google' | 'facebook'
-        'avatar',          // Foto profil dari social
+        'phone',
+        'social_id',
+        'social_provider',
+        'avatar',
         'email_verified_at',
     ];
 
@@ -46,7 +46,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * Penanganan Casting Atribut (Laravel 11 style).
+     * Casting
      */
     protected function casts(): array
     {
@@ -57,84 +57,83 @@ class User extends Authenticatable
         ];
     }
 
-    // ─── Relasi ───────────────────────────────────────────────────────────────
+    // ─── RELASI ─────────────────────────────────────────
 
-    /**
-     * Relasi ke Kode OTP.
-     */
     public function otpCodes(): HasMany
     {
         return $this->hasMany(OtpCode::class);
     }
 
-    /**
-     * Relasi One-to-One ke Student.
-     */
     public function student(): HasOne
     { 
         return $this->hasOne(Student::class, 'user_id', 'id');
     }
 
-    /**
-     * Relasi Many-to-One ke Role (Manual Role System).
-     */
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class, 'role_id', 'id');
     }
+    
+    public function userable()
+    {
+        return $this->morphTo();
+    }
 
-    /**
-     * Relasi One-to-Many ke SavedJob (Lowongan Tersimpan).
-     */
     public function savedJobs(): HasMany
     {
         return $this->hasMany(SavedJob::class, 'user_id', 'id');
     }
 
-    // ─── Helpers & Custom Logic ──────────────────────────────────────────────
+    // ─── ROLE HELPERS ───────────────────────────────────
 
-    /**
-     * Cek apakah user login via social (tidak punya password asli)
-     */
+    public function isSuperAdmin()    { return $this->role?->name === Role::SUPER_ADMIN; }
+    public function isAdminBkk()      { return $this->role?->name === Role::ADMIN_BKK; }
+    public function isKepalaBkk()     { return $this->role?->name === Role::KEPALA_BKK; }
+    public function isKepalaSekolah() { return $this->role?->name === Role::KEPALA_SEKOLAH; }
+    public function isSiswa()         { return $this->role?->name === Role::SISWA; }
+    public function isPerusahaan()    { return $this->role?->name === Role::PERUSAHAAN; }
+    public function isAlumni()        { return $this->role?->name === Role::ALUMNI; }
+    public function isPublik()        { return $this->role?->name === Role::PUBLIK; }
+
+    public function isAnyAdmin()
+    {
+        return in_array($this->role?->name, [
+            Role::SUPER_ADMIN,
+            Role::ADMIN_BKK,
+            Role::KEPALA_BKK,
+            Role::KEPALA_SEKOLAH,
+        ]);
+    }
+
+    // ─── LOGIC ──────────────────────────────────────────
+
     public function isSocialUser(): bool
     {
         return !is_null($this->social_provider);
     }
 
-    /**
-     * Accessor untuk Avatar: dari social jika ada, atau generate inisial.
-     * Panggil di Blade dengan: $user->avatar_url
-     */
     public function getAvatarUrlAttribute(): string
     {
         if ($this->avatar) return $this->avatar;
+
         return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=001f3f&color=fff&bold=true';
     }
 
-    /**
-     * Method hasPermission untuk mengecek hak akses di View Admin.
-     */
     public function hasPermission($permission)
     {
-        // 1. Pastikan user memiliki role
-        if (!$this->role) {
-            return false;
-        }
+        if (!$this->role) return false;
 
-        // 2. Super Admin biasanya punya akses ke semua hal
-        if ($this->role->name === 'super_admin') {
+        if ($this->role->name === 'super_admin') return true;
+
+        $adminRoles = ['admin_bkk', 'kepala_bkk', 'perusahaan'];
+
+        if (in_array($this->role->name, $adminRoles)) {
+            if (isset($this->role->permissions) && is_array($this->role->permissions)) {
+                return in_array($permission, $this->role->permissions);
+            }
             return true;
         }
 
-        // 3. Logika pengecekan permission manual
-        $adminRoles = ['admin_bkk', 'kepala_bkk', 'perusahaan'];
-        if (in_array($this->role->name, $adminRoles)) { 
-            if (isset($this->role->permissions) && is_array($this->role->permissions)) {
-                return in_array($permission, $this->role->permissions);
-            } 
-            return true; 
-        }
-
         return false;
-    } 
+    }
 }
