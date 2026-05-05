@@ -20,13 +20,15 @@ return new class extends Migration
 
         // Langsung isi daftar role agar kamu tidak perlu input manual
         DB::table('roles')->insert([
-            ['name' => 'super_admin', 'display_name' => 'Super Admin', 'created_at' => now()],
-            ['name' => 'admin_bkk', 'display_name' => 'Admin BKK', 'created_at' => now()],
-            ['name' => 'kepala_bkk', 'display_name' => 'Kepala BKK', 'created_at' => now()],
-            ['name' => 'kepala_sekolah', 'display_name' => 'Kepala Sekolah', 'created_at' => now()],
-            ['name' => 'siswa', 'display_name' => 'Siswa', 'created_at' => now()],
-            ['name' => 'perusahaan', 'display_name' => 'Perusahaan', 'created_at' => now()],
-        ]);
+    ['name' => 'super_admin',    'display_name' => 'Super Admin',    'description' => null, 'created_at' => now(), 'updated_at' => now()],
+    ['name' => 'admin_bkk',      'display_name' => 'Admin BKK',      'description' => null, 'created_at' => now(), 'updated_at' => now()],
+    ['name' => 'kepala_bkk',     'display_name' => 'Kepala BKK',     'description' => null, 'created_at' => now(), 'updated_at' => now()],
+    ['name' => 'kepala_sekolah', 'display_name' => 'Kepala Sekolah', 'description' => null, 'created_at' => now(), 'updated_at' => now()],
+    ['name' => 'siswa',          'display_name' => 'Siswa',          'description' => null, 'created_at' => now(), 'updated_at' => now()],
+    ['name' => 'perusahaan',     'display_name' => 'Perusahaan',     'description' => null, 'created_at' => now(), 'updated_at' => now()],
+    ['name' => 'alumni',         'display_name' => 'Alumni',         'description' => null, 'created_at' => now(), 'updated_at' => now()],
+    ['name' => 'publik',         'display_name' => 'Publik',         'description' => null, 'created_at' => now(), 'updated_at' => now()],
+]);
     }
 
     public function down(): void

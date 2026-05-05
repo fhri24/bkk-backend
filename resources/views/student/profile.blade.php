@@ -39,12 +39,13 @@
                         <div class="flex items-center justify-between p-3 bg-purple-50 rounded-xl">
                             <div class="text-left">
                                 <p class="text-xs text-slate-500 font-bold uppercase">Lamaran Diajukan</p>
-                                <p class="text-lg font-extrabold text-purple-600">{{ $applications->count() }}</p>
+                                <p class="text-lg font-extrabold text-purple-600">{{ is_array($applications) ? count($applications) : $applications->count() }}</p>
                             </div>
                             <i class="fas fa-paper-plane text-purple-200 text-2xl"></i>
                         </div>
 
                         {{-- TAMBAHAN: Tombol Lowongan Tersimpan --}}
+                        @if(auth()->user()->role->name === 'siswa')
                         <a href="{{ route('student.saved-jobs') }}" class="flex items-center justify-between p-4 bg-blue-50 rounded-2xl border border-blue-100 hover:bg-blue-100 transition">
                             <span class="font-bold text-blue-700 text-sm">
                                 <i class="fas fa-bookmark mr-2"></i> Lowongan Tersimpan
@@ -53,6 +54,7 @@
                                 {{ $savedCount }}
                             </span>
                         </a>
+                        @endif
 
                         <div class="text-left px-2 pt-2">
                             <p class="text-xs text-slate-500 font-bold uppercase">Akun Dibuat</p>
@@ -125,7 +127,7 @@
                     </h3>
                     
                     <div class="space-y-4">
-                        @forelse(Auth::user()->savedJobs()->with('job')->get() as $saved)
+                        @forelse(auth()->user()->savedJobs()->with('job')->get() as $saved)
                             @if($saved->job)
                                 <div class="group flex items-center justify-between p-4 hover:bg-slate-50 transition-all border-b border-slate-100 last:border-0">
                                     <div class="flex items-center space-x-4"> 
@@ -187,9 +189,9 @@
                 </div> 
 
                 <div class="flex justify-end">
-                    <a href="{{ route('student.home') }}" class="bg-slate-200 text-slate-800 px-6 py-3 rounded-xl font-bold hover:bg-slate-300 transition">
-                         Kembali ke Beranda
-                    </a>
+            <a href="{{ route('home') }}" class="bg-slate-200 text-slate-800 px-6 py-3 rounded-xl font-bold hover:bg-slate-300 transition">
+                Kembali ke Beranda
+            </a>
                 </div>
 
             </div>
@@ -205,7 +207,7 @@
             <button onclick="closeEditModal()" class="text-white text-2xl hover:text-blue-200 transition">&times;</button>
         </div>
 
-        <form action="{{ route('student.profile.update') }}" method="POST" enctype="multipart/form-data" class="p-8 space-y-6">
+        <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" class="p-8 space-y-6">
             @csrf
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>

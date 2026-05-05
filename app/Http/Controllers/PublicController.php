@@ -229,20 +229,38 @@ class PublicController extends Controller
             'salary'       => 'nullable|string',
         ]);
 
-        $user    = auth()->user();
-        $student = Student::where('user_id', $user->id)->first();
+        $user = auth()->user();
+        
+        // Support untuk Student (alumni) dan Publik users
+        if ($user->role->name === 'student' || $user->role->name === 'alumni') {
+            $student = Student::where('user_id', $user->id)->first();
+            
+            if (!$student) {
+                return back()->with('error', 'Data profil siswa tidak ditemukan.');
+            }
 
-        if (!$student) {
-            return back()->with('error', 'Data profil siswa tidak ditemukan.');
+            TracerStudy::create([
+                'student_id'         => $student->student_id,
+                'status_saat_ini'    => $request->status_kerja,
+                'nama_instansi'      => $request->company,
+                'pendapatan_bulanan' => $request->salary,
+                'keselarasan_jurusan'=> $request->position,
+            ]);
+        } elseif ($user->role->name === 'publik') {
+            // Untuk publik, simpan ke aktivitas log atau table khusus publik
+            // Untuk sekarang, simpan info ke activity log atau email
+            \App\Models\ActivityLog::create([
+                'user_id'    => $user->id,
+                'action'     => 'Tracer Study Submission',
+                'description'=> json_encode([
+                    'status' => $request->status_kerja,
+                    'company' => $request->company,
+                    'position' => $request->position,
+                    'salary' => $request->salary,
+                ]),
+                'ip_address' => $request->ip(),
+            ]);
         }
-
-        TracerStudy::create([
-            'student_id'         => $student->student_id,
-            'status_saat_ini'    => $request->status_kerja,
-            'nama_instansi'      => $request->company,
-            'pendapatan_bulanan' => $request->salary,
-            'keselarasan_jurusan'=> $request->position,
-        ]);
 
         return back()->with('success', 'Tracer Study berhasil disimpan!');
     }

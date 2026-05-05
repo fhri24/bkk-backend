@@ -8,16 +8,16 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CheckStudentRole
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
     public function handle(Request $request, Closure $next): Response
     {
         if (auth()->check()) {
-            $user = auth()->user()->load('role'); // Load relasi role
-            if (!$user->role || $user->role->name !== 'siswa') {
+            $user     = auth()->user()->load('role');
+            $userRole = $user->role?->name;
+
+            $allowedRoles = ['siswa', 'alumni', 'publik'];
+
+            if (!in_array($userRole, $allowedRoles)) {
+                // Kalau admin nyasar ke area user, redirect ke admin dashboard
                 return redirect()->route('admin.dashboard');
             }
         }

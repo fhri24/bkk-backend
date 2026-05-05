@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('students', function (Blueprint $table) {
-            $table->enum('gender', ['L', 'P'])->nullable()->after('graduation_year');
+            if (!Schema::hasColumn('students', 'gender')) {
+                $table->enum('gender', ['L', 'P'])->nullable()->after('graduation_year');
+            }
         });
     }
 

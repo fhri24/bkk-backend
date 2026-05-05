@@ -24,6 +24,8 @@ class User extends Authenticatable
         'email',
         'password',
         'role_id',
+        'userable_id', 
+        'userable_type',
         'is_active',
     ];
 
@@ -96,6 +98,32 @@ class User extends Authenticatable
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class, 'role_id', 'id');
+    }
+    
+     public function userable()
+    {
+        return $this->morphTo();
+    }
+
+    // Helper cek role pakai konstanta
+    public function isSuperAdmin()    { return $this->role->name === Role::SUPER_ADMIN; }
+    public function isAdminBkk()      { return $this->role->name === Role::ADMIN_BKK; }
+    public function isKepalaBkk()     { return $this->role->name === Role::KEPALA_BKK; }
+    public function isKepalaSekolah() { return $this->role->name === Role::KEPALA_SEKOLAH; }
+    public function isSiswa()         { return $this->role->name === Role::SISWA; }
+    public function isPerusahaan()    { return $this->role->name === Role::PERUSAHAAN; }
+    public function isAlumni()        { return $this->role->name === Role::ALUMNI; }
+    public function isPublik()        { return $this->role->name === Role::PUBLIK; }
+
+    // Cek apakah punya akses admin (salah satu dari 4 role admin)
+    public function isAnyAdmin()
+    {
+        return in_array($this->role->name, [
+            Role::SUPER_ADMIN,
+            Role::ADMIN_BKK,
+            Role::KEPALA_BKK,
+            Role::KEPALA_SEKOLAH,
+        ]);
     }
 
     /**
