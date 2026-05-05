@@ -10,14 +10,14 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
     /**
-     * Atribut yang dapat diisi (Mass Assignable).
-     * 
+     * Atribut yang dapat diisi (Mass Assignable). 
      */
     protected $fillable = [
         'name',
@@ -25,6 +25,15 @@ class User extends Authenticatable
         'password',
         'role_id',
         'is_active',
+        'nis',
+        'major',
+        'gender',
+        'graduation_year',
+        'phone',           // Untuk OTP via WhatsApp
+        'social_id',       // Untuk Google/Facebook login
+        'social_provider', // 'google' | 'facebook'
+        'avatar',          // Foto profil dari social
+        'email_verified_at',
     ];
 
     /**
@@ -33,65 +42,41 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'social_id',
     ];
 
     /**
-     * Penanganan Casting Atribut (Laravel 11+ style).
+     * Penanganan Casting Atribut (Laravel 11 style).
      */
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_active' => 'boolean',
         ];
     }
 
+    // ─── Relasi ───────────────────────────────────────────────────────────────
+
     /**
-     * PERBAIKAN: Method hasPermission untuk mengecek hak akses di View Admin.
-     * Method ini yang dipanggil di resources\views\layouts\admin.blade.php:216
+     * Relasi ke Kode OTP.
      */
-    public function hasPermission($permission)
+    public function otpCodes(): HasMany
     {
-        // 1. Pastikan user memiliki role
-        if (!$this->role) {
-            return false;
-        }
-
-        // 2. Super Admin biasanya punya akses ke semua hal
-        if ($this->role->name === 'super_admin') {
-            return true;
-        }
-
-        /** 
-         * 3. Logika pengecekan permission.
-         * Asumsi: Tabel roles memiliki kolom 'permissions' yang menyimpan JSON atau Array.
-         * Jika kamu belum membuat sistem permission yang kompleks, kita kembalikan true 
-         * untuk semua admin agar kamu bisa login dulu.
-         */
-        $adminRoles = ['admin_bkk', 'kepala_bkk', 'perusahaan'];
-        if (in_array($this->role->name, $adminRoles)) {
-            // Jika kolom permissions di database ada, gunakan ini:
-            if (isset($this->role->permissions) && is_array($this->role->permissions)) {
-                return in_array($permission, $this->role->permissions);
-            }
-            // Jika belum ada sistem permission di DB, berikan akses penuh untuk role admin
-            return true; 
-        }
-
-        return false;
+        return $this->hasMany(OtpCode::class);
     }
 
     /**
      * Relasi One-to-One ke Student.
      */
     public function student(): HasOne
-    {
-        
+    { 
         return $this->hasOne(Student::class, 'user_id', 'id');
     }
 
     /**
-     * Relasi Many-to-One ke Role.
+     * Relasi Many-to-One ke Role (Manual Role System).
      */
     public function role(): BelongsTo
     {
@@ -105,4 +90,51 @@ class User extends Authenticatable
     {
         return $this->hasMany(SavedJob::class, 'user_id', 'id');
     }
+
+    // ─── Helpers & Custom Logic ──────────────────────────────────────────────
+
+    /**
+     * Cek apakah user login via social (tidak punya password asli)
+     */
+    public function isSocialUser(): bool
+    {
+        return !is_null($this->social_provider);
+    }
+
+    /**
+     * Accessor untuk Avatar: dari social jika ada, atau generate inisial.
+     * Panggil di Blade dengan: $user->avatar_url
+     */
+    public function getAvatarUrlAttribute(): string
+    {
+        if ($this->avatar) return $this->avatar;
+        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=001f3f&color=fff&bold=true';
+    }
+
+    /**
+     * Method hasPermission untuk mengecek hak akses di View Admin.
+     */
+    public function hasPermission($permission)
+    {
+        // 1. Pastikan user memiliki role
+        if (!$this->role) {
+            return false;
+        }
+
+        // 2. Super Admin biasanya punya akses ke semua hal
+        if ($this->role->name === 'super_admin') {
+            return true;
+        }
+
+        // 3. Logika pengecekan permission manual
+        $adminRoles = ['admin_bkk', 'kepala_bkk', 'perusahaan'];
+        if (in_array($this->role->name, $adminRoles)) { 
+            if (isset($this->role->permissions) && is_array($this->role->permissions)) {
+                return in_array($permission, $this->role->permissions);
+            } 
+            return true; 
+        }
+
+        return false;
+    } 
 }

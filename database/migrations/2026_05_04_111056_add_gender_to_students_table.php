@@ -12,7 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('students', function (Blueprint $table) {
-            $table->enum('gender', ['L', 'P'])->nullable()->after('graduation_year');
+            // Cek apakah kolom gender sudah ada sebelum menambahkannya
+            if (!Schema::hasColumn('students', 'gender')) {
+                $table->enum('gender', ['L', 'P'])->nullable()->after('graduation_year');
+            }
         });
     }
 
@@ -22,7 +25,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('students', function (Blueprint $table) {
-            $table->dropColumn('gender');
+            if (Schema::hasColumn('students', 'gender')) {
+                $table->dropColumn('gender');
+            }
         });
     }
 };

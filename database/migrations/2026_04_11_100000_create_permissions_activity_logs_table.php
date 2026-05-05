@@ -7,9 +7,13 @@ use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
+    /**
+     * Jalankan migrasi.
+     */
     public function up(): void
     {
-        Schema::create('permissions', function (Blueprint $table) {
+        // Menggunakan nama 'system_permissions' agar tidak bentrok dengan tabel 'permissions' milik Spatie
+        Schema::create('system_permissions', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
             $table->string('display_name');
@@ -17,10 +21,10 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('permission_role', function (Blueprint $table) {
+        Schema::create('system_permission_role', function (Blueprint $table) {
             $table->id();
             $table->foreignId('role_id')->constrained('roles')->onDelete('cascade');
-            $table->foreignId('permission_id')->constrained('permissions')->onDelete('cascade');
+            $table->foreignId('permission_id')->constrained('system_permissions')->onDelete('cascade');
             $table->timestamps();
             $table->unique(['role_id', 'permission_id']);
         });
@@ -35,6 +39,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        // Data permissions kustom untuk sistem BKK
         $permissions = [
             ['name' => 'view_reports', 'display_name' => 'Lihat Laporan', 'description' => 'Mengizinkan akses ke halaman laporan'],
             ['name' => 'manage_users', 'display_name' => 'Kelola Pengguna', 'description' => 'Mengizinkan pembuatan, aktivasi, dan pemblokiran pengguna'],
@@ -43,14 +48,15 @@ return new class extends Migration
             ['name' => 'view_activity_logs', 'display_name' => 'Lihat Log Aktivitas', 'description' => 'Mengizinkan akses ke riwayat aktivitas pengguna'],
         ];
 
-        DB::table('permissions')->insert(array_map(function ($permission) {
+        DB::table('system_permissions')->insert(array_map(function ($permission) {
             return array_merge($permission, ['created_at' => now(), 'updated_at' => now()]);
         }, $permissions));
 
+        // Mapping Role ke Permission kustom
         $roles = DB::table('roles')->pluck('id', 'name')->toArray();
         if (!empty($roles)) {
             $mappings = [];
-            $allPermissionIds = DB::table('permissions')->pluck('id', 'name')->toArray();
+            $allPermissionIds = DB::table('system_permissions')->pluck('id', 'name')->toArray();
 
             foreach ($roles as $roleName => $roleId) {
                 $permissionNames = [];
@@ -80,15 +86,18 @@ return new class extends Migration
             }
 
             if (!empty($mappings)) {
-                DB::table('permission_role')->insert($mappings);
+                DB::table('system_permission_role')->insert($mappings);
             }
         }
     }
 
+    /**
+     * Batalkan migrasi.
+     */
     public function down(): void
     {
         Schema::dropIfExists('activity_logs');
-        Schema::dropIfExists('permission_role');
-        Schema::dropIfExists('permissions');
+        Schema::dropIfExists('system_permission_role');
+        Schema::dropIfExists('system_permissions');
     }
-};
+}; 

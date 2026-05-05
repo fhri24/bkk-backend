@@ -3,11 +3,16 @@
 use Illuminate\Support\Facades\Route;
 use App\Models\User;
 
-// Import Controllers
+// Import Controllers Utama
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SearchController;
+
+// Import Controller Baru (Auth Tambahan)
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\SocialAuthController;
+use App\Http\Controllers\Auth\OtpController; // Tambahan Baru
 
 // Admin Controllers
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
@@ -49,7 +54,7 @@ Route::get('/', [PublicController::class, 'beranda'])->name('public.beranda');
 Route::get('/lowongan', [PublicController::class, 'lowongan'])->name('public.lowongan');
 Route::get('/lowongan/{id}', [PublicController::class, 'lowonganDetail'])->name('public.lowongan.detail');
 
-// --- BERITA PUBLIC (FIXED: Mengarah ke AdminNewsController agar fungsi detail jalan) ---
+// --- BERITA PUBLIC ---
 Route::get('/berita', [AdminNewsController::class, 'index_student'])->name('public.berita');
 Route::get('/berita/{slug}', [AdminNewsController::class, 'show'])->name('public.berita.detail');
 
@@ -74,6 +79,25 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'login'])->name('login.process');
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AuthController::class, 'register'])->name('register.process');
+
+    // --- Forgot Password (OTP) - Menggunakan OtpController Baru ---
+    Route::prefix('forgot-password')->group(function () {
+        Route::post('/send-otp', [OtpController::class, 'sendOtp'])->name('password.otp.send');
+        Route::post('/verify-otp', [OtpController::class, 'verifyOtp'])->name('password.otp.check');
+        Route::post('/reset', [OtpController::class, 'resetPassword'])->name('password.reset.update');
+    });
+
+    // --- Social Auth (Google) ---
+    Route::get('/auth/google', [SocialAuthController::class, 'redirectToGoogle'])
+         ->name('auth.google');
+    Route::get('/auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback'])
+         ->name('auth.google.callback');
+
+    // --- Social Auth (Facebook) ---
+    Route::get('/auth/facebook', [SocialAuthController::class, 'redirectToFacebook'])
+         ->name('auth.facebook');
+    Route::get('/auth/facebook/callback', [SocialAuthController::class, 'handleFacebookCallback'])
+         ->name('auth.facebook.callback');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -108,7 +132,7 @@ Route::middleware(['auth', 'student'])->prefix('student')->name('student.')->gro
     Route::get('/lamaran', [StudentController::class, 'myApplications'])->name('applications');
     Route::delete('/lamaran/{id}', [StudentController::class, 'deleteApplication'])->name('applications.delete');
 
-    // --- BERITA STUDENT (FIXED: Biar sinkron sama tombol di beranda) ---
+    // --- BERITA STUDENT ---
     Route::get('/tracer', fn () => redirect()->route('public.tracer'))->name('tracer');
     Route::get('/berita', [AdminNewsController::class, 'index_student'])->name('berita');
     Route::get('/berita/{slug}', [AdminNewsController::class, 'show'])->name('berita.detail');
@@ -234,4 +258,4 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
             'link'  => route('admin.users.index'),
         ]));
     })->name('notifications');
-});
+}); 
