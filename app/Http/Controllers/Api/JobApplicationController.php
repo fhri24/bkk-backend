@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\JobApplication;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class JobApplicationController extends Controller
 {
@@ -16,17 +17,15 @@ class JobApplicationController extends Controller
     {
         $user = Auth::user();
 
-        // Filter berdasarkan role
-        if ($user->role->name === 'student') {
-            // Siswa lihat lamaran sendiri + data lowongan & jurusannya
+        // Cek Role (Student vs Admin)
+        if ($user->role && (in_array($user->role->name, ['student', 'siswa']))) {
             $student = $user->userable;
             $applications = JobApplication::where('student_id', $student->student_id)
-                ->with(['student', 'job.major', 'job.company']) // Ditambah job.major
+                ->with(['student', 'job.major', 'job.company'])
                 ->latest('application_date')
                 ->get();
         } else {
-            // Admin lihat semua + data lowongan & jurusannya
-            $applications = JobApplication::with(['student.major', 'job.major', 'job.company'])
+            $applications = JobApplication::with(['student', 'job.major', 'job.company'])
                 ->latest('application_date')
                 ->get();
         }
@@ -43,17 +42,14 @@ class JobApplicationController extends Controller
     public function show($id)
     {
         try {
-            // Load relasi major di dalam job
-            $application = JobApplication::with(['student.major', 'job.major', 'job.company'])
+            $application = JobApplication::with(['student', 'job.major', 'job.company'])
                 ->findOrFail($id);
 
             $user = Auth::user();
-            if ($user->role->name === 'student') {
+            if ($user->role && (in_array($user->role->name, ['student', 'siswa']))) {
                 $student = $user->userable;
                 if ($application->student_id !== $student->student_id) {
-                    return response()->json([
-                        'message' => 'Anda tidak berhak mengakses lamaran ini'
-                    ], 403);
+                    return response()->json(['message' => 'Akses ditolak'], 403);
                 }
             }
 
@@ -62,128 +58,128 @@ class JobApplicationController extends Controller
                 'data' => $application
             ], 200);
 
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'message' => 'Lamaran tidak ditemukan'
-            ], 404);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Lamaran tidak ditemukan'], 404);
         }
     }
 
-    /**
-     * Siswa melamar ke sebuah lowongan
-     */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'job_id' => 'required|exists:job_listings,job_id',
-            'cover_letter' => 'nullable|string|max:1000',
-            'additional_file' => 'nullable|string|max:255',
-        ]);
+ public function store(Request $request, $id = null)
+{
+    $jobId = $request->job_id ?? $id;
 
+    $request->validate([
+        'notes'  => 'nullable|string',
+        'cv'     => 'required|mimes:pdf|max:2048',
+    ]);
+
+    try {
         $user = Auth::user();
-        $student = $user->userable;
 
-        // Cek apakah user benar-benar student
-        if (!$student || !($student instanceof \App\Models\Student)) {
-            return response()->json(['message' => 'Hanya siswa yang bisa melamar.'], 403);
+        /**
+         * PERBAIKAN: Kita ambil ID dari userable-nya.
+         * Apapun role-nya (Student/Alumni), yang penting dia punya ID di tabel profilnya.
+         */
+        $profile = $user->userable;
+
+        if (!$profile) {
+            // Kalau masih NULL, kita coba cari ID manual atau kasih error yang jelas
+            return redirect()->back()->with('error', 'Profil lu gak ketemu, Mang. Pastiin data profil Student/Alumni lu udah diisi.');
         }
 
-        // Cek duplikasi lamaran
-        $alreadyApplied = JobApplication::where('student_id', $student->student_id)
-            ->where('job_id', $request->job_id)
-            ->exists();
+        // Ambil student_id (biasanya tabel alumni & student pake kolom yang sama atau mirip)
+        // Kalau di tabel alumni nama kolomnya beda, sesuaikan di sini.
+        $studentId = $profile->student_id ?? $profile->id;
 
-        if ($alreadyApplied) {
-            return response()->json([
-                'message' => 'Kamu sudah melamar di lowongan ini sebelumnya.'
-            ], 400);
+        $cvPath = null;
+        if ($request->hasFile('cv')) {
+            $file = $request->file('cv');
+            $filename = time() . '_' . str_replace(' ', '_', $user->name) . '_cv.pdf';
+            $cvPath = $file->storeAs('applications/cvs', $filename, 'public');
         }
 
-        // Simpan lamaran
-        $application = JobApplication::create([
-            'job_id' => $request->job_id,
-            'student_id' => $student->student_id,
-            'cover_letter' => $request->cover_letter,
-            'additional_file' => $request->additional_file,
-            'application_date' => now(),
-            'status' => 'pending',
-        ]);
+        // Simpan manual biar gak kena mass assignment
+        $app = new \App\Models\JobApplication();
+        $app->job_id = $jobId;
+        $app->student_id = $studentId;
+        $app->cover_letter = $request->notes ?? '-';
+        $app->additional_file = $cvPath;
+        $app->application_date = now();
+        $app->status = 'pending';
 
-        // Load data lengkap untuk respon
-        $application->load(['job.major', 'job.company']);
+        if($app->save()) {
+            // HAPUS SEMUA DD SEBELUMNYA, KITA PAKE REDIRECT
+            return redirect()->route('student.applications')->with('success', 'Lamaran berhasil dikirim!');
+        }
 
-        return response()->json([
-            'message' => 'Lamaran berhasil dikirim!',
-            'data' => $application
-        ], 201);
+        return redirect()->back()->with('error', 'Gagal simpan data.');
+
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', 'Masalah: ' . $e->getMessage());
     }
+}
 
-    /**
-     * Update lamaran (Status oleh Admin, File oleh Student)
-     */
     public function update(Request $request, $id)
     {
         try {
             $application = JobApplication::findOrFail($id);
             $user = Auth::user();
 
-            if ($user->role->name === 'student') {
-                $student = $user->userable;
-                if ($application->student_id !== $student->student_id) {
-                    return response()->json(['message' => 'Akses ditolak'], 403);
-                }
-
-                $request->validate([
-                    'cover_letter' => 'nullable|string|max:1000',
-                    'additional_file' => 'nullable|string|max:255',
-                ]);
-
-                $application->update($request->only(['cover_letter', 'additional_file']));
-
-            } else {
-                // Admin/Kepala BKK update status
+            // Admin Update Status
+            if ($user->role && !in_array($user->role->name, ['student', 'siswa'])) {
                 $request->validate([
                     'status' => 'required|in:pending,review,accepted,rejected',
-                    'admin_notes' => 'nullable|string|max:1000',
+                    'admin_notes' => 'nullable|string',
                 ]);
 
                 $application->update([
                     'status' => $request->status,
-                    'admin_notes' => $request->admin_notes ?? $application->admin_notes,
+                    'admin_notes' => $request->admin_notes
                 ]);
             }
-
-            return response()->json([
-                'message' => 'Lamaran berhasil diperbarui',
-                'data' => $application->load(['job.major', 'job.company'])
-            ], 200);
-
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['message' => 'Lamaran tidak ditemukan'], 404);
-        }
-    }
-
-    /**
-     * Hapus lamaran
-     */
-    public function destroy($id)
-    {
-        try {
-            $application = JobApplication::findOrFail($id);
-            $user = Auth::user();
-
-            if ($user->role->name === 'student') {
+            // Student Update Lamaran
+            else {
                 $student = $user->userable;
                 if ($application->student_id !== $student->student_id) {
                     return response()->json(['message' => 'Akses ditolak'], 403);
                 }
+
+                if ($request->hasFile('cv')) {
+                    if ($application->additional_file) {
+                        Storage::disk('public')->delete($application->additional_file);
+                    }
+                    $file = $request->file('cv');
+                    $filename = time() . '_updated_cv.pdf';
+                    $application->additional_file = $file->storeAs('applications/cvs', $filename, 'public');
+                }
+
+                if ($request->has('notes')) {
+                    $application->cover_letter = $request->notes;
+                }
+
+                $application->save();
             }
 
-            $application->delete();
-            return response()->json(['message' => 'Lamaran berhasil dihapus'], 200);
+            return response()->json([
+                'message' => 'Berhasil diperbarui',
+                'data' => $application
+            ]);
 
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['message' => 'Lamaran tidak ditemukan'], 404);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Terjadi kesalahan: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $application = JobApplication::findOrFail($id);
+            if ($application->additional_file) {
+                Storage::disk('public')->delete($application->additional_file);
+            }
+            $application->delete();
+            return response()->json(['message' => 'Lamaran dihapus']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Gagal menghapus'], 500);
         }
     }
 }

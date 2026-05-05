@@ -417,7 +417,7 @@
                     @endforeach
                 </div>
                 @endif
-                
+
             </div>
         </div>
     </div>
@@ -426,7 +426,6 @@
 {{-- ── APPLICATION MODAL ── --}}
 <div id="applicationModal">
     <div class="modal-box">
-        {{-- Header --}}
         <div style="background:linear-gradient(135deg,#2563eb,#1e40af); padding:28px 32px; border-radius:20px 20px 0 0; display:flex; justify-content:space-between; align-items:center;">
             <h2 style="color:#fff; font-size:20px; font-weight:900; margin:0; display:flex; align-items:center; gap:10px;">
                 <i class="fas fa-file-invoice"></i> Formulir Aplikasi Kerja
@@ -435,123 +434,79 @@
                 style="background:none; border:none; color:#fff; font-size:28px; font-weight:900; cursor:pointer; line-height:1; padding:0;">&times;</button>
         </div>
 
-        {{-- Form --}}
         <form id="applicationForm"
-              action="{{ Route::has('public.lowongan.apply') ? route('public.lowongan.apply', $job->job_id) : url('/lowongan/'.$job->job_id.'/apply') }}"
+              action="{{ route('student.lowongan.apply', $job->job_id) }}"
               method="POST"
               enctype="multipart/form-data"
               style="padding:32px; display:flex; flex-direction:column; gap:20px;">
             @csrf
+            {{-- Tambahin ID Lowongan biar Controller tau mana yang dilamar --}}
             <input type="hidden" name="job_id" value="{{ $job->job_id }}">
 
             <div>
-                <label class="form-label">Nama Lengkap *</label>
-                <input type="text" name="full_name" class="form-input"
-                    value="{{ auth()->user()->name ?? '' }}" required>
-            </div>
-            <div>
-                <label class="form-label">Email *</label>
-                <input type="email" name="email" class="form-input"
-                    value="{{ auth()->user()->email ?? '' }}" required>
-            </div>
-            <div>
-                <label class="form-label">Nomor Telepon *</label>
-                <input type="tel" name="phone" class="form-input" required>
+                <label class="form-label">Nama Lengkap</label>
+                <input type="text" class="form-input bg-slate-50" value="{{ auth()->user()->name ?? '' }}" readonly>
             </div>
             <div>
                 <label class="form-label">Upload CV/Resume (PDF) *</label>
-                <input type="file" name="resume" accept=".pdf" class="form-input" required>
-                <p style="font-size:12px; color:#94a3b8; margin-top:6px;">Format: PDF, Maks. 5 MB</p>
+                {{-- Field CV --}}
+                <input type="file" name="cv" accept=".pdf" class="form-input" required>
+                <p style="font-size:12px; color:#94a3b8; margin-top:6px;">Format: PDF, Maks. 2 MB</p>
             </div>
             <div>
-                <label class="form-label">Cover Letter (Opsional)</label>
-                <textarea name="cover_letter" rows="4" class="form-input"
-                    placeholder="Tulis motivasi Anda bergabung dengan kami..."></textarea>
+                <label class="form-label">Pesan / Motivasi (Opsional)</label>
+                <textarea name="notes" rows="4" class="form-input"
+                    placeholder="Tulis pesan singkat untuk perusahaan..."></textarea>
             </div>
-            <div>
-                <label class="form-label">Pengalaman Singkat (Opsional)</label>
-                <textarea name="experience" rows="3" class="form-input"
-                    placeholder="Jelaskan pengalaman relevan Anda..."></textarea>
-            </div>
+
             <div style="display:flex; align-items:flex-start; gap:10px;">
                 <input type="checkbox" name="agree" id="agreeChk"
                     style="margin-top:3px; width:16px; height:16px; flex-shrink:0;" required>
                 <label for="agreeChk" style="font-size:14px; color:#475569;">
-                    Saya setuju dengan <a href="#" style="color:#2563eb; font-weight:700;">syarat dan ketentuan</a> yang berlaku
+                    Saya menyatakan data yang saya kirimkan adalah benar.
                 </label>
             </div>
             <button type="submit" class="btn-primary" style="margin-bottom:0;">
-                <i class="fas fa-paper-plane" style="margin-right:8px;"></i> Kirim Aplikasi
+                <i class="fas fa-paper-plane" style="margin-right:8px;"></i> Kirim Lamaran
             </button>
         </form>
     </div>
 </div>
 
-@endsection
-
-@push('extra_js')
+{{-- SCRIPT PINDAH KE DALAM SECTION BIAR PASTI JALAN --}}
 <script>
-const JOB_ID   = {{ $job->job_id ?? 0 }};
-const SAVE_URL = '/student/lowongan/save/' + JOB_ID;
-const CSRF     = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '';
-
 function openApplicationForm() {
-    document.getElementById('applicationModal').classList.add('show');
-    document.body.style.overflow = 'hidden';
-}
-function closeApplicationForm() {
-    document.getElementById('applicationModal').classList.remove('show');
-    document.body.style.overflow = '';
-}
-
-function toggleSaveJob() {
-    const btn  = document.getElementById('saveBtn');
-    const icon = document.getElementById('saveBtnIcon');
-    const text = document.getElementById('saveBtnText');
-    if (!btn) return;
-    btn.disabled = true;
-    fetch(SAVE_URL, {
-        method: 'POST',
-        headers: { 'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json', 'Content-Type': 'application/json' }
-    })
-    .then(r => { if (!r.ok) throw r; return r.json(); })
-    .then(d => {
-        if (d.saved) {
-            icon.className = 'fas fa-bookmark';
-            text.innerText = 'Sudah Disimpan';
-            btn.style.opacity = '.75';
-        } else {
-            icon.className = 'far fa-bookmark';
-            text.innerText = 'Simpan Lowongan';
-            btn.style.opacity = '1';
-        }
-        showToast(d.message ?? 'Berhasil');
-    })
-    .catch(() => showToast('Gagal menyimpan. Coba lagi.'))
-    .finally(() => { btn.disabled = false; });
-}
-
-function shareVacancy() {
-    const title = @json($job->title ?? '');
-    if (navigator.share) {
-        navigator.share({ title, url: location.href });
-    } else {
-        navigator.clipboard.writeText(location.href)
-            .then(() => showToast('Link berhasil disalin!'))
-            .catch(() => showToast('Gagal menyalin link.'));
+    const modal = document.getElementById('applicationModal');
+    if(modal) {
+        modal.style.display = 'flex'; // Pakai style langsung biar anti-gagal
+        document.body.style.overflow = 'hidden';
     }
 }
 
-function showToast(msg) {
-    const t = document.createElement('div');
-    t.innerText = msg;
-    t.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#0f172a;color:#fff;padding:12px 20px;border-radius:14px;font-weight:700;font-size:14px;z-index:99999;box-shadow:0 8px 24px rgba(0,0,0,.2);';
-    document.body.appendChild(t);
-    setTimeout(() => t.remove(), 3000);
+function closeApplicationForm() {
+    const modal = document.getElementById('applicationModal');
+    if(modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
 }
 
-document.getElementById('applicationModal').addEventListener('click', function(e) {
-    if (e.target === this) closeApplicationForm();
-});
+// Menutup modal jika klik di luar box
+window.onclick = function(event) {
+    const modal = document.getElementById('applicationModal');
+    if (event.target == modal) {
+        closeApplicationForm();
+    }
+}
+
+function shareVacancy() {
+    if (navigator.share) {
+        navigator.share({ title: "{{ $job->title }}", url: window.location.href });
+    } else {
+        navigator.clipboard.writeText(window.location.href);
+        alert('Link berhasil disalin!');
+    }
+}
 </script>
-@endpush
+
+@endsection

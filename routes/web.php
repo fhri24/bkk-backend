@@ -164,9 +164,10 @@ Route::middleware(['auth', 'role:siswa'])->prefix('student')->name('student.')->
 
     Route::get('/daftar-lowongan', [StudentController::class, 'lowongan'])->name('lowongan');
     Route::get('/lowongan-tersimpan', [StudentController::class, 'savedJobs'])->name('saved-jobs');
-    Route::post('/lowongan/{id}/save', [StudentController::class, 'saveJob'])->name('lowongan.save');
+    Route::post('/lowongan/save/{id}', [StudentController::class, 'saveJob'])->name('lowongan.save');
     Route::delete('/lowongan/unsave/{id}', [StudentController::class, 'unsaveJob'])->name('lowongan.unsave');
-    Route::post('/lowongan/{id}/apply', [StudentController::class, 'applyJob'])->name('lowongan.apply');
+    Route::post('/lowongan/apply/{id}', [\App\Http\Controllers\Api\JobApplicationController::class, 'store'])->name('lowongan.apply');
+    // Note: detailLowongan diarahkan ke controller detail yang konsisten
     Route::get('/lowongan/{id}', [StudentController::class, 'detailLowongan'])->name('lowongan.detail');
 
     Route::get('/acara', [StudentController::class, 'acara'])->name('acara');

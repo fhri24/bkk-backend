@@ -12,16 +12,8 @@ class JobApplication extends Model
 
     protected $table = 'job_applications';
 
-    /**
-     * PERBAIKAN: Beritahu Laravel bahwa Primary Key kamu
-     * bukan 'id', tapi 'job_application_id'
-     */
     protected $primaryKey = 'job_application_id';
 
-    /**
-     * Jika Primary Key kamu bukan integer auto-increment,
-     * set ini ke false. Tapi biasanya tetap true untuk ID.
-     */
     public $incrementing = true;
 
     protected $fillable = [
@@ -29,8 +21,10 @@ class JobApplication extends Model
         'student_id',
         'status',
         'application_date',
-        'cover_letter',
-        'additional_file',
+        'cover_letter', // Untuk data lama
+        'notes',        // TAMBAHAN: Untuk nangkep input notes dari form baru
+        'additional_file', // Untuk data lama
+        'cv',           // TAMBAHAN: Untuk nangkep path file CV dari form baru
         'full_name',
         'email',
         'phone_number',
@@ -42,7 +36,7 @@ class JobApplication extends Model
      */
     public function student(): BelongsTo
     {
-        // Parameter: (Model, foreign_key, owner_key)
+        // Tetap pake student_id sebagai foreign key
         return $this->belongsTo(Student::class, 'student_id', 'student_id');
     }
 
@@ -51,7 +45,6 @@ class JobApplication extends Model
      */
     public function job(): BelongsTo
     {
-        // Parameter: (Model, foreign_key, owner_key)
         return $this->belongsTo(Job::class, 'job_id', 'job_id');
     }
 }

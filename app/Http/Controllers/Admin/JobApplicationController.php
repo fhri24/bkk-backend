@@ -12,13 +12,15 @@ class JobApplicationController extends Controller
 {
     public function index()
     {
-        $applications = JobApplication::with(['student.user', 'job.company'])->paginate(10);
+
+        $applications = JobApplication::with(['student', 'job.company'])->latest()->paginate(10);
+
         return view('admin.job-applications.index', compact('applications'));
     }
 
     public function show($id)
     {
-        $application = JobApplication::with(['student.user', 'job.company'])->findOrFail($id);
+        $application = JobApplication::with(['student', 'job.company'])->findOrFail($id);
         return view('admin.job-applications.show', compact('application'));
     }
 
