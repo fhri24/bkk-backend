@@ -5,57 +5,80 @@
 @section('content')
 <div class="bg-slate-100 text-slate-900 min-h-screen">
     <div class="container mx-auto px-4 py-12">
-        {{-- PERBAIKAN: Menambahkan items-start agar kolom kiri tidak dipaksa memanjang, sehingga sticky berfungsi --}}
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
             
             {{-- Kolom Kiri: Profil Card --}}
             <div class="lg:col-span-1">
                 <div class="bg-white rounded-2xl shadow-lg p-8 text-center sticky top-24">
-                    @if($student->profile_picture)
-                        <img src="{{ asset('storage/' . $student->profile_picture) }}" alt="Profile Picture" class="w-24 h-24 mx-auto mb-4 rounded-full object-cover shadow-lg">
-                    @else
-                        <div class="w-24 h-24 mx-auto mb-4 rounded-full bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center text-white text-4xl shadow-lg">
-                            <i class="fas fa-user"></i>
-                        </div>
-                    @endif
+                    
+                    {{-- Foto Profil --}}
+                    <div class="relative w-24 h-24 mx-auto mb-4">
+                        @if($student && $student->profile_picture)
+                            <img 
+                                id="avatar-img"
+                                src="{{ asset('storage/' . $student->profile_picture) }}" 
+                                alt="Profile Picture" 
+                                class="w-24 h-24 rounded-full object-cover shadow-lg border-2 border-blue-500"
+                                onerror="this.style.display='none'; document.getElementById('avatar-fallback').style.display='flex';">
+                            <div id="avatar-fallback" class="w-24 h-24 rounded-full bg-gradient-to-br from-blue-600 to-blue-700 items-center justify-center text-white text-4xl shadow-lg" style="display:none;">
+                                <i class="fas fa-user"></i>
+                            </div>
+                        @else
+                            <div class="w-24 h-24 rounded-full bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center text-white text-4xl shadow-lg">
+                                <i class="fas fa-user"></i>
+                            </div>
+                        @endif
+                    </div>
 
-                    <h2 class="text-2xl font-extrabold text-slate-900 mb-1">{{ $student->full_name ?? $user->name }}</h2>
+                    <h2 class="text-2xl font-extrabold text-slate-900 mb-1">
+                        {{ ($student && $student->full_name) ? $student->full_name : $user->name }}
+                    </h2>
                     <p class="text-sm text-slate-500 font-bold mb-4">{{ $user->email }}</p>
 
+                    {{-- Badge Role --}}
                     <div class="inline-block bg-green-100 text-green-700 px-4 py-2 rounded-full text-xs font-bold mb-6">
                         <i class="fas fa-check-circle mr-2"></i>
-                        {{ ($student && $student->alumni_flag) ? 'Alumni' : 'Siswa Aktif' }}
+                        @if(auth()->user()->role->name === 'publik')
+                            Pengguna Umum
+                        @elseif(auth()->user()->role->name === 'alumni' || ($student && $student->alumni_flag))
+                            Alumni
+                        @else
+                            Siswa Aktif
+                        @endif
                     </div>
 
                     <div class="space-y-3 border-t border-slate-200 pt-6">
+                        {{-- NIS / NIK --}}
                         <div class="flex items-center justify-between p-3 bg-blue-50 rounded-xl">
                             <div class="text-left">
-                                <p class="text-xs text-slate-500 font-bold uppercase">NIS</p>
-                                <p class="text-lg font-extrabold text-blue-600">{{ $student->nis ?? '-' }}</p>
+                                <p class="text-xs text-slate-500 font-bold uppercase">NIS / NIK</p>
+                                <p class="text-lg font-extrabold text-blue-600">{{ ($student && $student->nis) ? $student->nis : '-' }}</p>
                             </div>
                             <i class="fas fa-id-card text-blue-200 text-2xl"></i>
                         </div>
                         
+                        {{-- Lamaran Diajukan --}}
                         <div class="flex items-center justify-between p-3 bg-purple-50 rounded-xl">
                             <div class="text-left">
                                 <p class="text-xs text-slate-500 font-bold uppercase">Lamaran Diajukan</p>
-                                <p class="text-lg font-extrabold text-purple-600">{{ is_array($applications) ? count($applications) : $applications->count() }}</p>
+                                <p class="text-lg font-extrabold text-purple-600">
+                                    {{ is_array($applications) ? count($applications) : ($applications ? $applications->count() : 0) }}
+                                </p>
                             </div>
                             <i class="fas fa-paper-plane text-purple-200 text-2xl"></i>
                         </div>
 
-                        {{-- TAMBAHAN: Tombol Lowongan Tersimpan --}}
-                        @if(auth()->user()->role->name === 'siswa')
+                        {{-- Tersimpan --}}
                         <a href="{{ route('student.saved-jobs') }}" class="flex items-center justify-between p-4 bg-blue-50 rounded-2xl border border-blue-100 hover:bg-blue-100 transition">
                             <span class="font-bold text-blue-700 text-sm">
-                                <i class="fas fa-bookmark mr-2"></i> Lowongan Tersimpan
+                                <i class="fas fa-bookmark mr-2"></i> Tersimpan
                             </span>
                             <span class="bg-blue-600 text-white text-xs font-black px-3 py-1 rounded-full">
-                                {{ $savedCount }}
+                                {{ $savedCount ?? 0 }}
                             </span>
                         </a>
-                        @endif
 
+                        {{-- Akun Dibuat --}}
                         <div class="text-left px-2 pt-2">
                             <p class="text-xs text-slate-500 font-bold uppercase">Akun Dibuat</p>
                             <p class="text-sm font-bold text-slate-600">{{ $user->created_at->format('d M Y') }}</p>
@@ -71,6 +94,7 @@
             {{-- Kolom Kanan: Detail Informasi --}}
             <div class="lg:col-span-2 space-y-6">
 
+                {{-- Informasi Pribadi --}}
                 <div class="bg-white rounded-2xl shadow-lg p-8">
                     <h3 class="text-xl font-extrabold text-slate-900 mb-6 flex items-center">
                         <i class="fas fa-user-circle text-blue-600 mr-3"></i>Informasi Pribadi
@@ -78,54 +102,76 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <p class="text-xs font-bold text-slate-500 uppercase mb-1">Nama Lengkap</p>
-                            <p class="text-lg font-bold text-slate-900">{{ $student->full_name ?? $user->name }}</p>
+                            <p class="text-lg font-bold text-slate-900">
+                                {{ ($student && $student->full_name) ? $student->full_name : $user->name }}
+                            </p>
                         </div>
                         <div>
                             <p class="text-xs font-bold text-slate-500 uppercase mb-1">Jenis Kelamin</p>
-                            <p class="text-lg font-bold text-slate-900">{{ $student->gender === 'L' ? 'Laki-laki' : ($student->gender === 'P' ? 'Perempuan' : '-') }}</p>
+                            <p class="text-lg font-bold text-slate-900">
+                                @if($student && $student->gender === 'L')
+                                    Laki-laki
+                                @elseif($student && $student->gender === 'P')
+                                    Perempuan
+                                @else
+                                    -
+                                @endif
+                            </p>
                         </div>
                         <div>
                             <p class="text-xs font-bold text-slate-500 uppercase mb-1">Email</p>
-                            <p class="text-lg font-bold text-slate-900 text-break">{{ $user->email }}</p>
+                            <p class="text-lg font-bold text-slate-900 break-all">{{ $user->email }}</p>
                         </div>
                         <div>
                             <p class="text-xs font-bold text-slate-500 uppercase mb-1">No. Handphone</p>
-                            <p class="text-lg font-bold text-slate-900">{{ $student->phone ?? '-' }}</p>
+                            <p class="text-lg font-bold text-slate-900">{{ ($student && $student->phone) ? $student->phone : '-' }}</p>
                         </div>
                     </div>
                 </div> 
 
+                {{-- Informasi Pendidikan & Status --}}
                 <div class="bg-white rounded-2xl shadow-lg p-8">
                     <h3 class="text-xl font-extrabold text-slate-900 mb-6 flex items-center">
-                        <i class="fas fa-graduation-cap text-blue-600 mr-3"></i>Informasi Pendidikan
+                        <i class="fas fa-graduation-cap text-blue-600 mr-3"></i>Informasi Pendidikan & Status
                     </h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <p class="text-xs font-bold text-slate-500 uppercase mb-1">Sekolah</p>
-                            <p class="text-lg font-bold text-slate-900">SMKN 1 Garut</p>
+                            <p class="text-xs font-bold text-slate-500 uppercase mb-1">Sekolah / Instansi</p>
+                            <p class="text-lg font-bold text-slate-900">
+                                {{ ($student && $student->school_origin) ? $student->school_origin : 'SMKN 1 Garut' }}
+                            </p>
                         </div>
+                        
+                        {{-- Jurusan: tampil HANYA untuk siswa & alumni --}}
+                        @if(auth()->user()->role->name !== 'publik')
                         <div>
                             <p class="text-xs font-bold text-slate-500 uppercase mb-1">Jurusan</p>
-                            <p class="text-lg font-bold text-slate-900">{{ $student->major ?? '-' }}</p>
+                            <p class="text-lg font-bold text-slate-900">
+                                {{ ($student && $student->major) ? $student->major : 'Tidak Diisi' }}
+                            </p>
                         </div>
+                        @endif
+
                         <div>
                             <p class="text-xs font-bold text-slate-500 uppercase mb-1">Tahun Lulus / Angkatan</p>
-                            <p class="text-lg font-bold text-slate-900">{{ $student->graduation_year ?? '-' }}</p>
+                            <p class="text-lg font-bold text-slate-900">
+                                {{ ($student && $student->graduation_year) ? $student->graduation_year : '-' }}
+                            </p>
                         </div>
                         <div>
-                            <p class="text-xs font-bold text-slate-500 uppercase mb-1">Status Pekerjaan</p>
+                            <p class="text-xs font-bold text-slate-500 uppercase mb-1">Status Saat Ini</p>
                             <p class="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-bold">
-                                {{ ucfirst($student->status ?? 'Mencari Kerja') }}
+                                {{ ucfirst(($student && $student->status) ? $student->status : 'Active') }}
                             </p>
                         </div>
                     </div>
                 </div>
 
+                {{-- Lowongan Tersimpan --}}
                 <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
                     <h3 class="text-xl font-extrabold text-slate-900 mb-6 flex items-center">
                         <i class="fas fa-bookmark mr-3 text-blue-500"></i> Lowongan yang Saya Simpan
                     </h3>
-                    
                     <div class="space-y-4">
                         @forelse(auth()->user()->savedJobs()->with('job')->get() as $saved)
                             @if($saved->job)
@@ -136,23 +182,21 @@
                                         </div> 
                                         <div class="flex flex-col">
                                             <h4 class="font-bold text-slate-800 text-sm line-clamp-1 group-hover:text-blue-600 transition-colors">
-                                                {{ $saved->job->title ?? 'Judul Lowongan' }}
+                                                {{ $saved->job->title }}
                                             </h4>
                                             <p class="text-xs text-slate-500 flex items-center mt-1">
                                                 <i class="far fa-building mr-1"></i>
-                                                {{ $saved->job->company->name ?? 'Nama Perusahaan' }}
+                                                {{ $saved->job->company->name ?? 'Perusahaan' }}
                                             </p>
                                         </div>
                                     </div> 
                                     <div class="flex items-center space-x-2">
-                                        <a href="{{ route('student.lowongan.detail', $saved->job_id) }}" 
-                                           class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all" 
-                                           title="Lihat Detail">
+                                        <a href="{{ route('student.lowongan.detail', $saved->job_id) }}" class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                         <form action="{{ route('student.lowongan.save', $saved->job_id) }}" method="POST" class="inline">
                                             @csrf
-                                            <button type="submit" class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all" title="Hapus">
+                                            <button type="submit" class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all">
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
                                         </form>
@@ -160,40 +204,95 @@
                                 </div>
                             @endif
                         @empty
-                            <p class="text-sm text-slate-500">Tidak ada lowongan tersimpan</p>
+                            <p class="text-sm text-slate-500 italic">Tidak ada lowongan tersimpan</p>
                         @endforelse
                     </div>
-                </div> 
-
-                <div class="bg-white rounded-2xl shadow-lg p-8">
-                    <h3 class="text-xl font-extrabold text-slate-900 mb-6 flex items-center">
-                        <i class="fas fa-paper-plane text-blue-600 mr-3"></i>Lamaran Pekerjaan Terbaru
-                    </h3>
-                    <div class="space-y-4">
-                        @forelse($applications as $app)
-                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex justify-between items-center">
-                                <div>
-                                    <p class="font-bold text-slate-900">{{ $app->job->title ?? 'Pekerjaan' }}</p>
-                                    <p class="text-xs text-slate-500">Dikirim pada: {{ $app->created_at->format('d M Y') }}</p>
-                                </div>
-                                <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold uppercase">
-                                    {{ $app->status }}
-                                </span>
-                            </div>
-                        @empty
-                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-center">
-                                <p class="text-slate-500 text-sm">Belum ada lamaran pekerjaan</p>
-                            </div>
-                        @endforelse
-                    </div>
-                </div> 
-
-                <div class="flex justify-end">
-            <a href="{{ route('home') }}" class="bg-slate-200 text-slate-800 px-6 py-3 rounded-xl font-bold hover:bg-slate-300 transition">
-                Kembali ke Beranda
-            </a>
                 </div>
 
+                {{-- ============================================================
+                     Lamaran Pekerjaan Terbaru — tampil untuk SEMUA role
+                     Terhubung dengan halaman /student/applications (navbar Lamaran)
+                     ============================================================ --}}
+                <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+                    <h3 class="text-xl font-extrabold text-slate-900 mb-6 flex items-center justify-between">
+                        <span>
+                            <i class="fas fa-paper-plane mr-3 text-purple-500"></i> Lamaran Pekerjaan Terbaru
+                        </span>
+                        <a href="{{ route('student.applications') }}" 
+                           class="text-sm font-bold text-blue-600 hover:text-blue-800 hover:underline transition">
+                            Lihat Semua <i class="fas fa-arrow-right ml-1 text-xs"></i>
+                        </a>
+                    </h3>
+
+                    @php
+                        $recentApplications = ($applications instanceof \Illuminate\Support\Collection)
+                            ? $applications->take(5)
+                            : collect($applications)->take(5);
+                    @endphp
+
+                    @if($recentApplications->isEmpty())
+                        <div class="flex flex-col items-center justify-center py-8 text-center">
+                            <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-3">
+                                <i class="fas fa-file-alt text-slate-300 text-2xl"></i>
+                            </div>
+                            <p class="text-sm text-slate-500 italic">Belum ada lamaran pekerjaan</p>
+                            <a href="{{ route('public.lowongan') }}" 
+                               class="mt-3 text-xs font-bold text-blue-600 hover:underline">
+                                Cari Lowongan Sekarang →
+                            </a>
+                        </div>
+                    @else
+                        <div class="space-y-3">
+                            @foreach($recentApplications as $app)
+                                <div class="flex items-center justify-between p-4 rounded-xl border border-slate-100 hover:bg-slate-50 transition group">
+                                    <div class="flex items-center space-x-4">
+                                        {{-- Ikon status --}}
+                                        <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0
+                                            @if($app->status === 'pending')  bg-yellow-50 text-yellow-500
+                                            @elseif($app->status === 'accepted') bg-green-50 text-green-500
+                                            @elseif($app->status === 'rejected') bg-red-50 text-red-400
+                                            @else bg-blue-50 text-blue-500
+                                            @endif">
+                                            <i class="fas text-sm
+                                                @if($app->status === 'pending')  fa-clock
+                                                @elseif($app->status === 'accepted') fa-check-circle
+                                                @elseif($app->status === 'rejected') fa-times-circle
+                                                @else fa-info-circle
+                                                @endif"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-bold text-slate-800 text-sm group-hover:text-blue-600 transition line-clamp-1">
+                                                {{ $app->job->title ?? 'Lowongan tidak tersedia' }}
+                                            </p>
+                                            <p class="text-xs text-slate-500 mt-0.5">
+                                                <i class="far fa-building mr-1"></i>
+                                                {{ $app->job->company->name ?? '-' }}
+                                                &nbsp;·&nbsp;
+                                                <i class="far fa-calendar mr-1"></i>
+                                                {{ \Carbon\Carbon::parse($app->application_date)->format('d M Y') }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    {{-- Badge status --}}
+                                    <span class="text-xs font-bold px-3 py-1 rounded-full flex-shrink-0
+                                        @if($app->status === 'pending')  bg-yellow-100 text-yellow-700
+                                        @elseif($app->status === 'accepted') bg-green-100 text-green-700
+                                        @elseif($app->status === 'rejected') bg-red-100 text-red-600
+                                        @else bg-blue-100 text-blue-700
+                                        @endif">
+                                        {{ ucfirst($app->status) }}
+                                    </span>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+
+                <div class="flex justify-end">
+                    <a href="{{ route('home') }}" class="bg-slate-200 text-slate-800 px-6 py-3 rounded-xl font-bold hover:bg-slate-300 transition">
+                        Kembali ke Beranda
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -211,59 +310,76 @@
             @csrf
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">Nama Lengkap</label>
-                    <input type="text" name="full_name" value="{{ $student->full_name ?? $user->name }}" placeholder="Nama Lengkap" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" required />
+                    <label class="block text-xs font-extrabold text-slate-400 uppercase mb-2">Nama Lengkap</label>
+                    <input type="text" name="full_name" 
+                           value="{{ ($student && $student->full_name) ? $student->full_name : $user->name }}" 
+                           class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-blue-600 outline-none" required />
                 </div>
                 <div>
-                    <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">NIK / NIS</label>
-                    <input type="text" name="nis" value="{{ $student->nis }}" placeholder="NIK / NIS" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" />
+                    <label class="block text-xs font-extrabold text-slate-400 uppercase mb-2">NIS / NIK / No.Identitas</label>
+                    <input type="text" name="nis" 
+                           value="{{ ($student && $student->nis) ? $student->nis : '' }}" 
+                           class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-blue-600 outline-none" />
                 </div>
                 <div>
-                    <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">Jenis Kelamin</label>
-                    <select name="gender" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600">
-                        <option value="">Pilih Jenis Kelamin</option>
-                        <option value="L" {{ $student->gender == 'L' ? 'selected' : '' }}>Laki-laki</option>
-                        <option value="P" {{ $student->gender == 'P' ? 'selected' : '' }}>Perempuan</option>
+                    <label class="block text-xs font-extrabold text-slate-400 uppercase mb-2">Jenis Kelamin</label>
+                    <select name="gender" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-blue-600 outline-none">
+                        <option value="">Pilih</option>
+                        <option value="L" {{ ($student && $student->gender == 'L') ? 'selected' : '' }}>Laki-laki</option>
+                        <option value="P" {{ ($student && $student->gender == 'P') ? 'selected' : '' }}>Perempuan</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">Info Kelahiran</label>
-                    <input type="text" name="birth_info" value="{{ $student->birth_info }}" placeholder="Tempat, Tanggal Lahir" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" />
-                </div> 
+                    <label class="block text-xs font-extrabold text-slate-400 uppercase mb-2">No. Handphone</label>
+                    <input type="tel" name="phone" 
+                           value="{{ ($student && $student->phone) ? $student->phone : '' }}" 
+                           class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-blue-600 outline-none" />
+                </div>
+                
+                {{-- Jurusan: HANYA untuk siswa & alumni --}}
+                @if(auth()->user()->role->name !== 'publik')
                 <div>
-                    <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">Jurusan</label>
-                    <select name="major" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600">
-                        <option value="">Pilih Jurusan</option>
+                    <label class="block text-xs font-extrabold text-slate-400 uppercase mb-2">Jurusan</label>
+                    <input type="text" name="major" list="major_list" 
+                           value="{{ ($student && $student->major) ? $student->major : '' }}" 
+                           class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-blue-600 outline-none" 
+                           placeholder="Ketik atau pilih jurusan">
+                    <datalist id="major_list">
                         @foreach($majors as $major)
-                            <option value="{{ $major->name }}" {{ $student->major == $major->name ? 'selected' : '' }}>
-                                {{ $major->name }}
-                            </option>
+                            <option value="{{ $major->name }}">
                         @endforeach
-                    </select>
-                </div> 
+                    </datalist>
+                </div>
+                @endif
+
                 <div>
-                    <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">Tahun Lulus</label>
-                    <select name="graduation_year" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600">
-                        <option value="">Pilih Tahun Lulus</option>
+                    <label class="block text-xs font-extrabold text-slate-400 uppercase mb-2">Tahun Lulus</label>
+                    <select name="graduation_year" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-blue-600 outline-none">
+                        <option value="">Pilih Tahun</option>
                         @foreach($years as $year)
-                            <option value="{{ $year->year }}" {{ $student->graduation_year == $year->year ? 'selected' : '' }}>
+                            <option value="{{ $year->year }}" {{ ($student && $student->graduation_year == $year->year) ? 'selected' : '' }}>
                                 {{ $year->year }}
                             </option>
                         @endforeach
                     </select>
                 </div> 
-                <div>
-                    <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">No. Handphone</label>
-                    <input type="tel" name="phone" value="{{ $student->phone }}" placeholder="No. Handphone" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" />
-                </div>
-                <div>
-                    <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">Alamat</label>
-                    <textarea name="address" placeholder="Alamat Lengkap" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" rows="3">{{ $student->address }}</textarea>
+                <div class="md:col-span-2">
+                    <label class="block text-xs font-extrabold text-slate-400 uppercase mb-2">Alamat</label>
+                    <textarea name="address" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-blue-600 outline-none" rows="2">{{ ($student && $student->address) ? $student->address : '' }}</textarea>
                 </div>
                 <div class="md:col-span-2">
-                    <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">Foto Profil</label>
-                    <input type="file" name="profile_picture" accept="image/*" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600" />
-                    <p class="text-xs text-slate-500 mt-1">Format: JPG, PNG, GIF. Maksimal 2MB.</p>
+                    <label class="block text-xs font-extrabold text-slate-400 uppercase mb-2">Foto Profil</label>
+                    @if($student && $student->profile_picture)
+                        <div class="mb-3 flex items-center gap-3">
+                            <img src="{{ asset('storage/' . $student->profile_picture) }}" 
+                                 alt="Foto saat ini" 
+                                 class="w-16 h-16 rounded-full object-cover border-2 border-blue-300"
+                                 onerror="this.style.display='none'">
+                            <p class="text-xs text-slate-500">Foto profil saat ini. Upload baru untuk mengganti.</p>
+                        </div>
+                    @endif
+                    <input type="file" name="profile_picture" accept="image/*" 
+                           class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm" />
                 </div>
             </div>
 
@@ -284,12 +400,6 @@
     function closeEditModal() {
         document.getElementById('editModal').classList.add('hidden');
         document.body.style.overflow = 'auto'; 
-    } 
-
-    document.getElementById('editModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeEditModal();
-        }
-    });
+    }  
 </script>
 @endsection

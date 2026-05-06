@@ -44,26 +44,25 @@
             <div class="hidden lg:flex items-center space-x-6">
                 @auth
                     <div class="flex items-center gap-6">
-                        <!-- Sembunyikan Tersimpan & Lamaran untuk Publik -->
-                        @if(auth()->user()->role->name !== 'publik')
-                            @php $savedCount = \App\Models\SavedJob::where('user_id', auth()->id())->count(); @endphp
-                            <a href="{{ route('student.saved-jobs') }}" class="flex items-center space-x-2 bg-white/10 px-4 py-2 rounded-lg hover:bg-white/20 transition relative group {{ request()->routeIs('student.saved-jobs') ? 'bg-white/20 ring-1 ring-blue-400' : '' }}">
-                                <i class="fas fa-bookmark text-blue-400 group-hover:shake transition"></i>
-                                <span class="text-sm font-semibold">Tersimpan</span>
-                                @if($savedCount > 0)
-                                    <span class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-[#001f3f]">
-                                        {{ $savedCount }}
-                                    </span>
-                                @endif
-                            </a>
+                        {{-- Tersimpan - tampil untuk semua role yang login --}}
+                        @php $savedCount = \App\Models\SavedJob::where('user_id', auth()->id())->count(); @endphp
+                        <a href="{{ route('student.saved-jobs') }}" class="flex items-center space-x-2 bg-white/10 px-4 py-2 rounded-lg hover:bg-white/20 transition relative group {{ request()->routeIs('student.saved-jobs') ? 'bg-white/20 ring-1 ring-blue-400' : '' }}">
+                            <i class="fas fa-bookmark text-blue-400 group-hover:shake transition"></i>
+                            <span class="text-sm font-semibold">Tersimpan</span>
+                            @if($savedCount > 0)
+                                <span class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-[#001f3f]">
+                                    {{ $savedCount }}
+                                </span>
+                            @endif
+                        </a>
 
-                            <a href="{{ route('student.applications') }}" class="flex items-center space-x-2 bg-white/10 px-4 py-2 rounded-lg hover:bg-white/20 transition {{ request()->routeIs('student.applications') ? 'bg-white/20 ring-1 ring-blue-400' : '' }}">
-                                <i class="fas fa-file-alt text-green-400"></i>
-                                <span class="text-sm font-semibold">Lamaran</span>
-                            </a>
-                        @endif
+                        {{-- Lamaran - tampil untuk semua role yang login --}}
+                        <a href="{{ route('student.applications') }}" class="flex items-center space-x-2 bg-white/10 px-4 py-2 rounded-lg hover:bg-white/20 transition {{ request()->routeIs('student.applications') ? 'bg-white/20 ring-1 ring-blue-400' : '' }}">
+                            <i class="fas fa-file-alt text-green-400"></i>
+                            <span class="text-sm font-semibold">Lamaran</span>
+                        </a>
 
-                        <!-- Menggunakan rute global 'profile' -->
+                        {{-- Profil --}}
                         <a href="{{ route('profile') }}" class="flex items-center gap-2 text-sm font-semibold hover:text-blue-300 transition group {{ request()->routeIs('profile') ? 'text-blue-300' : '' }}">
                             <i class="fas fa-user-circle text-xl group-hover:scale-110 transition"></i>
                             <span>{{ auth()->user()->name }}</span>
@@ -104,30 +103,27 @@
                 }
             @endphp
             
-            <!-- Menggunakan rute global 'profile' -->
+            {{-- Profil --}}
             <a href="{{ route('profile') }}" class="block py-2 font-bold text-blue-300 border-b border-white/10">
                 <i class="fas fa-user-circle mr-2"></i>Profil Saya
             </a>
 
-            @if(auth()->user()->role->name !== 'publik')
-                @php $savedCountMobile = \App\Models\SavedJob::where('user_id', auth()->id())->count(); @endphp
-                <a href="{{ route('student.saved-jobs') }}" class="block py-2 text-blue-400 font-bold flex items-center">
-                    <i class="fas fa-bookmark mr-2"></i> Tersimpan ({{ $savedCountMobile }})
-                </a>
+            {{-- Tersimpan - tampil untuk semua role yang login --}}
+            @php $savedCountMobile = \App\Models\SavedJob::where('user_id', auth()->id())->count(); @endphp
+            <a href="{{ route('student.saved-jobs') }}" class="block py-2 text-blue-400 font-bold flex items-center">
+                <i class="fas fa-bookmark mr-2"></i> Tersimpan ({{ $savedCountMobile }})
+            </a>
 
-                <a href="{{ route('student.applications') }}" class="block py-2 text-green-400 font-bold">
-                    <i class="fas fa-file-alt mr-2"></i>Lamaran Saya
-                </a>
-            @endif
+            {{-- Lamaran - tampil untuk semua role yang login --}}
+            <a href="{{ route('student.applications') }}" class="block py-2 text-green-400 font-bold">
+                <i class="fas fa-file-alt mr-2"></i>Lamaran Saya
+            </a>
 
             <a href="{{ $homeRouteMobile }}" class="block py-2">Beranda</a>
             <a href="{{ route('public.lowongan') }}" class="block py-2">Lowongan</a>
             <a href="{{ route('public.berita') }}" class="block py-2">Berita</a>
-            
-            @if(auth()->user()->role->name !== 'publik')
-                <a href="{{ route('public.acara') }}" class="block py-2">Acara</a>
-                <a href="{{ route('public.tracer') }}" class="block py-2">Tracer Study</a>
-            @endif
+            <a href="{{ route('public.acara') }}" class="block py-2">Acara</a>
+            <a href="{{ route('public.tracer') }}" class="block py-2">Tracer Study</a>
 
             <form method="POST" action="{{ route('logout') }}" class="pt-4">
                 @csrf
@@ -147,4 +143,4 @@
         const menu = document.getElementById('mobile-menu');
         menu.classList.toggle('hidden');
     }
-</script>
+</script> 

@@ -155,9 +155,9 @@ Route::middleware(['auth', 'role:publik'])->prefix('publik')->name('publik.')->g
 });
 
 /**
- * STUDENT ROUTES
+ * STUDENT ROUTES (DIPERBAIKI UNTUK MULTI-ROLE AGAR FIX 403)
  */
-Route::middleware(['auth', 'role:siswa'])->prefix('student')->name('student.')->group(function () {
+Route::middleware(['auth', 'role:siswa,alumni,publik'])->prefix('student')->name('student.')->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::get('/', fn() => redirect()->route('student.home'));
 
@@ -168,7 +168,6 @@ Route::middleware(['auth', 'role:siswa'])->prefix('student')->name('student.')->
     Route::post('/lowongan/save/{id}', [StudentController::class, 'saveJob'])->name('lowongan.save');
     Route::delete('/lowongan/unsave/{id}', [StudentController::class, 'unsaveJob'])->name('lowongan.unsave');
     
-    // Perbaikan: Pastikan JobApplicationController API atau Web dipanggil dengan benar
     Route::post('/lowongan/apply/{id}', [StudentController::class, 'applyJob'])->name('lowongan.apply');
     Route::get('/lowongan/{id}', [StudentController::class, 'detailLowongan'])->name('lowongan.detail');
 
@@ -294,4 +293,4 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
             'link'  => route('admin.users.index'),
         ]));
     })->name('notifications');
-}); 
+});
