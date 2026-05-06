@@ -2,16 +2,22 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class SchoolProfile extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
-        'school_name',
-        'school_address',
-        'logo_path',
+        'name',
+        'site_title',
+        'site_description',
+        'tagline',
+        'phone',
+        'email',
+        'address',
+        'facebook',
+        'instagram',
+        'twitter',
+        'youtube',
+        'logo',
     ];
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\GraduationYear;
 use App\Models\Major;
 use App\Models\SchoolProfile;
+use App\Services\SchoolProfileService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Schema;
@@ -34,20 +35,21 @@ class SettingController extends Controller
         return Redirect::route($route)->with('error', "Tabel {$table} belum dibuat. Jalankan php artisan migrate.");
     }
 
-    /* --- PROFIL SEKOLAH --- */
+    /* ===== PROFIL SEKOLAH ===== */
 
     public function profile()
     {
-        if (! $this->tableExists('school_profiles')) {
+        if (!$this->tableExists('school_profiles')) {
             $profile = new SchoolProfile();
-            return view('admin.settings.profile', compact('profile'))->with('tableMissing', 'school_profiles');
+            return view('admin.settings.profile', compact('profile'))
+                ->with('tableMissing', 'school_profiles');
         }
 
         $profile = SchoolProfile::first();
 
-        if (! $profile) {
+        if (!$profile) {
             $profile = SchoolProfile::create([
-                'school_name' => 'Nama Sekolah',
+                'school_name'    => 'Nama Sekolah',
                 'school_address' => 'Alamat sekolah...',
             ]);
         }
@@ -57,59 +59,79 @@ class SettingController extends Controller
 
     public function updateProfile(Request $request)
     {
-        if (! $this->tableExists('school_profiles')) {
+        if (!$this->tableExists('school_profiles')) {
             return $this->missingTableResponse('school_profiles');
         }
 
         $profile = SchoolProfile::first() ?: new SchoolProfile();
 
-        $data = $request->validate([
-            'school_name' => 'required|string|max:255',
-            'school_address' => 'nullable|string|max:1000',
-            'logo' => 'nullable|image|max:2048',
+        $validated = $request->validate([
+            // Field lama
+            'school_name'      => 'required|string|max:255',
+            'school_address'   => 'nullable|string|max:1000',
+
+            // Field baru
+            'site_title'       => 'nullable|string|max:255',
+            'site_description' => 'nullable|string|max:500',
+            'tagline'          => 'nullable|string|max:255',
+            'phone'            => 'nullable|string|max:20',
+            'email'            => 'nullable|email|max:255',
+            'facebook'         => 'nullable|url|max:255',
+            'instagram'        => 'nullable|url|max:255',
+            'twitter'          => 'nullable|url|max:255',
+            'youtube'          => 'nullable|url|max:255',
+            'logo'             => 'nullable|image|mimes:png,jpg,jpeg,svg|max:2048',
         ]);
 
+        // ===== Upload Logo =====
         if ($request->hasFile('logo')) {
-            if ($profile->logo_path && Storage::disk('public')->exists($profile->logo_path)) {
-                Storage::disk('public')->delete($profile->logo_path);
+            // Hapus logo lama kalau ada
+            $oldLogo = $profile->logo_path ?? $profile->logo ?? null;
+            if ($oldLogo && Storage::disk('public')->exists($oldLogo)) {
+                Storage::disk('public')->delete($oldLogo);
             }
-
-            $data['logo_path'] = $request->file('logo')->store('school-logos', 'public');
+            $validated['logo_path'] = $request->file('logo')->store('school-logos', 'public');
+            $validated['logo']      = $validated['logo_path']; // sync dua kolom
         }
 
-        $profile->fill($data);
+        $profile->fill($validated);
         $profile->save();
 
-        return Redirect::route('admin.settings.profile')->with('success', 'Profil sekolah berhasil diperbarui.');
+        // ===== Hapus cache agar perubahan langsung tampil =====
+        SchoolProfileService::clear();
+
+        return Redirect::route('admin.settings.profile')
+            ->with('success', 'Profil sekolah berhasil diperbarui.');
     }
 
-    /* --- MANAJEMEN JURUSAN (MAJORS) --- */
+    /* ===== MANAJEMEN JURUSAN (MAJORS) ===== */
 
     public function majorsIndex()
     {
-        if (! $this->tableExists('majors')) {
-            return view('admin.settings.majors.index', ['majors' => collect()])->with('tableMissing', 'majors');
+        if (!$this->tableExists('majors')) {
+            return view('admin.settings.majors.index', ['majors' => collect()])
+                ->with('tableMissing', 'majors');
         }
 
         $majors = Major::orderBy('name')->get();
-        // Memanggil folder settings/majors/index.blade.php
         return view('admin.settings.majors.index', compact('majors'));
     }
 
     public function storeMajor(Request $request)
     {
-        if (! $this->tableExists('majors')) {
+        if (!$this->tableExists('majors')) {
             return $this->missingTableResponse('majors', 'admin.settings.majors.index');
         }
 
         $data = $request->validate([
-            'name' => 'required|string|max:150|unique:majors,name',
+            'name'        => 'required|string|max:150|unique:majors,name',
             'description' => 'nullable|string|max:1000',
         ]);
 
         Major::create($data);
 
-        return Redirect::route('admin.settings.majors.index')->with('success', 'Jurusan berhasil ditambahkan.');
+        return Redirect::route('admin.settings.majors.index')
+            ->with('success', 'Jurusan berhasil ditambahkan.');
     }
 
     public function editMajor(Major $major)
@@ -120,49 +142,52 @@ class SettingController extends Controller
     public function updateMajor(Request $request, Major $major)
     {
         $data = $request->validate([
-            'name' => 'required|string|max:150|unique:majors,name,' . $major->id,
+            'name'        => 'required|string|max:150|unique:majors,name,' . $major->id,
             'description' => 'nullable|string|max:1000',
         ]);
 
         $major->update($data);
 
-        return Redirect::route('admin.settings.majors.index')->with('success', 'Jurusan berhasil diperbarui.');
+        return Redirect::route('admin.settings.majors.index')
+            ->with('success', 'Jurusan berhasil diperbarui.');
     }
 
     public function destroyMajor(Major $major)
     {
         $major->delete();
 
-        return Redirect::route('admin.settings.majors.index')->with('success', 'Jurusan berhasil dihapus.');
+        return Redirect::route('admin.settings.majors.index')
+            ->with('success', 'Jurusan berhasil dihapus.');
     }
 
-    /* --- MANAJEMEN TAHUN LULUS (YEARS) --- */
+    /* ===== MANAJEMEN TAHUN LULUS (YEARS) ===== */
 
     public function yearsIndex()
     {
-        if (! $this->tableExists('graduation_years')) {
-            return view('admin.settings.years.index', ['years' => collect()])->with('tableMissing', 'graduation_years');
+        if (!$this->tableExists('graduation_years')) {
+            return view('admin.settings.years.index', ['years' => collect()])
+                ->with('tableMissing', 'graduation_years');
         }
 
         $years = GraduationYear::orderByDesc('year')->get();
-        // Memanggil folder settings/years/index.blade.php
         return view('admin.settings.years.index', compact('years'));
     }
 
     public function storeYear(Request $request)
     {
-        if (! $this->tableExists('graduation_years')) {
+        if (!$this->tableExists('graduation_years')) {
             return $this->missingTableResponse('graduation_years', 'admin.settings.years.index');
         }
 
         $data = $request->validate([
-            'year' => 'required|integer|min:1900|max:2100|unique:graduation_years,year',
+            'year'  => 'required|integer|min:1900|max:2100|unique:graduation_years,year',
             'label' => 'nullable|string|max:255',
         ]);
 
         GraduationYear::create($data);
 
-        return Redirect::route('admin.settings.years.index')->with('success', 'Tahun lulus berhasil ditambahkan.');
+        return Redirect::route('admin.settings.years.index')
+            ->with('success', 'Tahun lulus berhasil ditambahkan.');
     }
 
     public function editYear(GraduationYear $year)
@@ -173,19 +198,21 @@ class SettingController extends Controller
     public function updateYear(Request $request, GraduationYear $year)
     {
         $data = $request->validate([
-            'year' => 'required|integer|min:1900|max:2100|unique:graduation_years,year,' . $year->id,
+            'year'  => 'required|integer|min:1900|max:2100|unique:graduation_years,year,' . $year->id,
             'label' => 'nullable|string|max:255',
         ]);
 
         $year->update($data);
-        return Redirect::route('adm
-        in.settings.years.index')->with('success', 'Tahun lulus berhasil diperbarui.');
+
+        return Redirect::route('admin.settings.years.index')
+            ->with('success', 'Tahun lulus berhasil diperbarui.');
     }
 
     public function destroyYear(GraduationYear $year)
     {
         $year->delete();
 
-        return Redirect::route('admin.settings.years.index')->with('success', 'Tahun lulus berhasil dihapus.');
+        return Redirect::route('admin.settings.years.index')
+            ->with('success', 'Tahun lulus berhasil dihapus.');
     }
 }

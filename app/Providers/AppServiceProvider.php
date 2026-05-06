@@ -5,6 +5,9 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use App\Models\User;
+// Tambahkan dua baris ini agar View dan Service terbaca:
+use Illuminate\Support\Facades\View;
+use App\Services\SchoolProfileService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -12,6 +15,8 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        View::share('schoolProfile', SchoolProfileService::get());
+
         Gate::define('super_admin',    fn(User $u) => $u->role->name === 'super_admin');
         Gate::define('admin_bkk',      fn(User $u) => $u->role->name === 'admin_bkk');
         Gate::define('kepala_bkk',     fn(User $u) => $u->role->name === 'kepala_bkk');
@@ -20,11 +25,9 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('perusahaan',     fn(User $u) => $u->role->name === 'perusahaan');
         Gate::define('alumni',         fn(User $u) => $u->role->name === 'alumni');
         Gate::define('publik',         fn(User $u) => $u->role->name === 'publik');
-
         Gate::define('any_admin', fn(User $u) => in_array($u->role->name, [
             'super_admin', 'admin_bkk', 'kepala_bkk', 'kepala_sekolah'
         ]));
-
         Gate::define('any_user', fn(User $u) => in_array($u->role->name, [
             'siswa', 'alumni', 'publik'
         ]));

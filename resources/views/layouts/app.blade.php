@@ -4,7 +4,15 @@
     <meta charset="UTF-8">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'BKK SMKN 1 Garut')</title>
+    
+    {{-- Title Dinamis --}}
+    <title>@yield('title', isset($schoolProfile) && $schoolProfile->site_title ? $schoolProfile->site_title : 'BKK SMKN 1 Garut')</title>
+
+    {{-- Favicon Dinamis --}}
+    @if(isset($schoolProfile) && $schoolProfile->logo)
+        <link rel="icon" type="image/png" href="{{ asset('storage/' . $schoolProfile->logo) }}">
+    @endif
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">

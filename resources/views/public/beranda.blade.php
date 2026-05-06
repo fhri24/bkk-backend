@@ -86,8 +86,16 @@
 @endphp
 <section class="hero-bg h-[600px] flex items-center justify-center text-center text-white relative">
     <div class="container mx-auto px-6 z-10">
-        <h2 class="text-5xl md:text-7xl font-extrabold mb-6 leading-tight">Sistem Informasi <br /><span class="text-blue-500">Bursa Kerja</span></h2>
-        <p class="text-lg md:text-xl opacity-90 mb-10 max-w-2xl mx-auto font-medium">"Menghubungkan Talenta Alumni SMKN 1 Garut dengan Peluang Karir Masa Depan di Industri Global"</p>
+        
+        {{-- Hero Title & Description Dinamis --}}
+        <h1 class="text-5xl md:text-6xl font-black leading-tight mb-6">
+            {{ $schoolProfile->site_title ?? 'Sistem Informasi' }}
+            <span class="text-blue-400 block">Bursa Kerja</span>
+        </h1>
+        <p class="text-lg md:text-xl text-blue-100 mb-10 max-w-2xl mx-auto leading-relaxed">
+            "{{ $schoolProfile->site_description ?? 'Menghubungkan Talenta Alumni SMKN 1 Garut dengan Peluang Karir Masa Depan di Industri Global' }}"
+        </p>
+
         <div class="bg-white rounded-2xl p-2 flex flex-col md:flex-row shadow-2xl max-w-3xl mx-auto overflow-hidden">
             <div class="flex items-center flex-1 px-4 py-2 border-b md:border-b-0 md:border-r border-slate-100">
                 <i class="fas fa-search text-slate-400 mr-3"></i>
@@ -97,7 +105,7 @@
                 <i class="fas fa-location-arrow text-slate-400 mr-3"></i>
                 <input type="text" placeholder="Lokasi..." class="w-full text-slate-800 focus:outline-none font-medium" />
             </div>
-        <a href="{{ $routeLowongan }}" class="bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-xl font-bold transition text-center flex items-center justify-center">CARI KERJA</a>
+            <a href="{{ $routeLowongan }}" class="bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-xl font-bold transition text-center flex items-center justify-center">CARI KERJA</a>
         </div>
     </div>
 </section>

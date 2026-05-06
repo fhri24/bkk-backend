@@ -5,12 +5,24 @@
             {{-- Logo --}}
             <div class="flex items-center space-x-3 cursor-pointer hover:opacity-80 transition"
                  onclick="window.location.href = '{{ route('home') }}'">
-                <div class="w-11 h-11 bg-white rounded-xl flex items-center justify-center shadow-lg">
-                    <i class="fas fa-graduation-cap text-[#001f3f] text-xl"></i>
+                
+                {{-- Logo dinamis --}}
+                <div class="w-11 h-11 bg-white rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
+                    @if(isset($schoolProfile) && $schoolProfile->logo)
+                        <img src="{{ asset('storage/' . $schoolProfile->logo) }}"
+                             class="w-full h-full object-contain p-1" alt="Logo">
+                    @else
+                        <i class="fas fa-graduation-cap text-[#001f3f] text-xl"></i>
+                    @endif
                 </div>
+
                 <div>
-                    <h1 class="font-extrabold text-xl tracking-tight leading-none">BKK SMKN 1</h1>
-                    <p class="text-[10px] uppercase tracking-widest opacity-70">Garut Bermartabat</p>
+                    <h1 class="font-extrabold text-xl tracking-tight leading-none">
+                        {{ $schoolProfile->site_title ?? 'BKK SMKN 1' }}
+                    </h1>
+                    <p class="text-[10px] uppercase tracking-widest opacity-70">
+                        {{ $schoolProfile->tagline ?? 'Garut Bermartabat' }}
+                    </p>
                 </div>
             </div>
 
