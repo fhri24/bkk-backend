@@ -12,10 +12,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
+    // Gunakan trait bawaan saja, jangan tambahkan HasRoles jika tidak pakai Spatie
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
-     * Atribut yang dapat diisi (Mass Assignable). 
+     * Atribut yang dapat diisi (Mass Assignable).
      */
     protected $fillable = [
         'name',
@@ -25,14 +26,14 @@ class User extends Authenticatable
         'userable_id', 
         'userable_type',
         'is_active',
-        'nis',
-        'major',
+        'nis',             // Untuk Siswa/Alumni
+        'major',           // Untuk Siswa/Alumni
         'gender',
         'graduation_year',
         'phone',
-        'social_id',       // Sudah masuk
-        'social_provider', // Sudah masuk
-        'avatar',          // Sudah masuk
+        'social_id',
+        'social_provider',
+        'avatar',
         'email_verified_at',
     ];
 
@@ -64,6 +65,9 @@ class User extends Authenticatable
         return $this->hasMany(OtpCode::class);
     }
 
+    /**
+     * Relasi ke data Student (Jika kamu memisahkan detail ke tabel lain)
+     */
     public function student(): HasOne
     { 
         return $this->hasOne(Student::class, 'user_id', 'id');
@@ -74,6 +78,9 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class, 'role_id', 'id');
     }
     
+    /**
+     * Polymorphic relation
+     */
     public function userable()
     {
         return $this->morphTo();
@@ -105,41 +112,42 @@ class User extends Authenticatable
         ]);
     }
 
-    // ─── LOGIC ──────────────────────────────────────────
+    // ─── LOGIC & ACCESSORS ──────────────────────────────
 
     public function isSocialUser(): bool
     {
         return !is_null($this->social_provider);
     }
 
+    /**
+     * Accessor untuk memanggil URL avatar dengan $user->avatar_url
+     */
     public function getAvatarUrlAttribute(): string
     {
-        if ($this->avatar) return $this->avatar;
+        if ($this->avatar) {
+            return str_contains($this->avatar, 'http') ? $this->avatar : asset('storage/' . $this->avatar);
+        }
 
         return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=001f3f&color=fff&bold=true';
     }
 
+    /**
+     * Pengecekan Permission Manual (Karena tidak pakai Spatie)
+     */
     public function hasPermission($permission)
     {
         if (!$this->role) return false;
 
+        // Super Admin punya semua akses
         if ($this->role->name === 'super_admin') return true;
 
-        $adminRoles = ['admin_bkk', 'kepala_bkk', 'perusahaan'];
-
-        if (in_array($this->role->name, $adminRoles)) {
-            // Cek jika permissions dalam bentuk array atau json
-            $perms = $this->role->permissions;
-            if (is_string($perms)) {
-                $perms = json_decode($perms, true);
-            }
-            
-            if (is_array($perms)) {
-                return in_array($permission, $perms);
-            }
-            return true;
+        $perms = $this->role->permissions;
+        
+        // Handle jika permissions disimpan sebagai JSON di database
+        if (is_string($perms)) {
+            $perms = json_decode($perms, true);
         }
-
-        return false;
+        
+        return is_array($perms) && in_array($permission, $perms);
     }
 }

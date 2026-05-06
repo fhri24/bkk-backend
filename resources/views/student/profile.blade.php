@@ -31,16 +31,16 @@
                     </div>
 
                     <h2 class="text-2xl font-extrabold text-slate-900 mb-1">
-                        {{ ($student && $student->full_name) ? $student->full_name : $user->name }}
+                        {{ $student->full_name ?? $user->name }}
                     </h2>
                     <p class="text-sm text-slate-500 font-bold mb-4">{{ $user->email }}</p>
 
                     {{-- Badge Role --}}
                     <div class="inline-block bg-green-100 text-green-700 px-4 py-2 rounded-full text-xs font-bold mb-6">
                         <i class="fas fa-check-circle mr-2"></i>
-                        @if(auth()->user()->role->name === 'publik')
+                        @if(auth()->user()->role && auth()->user()->role->name === 'publik')
                             Pengguna Umum
-                        @elseif(auth()->user()->role->name === 'alumni' || ($student && $student->alumni_flag))
+                        @elseif((auth()->user()->role && auth()->user()->role->name === 'alumni') || ($student && $student->alumni_flag))
                             Alumni
                         @else
                             Siswa Aktif
@@ -52,7 +52,7 @@
                         <div class="flex items-center justify-between p-3 bg-blue-50 rounded-xl">
                             <div class="text-left">
                                 <p class="text-xs text-slate-500 font-bold uppercase">NIS / NIK</p>
-                                <p class="text-lg font-extrabold text-blue-600">{{ ($student && $student->nis) ? $student->nis : '-' }}</p>
+                                <p class="text-lg font-extrabold text-blue-600">{{ $student->nis ?? '-' }}</p>
                             </div>
                             <i class="fas fa-id-card text-blue-200 text-2xl"></i>
                         </div>
@@ -62,7 +62,7 @@
                             <div class="text-left">
                                 <p class="text-xs text-slate-500 font-bold uppercase">Lamaran Diajukan</p>
                                 <p class="text-lg font-extrabold text-purple-600">
-                                    {{ is_array($applications) ? count($applications) : ($applications ? $applications->count() : 0) }}
+                                    {{ is_countable($applications) ? count($applications) : 0 }}
                                 </p>
                             </div>
                             <i class="fas fa-paper-plane text-purple-200 text-2xl"></i>
@@ -81,7 +81,7 @@
                         {{-- Akun Dibuat --}}
                         <div class="text-left px-2 pt-2">
                             <p class="text-xs text-slate-500 font-bold uppercase">Akun Dibuat</p>
-                            <p class="text-sm font-bold text-slate-600">{{ $user->created_at->format('d M Y') }}</p>
+                            <p class="text-sm font-bold text-slate-600">{{ $user->created_at ? $user->created_at->format('d M Y') : '-' }}</p>
                         </div>
                     </div>
 
@@ -103,7 +103,7 @@
                         <div>
                             <p class="text-xs font-bold text-slate-500 uppercase mb-1">Nama Lengkap</p>
                             <p class="text-lg font-bold text-slate-900">
-                                {{ ($student && $student->full_name) ? $student->full_name : $user->name }}
+                                {{ $student->full_name ?? $user->name }}
                             </p>
                         </div>
                         <div>
@@ -124,7 +124,7 @@
                         </div>
                         <div>
                             <p class="text-xs font-bold text-slate-500 uppercase mb-1">No. Handphone</p>
-                            <p class="text-lg font-bold text-slate-900">{{ ($student && $student->phone) ? $student->phone : '-' }}</p>
+                            <p class="text-lg font-bold text-slate-900">{{ $student->phone ?? '-' }}</p>
                         </div>
                     </div>
                 </div> 
@@ -138,16 +138,15 @@
                         <div>
                             <p class="text-xs font-bold text-slate-500 uppercase mb-1">Sekolah / Instansi</p>
                             <p class="text-lg font-bold text-slate-900">
-                                {{ ($student && $student->school_origin) ? $student->school_origin : 'SMKN 1 Garut' }}
+                                {{ $student->school_origin ?? 'SMKN 1 Garut' }}
                             </p>
                         </div>
                         
-                        {{-- Jurusan: tampil HANYA untuk siswa & alumni --}}
-                        @if(auth()->user()->role->name !== 'publik')
+                        @if(auth()->user()->role && auth()->user()->role->name !== 'publik')
                         <div>
                             <p class="text-xs font-bold text-slate-500 uppercase mb-1">Jurusan</p>
                             <p class="text-lg font-bold text-slate-900">
-                                {{ ($student && $student->major) ? $student->major : 'Tidak Diisi' }}
+                                {{ $student->major ?? 'Tidak Diisi' }}
                             </p>
                         </div>
                         @endif
@@ -155,13 +154,13 @@
                         <div>
                             <p class="text-xs font-bold text-slate-500 uppercase mb-1">Tahun Lulus / Angkatan</p>
                             <p class="text-lg font-bold text-slate-900">
-                                {{ ($student && $student->graduation_year) ? $student->graduation_year : '-' }}
+                                {{ $student->graduation_year ?? '-' }}
                             </p>
                         </div>
                         <div>
                             <p class="text-xs font-bold text-slate-500 uppercase mb-1">Status Saat Ini</p>
                             <p class="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-bold">
-                                {{ ucfirst(($student && $student->status) ? $student->status : 'Active') }}
+                                {{ ucfirst($student->status ?? 'Aktif') }}
                             </p>
                         </div>
                     </div>
@@ -173,9 +172,9 @@
                         <i class="fas fa-bookmark mr-3 text-blue-500"></i> Lowongan yang Saya Simpan
                     </h3>
                     <div class="space-y-4">
-                        @forelse(auth()->user()->savedJobs()->with('job')->get() as $saved)
+                        @forelse(auth()->user()->savedJobs()->with('job.company')->get() as $saved)
                             @if($saved->job)
-                                <div class="group flex items-center justify-between p-4 hover:bg-slate-50 transition-all border-b border-slate-100 last:border-0">
+                                <div class="group flex items-center justify-between p-4 hover:bg-slate-50 transition-all border-b border-slate-100 last:border-0 rounded-xl">
                                     <div class="flex items-center space-x-4"> 
                                         <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-colors">
                                             <i class="fas fa-briefcase text-lg"></i>
@@ -196,7 +195,7 @@
                                         </a>
                                         <form action="{{ route('student.lowongan.save', $saved->job_id) }}" method="POST" class="inline">
                                             @csrf
-                                            <button type="submit" class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all">
+                                            <button type="submit" class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all" onclick="return confirm('Hapus dari simpanan?')">
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
                                         </form>
@@ -209,10 +208,7 @@
                     </div>
                 </div>
 
-                {{-- ============================================================
-                     Lamaran Pekerjaan Terbaru — tampil untuk SEMUA role
-                     Terhubung dengan halaman /student/applications (navbar Lamaran)
-                     ============================================================ --}}
+                {{-- Lamaran Pekerjaan Terbaru --}}
                 <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
                     <h3 class="text-xl font-extrabold text-slate-900 mb-6 flex items-center justify-between">
                         <span>
@@ -225,9 +221,7 @@
                     </h3>
 
                     @php
-                        $recentApplications = ($applications instanceof \Illuminate\Support\Collection)
-                            ? $applications->take(5)
-                            : collect($applications)->take(5);
+                        $recentApplications = collect($applications)->take(5);
                     @endphp
 
                     @if($recentApplications->isEmpty())
@@ -246,15 +240,14 @@
                             @foreach($recentApplications as $app)
                                 <div class="flex items-center justify-between p-4 rounded-xl border border-slate-100 hover:bg-slate-50 transition group">
                                     <div class="flex items-center space-x-4">
-                                        {{-- Ikon status --}}
                                         <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0
-                                            @if($app->status === 'pending')  bg-yellow-50 text-yellow-500
+                                            @if($app->status === 'pending') bg-yellow-50 text-yellow-500
                                             @elseif($app->status === 'accepted') bg-green-50 text-green-500
                                             @elseif($app->status === 'rejected') bg-red-50 text-red-400
                                             @else bg-blue-50 text-blue-500
                                             @endif">
                                             <i class="fas text-sm
-                                                @if($app->status === 'pending')  fa-clock
+                                                @if($app->status === 'pending') fa-clock
                                                 @elseif($app->status === 'accepted') fa-check-circle
                                                 @elseif($app->status === 'rejected') fa-times-circle
                                                 @else fa-info-circle
@@ -273,9 +266,8 @@
                                             </p>
                                         </div>
                                     </div>
-                                    {{-- Badge status --}}
                                     <span class="text-xs font-bold px-3 py-1 rounded-full flex-shrink-0
-                                        @if($app->status === 'pending')  bg-yellow-100 text-yellow-700
+                                        @if($app->status === 'pending') bg-yellow-100 text-yellow-700
                                         @elseif($app->status === 'accepted') bg-green-100 text-green-700
                                         @elseif($app->status === 'rejected') bg-red-100 text-red-600
                                         @else bg-blue-100 text-blue-700
@@ -299,11 +291,11 @@
 </div> 
 
 {{-- Modal Edit Profil --}}
-<div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-    <div class="bg-white rounded-2xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto shadow-2xl">
-        <div class="bg-gradient-to-r from-blue-600 to-blue-700 p-8 text-white flex justify-between items-center">
+<div id="editModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 hidden opacity-0 transition-opacity duration-300" aria-hidden="true">
+    <div class="bg-white rounded-2xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto shadow-2xl transform scale-95 transition-transform duration-300" id="modalContent">
+        <div class="bg-gradient-to-r from-blue-600 to-blue-700 p-8 text-white flex justify-between items-center sticky top-0 z-10">
             <h2 class="text-2xl font-extrabold">Edit Profil</h2>
-            <button onclick="closeEditModal()" class="text-white text-2xl hover:text-blue-200 transition">&times;</button>
+            <button onclick="closeEditModal()" class="text-white text-3xl hover:text-blue-200 transition leading-none">&times;</button>
         </div>
 
         <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" class="p-8 space-y-6">
@@ -312,36 +304,35 @@
                 <div>
                     <label class="block text-xs font-extrabold text-slate-400 uppercase mb-2">Nama Lengkap</label>
                     <input type="text" name="full_name" 
-                           value="{{ ($student && $student->full_name) ? $student->full_name : $user->name }}" 
-                           class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-blue-600 outline-none" required />
+                           value="{{ $student->full_name ?? $user->name }}" 
+                           class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-blue-600 focus:ring-1 focus:ring-blue-600 outline-none" required />
                 </div>
                 <div>
                     <label class="block text-xs font-extrabold text-slate-400 uppercase mb-2">NIS / NIK / No.Identitas</label>
                     <input type="text" name="nis" 
-                           value="{{ ($student && $student->nis) ? $student->nis : '' }}" 
-                           class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-blue-600 outline-none" />
+                           value="{{ $student->nis ?? '' }}" 
+                           class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-blue-600 focus:ring-1 focus:ring-blue-600 outline-none" />
                 </div>
                 <div>
                     <label class="block text-xs font-extrabold text-slate-400 uppercase mb-2">Jenis Kelamin</label>
                     <select name="gender" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-blue-600 outline-none">
                         <option value="">Pilih</option>
-                        <option value="L" {{ ($student && $student->gender == 'L') ? 'selected' : '' }}>Laki-laki</option>
-                        <option value="P" {{ ($student && $student->gender == 'P') ? 'selected' : '' }}>Perempuan</option>
+                        <option value="L" @selected(($student->gender ?? '') == 'L')>Laki-laki</option>
+                        <option value="P" @selected(($student->gender ?? '') == 'P')>Perempuan</option>
                     </select>
                 </div>
                 <div>
                     <label class="block text-xs font-extrabold text-slate-400 uppercase mb-2">No. Handphone</label>
                     <input type="tel" name="phone" 
-                           value="{{ ($student && $student->phone) ? $student->phone : '' }}" 
-                           class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-blue-600 outline-none" />
+                           value="{{ $student->phone ?? '' }}" 
+                           class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-blue-600 focus:ring-1 focus:ring-blue-600 outline-none" />
                 </div>
                 
-                {{-- Jurusan: HANYA untuk siswa & alumni --}}
-                @if(auth()->user()->role->name !== 'publik')
+                @if(auth()->user()->role && auth()->user()->role->name !== 'publik')
                 <div>
                     <label class="block text-xs font-extrabold text-slate-400 uppercase mb-2">Jurusan</label>
                     <input type="text" name="major" list="major_list" 
-                           value="{{ ($student && $student->major) ? $student->major : '' }}" 
+                           value="{{ $student->major ?? '' }}" 
                            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-blue-600 outline-none" 
                            placeholder="Ketik atau pilih jurusan">
                     <datalist id="major_list">
@@ -357,7 +348,7 @@
                     <select name="graduation_year" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-blue-600 outline-none">
                         <option value="">Pilih Tahun</option>
                         @foreach($years as $year)
-                            <option value="{{ $year->year }}" {{ ($student && $student->graduation_year == $year->year) ? 'selected' : '' }}>
+                            <option value="{{ $year->year }}" @selected(($student->graduation_year ?? '') == $year->year)>
                                 {{ $year->year }}
                             </option>
                         @endforeach
@@ -365,7 +356,7 @@
                 </div> 
                 <div class="md:col-span-2">
                     <label class="block text-xs font-extrabold text-slate-400 uppercase mb-2">Alamat</label>
-                    <textarea name="address" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-blue-600 outline-none" rows="2">{{ ($student && $student->address) ? $student->address : '' }}</textarea>
+                    <textarea name="address" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-blue-600 outline-none" rows="2">{{ $student->address ?? '' }}</textarea>
                 </div>
                 <div class="md:col-span-2">
                     <label class="block text-xs font-extrabold text-slate-400 uppercase mb-2">Foto Profil</label>
@@ -373,13 +364,12 @@
                         <div class="mb-3 flex items-center gap-3">
                             <img src="{{ asset('storage/' . $student->profile_picture) }}" 
                                  alt="Foto saat ini" 
-                                 class="w-16 h-16 rounded-full object-cover border-2 border-blue-300"
-                                 onerror="this.style.display='none'">
-                            <p class="text-xs text-slate-500">Foto profil saat ini. Upload baru untuk mengganti.</p>
+                                 class="w-16 h-16 rounded-full object-cover border-2 border-blue-300">
+                            <p class="text-xs text-slate-500">Foto saat ini. Upload baru untuk mengganti.</p>
                         </div>
                     @endif
                     <input type="file" name="profile_picture" accept="image/*" 
-                           class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm" />
+                           class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
                 </div>
             </div>
 
@@ -393,13 +383,32 @@
 
 <script>
     function openEditModal() {
-        document.getElementById('editModal').classList.remove('hidden');
+        const modal = document.getElementById('editModal');
+        const content = document.getElementById('modalContent');
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modal.classList.remove('opacity-0');
+            content.classList.remove('scale-95');
+        }, 10);
         document.body.style.overflow = 'hidden'; 
     }
 
     function closeEditModal() {
-        document.getElementById('editModal').classList.add('hidden');
+        const modal = document.getElementById('editModal');
+        const content = document.getElementById('modalContent');
+        modal.classList.add('opacity-0');
+        content.classList.add('scale-95');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300);
         document.body.style.overflow = 'auto'; 
     }  
+    
+    window.onclick = function(event) {
+        const modal = document.getElementById('editModal');
+        if (event.target == modal) {
+            closeEditModal();
+        }
+    }
 </script>
 @endsection
