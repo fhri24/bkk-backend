@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\JobApplication;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -17,20 +18,32 @@ class JobApplicationController extends Controller
     {
         $user = Auth::user();
 
-        // Cek Role (Student vs Admin)
-        if ($user->role && (in_array($user->role->name, ['student', 'siswa']))) {
-            $student = $user->userable;
-            $applications = JobApplication::where('student_id', $student->student_id)
-                ->with(['student', 'job.major', 'job.company'])
-                ->latest('application_date')
-                ->get();
-        } else {
-            $applications = JobApplication::with(['student', 'job.major', 'job.company'])
-                ->latest('application_date')
-                ->get();
+        // Query dasar dengan relasi
+        $query = JobApplication::with(['student.user', 'job.major', 'job.company']);
+
+        // Jika user adalah student/siswa/publik, filter berdasarkan ID profilnya
+        if ($user->role && (in_array($user->role->name, ['student', 'siswa', 'publik', 'alumni']))) {
+            $profile = $user->userable;
+
+            // Logika ambil ID: prioritaskan userable_id dari tabel users
+            $myId = $user->userable_id ?? ($profile ? ($profile->student_id ?? $profile->id) : null);
+
+            if ($myId) {
+                $query->where('student_id', $myId);
+            } else {
+                $query->where('student_id', 0);
+            }
         }
 
+        $applications = $query->latest('application_date')->get()->map(function ($app) {
+            // ANTI-TUKAR: Cari nama user asli berdasarkan student_id
+            $actualUser = User::where('userable_id', $app->student_id)->first();
+            $app->applicant_name = $actualUser ? $actualUser->name : ($app->student->full_name ?? 'Pelamar');
+            return $app;
+        });
+
         return response()->json([
+            'status' => 'success',
             'message' => 'Daftar lamaran berhasil diambil',
             'data' => $applications
         ], 200);
@@ -42,90 +55,81 @@ class JobApplicationController extends Controller
     public function show($id)
     {
         try {
-            $application = JobApplication::with(['student', 'job.major', 'job.company'])
+            $application = JobApplication::with(['student.user', 'job.major', 'job.company'])
                 ->findOrFail($id);
 
             $user = Auth::user();
-            if ($user->role && (in_array($user->role->name, ['student', 'siswa']))) {
-                $student = $user->userable;
-                if ($application->student_id !== $student->student_id) {
-                    return response()->json(['message' => 'Akses ditolak'], 403);
+            $myId = $user->userable_id;
+
+            if ($user->role && (in_array($user->role->name, ['student', 'siswa', 'publik', 'alumni']))) {
+                if ($application->student_id != $myId) {
+                    return response()->json(['status' => 'error', 'message' => 'Akses ditolak'], 403);
                 }
             }
 
             return response()->json([
+                'status' => 'success',
                 'message' => 'Detail lamaran berhasil diambil',
                 'data' => $application
             ], 200);
 
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Lamaran tidak ditemukan'], 404);
+            return response()->json(['status' => 'error', 'message' => 'Lamaran tidak ditemukan'], 404);
         }
     }
 
- public function store(Request $request, $id = null)
+    /**
+     * Simpan lamaran baru
+     */
+    public function store(Request $request, $id)
 {
-    $jobId = $request->job_id ?? $id;
-
+    // Validasi
     $request->validate([
-        'notes'  => 'nullable|string',
-        'cv'     => 'required|mimes:pdf|max:2048',
+        'cv' => 'required|file|mimes:pdf|max:2048',
+    ], [
+        'cv.required' => 'CV wajib diupload Mang!',
+        'cv.mimes' => 'Harus format PDF ya!',
     ]);
 
     try {
         $user = Auth::user();
 
-        /**
-         * PERBAIKAN: Kita ambil ID dari userable-nya.
-         * Apapun role-nya (Student/Alumni), yang penting dia punya ID di tabel profilnya.
-         */
-        $profile = $user->userable;
+        $application = new JobApplication();
+        $application->job_id = $id;
+        $application->student_id = $user->userable_id; // Pake ID Wahyu/Isal
+        $application->status = 'pending';
+        $application->application_date = now();
+        $application->cover_letter = $request->notes;
 
-        if (!$profile) {
-            // Kalau masih NULL, kita coba cari ID manual atau kasih error yang jelas
-            return redirect()->back()->with('error', 'Profil lu gak ketemu, Mang. Pastiin data profil Student/Alumni lu udah diisi.');
-        }
-
-        // Ambil student_id (biasanya tabel alumni & student pake kolom yang sama atau mirip)
-        // Kalau di tabel alumni nama kolomnya beda, sesuaikan di sini.
-        $studentId = $profile->student_id ?? $profile->id;
-
-        $cvPath = null;
         if ($request->hasFile('cv')) {
-            $file = $request->file('cv');
-            $filename = time() . '_' . str_replace(' ', '_', $user->name) . '_cv.pdf';
-            $cvPath = $file->storeAs('applications/cvs', $filename, 'public');
+            $application->additional_file = $request->file('cv')->store('applications/cvs', 'public');
         }
 
-        // Simpan manual biar gak kena mass assignment
-        $app = new \App\Models\JobApplication();
-        $app->job_id = $jobId;
-        $app->student_id = $studentId;
-        $app->cover_letter = $request->notes ?? '-';
-        $app->additional_file = $cvPath;
-        $app->application_date = now();
-        $app->status = 'pending';
+        $application->save();
 
-        if($app->save()) {
-            // HAPUS SEMUA DD SEBELUMNYA, KITA PAKE REDIRECT
-            return redirect()->route('student.applications')->with('success', 'Lamaran berhasil dikirim!');
-        }
-
-        return redirect()->back()->with('error', 'Gagal simpan data.');
+        return response()->json([
+            'status' => 'success',
+            'message' => 'MANTAP! Lamaran berhasil dikirim.'
+        ], 201);
 
     } catch (\Exception $e) {
-        return redirect()->back()->with('error', 'Masalah: ' . $e->getMessage());
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Gagal: ' . $e->getMessage()
+        ], 500);
     }
 }
 
+    /**
+     * Update lamaran
+     */
     public function update(Request $request, $id)
     {
         try {
             $application = JobApplication::findOrFail($id);
             $user = Auth::user();
 
-            // Admin Update Status
-            if ($user->role && !in_array($user->role->name, ['student', 'siswa'])) {
+            if ($user->role && !in_array($user->role->name, ['student', 'siswa', 'publik', 'alumni'])) {
                 $request->validate([
                     'status' => 'required|in:pending,review,accepted,rejected',
                     'admin_notes' => 'nullable|string',
@@ -135,12 +139,10 @@ class JobApplicationController extends Controller
                     'status' => $request->status,
                     'admin_notes' => $request->admin_notes
                 ]);
-            }
-            // Student Update Lamaran
-            else {
-                $student = $user->userable;
-                if ($application->student_id !== $student->student_id) {
-                    return response()->json(['message' => 'Akses ditolak'], 403);
+            } else {
+                $myId = $user->userable_id;
+                if ($application->student_id != $myId) {
+                    return response()->json(['status' => 'error', 'message' => 'Akses ditolak'], 403);
                 }
 
                 if ($request->hasFile('cv')) {
@@ -155,17 +157,12 @@ class JobApplicationController extends Controller
                 if ($request->has('notes')) {
                     $application->cover_letter = $request->notes;
                 }
-
                 $application->save();
             }
 
-            return response()->json([
-                'message' => 'Berhasil diperbarui',
-                'data' => $application
-            ]);
-
+            return response()->json(['status' => 'success', 'message' => 'Berhasil diperbarui']);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Terjadi kesalahan: ' . $e->getMessage()], 500);
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
         }
     }
 
@@ -177,9 +174,9 @@ class JobApplicationController extends Controller
                 Storage::disk('public')->delete($application->additional_file);
             }
             $application->delete();
-            return response()->json(['message' => 'Lamaran dihapus']);
+            return response()->json(['status' => 'success', 'message' => 'Lamaran dihapus']);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Gagal menghapus'], 500);
+            return response()->json(['status' => 'error', 'message' => 'Gagal menghapus'], 500);
         }
     }
 }

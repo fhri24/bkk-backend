@@ -168,6 +168,20 @@
     .detail-section h2 { font-size: 18px; }
     .sidebar-sticky { position: static; }
 }
+
+/* Tambahan CSS Notif Modern */
+#notif-container {
+    display: none;
+    margin: 20px 32px -10px 32px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    align-items: center;
+    gap: 10px;
+}
+.notif-success { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+.notif-error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
 </style>
 
 @php
@@ -434,8 +448,12 @@
                 style="background:none; border:none; color:#fff; font-size:28px; font-weight:900; cursor:pointer; line-height:1; padding:0;">&times;</button>
         </div>
 
+        {{-- UPDATE: Pake Container Notif Modern di sini --}}
+        <div id="notif-container"></div>
+
+        {{-- UPDATE: Pake universal.apply biar Alumni & Publik bisa lewat tanpa 403 --}}
         <form id="applicationForm"
-              action="{{ route('student.lowongan.apply', $job->job_id) }}"
+              action="{{ route('universal.apply', $job->job_id) }}"
               method="POST"
               enctype="multipart/form-data"
               style="padding:32px; display:flex; flex-direction:column; gap:20px;">
@@ -449,7 +467,6 @@
             </div>
             <div>
                 <label class="form-label">Upload CV/Resume (PDF) *</label>
-                {{-- Field CV --}}
                 <input type="file" name="cv" accept=".pdf" class="form-input" required>
                 <p style="font-size:12px; color:#94a3b8; margin-top:6px;">Format: PDF, Maks. 2 MB</p>
             </div>
@@ -466,7 +483,7 @@
                     Saya menyatakan data yang saya kirimkan adalah benar.
                 </label>
             </div>
-            <button type="submit" class="btn-primary" style="margin-bottom:0;">
+            <button type="submit" id="btnSubmitApply" class="btn-primary" style="margin-bottom:0;">
                 <i class="fas fa-paper-plane" style="margin-right:8px;"></i> Kirim Lamaran
             </button>
         </form>
@@ -478,7 +495,7 @@
 function openApplicationForm() {
     const modal = document.getElementById('applicationModal');
     if(modal) {
-        modal.style.display = 'flex'; // Pakai style langsung biar anti-gagal
+        modal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
     }
 }
@@ -488,6 +505,9 @@ function closeApplicationForm() {
     if(modal) {
         modal.style.display = 'none';
         document.body.style.overflow = '';
+        // Reset form & notif pas modal tutup
+        document.getElementById('applicationForm').reset();
+        document.getElementById('notif-container').style.display = 'none';
     }
 }
 
@@ -507,6 +527,53 @@ function shareVacancy() {
         alert('Link berhasil disalin!');
     }
 }
+
+// UPDATE: Handle Kirim Lamaran Modern (AJAX)
+document.getElementById('applicationForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const form = this;
+    const btn = document.getElementById('btnSubmitApply');
+    const notif = document.getElementById('notif-container');
+    const formData = new FormData(form);
+
+    // Loading State
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+    notif.style.display = 'none';
+
+    fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        notif.style.display = 'flex';
+        if (data.status === 'success') {
+            notif.className = 'notif-success';
+            notif.innerHTML = '<i class="fas fa-check-circle"></i> ' + data.message;
+            form.reset();
+            // Beri waktu user baca baru reload/tutup
+            setTimeout(() => { location.reload(); }, 2000);
+        } else {
+            notif.className = 'notif-error';
+            notif.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + (data.message || 'Terjadi kesalahan.');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-paper-plane" style="margin-right:8px;"></i> Kirim Lamaran';
+        }
+    })
+    .catch(error => {
+        notif.style.display = 'flex';
+        notif.className = 'notif-error';
+        notif.innerHTML = '<i class="fas fa-times-circle"></i> Gagal menghubungi server.';
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane" style="margin-right:8px;"></i> Kirim Lamaran';
+    });
+});
 </script>
 
 @endsection

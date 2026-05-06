@@ -21,30 +21,39 @@ class JobApplication extends Model
         'student_id',
         'status',
         'application_date',
-        'cover_letter', // Untuk data lama
-        'notes',        // TAMBAHAN: Untuk nangkep input notes dari form baru
-        'additional_file', // Untuk data lama
-        'cv',           // TAMBAHAN: Untuk nangkep path file CV dari form baru
+        'cover_letter',
+        'notes',
+        'additional_file',
+        'cv',
         'full_name',
         'email',
         'phone_number',
         'admin_notes'
     ];
 
+    protected $casts = [
+        'application_date' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
     /**
-     * Relasi ke Siswa
+     * Relasi ke Siswa (Tetap dipertahankan)
      */
     public function student(): BelongsTo
     {
-        // Tetap pake student_id sebagai foreign key
-        return $this->belongsTo(Student::class, 'student_id', 'student_id');
+        return $this->belongsTo(Student::class, 'student_id', 'student_id')->withDefault([
+            'full_name' => 'Data Siswa/Pelamar',
+        ]);
     }
 
     /**
-     * Relasi ke Lowongan (Job)
+     * Relasi ke Lowongan
      */
     public function job(): BelongsTo
     {
-        return $this->belongsTo(Job::class, 'job_id', 'job_id');
+        return $this->belongsTo(Job::class, 'job_id', 'job_id')->withDefault([
+            'title' => 'Lowongan Telah Dihapus',
+        ]);
     }
 }

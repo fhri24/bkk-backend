@@ -10,12 +10,23 @@ use Illuminate\Support\Facades\Auth;
 
 class JobApplicationController extends Controller
 {
-    public function index()
+   public function index()
     {
+    // Ambil semua lamaran
+    $applications = JobApplication::with(['student.user', 'job.company'])->latest()->paginate(10);
 
-        $applications = JobApplication::with(['student', 'job.company'])->latest()->paginate(10);
+    // Kita "oles" datanya biar namanya bener
+    $applications->getCollection()->transform(function ($app) {
+        // Cari user asli di tabel users berdasarkan student_id (userable_id)
+        $actualUser = \App\Models\User::where('userable_id', $app->student_id)->first();
 
-        return view('admin.job-applications.index', compact('applications'));
+        // Simpan nama aslinya ke atribut baru
+        $app->real_name = $actualUser ? $actualUser->name : ($app->student->full_name ?? 'Anonim');
+
+        return $app;
+    });
+
+    return view('admin.job-applications.index', compact('applications'));
     }
 
     public function show($id)
