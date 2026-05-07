@@ -235,6 +235,9 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
 
     Route::prefix('event-registrations')->name('event-registrations.')->group(function () {
         Route::get('/', [AdminEventRegistrationController::class, 'index'])->name('index');
+        Route::get('/export/csv', [AdminEventRegistrationController::class, 'exportCsv'])->name('export.csv');
+        Route::get('/export/print', [AdminEventRegistrationController::class, 'exportPrint'])->name('export.print');
+        Route::get('/export/pdf', [AdminEventRegistrationController::class, 'exportPdf'])->name('export.pdf');
         Route::put('/{id}', [AdminEventRegistrationController::class, 'update'])->name('update');
         Route::delete('/{id}', [AdminEventRegistrationController::class, 'destroy'])->name('destroy');
     });
