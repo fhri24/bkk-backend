@@ -44,7 +44,7 @@
             @php
                 $logoBase64 = '';
                 try {
-                    $dbPath = $profile->logo_path ?? '';
+                    $dbPath = $profile->logo ?? $profile->logo_path ?? '';
                     if (!empty($dbPath)) {
                         $locations = [
                             storage_path('app/public/' . $dbPath),

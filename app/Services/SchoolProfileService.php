@@ -15,6 +15,8 @@ class SchoolProfileService
         return Cache::remember(self::CACHE_KEY, self::CACHE_TTL, function () {
             return SchoolProfile::first() ?? new SchoolProfile([
                 'name'             => 'BKK SMKN 1 Garut',
+                'school_name'      => 'SMKN 1 Garut',
+                'school_address'   => 'Jl. Cimanuk No. 309 A, Garut, Jawa Barat',
                 'site_title'       => 'Sistem Informasi Bursa Kerja',
                 'site_description' => 'Menghubungkan Talenta Alumni SMKN 1 Garut dengan Peluang Karir Masa Depan di Industri Global',
                 'tagline'          => 'Garut Bermartabat',

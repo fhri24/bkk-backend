@@ -17,8 +17,8 @@
             {{-- Logo & Nama --}}
             <div class="px-6 pb-6 -mt-10 text-center">
                 <div class="w-20 h-20 rounded-2xl bg-white shadow-lg border-4 border-white mx-auto flex items-center justify-center overflow-hidden">
-                    @if(!empty($profile->logo_path))
-                        <img src="{{ asset('storage/' . $profile->logo_path) }}"
+                    @if(!empty($profile->logo ?? $profile->logo_path))
+                        <img src="{{ asset('storage/' . ($profile->logo ?? $profile->logo_path)) }}"
                              class="w-full h-full object-contain p-1" alt="Logo" id="preview-logo">
                     @else
                         <i class="fas fa-graduation-cap text-[#001f3f] text-2xl" id="logo-placeholder"></i>
@@ -110,8 +110,8 @@
                             {{-- Preview --}}
                             <div class="w-20 h-20 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden shrink-0"
                                  id="logo-drop-zone">
-                                @if(!empty($profile->logo_path))
-                                    <img src="{{ asset('storage/' . $profile->logo_path) }}"
+                                @if(!empty($profile->logo ?? $profile->logo_path))
+                                    <img src="{{ asset('storage/' . ($profile->logo ?? $profile->logo_path)) }}"
                                          class="w-full h-full object-contain p-2" id="logo-thumb">
                                 @else
                                     <div id="logo-thumb-placeholder" class="text-center">
@@ -284,11 +284,10 @@
                         <label class="block text-sm font-semibold text-slate-700 mb-2">
                             Judul Website (Hero)
                         </label>
-                        <input type="text" name="site_title"
-                               value="{{ old('site_title', $profile->site_title ?? '') }}"
-                               placeholder="Sistem Informasi Bursa Kerja"
-                               class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition">
-                        <p class="text-xs text-slate-400 mt-1">Tampil sebagai judul besar di halaman beranda dan tab browser.</p>
+                        <textarea name="site_title" rows="2"
+                                  placeholder="Sistem Informasi Bursa Kerja"
+                                  class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition resize-none">{{ old('site_title', $profile->site_title ?? '') }}</textarea>
+                        <p class="text-xs text-slate-400 mt-1">Tampil sebagai judul besar di halaman beranda dan tab browser. Gunakan Enter jika ingin pecah baris.</p>
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-2">

@@ -88,9 +88,8 @@
     <div class="container mx-auto px-6 z-10">
         
         {{-- Hero Title & Description Dinamis --}}
-        <h1 class="text-5xl md:text-6xl font-black leading-tight mb-6">
+        <h1 class="text-5xl md:text-6xl font-black leading-tight mb-6 whitespace-pre-line break-words">
             {{ $schoolProfile->site_title ?? 'Sistem Informasi' }}
-            <span class="text-blue-400 block">Bursa Kerja</span>
         </h1>
         <p class="text-lg md:text-xl text-blue-100 mb-10 max-w-2xl mx-auto leading-relaxed">
             "{{ $schoolProfile->site_description ?? 'Menghubungkan Talenta Alumni SMKN 1 Garut dengan Peluang Karir Masa Depan di Industri Global' }}"
