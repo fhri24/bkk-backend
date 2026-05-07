@@ -257,6 +257,25 @@
                     <span class="ml-3">Berita</span>
                 </a>
 
+
+                <a href="{{ route('admin.alumni-stories.index') }}"
+   class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white 
+   {{ request()->routeIs('admin.alumni-stories.*') ? 'active' : '' }}">
+
+    <i class="fas fa-star"></i>
+    <span class="ml-3">Kisah Sukses</span>
+
+    @php
+        $pendingCount = \App\Models\AlumniStory::where('status','pending')->count();
+    @endphp
+
+    @if($pendingCount > 0)
+        <span class="ml-auto bg-yellow-400 text-yellow-900 text-[10px] font-bold px-2 py-0.5 rounded-full">
+            {{ $pendingCount }}
+        </span>
+    @endif
+</a>
+
                 @if(auth()->user()->hasPermission('view_reports'))
                 <div class="mb-2">
                     <button type="button" class="sidebar-toggle flex items-center justify-between w-full px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white bg-transparent focus:outline-none" aria-expanded="false">

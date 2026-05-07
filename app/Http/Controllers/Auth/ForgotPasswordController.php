@@ -186,11 +186,10 @@ class ForgotPasswordController extends Controller
 
     /**
      * Kirim OTP via WhatsApp menggunakan Fonnte API
-     * Daftar & dapatkan token di https://fonnte.com
      */
     private function sendWhatsApp(string $phone, string $otp, string $name): void
     {
-        $token   = config('services.fonnte.token'); // isi di .env: FONNTE_TOKEN=xxxxx
+        $token   = config('services.fonnte.token');
         $message = "Halo {$name},\n\nKode OTP untuk reset kata sandi BKK SMKN 1 Garut kamu adalah:\n\n*{$otp}*\n\nKode berlaku selama 10 menit.\nJangan berikan kode ini kepada siapa pun.\n\n_BKK SMKN 1 Garut_";
 
         $ch = curl_init();
@@ -198,10 +197,10 @@ class ForgotPasswordController extends Controller
             CURLOPT_URL            => 'https://api.fonnte.com/send',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_POST           => true,
-            CURLOPT_POSTFIELDS     => http_build_query([
+            CURLOPT_POSTFIELDS     => [
                 'target'  => $phone,
                 'message' => $message,
-            ]),
+            ],
             CURLOPT_HTTPHEADER     => ["Authorization: {$token}"],
         ]);
         curl_exec($ch);
@@ -209,7 +208,7 @@ class ForgotPasswordController extends Controller
     }
 
     /**
-     * Kirim OTP via Email (gunakan Mail facade Laravel)
+     * Kirim OTP via Email
      */
     private function sendEmail(string $email, string $otp, string $name): void
     {
