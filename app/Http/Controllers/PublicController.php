@@ -219,7 +219,20 @@ class PublicController extends Controller
 
         $siswaAktif = Student::where('alumni_flag', false)->get();
 
-        return view('public.tracer', compact('alumni', 'siswaAktif'));
+        // Data untuk chart
+        $tracerData = TracerStudy::selectRaw('status_saat_ini, COUNT(*) as count')
+                                 ->groupBy('status_saat_ini')
+                                 ->pluck('count', 'status_saat_ini')
+                                 ->toArray();
+
+        $chartData = [
+            'Bekerja' => $tracerData['working'] ?? 0,
+            'Kuliah' => $tracerData['studying'] ?? 0,
+            'Wirausaha' => $tracerData['both'] ?? 0,
+            'Mencari Kerja' => $tracerData['unemployed'] ?? 0,
+        ];
+
+        return view('public.tracer', compact('alumni', 'siswaAktif', 'chartData'));
     }
 
     /**

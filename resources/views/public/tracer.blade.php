@@ -43,7 +43,7 @@
     <div>
       <h2 class="text-4xl font-extrabold text-[#001f3f] mb-6">Tracer Study & <br />Laporan Karir</h2>
       <p class="text-slate-500 text-lg leading-relaxed mb-8">Sistem pelacakan jejak alumni untuk memetakan kualitas pendidikan dan kebutuhan dunia industri.</p>
-      
+
       @auth
         @if(auth()->user()->role === 'student')
           <button onclick="openTracerForm()" class="bg-blue-600 text-white px-8 py-4 rounded-2xl font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-200 mb-8">
@@ -86,7 +86,7 @@
 
     <div class="bg-white p-10 rounded-[40px] shadow-sm border border-slate-100 group">
       <div class="w-16 h-16 bg-green-50 rounded-2xl flex items-center justify-center text-green-600 text-2xl mb-8 group-hover:bg-green-600 group-hover:text-white transition duration-500">
-        <i class="fas fa-building-user"></i>
+        <i class="fas fa-industry"></i>
       </div>
       <h3 class="text-2xl font-bold text-slate-800 mb-4">User Study Report (DUDI)</h3>
       <p class="text-slate-500 mb-8 leading-relaxed">Survei tingkat kepuasan mitra industri terhadap performa kerja alumni SMKN 1 Garut.</p>
@@ -114,11 +114,11 @@
           <option value="both">Bekerja & Studi</option>
           <option value="unemployed">Mencari Kerja</option>
         </select>
-      </div> 
+      </div>
       <div>
         <label class="block text-sm font-semibold text-slate-700 mb-2">Nama Perusahaan / Institusi</label>
         <input type="text" name="institution" class="w-full px-4 py-3 border border-slate-200 rounded-xl outline-none" placeholder="Masukkan nama tempat bekerja/studi">
-      </div> 
+      </div>
       <div>
         <label class="block text-sm font-semibold text-slate-700 mb-2">Posisi / Program Studi</label>
         <input type="text" name="position" class="w-full px-4 py-3 border border-slate-200 rounded-xl outline-none" placeholder="Masukkan jabatan/jurusan">
@@ -137,6 +137,7 @@
   {{-- ... (Isi Modal Industry/DUDI Anda yang lama tetap di sini) ... --}}
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   function openTracerForm() {
     document.getElementById('tracerFormModal').classList.add('show');
@@ -160,12 +161,13 @@
   document.addEventListener('DOMContentLoaded', function () {
     const ctx = document.getElementById('tracerChart');
     if (ctx) {
+      const chartData = @json($chartData ?? ['Bekerja' => 0, 'Kuliah' => 0, 'Wirausaha' => 0, 'Mencari Kerja' => 0]);
       new Chart(ctx, {
         type: 'doughnut',
         data: {
-          labels: ['Bekerja', 'Kuliah', 'Wirausaha', 'Mencari Kerja'],
+          labels: Object.keys(chartData),
           datasets: [{
-            data: [65, 15, 12, 8],
+            data: Object.values(chartData),
             backgroundColor: ['#2563eb', '#9333ea', '#f59e0b', '#94a3b8'],
             borderWidth: 0,
           }],
@@ -175,7 +177,7 @@
           plugins: { legend: { position: 'bottom' } }
         }
       });
-    } 
+    }
   });
 </script>
-@endsection 
+@endsection
