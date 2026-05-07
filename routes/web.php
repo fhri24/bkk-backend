@@ -8,7 +8,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PublikController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SearchController;
-use App\Http\Controllers\Admin\AlumniStoryController; // Pastikan namespace ini sesuai lokasi controller admin
+use App\Http\Controllers\Admin\AlumniStoryController;
 
 // Import Controller Baru (Auth Tambahan)
 use App\Http\Controllers\Auth\ForgotPasswordController;
@@ -31,6 +31,7 @@ use App\Http\Controllers\Admin\NewsController as AdminNewsController;
 use App\Http\Controllers\Admin\EventController as AdminEventController;
 use App\Http\Controllers\Admin\EventRegistrationController as AdminEventRegistrationController;
 use App\Http\Controllers\Admin\PublikController as AdminPublikController;
+use App\Http\Controllers\Admin\BroadcastController as AdminBroadcastController; // ← BARU
 
 // Student Controllers
 use App\Http\Controllers\Student\PageController as StudentPageController;
@@ -211,7 +212,9 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
 
     Route::get('/export-data', [DashboardActionController::class, 'export'])->name('export');
     Route::get('/laporan-cepat', [DashboardActionController::class, 'laporan'])->name('laporan');
-    Route::get('/broadcast', [DashboardActionController::class, 'broadcast'])->name('broadcast');
+
+    // ← BROADCAST: diganti ke BroadcastController
+    Route::get('/broadcast', [AdminBroadcastController::class, 'index'])->name('broadcast.index');
 
     Route::prefix('companies')->name('companies.')->group(function () {
         Route::get('/', [AdminCompanyController::class, 'index'])->name('index');
@@ -289,8 +292,8 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
 
     // MANAGEMENT ALUMNI STORIES (ADMIN)
     Route::prefix('alumni-stories')->name('alumni-stories.')->group(function () {
-        Route::get('/', [AlumniStoryController::class, 'index'])->name('index'); // Menggunakan method standar index
-        Route::get('/{alumniStory}', [AlumniStoryController::class, 'show'])->name('show'); // Menggunakan method standar show
+        Route::get('/', [AlumniStoryController::class, 'index'])->name('index');
+        Route::get('/{alumniStory}', [AlumniStoryController::class, 'show'])->name('show');
         Route::patch('/{alumniStory}/approve', [AlumniStoryController::class, 'approve'])->name('approve');
         Route::patch('/{alumniStory}/reject', [AlumniStoryController::class, 'reject'])->name('reject');
         Route::patch('/{alumniStory}/featured', [AlumniStoryController::class, 'toggleFeatured'])->name('featured');
@@ -305,4 +308,4 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
             'link'  => route('admin.users.index'),
         ]));
     })->name('notifications');
-}); 
+});

@@ -275,6 +275,15 @@
         </span>
     @endif
 </a>
+                
+                {{-- Sidebar Broadcast --}}
+<a href="{{ route('admin.broadcast.index') }}" 
+   class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->segment(2) === 'broadcast' ? 'active' : '' }}">
+
+    <i class="fas fa-bullhorn"></i>
+    <span class="ml-3">Broadcast</span>
+</a>
+                
 
                 @if(auth()->user()->hasPermission('view_reports'))
                 <div class="mb-2">
