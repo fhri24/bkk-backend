@@ -12,7 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Menggunakan nama 'system_permissions' agar tidak bentrok dengan tabel 'permissions' milik Spatie
+        // 1. Create system_permissions table
         Schema::create('system_permissions', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
@@ -21,6 +21,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        // 2. Create system_permission_role table (Pivot)
         Schema::create('system_permission_role', function (Blueprint $table) {
             $table->id();
             $table->foreignId('role_id')->constrained('roles')->onDelete('cascade');
@@ -29,6 +30,7 @@ return new class extends Migration
             $table->unique(['role_id', 'permission_id']);
         });
 
+        // 3. Create activity_logs table
         Schema::create('activity_logs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
@@ -100,4 +102,4 @@ return new class extends Migration
         Schema::dropIfExists('system_permission_role');
         Schema::dropIfExists('system_permissions');
     }
-}; 
+};

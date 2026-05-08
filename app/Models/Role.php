@@ -31,6 +31,7 @@ class Role extends Model
 
     public function permissions(): BelongsToMany
     {
-        return $this->belongsToMany(Permission::class, 'permission_role');
+        // BARU: Sesuaikan nama tabel pivot agar pakai 'system_permission_role'
+        return $this->belongsToMany(Permission::class, 'system_permission_role', 'role_id', 'permission_id');
     }
-}
+} 

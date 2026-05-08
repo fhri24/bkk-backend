@@ -13,9 +13,14 @@ return new class extends Migration
     {
         Schema::create('alumni_stories', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade'); // Link ke tabel users
             $table->string('name');
-            $table->string('job');
+            $table->string('job_title'); // Kita pakai job_title agar sinkron dengan Controller
+            $table->string('graduation_year')->nullable(); 
             $table->text('story');
+            $table->string('photo')->nullable();
+            $table->boolean('is_featured')->default(false);
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending'); // Default pending supaya di-acc admin dulu
             $table->timestamps();
         });
     }

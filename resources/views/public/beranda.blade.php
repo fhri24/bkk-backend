@@ -72,6 +72,56 @@
         height: 1px;
         background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
     }
+
+    /* ── Kisah Sukses Alumni ── */
+    .story-card {
+        animation: zoomInUp 0.8s ease-out backwards;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .story-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.10);
+    }
+    .story-card:nth-child(1) { animation-delay: 0.1s; }
+    .story-card:nth-child(2) { animation-delay: 0.2s; }
+    .story-card:nth-child(3) { animation-delay: 0.3s; }
+    .story-card:nth-child(4) { animation-delay: 0.4s; }
+    .story-card:nth-child(5) { animation-delay: 0.5s; }
+    .story-card:nth-child(6) { animation-delay: 0.6s; }
+
+    .avatar-initials {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 18px;
+        color: #fff;
+        flex-shrink: 0;
+    }
+
+    .story-text {
+        display: -webkit-box;
+        -webkit-line-clamp: 4;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    /* Quote decoration */
+    .quote-mark {
+        font-family: Georgia, serif;
+        font-size: 80px;
+        line-height: 0.6;
+        color: #dbeafe;
+        user-select: none;
+    }
+
+    /* Submit success alert */
+    .story-success-alert {
+        animation: zoomInUp 0.5s ease-out;
+    }
 </style>
 @endsection
 
@@ -83,6 +133,16 @@
     $routeLowongan = $isStudent ? route('student.lowongan') : route('public.lowongan');
     $routeAcara = $isStudent ? route('student.acara') : route('public.acara');
     $routeBerita = $isStudent ? route('student.berita') : route('public.berita');
+
+    // Warna avatar bergantian
+    $avatarColors = [
+        'bg-gradient-to-br from-blue-500 to-blue-700',
+        'bg-gradient-to-br from-indigo-500 to-indigo-700',
+        'bg-gradient-to-br from-violet-500 to-violet-700',
+        'bg-gradient-to-br from-sky-500 to-sky-700',
+        'bg-gradient-to-br from-cyan-500 to-cyan-700',
+        'bg-gradient-to-br from-teal-500 to-teal-700',
+    ];
 @endphp
 <section class="hero-bg h-[600px] flex items-center justify-center text-center text-white relative">
     <div class="container mx-auto px-6 z-10">
@@ -242,6 +302,277 @@
     </div>
 </section>
 
+{{-- ══════════════════════════════════════════════════════════════════════ --}}
+{{-- KISAH SUKSES ALUMNI                                                   --}}
+{{-- ══════════════════════════════════════════════════════════════════════ --}}
+<section class="py-20 bg-gradient-to-b from-slate-50 to-white overflow-hidden">
+    <div class="container mx-auto px-6">
+        <div class="section-header mb-12">
+            <h2 class="text-3xl font-extrabold text-[#001f3f] pl-6">Kisah Sukses Alumni</h2>
+            <p class="text-slate-500 mt-2 pl-6">Inspirasi karir dari para lulusan terbaik kami</p>
+        </div>
+
+        {{-- ── Grid Kisah yang Sudah Diapprove ── --}}
+@if(isset($alumni_stories) && $alumni_stories->count() > 0)
+<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+    @foreach($alumni_stories as $index => $story)
+    @php $colorClass = $avatarColors[$index % count($avatarColors)]; @endphp
+
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 story-card relative overflow-hidden">
+
+        {{-- Quote decoration --}}
+        <div class="quote-mark absolute top-3 right-5 select-none">"</div>
+
+        {{-- Isi cerita --}}
+        <p class="text-slate-600 text-sm leading-relaxed story-text mb-6 relative z-10">
+            {{ $story->story }}
+        </p>
+
+        {{-- Divider --}}
+        <div class="divider-line mb-5"></div>
+
+        {{-- Identitas --}}
+        <div class="flex items-center gap-3">
+
+            {{-- Avatar --}}
+            @if($story->photo)
+                <img
+                    src="{{ asset('storage/' . $story->photo) }}"
+                    class="w-[52px] h-[52px] rounded-full object-cover border-2 border-white shadow"
+                >
+            @else
+                <div class="avatar-initials {{ $colorClass }}">
+                    {{ $story->initials }}
+                </div>
+            @endif
+
+            <div>
+                <p class="font-bold text-slate-800 text-sm">
+                    {{ $story->name }}
+                </p>
+
+                <p class="text-xs text-slate-500">
+                    {{ $story->job_title }}
+                </p>
+            </div>
+        </div>
+
+    </div>
+    @endforeach
+</div>
+@endif
+
+{{-- ───────────────────────────────────────── --}}
+{{-- FORM KISAH SUKSES --}}
+{{-- ───────────────────────────────────────── --}}
+<div class="max-w-2xl mx-auto relative mb-10">
+
+    {{-- Background Blur --}}
+    <div class="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-purple-600/10 rounded-[40px] blur-3xl"></div>
+
+    <div class="relative bg-white rounded-[40px] custom-shadow p-10 md:p-12 animate-zoom-in border border-slate-100/50">
+
+        {{-- Success --}}
+        @if(session('story_success'))
+        <div class="story-success-alert flex items-start gap-3 bg-green-50 border border-green-200 text-green-800 rounded-2xl p-4 mb-8">
+            <i class="fas fa-check-circle text-green-500 mt-0.5 flex-shrink-0"></i>
+
+            <p class="text-sm font-medium">
+                {{ session('story_success') }}
+            </p>
+        </div>
+        @endif
+
+        {{-- Error --}}
+        @if(session('error'))
+        <div class="flex items-start gap-3 bg-red-50 border border-red-200 text-red-800 rounded-2xl p-4 mb-8">
+            <i class="fas fa-times-circle text-red-500 mt-0.5 flex-shrink-0"></i>
+
+            <p class="text-sm font-medium">
+                {{ session('error') }}
+            </p>
+        </div>
+        @endif
+
+        {{-- Validation --}}
+        @if($errors->any())
+        <div class="flex items-start gap-3 bg-red-50 border border-red-200 text-red-800 rounded-2xl p-4 mb-8">
+            <i class="fas fa-exclamation-circle text-red-500 mt-0.5 flex-shrink-0"></i>
+
+            <ul class="text-sm font-medium space-y-1">
+                @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
+
+        {{-- Header --}}
+        <div class="text-center mb-8">
+
+            <div class="inline-block">
+                <span class="bg-gradient-to-r from-blue-100 to-purple-100 px-5 py-1.5 rounded-full text-blue-700 font-bold text-[10px] uppercase tracking-widest">
+                    Berbagi Pengalaman
+                </span>
+            </div>
+
+            <h3 class="text-2xl md:text-3xl font-bold text-slate-800 mt-6 tracking-tight">
+                "Bagikan kisah suksesmu"
+            </h3>
+
+            <p class="text-slate-500 text-sm mt-2">
+                Inspirasi bagi alumni lain untuk meraih karir impian
+            </p>
+        </div>
+
+        {{-- =============================== --}}
+        {{-- SUDAH LOGIN --}}
+        {{-- =============================== --}}
+        @auth
+
+        <form
+            action="{{ route('alumni-stories.store') }}"
+            method="POST"
+            enctype="multipart/form-data"
+            class="space-y-4 max-w-md mx-auto text-left"
+        >
+            @csrf
+
+            {{-- Nama --}}
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-2 uppercase tracking-wider">
+                    Nama Lengkap
+                </label>
+
+                <input
+                    type="text"
+                    name="name"
+                    value="{{ old('name', auth()->user()->name ?? '') }}"
+                    placeholder="Nama Anda"
+                    class="w-full px-5 py-3.5 custom-input rounded-xl focus:outline-none text-sm font-medium @error('name') border-red-400 @enderror"
+                    required
+                >
+            </div>
+
+            {{-- Job --}}
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-2 uppercase tracking-wider">
+                    Pekerjaan & Instansi
+                </label>
+
+                <input
+                    type="text"
+                    name="job_title"
+                    value="{{ old('job_title') }}"
+                    placeholder="Contoh: Staff IT - PT. Maju Jaya"
+                    class="w-full px-5 py-3.5 custom-input rounded-xl focus:outline-none text-sm font-medium @error('job_title') border-red-400 @enderror"
+                    required
+                >
+            </div>
+
+            {{-- Foto --}}
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-2 uppercase tracking-wider">
+                    Upload Foto
+                </label>
+
+                <input
+                    type="file"
+                    name="photo"
+                    accept="image/*"
+                    class="w-full px-5 py-3.5 custom-input rounded-xl focus:outline-none text-sm font-medium @error('photo') border-red-400 @enderror"
+                >
+            </div>
+
+            {{-- Story --}}
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-2 uppercase tracking-wider">
+                    Cerita Singkat
+                </label>
+
+                <textarea
+                    name="story"
+                    id="storyTextarea"
+                    placeholder="Bagikan pengalaman menarik Anda..."
+                    rows="4"
+                    maxlength="2000"
+                    class="w-full px-5 py-3.5 custom-input rounded-xl focus:outline-none text-sm font-medium resize-none @error('story') border-red-400 @enderror"
+                    required
+                >{{ old('story') }}</textarea>
+
+                <p class="text-[11px] text-slate-400 mt-1">
+                    <span id="charCount">0</span>/2000 karakter
+                </p>
+            </div>
+
+            {{-- Submit --}}
+            <button
+                type="submit"
+                class="w-full bg-gradient-to-r from-[#001f3f] to-blue-700 text-white py-4 rounded-xl font-bold flex items-center justify-center space-x-2 hover:shadow-lg hover:-translate-y-1 transition duration-300 shadow-lg mt-6 active:translate-y-0"
+            >
+                <i class="fas fa-paper-plane"></i>
+
+                <span class="uppercase tracking-widest text-sm">
+                    Kirim Cerita
+                </span>
+            </button>
+
+        </form>
+
+        {{-- =============================== --}}
+        {{-- BELUM LOGIN --}}
+        {{-- =============================== --}}
+        @else
+
+        <div class="max-w-md mx-auto">
+
+            <div class="bg-gradient-to-br from-slate-50 to-blue-50 border border-blue-100 rounded-3xl p-8 text-center">
+
+                <div class="w-20 h-20 mx-auto mb-5 rounded-full bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center shadow-lg">
+                    <i class="fas fa-lock text-white text-3xl"></i>
+                </div>
+
+                <h4 class="text-xl font-bold text-slate-800 mb-3">
+                    Login Terlebih Dahulu
+                </h4>
+
+                <p class="text-slate-500 text-sm leading-relaxed mb-6">
+                    Anda harus login terlebih dahulu untuk membagikan kisah sukses dan pengalaman karir Anda.
+                </p>
+
+                <div class="flex flex-col sm:flex-row gap-3 justify-center">
+
+                    <a
+                        href="{{ route('login') }}"
+                        class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#001f3f] to-blue-700 text-white px-8 py-3 rounded-xl font-bold hover:shadow-xl hover:-translate-y-1 transition duration-300"
+                    >
+                        <i class="fas fa-sign-in-alt"></i>
+
+                        <span>Login</span>
+                    </a>
+
+                    <a
+                        href="{{ route('register') }}"
+                        class="inline-flex items-center justify-center gap-2 border border-blue-200 bg-white text-blue-700 px-8 py-3 rounded-xl font-bold hover:bg-blue-50 transition duration-300"
+                    >
+                        <i class="fas fa-user-plus"></i>
+
+                        <span>Register</span>
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        @endauth
+
+    </div>
+</div>
+
+</section>
+
 <section class="bg-gradient-to-b from-white to-slate-100 py-20">
     <div class="container mx-auto px-6 text-center">
         <div class="section-header inline-block mb-10">
@@ -274,4 +605,21 @@
         </div>
     </div>
 </section>
+@endsection
+
+@section('extra_js')
+<script>
+    // Counter karakter textarea
+    const textarea = document.getElementById('storyTextarea');
+    const charCount = document.getElementById('charCount');
+
+    if (textarea && charCount) {
+        // Set initial count (untuk old() value saat validasi gagal)
+        charCount.textContent = textarea.value.length;
+
+        textarea.addEventListener('input', function () {
+            charCount.textContent = this.value.length;
+        });
+    }
+</script>
 @endsection
