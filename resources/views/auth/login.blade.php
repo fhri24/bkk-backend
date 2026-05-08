@@ -75,8 +75,9 @@
         @endif
 
         <div class="space-y-1">
-          <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-3">📘 NIS</label>
-          <input type="text" name="nis" placeholder="NIS Sekolah" value="{{ old('nis') }}" class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100" required />
+          <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-3">📘 NIS / Email</label>
+          <input type="text" name="nis" placeholder="NIS atau email admin" value="{{ old('nis') }}" class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100" required />
+          <p class="text-slate-400 text-xs mt-1">Gunakan NIS untuk alumni atau email untuk admin.</p>
           @error('nis')
             <span class="text-red-600 text-xs mt-2 block"><i class="fas fa-times-circle mr-1"></i>{{ $message }}</span>
           @enderror
@@ -84,7 +85,7 @@
 
         <div class="space-y-1">
           <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-3">📅 Tahun Lulus</label>
-          <select name="graduation_year" class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100" required>
+          <select name="graduation_year" class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100">
             <option value="">Pilih Tahun Lulus</option>
             @foreach($years as $year)
               <option value="{{ $year->year }}" {{ old('graduation_year') == $year->year ? 'selected' : '' }}>{{ $year->year }}</option>
@@ -97,7 +98,7 @@
 
         <div class="space-y-1">
           <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-3">🎓 Jurusan</label>
-          <select name="major" class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100" required>
+          <select name="major" class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100">
             <option value="">Pilih Jurusan</option>
             @foreach($majors as $major)
               <option value="{{ $major->name }}" {{ old('major') == $major->name ? 'selected' : '' }}>{{ $major->name }}</option>
@@ -119,12 +120,6 @@
           @error('password')
             <span class="text-red-600 text-xs mt-2 block"><i class="fas fa-times-circle mr-1"></i>{{ $message }}</span>
           @enderror
-        </div>
-
-        <div class="text-xs font-bold text-slate-500">
-          <label class="flex items-center">
-            <input type="checkbox" name="remember" class="mr-2" /> Ingat Saya
-          </label>
         </div>
 
         <button type="submit" class="btn-submit w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 rounded-xl font-extrabold shadow-xl hover:shadow-2xl transition transform active:scale-95">
