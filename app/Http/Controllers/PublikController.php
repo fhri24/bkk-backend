@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Job;
 use App\Models\Event;
 use App\Models\News;
@@ -98,7 +99,7 @@ class PublikController extends Controller
      */
     public function applyJob(Request $request, $id)
     {
-        if (!auth()->check()) {
+        if (!Auth::check()) {
             return redirect()
                 ->route('login')
                 ->with('error', 'Silakan login terlebih dahulu untuk melamar.');
@@ -284,7 +285,7 @@ class PublikController extends Controller
             'company'      => 'nullable|string',
         ]);
 
-        $user = auth()->user();
+        $user = Auth::user();
 
         if (
             $user->role->name === 'siswa' ||
