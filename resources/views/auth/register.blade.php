@@ -48,28 +48,14 @@
         <button type="button" class="flex-1 pb-4 text-sm font-bold border-b-2 border-blue-600 text-blue-600">Daftar</button>
       </div>
 
-      <!-- Pilih Role -->
-      <div id="step-role" class="mb-6">
-        <p class="text-xs font-extrabold text-slate-500 uppercase tracking-widest mb-4 text-center">Daftar Sebagai</p>
-        <div class="grid grid-cols-2 gap-4">
-          <div class="role-card border-2 border-slate-200 rounded-2xl p-4 text-center {{ old('role') == 'alumni' ? 'active' : '' }}" onclick="selectRole('alumni')">
-            <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-2">
-              <i class="fas fa-user-graduate text-xl text-blue-600"></i>
-            </div>
-            <p class="font-bold text-slate-700 text-xs">Alumni</p>
-          </div>
-          <div class="role-card border-2 border-slate-200 rounded-2xl p-4 text-center {{ old('role') == 'publik' ? 'active' : '' }}" onclick="selectRole('publik')">
-            <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-2">
-              <i class="fas fa-users text-xl text-green-600"></i>
-            </div>
-            <p class="font-bold text-slate-700 text-xs">Publik</p>
-          </div>
-        </div>
+      <div class="mb-6 text-center">
+        <p class="text-xs font-extrabold text-slate-500 uppercase tracking-widest mb-2">Daftar sebagai Alumni</p>
+        <p class="text-sm text-slate-500">Gunakan NIS sekolah dan tahun lulus untuk membuat akun alumni.</p>
       </div>
 
       <form method="POST" action="{{ route('register.process') }}" enctype="multipart/form-data" class="space-y-4">
         @csrf
-        <input type="hidden" name="role" id="input_role" value="{{ old('role', '') }}" />
+        <input type="hidden" name="role" value="alumni" />
 
         <!-- Nama & Username -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -120,7 +106,7 @@
               @endforeach
             </select>
           </div>
-          <div id="field_jurusan" class="space-y-1" style="display: {{ old('role') == 'alumni' ? 'block' : 'none' }};">
+          <div id="field_jurusan" class="space-y-1" style="display: block;">
             <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-2">📚 Jurusan</label>
             <select name="jurusan" id="input_jurusan" class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600">
               <option value="">Pilih Jurusan</option>
@@ -175,7 +161,7 @@
           </div>
         </div>
 
-        <button type="submit" id="btn-submit" class="btn-submit w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 rounded-xl font-extrabold shadow-xl hover:shadow-2xl transition transform active:scale-95 mt-4 disabled:opacity-50" {{ old('role') ? '' : 'disabled' }}>
+        <button type="submit" id="btn-submit" class="btn-submit w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 rounded-xl font-extrabold shadow-xl hover:shadow-2xl transition transform active:scale-95 mt-4">
           <i class="fas fa-user-plus mr-2"></i>DAFTAR SEKARANG
         </button>
 
@@ -199,25 +185,6 @@
 </div>
 
 <script>
-    function selectRole(role) {
-        document.getElementById('input_role').value = role;
-        document.querySelectorAll('.role-card').forEach(card => card.classList.remove('active'));
-        event.currentTarget.classList.add('active');
-
-        const jurusanField = document.getElementById('field_jurusan');
-        const jurusanInput = document.getElementById('input_jurusan');
-
-        if (role === 'alumni') {
-            jurusanField.style.display = 'block';
-            jurusanInput.setAttribute('required', 'required');
-        } else {
-            jurusanField.style.display = 'none';
-            jurusanInput.removeAttribute('required');
-            jurusanInput.value = '';
-        }
-        document.getElementById('btn-submit').disabled = false;
-    }
-
     function formatPhone(input) {
         let val = input.value.replace(/\D/g, '');
         if (val.startsWith('0')) val = val.substring(1);
@@ -232,10 +199,5 @@
         icon.classList.toggle('fa-eye');
         icon.classList.toggle('fa-eye-slash');
     }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        const oldRole = document.getElementById('input_role').value;
-        if (oldRole) selectRole(oldRole);
-    });
 </script>
 @endsection

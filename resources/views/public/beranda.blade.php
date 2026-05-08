@@ -551,15 +551,6 @@
                         <span>Login</span>
                     </a>
 
-                    <a
-                        href="{{ route('register') }}"
-                        class="inline-flex items-center justify-center gap-2 border border-blue-200 bg-white text-blue-700 px-8 py-3 rounded-xl font-bold hover:bg-blue-50 transition duration-300"
-                    >
-                        <i class="fas fa-user-plus"></i>
-
-                        <span>Register</span>
-                    </a>
-
                 </div>
 
             </div>
@@ -599,7 +590,7 @@
                 @auth
                     <a href="{{ route('student.home') }}" class="inline-flex items-center justify-center gap-2 bg-white text-[#1e3a8a] px-10 py-4 rounded-full font-semibold shadow-2xl hover:shadow-[0_25px_75px_rgba(15,23,42,0.18)] transition transform hover:-translate-y-0.5 active:translate-y-0">Dashboard</a>
                 @else
-                    <a href="{{ route('register') }}" class="inline-flex items-center justify-center gap-2 bg-white text-[#1e3a8a] px-10 py-4 rounded-full font-semibold shadow-2xl hover:shadow-[0_25px_75px_rgba(15,23,42,0.18)] transition transform hover:-translate-y-0.5 active:translate-y-0">Daftar Sebagai Alumni</a>
+                    <a href="{{ route('login') }}" class="inline-flex items-center justify-center gap-2 bg-white text-[#1e3a8a] px-10 py-4 rounded-full font-semibold shadow-2xl hover:shadow-[0_25px_75px_rgba(15,23,42,0.18)] transition transform hover:-translate-y-0.5 active:translate-y-0">Login Sebagai Alumni</a>
                 @endauth
             </div>
         </div>
