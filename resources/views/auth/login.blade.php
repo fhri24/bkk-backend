@@ -75,9 +75,8 @@
         @endif
 
         <div class="space-y-1">
-          <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-3">📘 NIS / Email</label>
+          <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-3">📘 NIS </label>
           <input type="text" name="nis" placeholder="NIS atau email admin" value="{{ old('nis') }}" class="form-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100" required />
-          <p class="text-slate-400 text-xs mt-1">Gunakan NIS untuk alumni atau email untuk admin.</p>
           @error('nis')
             <span class="text-red-600 text-xs mt-2 block"><i class="fas fa-times-circle mr-1"></i>{{ $message }}</span>
           @enderror

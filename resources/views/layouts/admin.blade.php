@@ -227,13 +227,7 @@
                     <span class="ml-3">Alumni</span>
                 </a>
                 @endif
-
-                @if(auth()->user()->hasPermission('manage_publik'))
-                <a href="{{ route('admin.publik.index') }}" class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->segment(2) === 'publik' ? 'active' : '' }}">
-                    <i class="fas fa-users"></i>
-                    <span class="ml-3">Public</span>
-                </a>
-                @endif
+                
 
                 @if(auth()->user()->hasPermission('manage_companies'))
                 <a href="{{ route('admin.companies.index') }}" class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->segment(2) === 'companies' ? 'active' : '' }}">
