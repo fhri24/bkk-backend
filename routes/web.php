@@ -250,9 +250,10 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
     });
 
     Route::prefix('students')->name('students.')->group(function () {
-        Route::get('/', [AdminStudentController::class, 'index'])->name('index');
-        Route::get('/{id}', [AdminStudentController::class, 'show'])->name('show');
-    });
+    Route::get('/', [AdminStudentController::class, 'index'])->name('index');
+    Route::post('/import', [AdminStudentController::class, 'import'])->name('import');
+    Route::get('/{id}', [AdminStudentController::class, 'show'])->name('show');
+});
 
     Route::prefix('users')->name('users.')->group(function () {
         Route::get('/', [AdminUserController::class, 'index'])->name('index');
