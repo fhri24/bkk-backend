@@ -241,6 +241,22 @@ class PublikController extends Controller
         return view('public.tracer', compact('alumni'));
     }
 
+    public function tracerReport()
+    {
+        $students = \App\Models\Student::where('alumni_flag', 1)->get();
+
+        $chartData = [
+            'Bekerja' => $students->where('status', 'working')->count(),
+            'Kuliah' => $students->where('status', 'studying')->count(),
+            'Wirausaha' => $students->where('status', 'business')->count(),
+            'Mencari Kerja' => $students->where('status', 'unemployed')->count(),
+        ];
+
+        return view('public.tracer-report', compact(
+            'students',
+            'chartData'
+        ));
+    }
     /**
      * Simpan Tracer
      */

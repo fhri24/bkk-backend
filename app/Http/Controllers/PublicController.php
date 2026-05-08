@@ -248,11 +248,11 @@ class PublicController extends Controller
         ]);
 
         $user = auth()->user();
-        
+
         // Support untuk Student (alumni) dan Publik users
         if ($user->role->name === 'student' || $user->role->name === 'alumni') {
             $student = Student::where('user_id', $user->id)->first();
-            
+
             if (!$student) {
                 return back()->with('error', 'Data profil siswa tidak ditemukan.');
             }
