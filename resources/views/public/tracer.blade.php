@@ -137,6 +137,18 @@
   {{-- ... (Isi Modal Industry/DUDI Anda yang lama tetap di sini) ... --}}
 </div>
 
+@endsection
+
+@section('extra_js')
+@php
+$defaultChartData = [
+    'Bekerja' => 0,
+    'Kuliah' => 0,
+    'Wirausaha' => 0,
+    'Mencari Kerja' => 0
+];
+@endphp
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   function openTracerForm() {
@@ -157,27 +169,59 @@
     document.body.style.overflow = 'auto';
   }
 
-  // Chart Init
-  document.addEventListener('DOMContentLoaded', function () {
-    const ctx = document.getElementById('tracerChart');
-    if (ctx) {
-      const chartData = @json($chartData ?? ['Bekerja' => 0, 'Kuliah' => 0, 'Wirausaha' => 0, 'Mencari Kerja' => 0]);
-      new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: Object.keys(chartData),
-          datasets: [{
-            data: Object.values(chartData),
-            backgroundColor: ['#2563eb', '#9333ea', '#f59e0b', '#94a3b8'],
-            borderWidth: 0,
-          }],
-        },
-        options: {
-          maintainAspectRatio: false,
-          plugins: { legend: { position: 'bottom' } }
-        }
-      });
+  window.addEventListener('load', function () {
+    const canvas = document.getElementById('tracerChart');
+
+    if (!canvas) {
+      console.error('Tracer chart canvas not found.');
+      return;
     }
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      console.error('Unable to get 2D context for tracerChart.');
+      return;
+    }
+
+    if (typeof Chart === 'undefined') {
+      console.error('Chart.js is not loaded.');
+      return;
+    }
+
+    const chartData = @json($chartData ?? $defaultChartData);
+    const labelsWithCounts = Object.entries(chartData).map(([label, value]) => `${label} (${value})`);
+
+    new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: labelsWithCounts,
+        datasets: [{
+          data: Object.values(chartData),
+          backgroundColor: ['#2563eb', '#9333ea', '#f59e0b', '#94a3b8'],
+          borderColor: '#ffffff',
+          borderWidth: 2,
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '55%',
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { boxWidth: 12, padding: 16 }
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                const value = context.parsed;
+                return `${context.label}: ${value}`;
+              }
+            }
+          }
+        }
+      }
+    });
   });
 </script>
 @endsection
