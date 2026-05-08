@@ -243,18 +243,35 @@ class PublikController extends Controller
 
     public function tracerReport()
     {
-        $students = \App\Models\Student::where('alumni_flag', 1)->get();
+        // Get all tracer study data
+        $tracerStudies = TracerStudy::with('student')->get();
 
+        // Prepare chart data based on status_saat_ini
         $chartData = [
-            'Bekerja' => $students->where('status', 'working')->count(),
-            'Kuliah' => $students->where('status', 'studying')->count(),
-            'Wirausaha' => $students->where('status', 'business')->count(),
-            'Mencari Kerja' => $students->where('status', 'unemployed')->count(),
+            'Bekerja' => $tracerStudies->where('status_saat_ini', 'working')->count(),
+            'Kuliah' => $tracerStudies->where('status_saat_ini', 'studying')->count(),
+            'Wirausaha' => $tracerStudies->where('status_saat_ini', 'both')->count(),
+            'Mencari Kerja' => $tracerStudies->where('status_saat_ini', 'unemployed')->count(),
+        ];
+
+        // Get statistics
+        $totalRespondents = $tracerStudies->count();
+        $workingPercentage = $totalRespondents > 0 ? round(($chartData['Bekerja'] / $totalRespondents) * 100) : 0;
+        $entrepreneurPercentage = $totalRespondents > 0 ? round(($chartData['Wirausaha'] / $totalRespondents) * 100) : 0;
+
+        // Get alignment data (keselarasan_jurusan)
+        $alignmentData = [
+            'Sesuai' => $tracerStudies->where('keselarasan_jurusan', 'ya')->count(),
+            'Tidak Sesuai' => $tracerStudies->where('keselarasan_jurusan', 'tidak')->count(),
         ];
 
         return view('public.tracer-report', compact(
-            'students',
-            'chartData'
+            'tracerStudies',
+            'chartData',
+            'totalRespondents',
+            'workingPercentage',
+            'entrepreneurPercentage',
+            'alignmentData'
         ));
     }
     /**

@@ -81,7 +81,7 @@
       </div>
       <h3 class="text-2xl font-bold text-slate-800 mb-4">Tracer Study Report</h3>
       <p class="text-slate-500 mb-8 leading-relaxed">Laporan lengkap hasil pelacakan alumni mencakup masa tunggu kerja dan relevansi kurikulum.</p>
-      <button class="bg-slate-100 text-slate-800 px-8 py-3.5 rounded-xl font-bold hover:bg-blue-600 hover:text-white transition">Lihat Laporan Alumni</button>
+      <button onclick="window.location.href='{{ route('tracer.report') }}'" class="bg-slate-100 text-slate-800 px-8 py-3.5 rounded-xl font-bold hover:bg-blue-600 hover:text-white transition">Lihat Laporan Alumni</button>
     </div>
 
     <div class="bg-white p-10 rounded-[40px] shadow-sm border border-slate-100 group">
