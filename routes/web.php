@@ -91,14 +91,7 @@ Route::post('/alumni-stories', [AlumniStoryController::class, 'store'])->name('a
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'index'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.process');
-    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
-    Route::post('/register', [AuthController::class, 'register'])->name('register.process');
-
-    Route::prefix('forgot-password')->group(function () {
-        Route::post('/send-otp', [OtpController::class, 'sendOtp'])->name('password.otp.send');
-        Route::post('/verify-otp', [OtpController::class, 'verifyOtp'])->name('password.otp.check');
-        Route::post('/reset', [OtpController::class, 'resetPassword'])->name('password.reset.update');
-    });
+    Route::get('/register', fn() => redirect()->route('login'));
 
     // Social Login
     Route::get('/auth/google', [SocialAuthController::class, 'redirectToGoogle'])->name('auth.google');
