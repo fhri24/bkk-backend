@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\ActivityLog;
 use App\Models\User;
 use App\Models\Student;
-use App\Models\Publik;
 use App\Models\Role;
 use App\Models\Major;
 use App\Models\GraduationYear;
@@ -21,7 +20,10 @@ class AuthController extends Controller
         if (Auth::check()) {
             return $this->redirectUserByRole(Auth::user());
         }
-        return view('auth.login');
+
+        $majors = Major::orderBy('name', 'asc')->get();
+        $years  = GraduationYear::orderBy('year', 'desc')->get();
+        return view('auth.login', compact('majors', 'years'));
     }
 
     public function showRegister()
@@ -35,11 +37,10 @@ class AuthController extends Controller
     {
         // ===== VALIDASI UMUM =====
         $request->validate([
-            'role'          => 'required|in:alumni,publik',
             'name'          => 'required|string|max:255',
             'email'         => 'required|email|unique:users,email',
             'password'      => 'required|min:6|confirmed',
-            'nisn'          => 'required|string|max:20',
+            'nisn'          => 'required|string|max:20|unique:students,nis',
             'nama_lengkap'  => 'required|string|max:255',
             'jenis_kelamin' => 'required|in:L,P',
             'tempat_lahir'  => 'required|string|max:100',
@@ -48,17 +49,16 @@ class AuthController extends Controller
             'no_hp'         => 'required|string|max:20',
             'alamat'        => 'required|string',
             'foto_profile'  => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'jurusan'       => 'required|string|max:100',
         ], [
-            'role.required'          => 'Silakan pilih daftar sebagai Alumni atau Publik.',
-            'role.in'                => 'Pilihan role tidak valid.',
             'name.required'          => 'Nama pengguna wajib diisi.',
             'email.required'         => 'Email wajib diisi.',
             'email.unique'           => 'Email sudah terdaftar.',
             'password.required'      => 'Kata sandi wajib diisi.',
             'password.min'           => 'Kata sandi minimal 6 karakter.',
             'password.confirmed'     => 'Konfirmasi kata sandi tidak cocok.',
-            'nisn.required'          => 'NISN wajib diisi.',
-            'nisn.unique'            => 'NISN sudah terdaftar.',
+            'nisn.required'          => 'NIS wajib diisi.',
+            'nisn.unique'            => 'NIS sudah terdaftar.',
             'nama_lengkap.required'  => 'Nama lengkap wajib diisi.',
             'jenis_kelamin.required' => 'Jenis kelamin wajib dipilih.',
             'tempat_lahir.required'  => 'Tempat lahir wajib diisi.',
@@ -67,26 +67,10 @@ class AuthController extends Controller
             'tahun_lulus.digits'     => 'Tahun lulus harus 4 digit.',
             'no_hp.required'         => 'Nomor HP wajib diisi.',
             'alamat.required'        => 'Alamat wajib diisi.',
+            'jurusan.required'       => 'Jurusan wajib diisi.',
             'foto_profile.image'     => 'File harus berupa gambar.',
             'foto_profile.max'       => 'Ukuran foto maksimal 2MB.',
         ]);
-
-        // ===== VALIDASI JURUSAN khusus alumni =====
-        if ($request->role === 'alumni') {
-            $request->validate([
-                'jurusan' => 'required|string|max:100',
-                'nisn'    => 'unique:students,nis',
-            ], [
-                'jurusan.required' => 'Jurusan wajib diisi untuk alumni.',
-                'nisn.unique'      => 'NISN sudah terdaftar.',
-            ]);
-        } else {
-            $request->validate([
-                'nisn' => 'unique:publik,nisn',
-            ], [
-                'nisn.unique' => 'NISN sudah terdaftar.',
-            ]);
-        }
 
         return DB::transaction(function () use ($request) {
 
@@ -97,11 +81,11 @@ class AuthController extends Controller
                     ->store('foto_profile', 'public');
             }
 
-            // ===== AMBIL ROLE =====
-            $role = Role::where('name', $request->role)->first();
+            // ===== AMBIL ROLE ALUMNI =====
+            $role = Role::where('name', 'alumni')->first();
 
             if (!$role) {
-                throw new \Exception('Role ' . $request->role . ' tidak ditemukan di database.');
+                throw new \Exception('Role alumni tidak ditemukan di database.');
             }
 
             // ===== BUAT USER DULU =====
@@ -115,35 +99,21 @@ class AuthController extends Controller
                 'is_active'     => true,
             ]);
 
-            // ===== BUAT PROFIL SESUAI ROLE =====
-            if ($request->role === 'alumni') {
-                $profil = Student::create([
-                    'user_id'         => $user->id,
-                    'nis'             => $request->nisn,
-                    'full_name'       => $request->nama_lengkap,
-                    'gender'          => $request->jenis_kelamin,
-                    'birth_info'      => $request->tempat_lahir . ', ' . $request->tanggal_lahir,
-                    'major'           => $request->jurusan,
-                    'graduation_year' => $request->tahun_lulus,
-                    'phone'           => $request->no_hp,
-                    'address'         => $request->alamat,
-                    'profile_picture' => $fotoPath,
-                    'alumni_flag'     => true,
-                    'status'          => 'active',
-                ]);
-            } else {
-                $profil = Publik::create([
-                    'nisn'          => $request->nisn,
-                    'nama_lengkap'  => $request->nama_lengkap,
-                    'jenis_kelamin' => $request->jenis_kelamin,
-                    'tempat_lahir'  => $request->tempat_lahir,
-                    'tanggal_lahir' => $request->tanggal_lahir,
-                    'tahun_lulus'   => $request->tahun_lulus,
-                    'no_hp'         => $request->no_hp,
-                    'alamat'        => $request->alamat,
-                    'foto_profile'  => $fotoPath,
-                ]);
-            }
+            // ===== BUAT PROFIL ALUMNI =====
+            $profil = Student::create([
+                'user_id'         => $user->id,
+                'nis'             => $request->nisn,
+                'full_name'       => $request->nama_lengkap,
+                'gender'          => $request->jenis_kelamin,
+                'birth_info'      => $request->tempat_lahir . ', ' . $request->tanggal_lahir,
+                'major'           => $request->jurusan,
+                'graduation_year' => $request->tahun_lulus,
+                'phone'           => $request->no_hp,
+                'address'         => $request->alamat,
+                'profile_picture' => $fotoPath,
+                'alumni_flag'     => true,
+                'status'          => 'active',
+            ]);
 
             // ===== BUAT USER + POLYMORPHIC =====
             $user->update([
@@ -162,24 +132,39 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email'    => ['required', 'email'],
-            'password' => ['required'],
+            'nis'             => ['required', 'string', 'max:50'],
+            'graduation_year' => ['required', 'digits:4', 'integer'],
+            'major'           => ['required', 'string', 'max:100'],
+            'password'        => ['required'],
         ], [
-            'email.required'    => 'Email wajib diisi.',
-            'email.email'       => 'Format email tidak valid.',
-            'password.required' => 'Kata sandi wajib diisi.',
+            'nis.required'             => 'NIS wajib diisi.',
+            'graduation_year.required' => 'Tahun lulus wajib diisi.',
+            'graduation_year.digits'   => 'Tahun lulus harus 4 digit.',
+            'major.required'           => 'Jurusan wajib diisi.',
+            'password.required'        => 'Kata sandi wajib diisi.',
         ]);
 
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+        $user = User::whereHas('role', function ($query) {
+                $query->where('name', 'alumni');
+            })
+            ->whereHas('student', function ($query) use ($request) {
+                $query->where('nis', $request->nis)
+                      ->where('graduation_year', $request->graduation_year)
+                      ->where('major', $request->major);
+            })
+            ->first();
+
+        if ($user && Hash::check($request->password, $user->password)) {
+            Auth::login($user);
             $request->session()->regenerate();
- 
+
             if (!Auth::user()->is_active) {
                 Auth::logout();
                 return back()->withErrors([
-                    'email' => 'Akun Anda telah dinonaktifkan. Hubungi admin.',
-                ])->onlyInput('email');
+                    'nis' => 'Akun Anda telah dinonaktifkan. Hubungi admin.',
+                ])->onlyInput('nis');
             }
- 
+
             ActivityLog::create([
                 'user_id'    => Auth::id(),
                 'action'     => 'Login berhasil',
@@ -191,9 +176,10 @@ class AuthController extends Controller
         }
 
         return back()->withErrors([
-            'email' => 'Email atau password salah!',
-        ])->onlyInput('email');
+            'nis' => 'NIS, tahun lulus, atau password salah.',
+        ])->onlyInput('nis');
     }
+
  
     private function redirectUserByRole($user)
     {

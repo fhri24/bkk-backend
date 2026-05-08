@@ -148,9 +148,8 @@
     <div class="container mx-auto px-6 z-10">
         
         {{-- Hero Title & Description Dinamis --}}
-        <h1 class="text-5xl md:text-6xl font-black leading-tight mb-6">
+        <h1 class="text-5xl md:text-6xl font-black leading-tight mb-6 whitespace-pre-line break-words">
             {{ $schoolProfile->site_title ?? 'Sistem Informasi' }}
-            <span class="text-blue-400 block">Bursa Kerja</span>
         </h1>
         <p class="text-lg md:text-xl text-blue-100 mb-10 max-w-2xl mx-auto leading-relaxed">
             "{{ $schoolProfile->site_description ?? 'Menghubungkan Talenta Alumni SMKN 1 Garut dengan Peluang Karir Masa Depan di Industri Global' }}"
@@ -552,15 +551,6 @@
                         <span>Login</span>
                     </a>
 
-                    <a
-                        href="{{ route('register') }}"
-                        class="inline-flex items-center justify-center gap-2 border border-blue-200 bg-white text-blue-700 px-8 py-3 rounded-xl font-bold hover:bg-blue-50 transition duration-300"
-                    >
-                        <i class="fas fa-user-plus"></i>
-
-                        <span>Register</span>
-                    </a>
-
                 </div>
 
             </div>
@@ -600,7 +590,7 @@
                 @auth
                     <a href="{{ route('student.home') }}" class="inline-flex items-center justify-center gap-2 bg-white text-[#1e3a8a] px-10 py-4 rounded-full font-semibold shadow-2xl hover:shadow-[0_25px_75px_rgba(15,23,42,0.18)] transition transform hover:-translate-y-0.5 active:translate-y-0">Dashboard</a>
                 @else
-                    <a href="{{ route('register') }}" class="inline-flex items-center justify-center gap-2 bg-white text-[#1e3a8a] px-10 py-4 rounded-full font-semibold shadow-2xl hover:shadow-[0_25px_75px_rgba(15,23,42,0.18)] transition transform hover:-translate-y-0.5 active:translate-y-0">Daftar Sebagai Alumni</a>
+                    <a href="{{ route('login') }}" class="inline-flex items-center justify-center gap-2 bg-white text-[#1e3a8a] px-10 py-4 rounded-full font-semibold shadow-2xl hover:shadow-[0_25px_75px_rgba(15,23,42,0.18)] transition transform hover:-translate-y-0.5 active:translate-y-0">Login Sebagai Alumni</a>
                 @endauth
             </div>
         </div>

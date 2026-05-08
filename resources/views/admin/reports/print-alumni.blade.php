@@ -47,7 +47,7 @@
             @php
                 $logoBase64 = '';
                 try {
-                    $dbPath = $profile->logo_path ?? '';
+                    $dbPath = $profile->logo ?? $profile->logo_path ?? '';
                     if (!empty($dbPath)) {
                         // Mencari di berbagai kemungkinan lokasi folder Laravel
                         $locations = [
@@ -61,7 +61,7 @@
                                 $type = pathinfo($path, PATHINFO_EXTENSION);
                                 $data = file_get_contents($path);
                                 $logoBase64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
-                                break; 
+                                break;
                             }
                         }
                     }

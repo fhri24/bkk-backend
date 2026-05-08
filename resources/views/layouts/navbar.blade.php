@@ -8,8 +8,8 @@
                 
                 {{-- Logo dinamis --}}
                 <div class="w-11 h-11 bg-white rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
-                    @if(isset($schoolProfile) && $schoolProfile->logo)
-                        <img src="{{ asset('storage/' . $schoolProfile->logo) }}"
+                    @if(isset($schoolProfile) && ($schoolProfile->logo ?? $schoolProfile->logo_path))
+                        <img src="{{ asset('storage/' . ($schoolProfile->logo ?? $schoolProfile->logo_path)) }}"
                              class="w-full h-full object-contain p-1" alt="Logo">
                     @else
                         <i class="fas fa-graduation-cap text-[#001f3f] text-xl"></i>
@@ -18,7 +18,7 @@
 
                 <div>
                     <h1 class="font-extrabold text-xl tracking-tight leading-none">
-                        {{ $schoolProfile->site_title ?? 'BKK SMKN 1' }}
+                        {{ $schoolProfile->school_name ?? $schoolProfile->name ?? $schoolProfile->site_title ?? 'BKK SMKN 1' }}
                     </h1>
                     <p class="text-[10px] uppercase tracking-widest opacity-70">
                         {{ $schoolProfile->tagline ?? 'Garut Bermartabat' }}
@@ -88,7 +88,6 @@
                         </form>
                     </div>
                 @else
-                    <a href="{{ route('register') }}" class="text-sm font-bold hover:text-blue-400 transition">Daftar</a>
                     <a href="{{ route('login') }}" class="bg-blue-600 hover:bg-blue-700 px-8 py-2.5 rounded-full text-sm font-bold shadow-lg transition transform hover:scale-105 active:scale-95">
                         Masuk
                     </a>

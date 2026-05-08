@@ -80,6 +80,7 @@ Route::get('/acara/{id}', [PublikController::class, 'acaraDetail'])->name('publi
 Route::post('/acara/{id}/register', [PublikController::class, 'storeEventRegistration'])->name('public.event.register');
 
 Route::get('/tracer-study', [PublikController::class, 'tracer'])->name('public.tracer');
+Route::get('/tracer-study-report', [PublikController::class, 'tracerReport'])->name('tracer.report');
 Route::post('/tracer-study/store', [PublikController::class, 'storeTracer'])
     ->middleware(['auth'])
     ->name('student.tracer.store');
@@ -95,14 +96,7 @@ Route::post('/alumni-stories', [AlumniStoryController::class, 'store'])->name('a
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'index'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.process');
-    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
-    Route::post('/register', [AuthController::class, 'register'])->name('register.process');
-
-    Route::prefix('forgot-password')->group(function () {
-        Route::post('/send-otp', [OtpController::class, 'sendOtp'])->name('password.otp.send');
-        Route::post('/verify-otp', [OtpController::class, 'verifyOtp'])->name('password.otp.check');
-        Route::post('/reset', [OtpController::class, 'resetPassword'])->name('password.reset.update');
-    });
+    Route::get('/register', fn() => redirect()->route('login'));
 
     // Social Login
     Route::get('/auth/google', [SocialAuthController::class, 'redirectToGoogle'])->name('auth.google');
@@ -248,6 +242,9 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
 
     Route::prefix('event-registrations')->name('event-registrations.')->group(function () {
         Route::get('/', [AdminEventRegistrationController::class, 'index'])->name('index');
+        Route::get('/export/csv', [AdminEventRegistrationController::class, 'exportCsv'])->name('export.csv');
+        Route::get('/export/print', [AdminEventRegistrationController::class, 'exportPrint'])->name('export.print');
+        Route::get('/export/pdf', [AdminEventRegistrationController::class, 'exportPdf'])->name('export.pdf');
         Route::put('/{id}', [AdminEventRegistrationController::class, 'update'])->name('update');
         Route::delete('/{id}', [AdminEventRegistrationController::class, 'destroy'])->name('destroy');
     });

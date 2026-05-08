@@ -8,6 +8,8 @@ class SchoolProfile extends Model
 {
     protected $fillable = [
         'name',
+        'school_name',
+        'school_address',
         'site_title',
         'site_description',
         'tagline',
@@ -18,6 +20,7 @@ class SchoolProfile extends Model
         'instagram',
         'twitter',
         'youtube',
+        'logo_path',
         'logo',
     ];
 }

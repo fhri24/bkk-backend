@@ -17,7 +17,9 @@
             @endif
           </div>
           <h2 class="text-white font-bold text-xl">
-            {{ $schoolProfile->school_name ?? $schoolProfile->name ?? 'BKK SMKN 1' }}
+            <a href="{{ route('public.beranda') }}" class="hover:text-blue-200">
+              {{ $schoolProfile->school_name ?? $schoolProfile->name ?? 'SMKN 1 Garut' }}
+            </a>
           </h2>
         </div>
 
@@ -53,10 +55,6 @@
             <a href="{{ $schoolProfile->twitter }}" target="_blank" rel="noopener"
                class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-sky-500 transition">
               <i class="fab fa-twitter"></i>
-            </a>
-          @else
-            <a href="#" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-sky-500 transition">
-              <i class="fab fa-linkedin-in"></i>
             </a>
           @endif
 

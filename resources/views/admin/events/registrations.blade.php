@@ -43,6 +43,17 @@
                 <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition">
                     <i class="fas fa-search mr-2"></i>Cari
                 </button>
+
+                <div class="flex gap-3 items-center mt-4 w-full">
+                    <a href="{{ route('admin.event-registrations.export.csv', request()->only(['event_slug', 'status'])) }}"
+                       class="inline-flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-lg text-sm font-medium transition">
+                       <i class="fas fa-file-csv mr-2"></i>Export Excel
+                    </a>
+                    <a href="{{ route('admin.event-registrations.export.pdf', request()->only(['event_slug', 'status'])) }}" target="_blank"
+                       class="inline-flex items-center justify-center bg-slate-700 hover:bg-slate-800 text-white px-6 py-2 rounded-lg text-sm font-medium transition">
+                       <i class="fas fa-file-pdf mr-2"></i>Export PDF
+                    </a>
+                </div>
             </form>
         </div>
 
