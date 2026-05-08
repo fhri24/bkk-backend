@@ -467,7 +467,7 @@
             </div>
             <div>
                 <label class="form-label">Upload CV/Resume (PDF) *</label>
-                <input type="file" name="cv" accept=".pdf" class="form-input" required>
+                <input type="file" name="cv_file" accept=".pdf" class="form-input" required>
                 <p style="font-size:12px; color:#94a3b8; margin-top:6px;">Format: PDF, Maks. 2 MB</p>
             </div>
             <div>
@@ -528,7 +528,7 @@ function shareVacancy() {
     }
 }
 
-// UPDATE: Handle Kirim Lamaran Modern (AJAX)
+// UPDATE: Handle Kirim Lamaran Modern (AJAX) - VERSI ANTI-ERROR
 document.getElementById('applicationForm').addEventListener('submit', function(e) {
     e.preventDefault();
 
@@ -547,31 +547,35 @@ document.getElementById('applicationForm').addEventListener('submit', function(e
         body: formData,
         headers: {
             'X-Requested-With': 'XMLHttpRequest',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json' // <--- WAJIB: Biar Laravel tau kita minta JSON
         }
     })
-    .then(response => response.json())
-    .then(data => {
-        notif.style.display = 'flex';
-        if (data.status === 'success') {
-            notif.className = 'notif-success';
-            notif.innerHTML = '<i class="fas fa-check-circle"></i> ' + data.message;
-            form.reset();
-            // Beri waktu user baca baru reload/tutup
-            setTimeout(() => { location.reload(); }, 2000);
-        } else {
-            notif.className = 'notif-error';
-            notif.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + (data.message || 'Terjadi kesalahan.');
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-paper-plane" style="margin-right:8px;"></i> Kirim Lamaran';
+    .then(async response => {
+        const isJson = response.headers.get('content-type')?.includes('application/json');
+        const data = isJson ? await response.json() : null;
+
+        if (!response.ok) {
+            // Kalau error validasi (422) atau server error (500)
+            throw new Error(data ? data.message : 'Terjadi kesalahan sistem (Error ' + response.status + ')');
         }
+
+        // Kalau sukses
+        notif.style.display = 'flex';
+        notif.className = 'notif-success';
+        notif.innerHTML = '<i class="fas fa-check-circle"></i> ' + (data.message || 'Lamaran berhasil dikirim!');
+        form.reset();
+        setTimeout(() => { location.reload(); }, 2000);
     })
     .catch(error => {
+        // Blok ini nangkep error beneran (koneksi mati atau throw error di atas)
         notif.style.display = 'flex';
         notif.className = 'notif-error';
-        notif.innerHTML = '<i class="fas fa-times-circle"></i> Gagal menghubungi server.';
+        notif.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + error.message;
+
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-paper-plane" style="margin-right:8px;"></i> Kirim Lamaran';
+        console.error('Detail Error:', error);
     });
 });
 </script>

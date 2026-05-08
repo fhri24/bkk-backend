@@ -40,10 +40,6 @@
             </thead>
             <tbody class="text-slate-700">
                 @forelse($applications as $app)
-                    @php
-                        $userPelamar = \App\Models\User::where('userable_id', $app->student_id)->first();
-                        $namaAsli = $userPelamar ? $userPelamar->name : ($app->student->full_name ?? '-');
-                    @endphp
                     <tr class="border-b hover:bg-slate-50 transition">
                         <td class="p-4 text-sm">
                             <div class="font-bold text-slate-800">{{ $app->job->title ?? '-' }}</div>
@@ -52,7 +48,8 @@
 
                         <td class="p-4">
                             <span class="font-bold text-blue-700 px-2 py-1 bg-blue-50 rounded text-sm">
-                                {{ $namaAsli }}
+                                {{-- AMBIL DARI FULL_NAME SESUAI DATABASE --}}
+                                {{ $app->full_name ?? ($app->student->full_name ?? 'Tanpa Nama') }}
                             </span>
                         </td>
 
@@ -60,7 +57,8 @@
 
                         <td class="p-4">
                             @if($app->additional_file)
-                                <a href="{{ asset('storage/' . $app->additional_file) }}" target="_blank" class="text-blue-600 hover:text-blue-800 flex items-center font-medium">
+                                {{-- UPDATE PATH AGAR SESUAI DENGAN FOLDER DI STORAGE --}}
+                                <a href="{{ asset('storage/cv_applications/' . $app->additional_file) }}" target="_blank" class="text-blue-600 hover:text-blue-800 flex items-center font-medium">
                                     <i class="fas fa-file-pdf mr-2 text-lg"></i> CV
                                 </a>
                             @else

@@ -67,6 +67,10 @@ Route::get('/', [PublikController::class, 'beranda'])->name('public.beranda');
 // Route Publik
 Route::get('/lowongan', [PublikController::class, 'lowongan'])->name('public.lowongan');
 Route::get('/lowongan/{id}', [PublikController::class, 'lowonganDetail'])->name('public.lowongan.detail');
+// Tambahin ini di bawah route public.lowongan.detail
+Route::post('/lowongan/apply-universal/{id}', [StudentController::class, 'applyJob'])
+    ->middleware(['auth'])
+    ->name('universal.apply');
 
 Route::get('/berita', [AdminNewsController::class, 'index_student'])->name('public.berita');
 Route::get('/berita/{slug}', [AdminNewsController::class, 'show'])->name('public.berita.detail');
