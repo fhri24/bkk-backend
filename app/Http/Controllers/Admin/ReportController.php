@@ -129,14 +129,41 @@ class ReportController extends Controller
     /**
      * Cetak Laporan Alumni dengan Profil Sekolah
      */
-    public function printAlumni()
+    public function printAlumni(Request $request)
     {
-        $alumni = Student::where('alumni_flag', true)->with('user')->get();
-        
-        // Mengambil data profil sekolah yang terakhir diupdate
-        $profile = SchoolProfile::latest()->first(); 
+        $query = Student::where('alumni_flag', true)->with('user');
 
-        return view('admin.reports.print-alumni', compact('alumni', 'profile'));
+        // Filter per tahun lulus
+        if ($request->filled('year')) {
+            $query->where('graduation_year', $request->year);
+        }
+
+        // Filter per jurusan
+        if ($request->filled('major')) {
+            $query->where('major', $request->major);
+        }
+
+        $alumni = $query->orderBy('full_name')->get();
+
+        // Untuk dropdown filter
+        $availableYears = Student::where('alumni_flag', true)
+            ->select('graduation_year')->distinct()
+            ->orderBy('graduation_year', 'desc')
+            ->pluck('graduation_year');
+
+        $availableMajors = Student::where('alumni_flag', true)
+            ->select('major')->distinct()
+            ->orderBy('major')
+            ->pluck('major');
+
+        $profile = SchoolProfile::latest()->first();
+
+        return view('admin.reports.print-alumni', compact(
+            'alumni',
+            'profile',
+            'availableYears',
+            'availableMajors'
+        ));
     }
 
     /**
@@ -145,7 +172,7 @@ class ReportController extends Controller
     public function printJobs()
     {
         $jobs = Job::with('company')->get();
-        
+
         // Mengambil data profil sekolah yang terakhir diupdate
         $profile = SchoolProfile::latest()->first();
 
