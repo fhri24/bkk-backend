@@ -133,24 +133,34 @@ class AuthController extends Controller
     {
         $request->validate([
             'nis'             => ['required', 'string', 'max:50'],
-            'graduation_year' => ['required', 'digits:4', 'integer'],
-            'major'           => ['required', 'string', 'max:100'],
+            'graduation_year' => ['nullable', 'digits:4', 'integer'],
+            'major'           => ['nullable', 'string', 'max:100'],
             'password'        => ['required'],
         ], [
             'nis.required'             => 'NIS wajib diisi.',
-            'graduation_year.required' => 'Tahun lulus wajib diisi.',
             'graduation_year.digits'   => 'Tahun lulus harus 4 digit.',
-            'major.required'           => 'Jurusan wajib diisi.',
+            'major.string'             => 'Jurusan harus berupa teks.',
+            'major.max'                => 'Jurusan maksimal 100 karakter.',
             'password.required'        => 'Kata sandi wajib diisi.',
         ]);
 
-        $user = User::whereHas('role', function ($query) {
-                $query->where('name', 'alumni');
-            })
-            ->whereHas('student', function ($query) use ($request) {
-                $query->where('nis', $request->nis)
-                      ->where('graduation_year', $request->graduation_year)
-                      ->where('major', $request->major);
+        $user = User::where(function ($query) use ($request) {
+                $query->where(function ($query) use ($request) {
+                    $query->whereHas('role', function ($query) {
+                        $query->where('name', 'alumni');
+                    })
+                    ->whereHas('student', function ($query) use ($request) {
+                        $query->where('nis', $request->nis)
+                              ->where('graduation_year', $request->graduation_year)
+                              ->where('major', $request->major);
+                    });
+                })
+                ->orWhere(function ($query) use ($request) {
+                    $query->whereHas('role', function ($query) {
+                        $query->whereIn('name', ['super_admin', 'admin_bkk', 'kepala_bkk', 'kepala_sekolah']);
+                    })
+                    ->where('email', $request->nis);
+                });
             })
             ->first();
 
