@@ -35,7 +35,6 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        // ===== VALIDASI UMUM =====
         $request->validate([
             'name'          => 'required|string|max:255',
             'email'         => 'required|email|unique:users,email',
@@ -57,8 +56,8 @@ class AuthController extends Controller
             'password.required'      => 'Kata sandi wajib diisi.',
             'password.min'           => 'Kata sandi minimal 6 karakter.',
             'password.confirmed'     => 'Konfirmasi kata sandi tidak cocok.',
-            'nisn.required'          => 'NIS wajib diisi.',
-            'nisn.unique'            => 'NIS sudah terdaftar.',
+            'nisn.required'          => 'NISN wajib diisi.',
+            'nisn.unique'            => 'NISN sudah terdaftar.',
             'nama_lengkap.required'  => 'Nama lengkap wajib diisi.',
             'jenis_kelamin.required' => 'Jenis kelamin wajib dipilih.',
             'tempat_lahir.required'  => 'Tempat lahir wajib diisi.',
@@ -74,32 +73,27 @@ class AuthController extends Controller
 
         return DB::transaction(function () use ($request) {
 
-            // ===== UPLOAD FOTO =====
             $fotoPath = null;
             if ($request->hasFile('foto_profile')) {
                 $fotoPath = $request->file('foto_profile')
                     ->store('foto_profile', 'public');
             }
 
-            // ===== AMBIL ROLE ALUMNI =====
             $role = Role::where('name', 'alumni')->first();
-
             if (!$role) {
                 throw new \Exception('Role alumni tidak ditemukan di database.');
             }
 
-            // ===== BUAT USER DULU =====
             $user = User::create([
                 'name'          => $request->name,
                 'email'         => $request->email,
                 'password'      => Hash::make($request->password),
                 'role_id'       => $role->id,
-                'userable_id'   => 0, // Placeholder
-                'userable_type' => 'App\Models\User', // Placeholder
+                'userable_id'   => 0,
+                'userable_type' => 'App\Models\User',
                 'is_active'     => true,
             ]);
 
-            // ===== BUAT PROFIL ALUMNI =====
             $profil = Student::create([
                 'user_id'         => $user->id,
                 'nis'             => $request->nisn,
@@ -115,16 +109,12 @@ class AuthController extends Controller
                 'status'          => 'active',
             ]);
 
-            // ===== BUAT USER + POLYMORPHIC =====
             $user->update([
                 'userable_id'   => $profil->getKey(),
                 'userable_type' => get_class($profil),
             ]);
 
-            // ===== LOGIN =====
             Auth::login($user);
-
-            // ===== REDIRECT SESUAI ROLE =====
             return $this->redirectUserByRole($user);
         });
     }
@@ -137,43 +127,54 @@ class AuthController extends Controller
             'major'           => ['nullable', 'string', 'max:100'],
             'password'        => ['required'],
         ], [
-            'nis.required'             => 'NIS wajib diisi.',
-            'graduation_year.digits'   => 'Tahun lulus harus 4 digit.',
-            'major.string'             => 'Jurusan harus berupa teks.',
-            'major.max'                => 'Jurusan maksimal 100 karakter.',
-            'password.required'        => 'Kata sandi wajib diisi.',
+            'nis.required'           => 'NISN wajib diisi.',
+            'graduation_year.digits' => 'Tahun lulus harus 4 digit.',
+            'password.required'      => 'Kata sandi wajib diisi.',
         ]);
 
-        $user = User::where(function ($query) use ($request) {
-                $query->where(function ($query) use ($request) {
-                    $query->whereHas('role', function ($query) {
-                        $query->where('name', 'alumni');
-                    })
-                    ->whereHas('student', function ($query) use ($request) {
-                        $query->where('nis', $request->nis)
-                              ->where('graduation_year', $request->graduation_year)
-                              ->where('major', $request->major);
+        // Normalisasi input NISN — hapus spasi, pastikan string
+        $nisnInput = trim($request->nis);
+
+        $user = User::where(function ($query) use ($request, $nisnInput) {
+
+            // Login Alumni: cari via relasi student dengan NISN
+            $query->where(function ($q) use ($request, $nisnInput) {
+                $q->whereHas('role', fn($r) => $r->where('name', 'alumni'))
+                    ->whereHas('student', function ($s) use ($request, $nisnInput) {
+                        // Cari dengan NISN persis
+                        $s->where('nisn', $nisnInput);
+
+                        if ($request->filled('graduation_year')) {
+                            $s->where('graduation_year', $request->graduation_year);
+                        }
+                        if ($request->filled('major')) {
+                            $s->where('major', $request->major);
+                        }
                     });
-                })
-                ->orWhere(function ($query) use ($request) {
-                    $query->whereHas('role', function ($query) {
-                        $query->whereIn('name', ['super_admin', 'admin_bkk', 'kepala_bkk', 'kepala_sekolah']);
-                    })
-                    ->where('email', $request->nis);
-                });
             })
-            ->first();
+
+                // Login Admin: pakai email
+                ->orWhere(function ($q) use ($nisnInput) {
+                    $q->whereHas('role', fn($r) => $r->whereIn('name', [
+                        'super_admin',
+                        'admin_bkk',
+                        'kepala_bkk',
+                        'kepala_sekolah'
+                    ]))
+                        ->where('email', $nisnInput);
+                });
+        })->first();
 
         if ($user && Hash::check($request->password, $user->password)) {
-            Auth::login($user);
-            $request->session()->regenerate();
 
-            if (!Auth::user()->is_active) {
-                Auth::logout();
+            if (!$user->is_active) {
                 return back()->withErrors([
                     'nis' => 'Akun Anda telah dinonaktifkan. Hubungi admin.',
                 ])->onlyInput('nis');
             }
+
+            Auth::login($user);
+            $request->session()->regenerate();
 
             ActivityLog::create([
                 'user_id'    => Auth::id(),
@@ -186,51 +187,45 @@ class AuthController extends Controller
         }
 
         return back()->withErrors([
-            'nis' => 'NIS, tahun lulus, atau password salah.',
+            'nis' => 'NISN, tahun lulus, jurusan, atau password salah.',
         ])->onlyInput('nis');
     }
 
- 
     private function redirectUserByRole($user)
     {
         $roleName = $user->role->name ?? '';
 
-        return match(true) {
+        return match (true) {
             in_array($roleName, ['super_admin', 'admin_bkk', 'kepala_bkk', 'kepala_sekolah'])
-                => redirect()->intended(route('admin.dashboard')),
-
+            => redirect()->intended(route('admin.dashboard')),
             $roleName === 'alumni'
-                => redirect()->intended(route('alumni.home')),
-
+            => redirect()->intended(route('alumni.home')),
             $roleName === 'publik'
-                => redirect()->intended(route('publik.home')),
-
+            => redirect()->intended(route('publik.home')),
             $roleName === 'siswa'
-                => redirect()->intended(route('student.home')),
-
+            => redirect()->intended(route('student.home')),
             $roleName === 'perusahaan'
-                => redirect()->intended(route('admin.dashboard')),
-
+            => redirect()->intended(route('admin.dashboard')),
             default => redirect('/'),
         };
     }
 
     public function logout(Request $request)
-{
-    if (Auth::check()) {
-        ActivityLog::create([
-            'user_id'    => Auth::id(),
-            'action'     => 'Logout',
-            'ip_address' => $request->ip(),
-            'user_agent' => $request->userAgent(),
-        ]);
+    {
+        if (Auth::check()) {
+            ActivityLog::create([
+                'user_id'    => Auth::id(),
+                'action'     => 'Logout',
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
 
-        Auth::logout();
+            Auth::logout();
+        }
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/');
     }
-
-    $request->session()->invalidate();
-    $request->session()->regenerateToken();
-
-    return redirect('/');
-}
 }

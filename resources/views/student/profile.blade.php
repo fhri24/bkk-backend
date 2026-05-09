@@ -69,7 +69,7 @@
                         </div>
 
                         {{-- Tersimpan --}}
-                        <a href="{{ route('student.saved-jobs') }}" class="flex items-center justify-between p-4 bg-blue-50 rounded-2xl border border-blue-100 hover:bg-blue-100 transition">
+                        <a href="{{ auth()->user()->isAlumni() ? '#' : route('student.saved-jobs') }}" class="flex items-center justify-between p-4 bg-blue-50 rounded-2xl border border-blue-100 hover:bg-blue-100 transition">
                             <span class="font-bold text-blue-700 text-sm">
                                 <i class="fas fa-bookmark mr-2"></i> Tersimpan
                             </span>
@@ -190,10 +190,10 @@
                                         </div>
                                     </div> 
                                     <div class="flex items-center space-x-2">
-                                        <a href="{{ route('student.lowongan.detail', $saved->job_id) }}" class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all">
+                                        <a href="{{ auth()->user()->isAlumni() ? route('alumni.lowongan.detail', $saved->job_id) : route('student.lowongan.detail', $saved->job_id) }}" class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <form action="{{ route('student.lowongan.save', $saved->job_id) }}" method="POST" class="inline">
+                                        <form action="{{ auth()->user()->isAlumni() ? route('alumni.lowongan.save', $saved->job_id) : route('student.lowongan.save', $saved->job_id) }}" method="POST" class="inline">
                                             @csrf
                                             <button type="submit" class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all" onclick="return confirm('Hapus dari simpanan?')">
                                                 <i class="fas fa-trash-alt"></i>
@@ -214,7 +214,7 @@
                         <span>
                             <i class="fas fa-paper-plane mr-3 text-purple-500"></i> Lamaran Pekerjaan Terbaru
                         </span>
-                        <a href="{{ route('student.applications') }}" 
+                        <a href="{{ auth()->user()->isAlumni() ? route('alumni.applications') : route('student.applications') }}" 
                            class="text-sm font-bold text-blue-600 hover:text-blue-800 hover:underline transition">
                             Lihat Semua <i class="fas fa-arrow-right ml-1 text-xs"></i>
                         </a>
@@ -281,7 +281,7 @@
                 </div>
 
                 <div class="flex justify-end">
-                    <a href="{{ route('home') }}" class="bg-slate-200 text-slate-800 px-6 py-3 rounded-xl font-bold hover:bg-slate-300 transition">
+                    <a href="{{ auth()->user()->isAlumni() ? route('alumni.home') : route('student.home') }}" class="bg-slate-200 text-slate-800 px-6 py-3 rounded-xl font-bold hover:bg-slate-300 transition">
                         Kembali ke Beranda
                     </a>
                 </div>

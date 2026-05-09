@@ -10,21 +10,16 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class StudentController extends Controller
 {
-    /**
-     * Menampilkan daftar semua alumni.
-     */
     public function index(Request $request)
     {
         $query = Student::with('user')->alumniFilter()->latest();
 
-        // Filter per tahun lulus
         if ($request->filled('year')) {
             $query->where('graduation_year', $request->year);
         }
 
         $students = $query->paginate(15);
 
-        // Ambil semua tahun lulus yang tersedia untuk dropdown filter
         $availableYears = Student::alumniFilter()
             ->select('graduation_year')
             ->distinct()
@@ -34,18 +29,12 @@ class StudentController extends Controller
         return view('admin.students.index', compact('students', 'availableYears'));
     }
 
-    /**
-     * Menampilkan detail spesifik alumni.
-     */
     public function show($id)
-    { 
+    {
         $student = Student::with('user')->findOrFail($id);
-        return view('admin.students.show', compact('student')); 
+        return view('admin.students.show', compact('student'));
     }
 
-    /**
-     * Proses import data alumni dari Excel.
-     */
     public function import(Request $request)
     {
         $request->validate([
@@ -59,7 +48,6 @@ class StudentController extends Controller
 
         try {
             $year = (int) $request->graduation_year;
-
             Excel::import(new StudentsImport($year), $request->file('excel_file'));
 
             $count = Student::where('graduation_year', $year)
@@ -68,7 +56,6 @@ class StudentController extends Controller
 
             return redirect()->route('admin.students.index', ['year' => $year])
                 ->with('success', "Import berhasil! Total alumni angkatan {$year}: {$count} siswa.");
-
         } catch (\Exception $e) {
             return redirect()->back()
                 ->with('error', 'Gagal import: ' . $e->getMessage());
