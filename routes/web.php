@@ -53,7 +53,7 @@ Route::get('/home-redirect', function () {
 
     $role = auth()->user()->role->name;
 
-    return match($role) {
+    return match ($role) {
         'publik' => redirect()->route('publik.home'),
         'alumni' => redirect()->route('alumni.home'),
         'siswa'  => redirect()->route('student.home'),
@@ -228,7 +228,10 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
         Route::get('/', [AdminJobController::class, 'index'])->name('index');
         Route::get('/create', [AdminJobController::class, 'create'])->name('create');
         Route::post('/', [AdminJobController::class, 'store'])->name('store');
+
+        // TAMBAHKAN BARIS INI (Route untuk melihat detail)
         Route::get('/{job}', [AdminJobController::class, 'show'])->name('show');
+
         Route::get('/{job}/edit', [AdminJobController::class, 'edit'])->name('edit');
         Route::put('/{job}', [AdminJobController::class, 'update'])->name('update');
         Route::delete('/{job}', [AdminJobController::class, 'destroy'])->name('destroy');
@@ -250,10 +253,10 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
     });
 
     Route::prefix('students')->name('students.')->group(function () {
-    Route::get('/', [AdminStudentController::class, 'index'])->name('index');
-    Route::post('/import', [AdminStudentController::class, 'import'])->name('import');
-    Route::get('/{id}', [AdminStudentController::class, 'show'])->name('show');
-});
+        Route::get('/', [AdminStudentController::class, 'index'])->name('index');
+        Route::post('/import', [AdminStudentController::class, 'import'])->name('import');
+        Route::get('/{id}', [AdminStudentController::class, 'show'])->name('show');
+    });
 
     Route::prefix('users')->name('users.')->group(function () {
         Route::get('/', [AdminUserController::class, 'index'])->name('index');

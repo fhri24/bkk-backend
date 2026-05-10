@@ -67,9 +67,18 @@ class Job extends Model
     }
 
     // --- SCOPES & HELPERS (Tetap Sama) ---
-    public function scopeActive(Builder $query) { return $query->where('status', 'active'); }
-    public function scopePublic(Builder $query) { return $query->where('visibility', 'public'); }
-    public function scopeAlumniOnly(Builder $query) { return $query->where('visibility', 'alumni_only'); }
+    public function scopeActive(Builder $query)
+    {
+        return $query->where('status', 'active');
+    }
+    public function scopePublic(Builder $query)
+    {
+        return $query->where('visibility', 'public');
+    }
+    public function scopeAlumniOnly(Builder $query)
+    {
+        return $query->where('visibility', 'alumni_only');
+    }
 
     public function scopeVisibleFor(Builder $query, $user)
     {
@@ -83,7 +92,10 @@ class Job extends Model
         return $this->status === 'active' && ($this->expired_at === null || $this->expired_at->isFuture());
     }
 
-    public function getCompanyNameAttribute(): string { return $this->company->company_name ?? '-'; }
+    public function getCompanyNameAttribute(): string
+    {
+        return $this->company->company_name ?? '-';
+    }
 
     public function getLogoUrlAttribute(): ?string
     {
