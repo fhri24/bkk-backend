@@ -63,8 +63,8 @@
                     <div class="flex items-center gap-6">
                         {{-- Tersimpan --}}
                         @php $savedCount = \App\Models\SavedJob::where('user_id', auth()->id())->count(); @endphp
-                        <a href="{{ route('student.saved-jobs') }}"
-                            class="flex items-center space-x-2 bg-white/10 px-4 py-2 rounded-lg hover:bg-white/20 transition relative group {{ request()->routeIs('student.saved-jobs') ? 'bg-white/20 ring-1 ring-blue-400' : '' }}">
+                        <a href="{{ route('universal.saved-jobs') }}"
+                            class="flex items-center space-x-2 bg-white/10 px-4 py-2 rounded-lg hover:bg-white/20 transition relative group {{ request()->routeIs('universal.saved-jobs') ? 'bg-white/20 ring-1 ring-blue-400' : '' }}">
                             <i class="fas fa-bookmark text-blue-400 group-hover:shake transition"></i>
                             <span class="text-sm font-semibold">Tersimpan</span>
                             @if ($savedCount > 0)
@@ -76,8 +76,8 @@
                         </a>
 
                         {{-- Lamaran --}}
-                        <a href="{{ route('student.applications') }}"
-                            class="flex items-center space-x-2 bg-white/10 px-4 py-2 rounded-lg hover:bg-white/20 transition {{ request()->routeIs('student.applications') ? 'bg-white/20 ring-1 ring-blue-400' : '' }}">
+                        <a href="{{ route('universal.applications') }}"
+                            class="flex items-center space-x-2 bg-white/10 px-4 py-2 rounded-lg hover:bg-white/20 transition {{ request()->routeIs('universal.applications') ? 'bg-white/20 ring-1 ring-blue-400' : '' }}">
                             <i class="fas fa-file-alt text-green-400"></i>
                             <span class="text-sm font-semibold">Lamaran</span>
                         </a>
@@ -133,12 +133,13 @@
 
             {{-- Tersimpan --}}
             @php $savedCountMobile = \App\Models\SavedJob::where('user_id', auth()->id())->count(); @endphp
-            <a href="{{ route('student.saved-jobs') }}" class="block py-2 text-blue-400 font-bold flex items-center">
+            <a href="{{ route('universal.saved-jobs') }}"
+                class="flex items-center space-x-2 bg-white/10 px-4 py-2 rounded-lg hover:bg-white/20 transition relative group {{ request()->routeIs('universal.saved-jobs') ? 'bg-white/20 ring-1 ring-blue-400' : '' }}">
                 <i class="fas fa-bookmark mr-2"></i> Tersimpan ({{ $savedCountMobile }})
             </a>
 
             {{-- Lamaran --}}
-            <a href="{{ route('student.applications') }}" class="block py-2 text-green-400 font-bold">
+            <a href="{{ route('universal.applications') }}" class="block py-2 text-green-400 font-bold">
                 <i class="fas fa-file-alt mr-2"></i>Lamaran Saya
             </a>
 

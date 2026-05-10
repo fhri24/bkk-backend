@@ -75,7 +75,14 @@ class PublikController extends Controller
         $jobs = $query->get();
         $majors = Major::all();
 
-        return view('public.lowongan', compact('jobs', 'majors'));
+        $savedJobIds = [];
+        if (Auth::check()) {
+            $savedJobIds = \App\Models\SavedJob::where('user_id', Auth::id())
+                ->pluck('job_id')
+                ->toArray();
+        }
+
+        return view('public.lowongan', compact('jobs', 'majors', 'savedJobIds'));
     }
 
     /**

@@ -66,11 +66,16 @@ Route::get('/', [PublikController::class, 'beranda'])->name('public.beranda');
 
 // Route Publik
 Route::get('/lowongan', [PublikController::class, 'lowongan'])->name('public.lowongan');
-Route::get('/lowongan/{id}', [PublikController::class, 'lowonganDetail'])->name('public.lowongan.detail');
-// Tambahin ini di bawah route public.lowongan.detail
+Route::get('/lowongan-tersimpan', [StudentController::class, 'savedJobs'])
+    ->middleware(['auth'])
+    ->name('universal.saved-jobs');
 Route::post('/lowongan/apply-universal/{id}', [StudentController::class, 'applyJob'])
     ->middleware(['auth'])
     ->name('universal.apply');
+Route::post('/lowongan/{id}/save-toggle', [StudentController::class, 'saveJob'])
+    ->middleware(['auth'])
+    ->name('universal.save');
+Route::get('/lowongan/{id}', [PublikController::class, 'lowonganDetail'])->name('public.lowongan.detail');
 
 Route::get('/berita', [AdminNewsController::class, 'index_student'])->name('public.berita');
 Route::get('/berita/{slug}', [AdminNewsController::class, 'show'])->name('public.berita.detail');
@@ -113,6 +118,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [StudentController::class, 'showProfile'])->name('profile');
     Route::post('/profile', [StudentController::class, 'updateProfile'])->name('profile.update');
+    Route::get('/lamaran-saya', [StudentController::class, 'myApplications'])->name('universal.applications');
 });
 
 /**

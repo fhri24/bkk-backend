@@ -112,6 +112,7 @@ class StudentController extends Controller
             ->pluck('job')
             ->filter();
 
+        // Gunakan view yang sama, alumni & siswa bisa akses
         return view('student.saved-jobs', compact('savedJobs'));
     }
 

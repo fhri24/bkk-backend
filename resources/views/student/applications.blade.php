@@ -1,102 +1,139 @@
 @extends('layouts.app')
 
-@section('title', 'Lamaran Saya')
+@section('title', 'Lamaran Saya - BKK SMKN 1 Garut')
 
 @section('content')
-<div class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold mb-6">Lamaran Saya</h1>
+    <div class="min-h-screen bg-gray-50 py-12">
+        <div class="container mx-auto px-4 md:px-6">
 
-    @if(session('success'))
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
-            {{ session('success') }}
-        </div>
-    @endif
+            {{-- Header --}}
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="text-3xl font-extrabold text-[#001f3f]">Lamaran Saya</h2>
+                    <p class="text-gray-500 mt-1">Pantau status lamaran kerja yang telah kamu kirimkan.</p>
+                </div>
+                <a href="{{ route('alumni.home') }}"
+                    class="text-blue-600 hover:underline font-semibold flex items-center gap-2">
+                    <i class="fas fa-arrow-left"></i> Kembali ke Beranda
+                </a>
+            </div>
 
-    @if(session('error'))
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
-            {{ session('error') }}
-        </div>
-    @endif
+            {{-- Flash Messages --}}
+            @if (session('success'))
+                <div
+                    class="bg-green-100 border border-green-200 text-green-700 px-6 py-4 rounded-2xl mb-6 shadow-sm flex items-center gap-3">
+                    <i class="fas fa-check-circle"></i>
+                    {{ session('success') }}
+                </div>
+            @endif
 
-    @if ($applications->count() > 0)
-        <div class="bg-white shadow-md rounded-lg overflow-hidden">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Lowongan</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Lengkap</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Melamar</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">File Pendukung</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">CV File</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No. Telepon</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
+            @if (session('error'))
+                <div
+                    class="bg-red-100 border border-red-200 text-red-700 px-6 py-4 rounded-2xl mb-6 shadow-sm flex items-center gap-3">
+                    <i class="fas fa-exclamation-circle"></i>
+                    {{ session('error') }}
+                </div>
+            @endif
+
+            @if ($applications->isEmpty())
+                {{-- State Kosong --}}
+                <div class="bg-white rounded-2xl shadow-sm p-12 text-center border border-gray-100">
+                    <div
+                        class="w-20 h-20 bg-blue-50 text-blue-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-paper-plane text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Belum ada lamaran terkirim</h3>
+                    <p class="text-gray-500 mb-6">Kamu belum melamar ke lowongan manapun saat ini.</p>
+                    <a href="{{ route('student.home') }}"
+                        class="bg-[#001f3f] text-white px-8 py-3 rounded-full font-bold hover:bg-blue-900 transition">
+                        Cari Lowongan Sekarang
+                    </a>
+                </div>
+            @else
+                <div class="grid gap-6">
                     @foreach ($applications as $app)
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium text-gray-900">{{ $app->job->title }}</div>
-                                <div class="text-sm text-gray-500">{{ $app->job->company->company_name ?? 'Company' }}</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {{ $app->full_name }}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {{ $app->application_date->format('d F Y') }}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                @if ($app->cover_letter)
-                                    <span class="text-green-600">Ada</span>
-                                @else
-                                    <span class="text-gray-400">Tidak ada</span>
-                                @endif
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                @if ($app->additional_file)
-                                    <a href="{{ Storage::url('cv_applications/' . $app->additional_file) }}" target="_blank" class="text-blue-600 hover:underline">Download</a>
-                                @else
-                                    <span class="text-gray-400">Tidak ada</span>
-                                @endif
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {{ $app->phone_number ?? '-' }}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                    @if ($app->status === 'pending') bg-yellow-100 text-yellow-800
-                                    @elseif ($app->status === 'review') bg-blue-100 text-blue-800
-                                    @elseif ($app->status === 'accepted') bg-green-100 text-green-800
-                                    @elseif ($app->status === 'rejected') bg-red-100 text-red-800
-                                    @endif">
-                                    {{ ucfirst($app->status) }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <a href="{{ route('student.lowongan.detail', $app->job->job_id) }}" class="text-indigo-600 hover:text-indigo-900 mr-3">Lihat</a>
-                                <form method="POST" action="{{ route('student.applications.delete', $app->job_application_id) }}" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus lamaran ini?')">
+                        @php
+                            $companyName = $app->job->company->company_name ?? 'Perusahaan';
+                            // Logika Logo (disesuaikan dengan job atau company)
+                            $logoUrl = null;
+                            if ($app->job->logo) {
+                                $logoUrl = Storage::url($app->job->logo);
+                            } elseif ($app->job->company && $app->job->company->logo) {
+                                $logoUrl = Storage::url($app->job->company->logo);
+                            }
+                        @endphp
+
+                        <div
+                            class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col md:flex-row justify-between items-center gap-4 group hover:shadow-md transition">
+
+                            {{-- Info Utama --}}
+                            <div class="flex items-center gap-4 w-full">
+                                <div
+                                    class="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0 border border-gray-200">
+                                    @if ($logoUrl)
+                                        <img src="{{ $logoUrl }}" class="object-contain w-full h-full" alt="Logo">
+                                    @else
+                                        <span class="text-2xl font-black text-gray-400">
+                                            {{ strtoupper(substr($companyName, 0, 1)) }}
+                                        </span>
+                                    @endif
+                                </div>
+
+                                <div class="flex-grow">
+                                    <h4 class="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition">
+                                        {{ $app->job->title }}
+                                    </h4>
+                                    <p class="text-gray-600 font-medium text-sm">{{ $companyName }}</p>
+
+                                    <div class="flex flex-wrap items-center gap-4 mt-2 text-xs font-semibold">
+                                        <span class="text-gray-400">
+                                            <i class="fas fa-calendar-alt mr-1 text-blue-400"></i>
+                                            Melamar: {{ $app->application_date->format('d M Y') }}
+                                        </span>
+
+                                        {{-- Status Badge --}}
+                                        <span
+                                            class="px-3 py-1 rounded-full 
+                                        @if ($app->status === 'pending') bg-yellow-100 text-yellow-700
+                                        @elseif ($app->status === 'review') bg-blue-100 text-blue-700
+                                        @elseif ($app->status === 'accepted') bg-green-100 text-green-700
+                                        @elseif ($app->status === 'rejected') bg-red-100 text-red-700 @endif">
+                                            <i class="fas fa-circle text-[8px] mr-1 opacity-50"></i>
+                                            {{ ucfirst($app->status) }}
+                                        </span>
+
+                                        @if ($app->additional_file)
+                                            <a href="{{ Storage::url('cv_applications/' . $app->additional_file) }}"
+                                                target="_blank" class="text-blue-500 hover:text-blue-700">
+                                                <i class="fas fa-file-pdf mr-1"></i> CV/Lampiran
+                                            </a>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Aksi --}}
+                            <div class="flex items-center gap-3 w-full md:w-auto justify-end shrink-0">
+                                <a href="{{ route('student.lowongan.detail', $app->job->job_id) }}"
+                                    class="bg-blue-50 text-blue-600 px-6 py-2.5 rounded-xl font-bold hover:bg-blue-100 transition whitespace-nowrap">
+                                    Lihat Detail
+                                </a>
+
+                                <form method="POST"
+                                    action="{{ route('student.applications.delete', $app->job_application_id) }}"
+                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus riwayat lamaran ini?')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="text-red-600 hover:text-red-900">Hapus</button>
+                                    <button type="submit"
+                                        class="flex items-center gap-2 text-red-500 hover:text-red-700 font-bold px-4 py-2.5 rounded-xl border border-red-100 hover:bg-red-50 transition whitespace-nowrap">
+                                        <i class="fas fa-trash-alt"></i> Hapus
+                                    </button>
                                 </form>
-                            </td>
-                        </tr>
+                            </div>
+                        </div>
                     @endforeach
-                </tbody>
-            </table>
+                </div>
+            @endif
         </div>
-    @else
-        <div class="bg-gray-50 border border-gray-300 p-8 rounded-lg text-center">
-            <p class="text-gray-600 text-lg mb-4">Anda belum melakukan lamaran ke perusahaan manapun 😕</p>
-            <a href="{{ route('student.home') }}" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 inline-block">
-                Lihat Lowongan Kerja
-            </a>
-        </div>
-    @endif
-
-    <div class="mt-8">
-        <a href="{{ route('student.home') }}" class="text-blue-600 hover:underline">← Kembali ke Home</a>
     </div>
-</div>
 @endsection
