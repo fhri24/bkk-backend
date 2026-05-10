@@ -1,28 +1,21 @@
 <nav class="bg-[#001f3f] text-white sticky top-0 z-50 shadow-xl">
     <div class="container mx-auto px-4 md:px-6">
-        <div class="flex justify-between items-center h-20">
+        <div class="flex justify-between items-center h-24">
 
             {{-- Logo --}}
-            <div class="flex items-center space-x-3 cursor-pointer hover:opacity-80 transition"
-                 onclick="window.location.href = '{{ route('home') }}'">
-                
-                {{-- Logo dinamis --}}
-                <div class="w-11 h-11 bg-white rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
-                    @if(isset($schoolProfile) && ($schoolProfile->logo ?? $schoolProfile->logo_path))
-                        <img src="{{ asset('storage/' . ($schoolProfile->logo ?? $schoolProfile->logo_path)) }}"
-                             class="w-full h-full object-contain p-1" alt="Logo">
-                    @else
-                        <i class="fas fa-graduation-cap text-[#001f3f] text-xl"></i>
-                    @endif
-                </div>
+            <div class="flex items-center cursor-pointer hover:opacity-80 transition"
+                onclick="window.location.href = '{{ route('home') }}'">
 
-                <div>
-                    <h1 class="font-extrabold text-xl tracking-tight leading-none">
-                        {{ $schoolProfile->school_name ?? $schoolProfile->name ?? $schoolProfile->site_title ?? 'BKK SMKN 1' }}
-                    </h1>
-                    <p class="text-[10px] uppercase tracking-widest opacity-70">
-                        {{ $schoolProfile->tagline ?? 'Garut Bermartabat' }}
-                    </p>
+                {{-- Logo dinamis --}}
+                <div class="w-24 h-24 rounded-xl overflow-hidden">
+                    @if (isset($schoolProfile) && ($schoolProfile->logo ?? $schoolProfile->logo_path))
+                        <img src="{{ asset('storage/' . ($schoolProfile->logo ?? $schoolProfile->logo_path)) }}"
+                            class="w-full h-full object-contain" alt="Logo">
+                    @else
+                        <div class="w-full h-full flex items-center justify-center">
+                            <i class="fas fa-graduation-cap text-white text-3xl"></i>
+                        </div>
+                    @endif
                 </div>
             </div>
 
@@ -38,17 +31,29 @@
                             $homeRoute = route('student.home');
                         }
                     @endphp
-                    <a href="{{ $homeRoute }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('student.home') || request()->routeIs('publik.home') || request()->routeIs('alumni.home') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Beranda</a>
-                    <a href="{{ route('public.lowongan') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.lowongan*') || request()->routeIs('student.lowongan*') || request()->routeIs('publik.lowongan*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Lowongan</a>
-                    <a href="{{ route('public.berita') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.berita*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Berita</a>
-                    <a href="{{ route('public.acara') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.acara*') || request()->routeIs('student.acara*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Acara</a>
-                    <a href="{{ route('public.tracer') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.tracer*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Tracer Study</a>
+                    <a href="{{ $homeRoute }}"
+                        class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('student.home') || request()->routeIs('publik.home') || request()->routeIs('alumni.home') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Beranda</a>
+                    <a href="{{ route('public.lowongan') }}"
+                        class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.lowongan*') || request()->routeIs('student.lowongan*') || request()->routeIs('publik.lowongan*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Lowongan</a>
+                    <a href="{{ route('public.berita') }}"
+                        class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.berita*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Berita</a>
+                    <a href="{{ route('public.acara') }}"
+                        class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.acara*') || request()->routeIs('student.acara*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Acara</a>
+                    <a href="{{ route('public.tracer') }}"
+                        class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.tracer*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Tracer
+                        Study</a>
                 @else
-                    <a href="{{ route('public.beranda') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.beranda') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Beranda</a>
-                    <a href="{{ route('public.lowongan') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.lowongan*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Lowongan</a>
-                    <a href="{{ route('public.berita') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.berita*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Berita</a>
-                    <a href="{{ route('public.acara') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.acara*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Acara</a>
-                    <a href="{{ route('public.tracer') }}" class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.tracer*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Tracer Study</a>
+                    <a href="{{ route('public.beranda') }}"
+                        class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.beranda') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Beranda</a>
+                    <a href="{{ route('public.lowongan') }}"
+                        class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.lowongan*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Lowongan</a>
+                    <a href="{{ route('public.berita') }}"
+                        class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.berita*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Berita</a>
+                    <a href="{{ route('public.acara') }}"
+                        class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.acara*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Acara</a>
+                    <a href="{{ route('public.tracer') }}"
+                        class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.tracer*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Tracer
+                        Study</a>
                 @endauth
             </div>
 
@@ -56,39 +61,45 @@
             <div class="hidden lg:flex items-center space-x-6">
                 @auth
                     <div class="flex items-center gap-6">
-                        {{-- Tersimpan - tampil untuk semua role yang login --}}
+                        {{-- Tersimpan --}}
                         @php $savedCount = \App\Models\SavedJob::where('user_id', auth()->id())->count(); @endphp
-                        <a href="{{ route('student.saved-jobs') }}" class="flex items-center space-x-2 bg-white/10 px-4 py-2 rounded-lg hover:bg-white/20 transition relative group {{ request()->routeIs('student.saved-jobs') ? 'bg-white/20 ring-1 ring-blue-400' : '' }}">
+                        <a href="{{ route('student.saved-jobs') }}"
+                            class="flex items-center space-x-2 bg-white/10 px-4 py-2 rounded-lg hover:bg-white/20 transition relative group {{ request()->routeIs('student.saved-jobs') ? 'bg-white/20 ring-1 ring-blue-400' : '' }}">
                             <i class="fas fa-bookmark text-blue-400 group-hover:shake transition"></i>
                             <span class="text-sm font-semibold">Tersimpan</span>
-                            @if($savedCount > 0)
-                                <span class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-[#001f3f]">
+                            @if ($savedCount > 0)
+                                <span
+                                    class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-[#001f3f]">
                                     {{ $savedCount }}
                                 </span>
                             @endif
                         </a>
 
-                        {{-- Lamaran - tampil untuk semua role yang login --}}
-                        <a href="{{ route('student.applications') }}" class="flex items-center space-x-2 bg-white/10 px-4 py-2 rounded-lg hover:bg-white/20 transition {{ request()->routeIs('student.applications') ? 'bg-white/20 ring-1 ring-blue-400' : '' }}">
+                        {{-- Lamaran --}}
+                        <a href="{{ route('student.applications') }}"
+                            class="flex items-center space-x-2 bg-white/10 px-4 py-2 rounded-lg hover:bg-white/20 transition {{ request()->routeIs('student.applications') ? 'bg-white/20 ring-1 ring-blue-400' : '' }}">
                             <i class="fas fa-file-alt text-green-400"></i>
                             <span class="text-sm font-semibold">Lamaran</span>
                         </a>
 
                         {{-- Profil --}}
-                        <a href="{{ route('profile') }}" class="flex items-center gap-2 text-sm font-semibold hover:text-blue-300 transition group {{ request()->routeIs('profile') ? 'text-blue-300' : '' }}">
+                        <a href="{{ route('profile') }}"
+                            class="flex items-center gap-2 text-sm font-semibold hover:text-blue-300 transition group {{ request()->routeIs('profile') ? 'text-blue-300' : '' }}">
                             <i class="fas fa-user-circle text-xl group-hover:scale-110 transition"></i>
                             <span>{{ auth()->user()->name }}</span>
                         </a>
 
                         <form method="POST" action="{{ route('logout') }}" class="inline">
                             @csrf
-                            <button type="submit" class="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-full text-sm font-bold shadow-lg transition transform hover:scale-105 active:scale-95">
+                            <button type="submit"
+                                class="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-full text-sm font-bold shadow-lg transition transform hover:scale-105 active:scale-95">
                                 Logout
                             </button>
                         </form>
                     </div>
                 @else
-                    <a href="{{ route('login') }}" class="bg-blue-600 hover:bg-blue-700 px-8 py-2.5 rounded-full text-sm font-bold shadow-lg transition transform hover:scale-105 active:scale-95">
+                    <a href="{{ route('login') }}"
+                        class="bg-blue-600 hover:bg-blue-700 px-8 py-2.5 rounded-full text-sm font-bold shadow-lg transition transform hover:scale-105 active:scale-95">
                         Masuk
                     </a>
                 @endauth
@@ -102,9 +113,10 @@
     </div>
 
     {{-- Mobile Menu --}}
-    <div id="mobile-menu" class="hidden lg:hidden bg-[#001f3f] border-t border-white/10 px-6 py-6 space-y-4 shadow-inner">
+    <div id="mobile-menu"
+        class="hidden lg:hidden bg-[#001f3f] border-t border-white/10 px-6 py-6 space-y-4 shadow-inner">
         @auth
-            @php 
+            @php
                 if (auth()->user()->role->name === 'publik') {
                     $homeRouteMobile = route('publik.home');
                 } elseif (auth()->user()->role->name === 'alumni') {
@@ -113,19 +125,19 @@
                     $homeRouteMobile = route('student.home');
                 }
             @endphp
-            
+
             {{-- Profil --}}
             <a href="{{ route('profile') }}" class="block py-2 font-bold text-blue-300 border-b border-white/10">
                 <i class="fas fa-user-circle mr-2"></i>Profil Saya
             </a>
 
-            {{-- Tersimpan - tampil untuk semua role yang login --}}
+            {{-- Tersimpan --}}
             @php $savedCountMobile = \App\Models\SavedJob::where('user_id', auth()->id())->count(); @endphp
             <a href="{{ route('student.saved-jobs') }}" class="block py-2 text-blue-400 font-bold flex items-center">
                 <i class="fas fa-bookmark mr-2"></i> Tersimpan ({{ $savedCountMobile }})
             </a>
 
-            {{-- Lamaran - tampil untuk semua role yang login --}}
+            {{-- Lamaran --}}
             <a href="{{ route('student.applications') }}" class="block py-2 text-green-400 font-bold">
                 <i class="fas fa-file-alt mr-2"></i>Lamaran Saya
             </a>
@@ -154,5 +166,4 @@
         const menu = document.getElementById('mobile-menu');
         menu.classList.toggle('hidden');
     }
-</script> 
-
+</script>

@@ -67,7 +67,7 @@ class SettingController extends Controller
 
         $validated = $request->validate([
             // Field lama
-            'school_name'      => 'required|string|max:255',
+            'school_name'      => 'nullable|string|max:255',
             'school_address'   => 'nullable|string|max:1000',
 
             // Field baru
@@ -83,6 +83,10 @@ class SettingController extends Controller
             'logo'             => 'nullable|image|mimes:png,jpg,jpeg,svg|max:2048',
         ]);
 
+        // ===== Pertahankan school_name lama jika tidak dikirim =====
+        if (empty($validated['school_name'])) {
+            unset($validated['school_name']);
+        }
         // ===== Upload Logo =====
         if ($request->hasFile('logo')) {
             // Hapus logo lama kalau ada
