@@ -20,15 +20,31 @@ class JobController extends Controller
                     ->orWhere('job_type', 'like', "%{$search}%")
                     ->orWhereHas('company', function ($q) use ($search) {
                         $q->where('company_name', 'like', "%{$search}%");
-                    })
-                    ->orWhereHas('major', function ($q) use ($search) {
-                        $q->where('name', 'like', "%{$search}%");
                     });
             });
         }
 
+        if ($visibility = $request->query('visibility')) {
+            $query->where('visibility', $visibility);
+        }
+
+        if ($status = $request->query('status')) {
+            $query->where('status', $status);
+        }
+
+        // Filter by approval status
+        if ($approval = $request->query('approval')) {
+            $query->where('approval_status', $approval);
+        }
+
         $jobs = $query->latest()->get();
-        return view('admin.jobs.index', compact('jobs'));
+
+        return view('admin.jobs.index', compact('jobs'))->with([
+            'search'     => $request->query('search', ''),
+            'visibility' => $request->query('visibility', ''),
+            'status'     => $request->query('status', ''),
+            'approval'   => $request->query('approval', ''),
+        ]);
     }
 
     public function create(Request $request)
@@ -62,10 +78,12 @@ class JobController extends Controller
             $validated['logo'] = $request->file('image')->store('logos', 'public');
         }
 
-        $validated['admin_id']  = auth()->id();
-        $validated['status']    = 'active';
-        $validated['is_active'] = true;
-        $validated['posted_at'] = now();
+        // Lowongan dari admin langsung approved
+        $validated['admin_id']       = auth()->id();
+        $validated['status']         = 'active';
+        $validated['approval_status'] = 'approved';
+        $validated['is_active']      = true;
+        $validated['posted_at']      = now();
 
         unset($validated['image']);
 
@@ -109,6 +127,40 @@ class JobController extends Controller
         $job->update($validated);
 
         return redirect()->route('admin.jobs.index')->with('success', 'Lowongan berhasil diperbarui!');
+    }
+
+    /**
+     * Approve lowongan dari perusahaan
+     */
+    public function approve(Job $job)
+    {
+        $job->update([
+            'approval_status' => 'approved',
+            'status'          => 'active',
+            'is_active'       => true,
+            'approval_notes'  => null,
+        ]);
+
+        return redirect()->back()->with('success', "Lowongan \"{$job->title}\" berhasil disetujui dan sekarang tampil ke publik.");
+    }
+
+    /**
+     * Reject lowongan dari perusahaan
+     */
+    public function reject(Request $request, Job $job)
+    {
+        $request->validate([
+            'approval_notes' => 'required|string|max:500',
+        ]);
+
+        $job->update([
+            'approval_status' => 'rejected',
+            'status'          => 'inactive',
+            'is_active'       => false,
+            'approval_notes'  => $request->approval_notes,
+        ]);
+
+        return redirect()->back()->with('success', "Lowongan \"{$job->title}\" ditolak. Perusahaan akan melihat alasan penolakan.");
     }
 
     public function destroy(Job $job)

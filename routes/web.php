@@ -15,6 +15,9 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\Auth\OtpController;
 
+// Import Company Controller
+use App\Http\Controllers\Company\CompanyPanelController;
+
 // Admin Controllers
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\JobController as AdminJobController;
@@ -31,7 +34,9 @@ use App\Http\Controllers\Admin\NewsController as AdminNewsController;
 use App\Http\Controllers\Admin\EventController as AdminEventController;
 use App\Http\Controllers\Admin\EventRegistrationController as AdminEventRegistrationController;
 use App\Http\Controllers\Admin\PublikController as AdminPublikController;
-use App\Http\Controllers\Admin\BroadcastController as AdminBroadcastController; // ← BARU
+use App\Http\Controllers\Admin\BroadcastController as AdminBroadcastController;
+// Import Baru untuk Manajemen Akun Perusahaan
+use App\Http\Controllers\Admin\CompanyAccountController;
 
 // Student Controllers
 use App\Http\Controllers\Student\PageController as StudentPageController;
@@ -54,10 +59,11 @@ Route::get('/home-redirect', function () {
     $role = auth()->user()->role->name;
 
     return match ($role) {
-        'publik' => redirect()->route('publik.home'),
-        'alumni' => redirect()->route('alumni.home'),
-        'siswa'  => redirect()->route('student.home'),
-        default  => redirect()->route('admin.dashboard'),
+        'publik'     => redirect()->route('publik.home'),
+        'alumni'     => redirect()->route('alumni.home'),
+        'siswa'      => redirect()->route('student.home'),
+        'perusahaan' => redirect()->route('company.dashboard'),
+        default      => redirect()->route('admin.dashboard'),
     };
 })->name('home');
 
@@ -200,6 +206,26 @@ Route::middleware(['auth', 'role:siswa'])->prefix('student')->name('student.')->
 });
 
 /**
+ * COMPANY ROUTES
+ */
+Route::middleware(['auth', 'role:perusahaan'])->prefix('company')->name('company.')->group(function () {
+    Route::get('/dashboard', [CompanyPanelController::class, 'dashboard'])->name('dashboard');
+
+    // Lowongan
+    Route::get('/lowongan', [CompanyPanelController::class, 'lowonganIndex'])->name('lowongan.index');
+    Route::get('/lowongan/create', [CompanyPanelController::class, 'lowonganCreate'])->name('lowongan.create');
+    Route::post('/lowongan', [CompanyPanelController::class, 'lowonganStore'])->name('lowongan.store');
+    Route::get('/lowongan/{job}/edit', [CompanyPanelController::class, 'lowonganEdit'])->name('lowongan.edit');
+    Route::put('/lowongan/{job}', [CompanyPanelController::class, 'lowonganUpdate'])->name('lowongan.update');
+    Route::delete('/lowongan/{job}', [CompanyPanelController::class, 'lowonganDestroy'])->name('lowongan.destroy');
+
+    // Lamaran
+    Route::get('/lamaran', [CompanyPanelController::class, 'lamaranIndex'])->name('lamaran.index');
+    Route::get('/lamaran/{application}', [CompanyPanelController::class, 'lamaranShow'])->name('lamaran.show');
+    Route::put('/lamaran/{application}/status', [CompanyPanelController::class, 'lamaranUpdateStatus'])->name('lamaran.update-status');
+});
+
+/**
  * ADMIN ROUTES
  */
 Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -217,7 +243,6 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
     Route::get('/export-data', [DashboardActionController::class, 'export'])->name('export');
     Route::get('/laporan-cepat', [DashboardActionController::class, 'laporan'])->name('laporan');
 
-    // ← BROADCAST: diganti ke BroadcastController
     Route::get('/broadcast', [AdminBroadcastController::class, 'index'])->name('broadcast.index');
 
     Route::prefix('companies')->name('companies.')->group(function () {
@@ -234,13 +259,25 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
         Route::get('/', [AdminJobController::class, 'index'])->name('index');
         Route::get('/create', [AdminJobController::class, 'create'])->name('create');
         Route::post('/', [AdminJobController::class, 'store'])->name('store');
-
-        // TAMBAHKAN BARIS INI (Route untuk melihat detail)
         Route::get('/{job}', [AdminJobController::class, 'show'])->name('show');
-
         Route::get('/{job}/edit', [AdminJobController::class, 'edit'])->name('edit');
         Route::put('/{job}', [AdminJobController::class, 'update'])->name('update');
         Route::delete('/{job}', [AdminJobController::class, 'destroy'])->name('destroy');
+
+        // Route Approval Lowongan (Tambahan Baru)
+        Route::post('/{job}/approve', [AdminJobController::class, 'approve'])->name('approve');
+        Route::post('/{job}/reject',  [AdminJobController::class, 'reject'])->name('reject');
+    });
+
+    // Manajemen Akun Perusahaan (Tambahan Baru)
+    Route::prefix('company-accounts')->name('company-accounts.')->group(function () {
+        Route::get('/',                 [CompanyAccountController::class, 'index'])->name('index');
+        Route::get('/create',           [CompanyAccountController::class, 'create'])->name('create');
+        Route::post('/',                [CompanyAccountController::class, 'store'])->name('store');
+        Route::put('/{user}/toggle',    [CompanyAccountController::class, 'toggle'])->name('toggle');
+        Route::get('/{user}/reset-password', [CompanyAccountController::class, 'resetPasswordForm'])->name('reset-password');
+        Route::put('/{user}/reset-password', [CompanyAccountController::class, 'resetPassword'])->name('reset-password.update');
+        Route::delete('/{user}',        [CompanyAccountController::class, 'destroy'])->name('destroy');
     });
 
     Route::prefix('job-applications')->name('job-applications.')->group(function () {

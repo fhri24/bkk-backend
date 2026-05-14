@@ -59,7 +59,9 @@ class PublikController extends Controller
      */
     public function lowongan(Request $request)
     {
-        $query = Job::with(['company', 'major'])->latest();
+        $query = Job::with(['company', 'major'])
+            ->where('approval_status', 'approved')
+            ->latest();
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -90,7 +92,9 @@ class PublikController extends Controller
      */
     public function lowonganDetail($id)
     {
-        $job = Job::with('company')->findOrFail($id);
+        $job = Job::with('company')
+            ->where('approval_status', 'approved')
+            ->findOrFail($id);
 
         $similarJobs = Job::with('company')
             ->where('job_id', '!=', $id)

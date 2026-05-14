@@ -153,13 +153,14 @@ class AuthController extends Controller
                     });
             })
 
-                // Login Admin: pakai email
+                // Login Admin & Perusahaan: pakai email
                 ->orWhere(function ($q) use ($nisnInput) {
                     $q->whereHas('role', fn($r) => $r->whereIn('name', [
                         'super_admin',
                         'admin_bkk',
                         'kepala_bkk',
-                        'kepala_sekolah'
+                        'kepala_sekolah',
+                        'perusahaan',        // ← tambah ini
                     ]))
                         ->where('email', $nisnInput);
                 });
@@ -205,7 +206,7 @@ class AuthController extends Controller
             $roleName === 'siswa'
             => redirect()->intended(route('student.home')),
             $roleName === 'perusahaan'
-            => redirect()->intended(route('admin.dashboard')),
+            => redirect()->intended(route('company.dashboard')),
             default => redirect('/'),
         };
     }

@@ -9,10 +9,10 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\Company;
 
 class User extends Authenticatable
 {
-    // Gunakan trait bawaan saja, jangan tambahkan HasRoles jika tidak pakai Spatie
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
@@ -23,11 +23,12 @@ class User extends Authenticatable
         'email',
         'password',
         'role_id',
-        'userable_id', 
+        'company_id',      // <-- TAMBAHKAN INI (Langkah 6)
+        'userable_id',
         'userable_type',
         'is_active',
-        'nis',             // Untuk Siswa/Alumni
-        'major',           // Untuk Siswa/Alumni
+        'nis',
+        'major',
         'gender',
         'graduation_year',
         'phone',
@@ -60,16 +61,21 @@ class User extends Authenticatable
 
     // ─── RELASI ─────────────────────────────────────────
 
+    /**
+     * Relasi ke Perusahaan (Langkah 6)
+     */
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class, 'company_id');
+    }
+
     public function otpCodes(): HasMany
     {
         return $this->hasMany(OtpCode::class);
     }
 
-    /**
-     * Relasi ke data Student (Jika kamu memisahkan detail ke tabel lain)
-     */
     public function student(): HasOne
-    { 
+    {
         return $this->hasOne(Student::class, 'user_id', 'id');
     }
 
@@ -77,10 +83,7 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Role::class, 'role_id', 'id');
     }
-    
-    /**
-     * Polymorphic relation
-     */
+
     public function userable()
     {
         return $this->morphTo();
@@ -93,14 +96,38 @@ class User extends Authenticatable
 
     // ─── ROLE HELPERS ───────────────────────────────────
 
-    public function isSuperAdmin()    { return $this->role?->name === Role::SUPER_ADMIN; }
-    public function isAdminBkk()      { return $this->role?->name === Role::ADMIN_BKK; }
-    public function isKepalaBkk()     { return $this->role?->name === Role::KEPALA_BKK; }
-    public function isKepalaSekolah() { return $this->role?->name === Role::KEPALA_SEKOLAH; }
-    public function isSiswa()         { return $this->role?->name === Role::SISWA; }
-    public function isPerusahaan()    { return $this->role?->name === Role::PERUSAHAAN; }
-    public function isAlumni()        { return $this->role?->name === Role::ALUMNI; }
-    public function isPublik()        { return $this->role?->name === Role::PUBLIK; }
+    public function isSuperAdmin()
+    {
+        return $this->role?->name === Role::SUPER_ADMIN;
+    }
+    public function isAdminBkk()
+    {
+        return $this->role?->name === Role::ADMIN_BKK;
+    }
+    public function isKepalaBkk()
+    {
+        return $this->role?->name === Role::KEPALA_BKK;
+    }
+    public function isKepalaSekolah()
+    {
+        return $this->role?->name === Role::KEPALA_SEKOLAH;
+    }
+    public function isSiswa()
+    {
+        return $this->role?->name === Role::SISWA;
+    }
+    public function isPerusahaan()
+    {
+        return $this->role?->name === Role::PERUSAHAAN;
+    }
+    public function isAlumni()
+    {
+        return $this->role?->name === Role::ALUMNI;
+    }
+    public function isPublik()
+    {
+        return $this->role?->name === Role::PUBLIK;
+    }
 
     public function isAnyAdmin()
     {
@@ -119,9 +146,6 @@ class User extends Authenticatable
         return !is_null($this->social_provider);
     }
 
-    /**
-     * Accessor untuk memanggil URL avatar dengan $user->avatar_url
-     */
     public function getAvatarUrlAttribute(): string
     {
         if ($this->avatar) {
@@ -131,23 +155,18 @@ class User extends Authenticatable
         return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=001f3f&color=fff&bold=true';
     }
 
-    /**
-     * Pengecekan Permission Manual (Karena tidak pakai Spatie)
-     */
     public function hasPermission($permission)
     {
         if (!$this->role) return false;
 
-        // Super Admin punya semua akses
         if ($this->role->name === 'super_admin') return true;
 
         $perms = $this->role->permissions;
-        
-        // Handle jika permissions disimpan sebagai JSON di database
+
         if (is_string($perms)) {
             $perms = json_decode($perms, true);
         }
-        
+
         return is_array($perms) && in_array($permission, $perms);
     }
 }
