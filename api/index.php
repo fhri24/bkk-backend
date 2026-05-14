@@ -1,10 +1,12 @@
 <?php
 
-// Set working directory ke root Laravel
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
+
 $root = __DIR__ . '/..';
 chdir($root);
 
-// Bootstrap Laravel
 define('LARAVEL_START', microtime(true));
 
 require $root . '/vendor/autoload.php';
