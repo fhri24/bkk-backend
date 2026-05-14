@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ApiExampleController;
-use App\Http\Controllers\API\SuperAdminController;
+use App\Http\Controllers\Api\SuperAdminController;
 use App\Http\Controllers\Api\JobApplicationController;
 use App\Http\Controllers\Api\EventRegistrationController;
 use App\Http\Controllers\Api\CompanyController; 
