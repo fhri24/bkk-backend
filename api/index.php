@@ -10,17 +10,21 @@ define('LARAVEL_START', microtime(true));
 
 require $root . '/vendor/autoload.php';
 
-// Generate packages.php dan tampilkan isinya
-$manifest = new \Illuminate\Foundation\PackageManifest(
-    new \Illuminate\Filesystem\Filesystem,
-    $root,
-    '/tmp/cache/packages.php'
-);
-$manifest->build();
+$app = require_once $root . '/bootstrap/app.php';
 
-echo '<pre>';
-echo "packages.php exists: " . (file_exists('/tmp/cache/packages.php') ? 'YES' : 'NO') . "\n";
-echo "packages.php content:\n";
-print_r(require '/tmp/cache/packages.php');
-echo '</pre>';
-die();
+// Force register semua core service providers
+$app->register(\Illuminate\Filesystem\FilesystemServiceProvider::class);
+$app->register(\Illuminate\View\ViewServiceProvider::class);
+$app->register(\Illuminate\Translation\TranslationServiceProvider::class);
+$app->register(\Illuminate\Validation\ValidationServiceProvider::class);
+
+$kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
+$request = Illuminate\Http\Request::capture();
+
+try {
+    $response = $kernel->handle($request);
+    $response->send();
+    $kernel->terminate($request, $response);
+} catch (\Throwable $e) {
+    echo '<pre>ERROR: ' . $e->getMessage() . "\nFile: " . $e->getFile() . "\nLine: " . $e->getLine() . '</pre>';
+}
