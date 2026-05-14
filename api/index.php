@@ -1,6 +1,5 @@
 <?php
 
-// Buat direktori yang dibutuhkan
 foreach (['/tmp/views', '/tmp/cache', '/tmp/logs', '/tmp/sessions'] as $dir) {
     if (!is_dir($dir)) mkdir($dir, 0775, true);
 }
@@ -13,24 +12,22 @@ require $root . '/vendor/autoload.php';
 
 $app = require_once $root . '/bootstrap/app.php';
 
-// Override agar error dikembalikan sebagai JSON, bukan view
-$app->singleton(
-    Illuminate\Contracts\Debug\ExceptionHandler::class,
-    function ($app) {
-        return new class($app) extends \Illuminate\Foundation\Exceptions\Handler {
-            public function render($request, \Throwable $e) {
-                return response()->json([
-                    'error' => $e->getMessage(),
-                    'file' => $e->getFile(),
-                    'line' => $e->getLine(),
-                ], 500);
-            }
-        };
-    }
-);
+// Debug: cek apakah view ter-bind
+echo 'view bound: ' . ($app->bound('view') ? 'YES' : 'NO') . '<br>';
+echo 'providers file: ' . (file_exists($root.'/bootstrap/providers.php') ? 'YES' : 'NO') . '<br>';
 
-$kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
-$request = Illuminate\Http\Request::capture();
-$response = $kernel->handle($request);
-$response->send();
-$kernel->terminate($request, $response);
+// Cek packages.php cache
+echo 'packages cache: ' . (file_exists('/tmp/cache/packages.php') ? 'YES' : 'NO') . '<br>';
+
+// Boot aplikasi manual
+$app->boot();
+echo 'after boot - view bound: ' . ($app->bound('view') ? 'YES' : 'NO') . '<br>';
+
+// List semua registered service providers
+$providers = array_keys($app->getLoadedProviders());
+echo '<pre>';
+echo "Loaded providers:\n";
+foreach ($providers as $p) {
+    echo "  - $p\n";
+}
+echo '</pre>';
