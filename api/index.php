@@ -10,24 +10,34 @@ define('LARAVEL_START', microtime(true));
 
 require $root . '/vendor/autoload.php';
 
+// Generate packages.php cache kalau belum ada
+if (!file_exists('/tmp/cache/packages.php')) {
+    $packageManifest = new \Illuminate\Foundation\PackageManifest(
+        new \Illuminate\Filesystem\Filesystem,
+        $root,
+        '/tmp/cache/packages.php'
+    );
+    $packageManifest->build();
+}
+
 $app = require_once $root . '/bootstrap/app.php';
 
-// Debug: cek apakah view ter-bind
-echo 'view bound: ' . ($app->bound('view') ? 'YES' : 'NO') . '<br>';
-echo 'providers file: ' . (file_exists($root.'/bootstrap/providers.php') ? 'YES' : 'NO') . '<br>';
+// Override package manifest path ke /tmp
+$app->singleton(\Illuminate\Foundation\PackageManifest::class, function ($app) use ($root) {
+    return new \Illuminate\Foundation\PackageManifest(
+        new \Illuminate\Filesystem\Filesystem,
+        $root,
+        '/tmp/cache/packages.php'
+    );
+});
 
-// Cek packages.php cache
-echo 'packages cache: ' . (file_exists('/tmp/cache/packages.php') ? 'YES' : 'NO') . '<br>';
+$kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
+$request = Illuminate\Http\Request::capture();
 
-// Boot aplikasi manual
-$app->boot();
-echo 'after boot - view bound: ' . ($app->bound('view') ? 'YES' : 'NO') . '<br>';
-
-// List semua registered service providers
-$providers = array_keys($app->getLoadedProviders());
-echo '<pre>';
-echo "Loaded providers:\n";
-foreach ($providers as $p) {
-    echo "  - $p\n";
+try {
+    $response = $kernel->handle($request);
+    $response->send();
+    $kernel->terminate($request, $response);
+} catch (\Throwable $e) {
+    echo '<pre>ERROR: ' . $e->getMessage() . "\nFile: " . $e->getFile() . "\nLine: " . $e->getLine() . '</pre>';
 }
-echo '</pre>';
