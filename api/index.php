@@ -1,30 +1,27 @@
 <?php
 
-$runtimeDirs = [
-    '/tmp/views',
-    '/tmp/cache',
-    '/tmp/logs',
-    '/tmp/sessions',
-];
-
-foreach ($runtimeDirs as $dir) {
+foreach (['/tmp/views', '/tmp/cache', '/tmp/logs', '/tmp/sessions'] as $dir) {
     if (!is_dir($dir)) mkdir($dir, 0775, true);
 }
 
-foreach ([
-    'APP_CONFIG_CACHE' => '/tmp/cache/config.php',
-    'APP_EVENTS_CACHE' => '/tmp/cache/events.php',
-    'APP_PACKAGES_CACHE' => '/tmp/cache/packages.php',
-    'APP_ROUTES_CACHE' => '/tmp/cache/routes.php',
-    'VIEW_COMPILED_PATH' => '/tmp/views',
-    'SESSION_PATH' => '/tmp/sessions',
-] as $key => $value) {
-    putenv("{$key}={$value}");
-    $_ENV[$key] = $value;
-    $_SERVER[$key] = $value;
+$root = __DIR__ . '/..';
+
+// Symlink bootstrap/cache ke /tmp/cache
+$bootstrapCache = $root . '/bootstrap/cache';
+if (is_dir($bootstrapCache) && !is_link($bootstrapCache)) {
+    // Pindahkan isi yang ada ke /tmp/cache
+    foreach (glob($bootstrapCache . '/*') as $file) {
+        $dest = '/tmp/cache/' . basename($file);
+        if (!file_exists($dest)) copy($file, $dest);
+    }
+    // Hapus directory asli dan buat symlink
+    array_map('unlink', glob($bootstrapCache . '/*'));
+    rmdir($bootstrapCache);
+    symlink('/tmp/cache', $bootstrapCache);
+} elseif (!file_exists($bootstrapCache)) {
+    symlink('/tmp/cache', $bootstrapCache);
 }
 
-$root = __DIR__ . '/..';
 chdir($root);
 define('LARAVEL_START', microtime(true));
 
@@ -32,7 +29,6 @@ require $root . '/vendor/autoload.php';
 
 $app = require_once $root . '/bootstrap/app.php';
 
-// Force register semua core service providers
 $app->register(\Illuminate\Filesystem\FilesystemServiceProvider::class);
 $app->register(\Illuminate\View\ViewServiceProvider::class);
 $app->register(\Illuminate\Translation\TranslationServiceProvider::class);
