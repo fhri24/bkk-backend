@@ -12,8 +12,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // DI SINI TEMPAT GABUNGINNYA:
-        // Kita mendaftarkan middleware alias agar bisa dipakai di file routes
+        // Disable CSRF untuk semua route (perlu untuk Vercel serverless)
+        $middleware->validateCsrfTokens(except: [
+            '*'
+        ]);
+
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
             'admin' => \App\Http\Middleware\CheckAdminRole::class,
@@ -25,4 +28,3 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();
-    

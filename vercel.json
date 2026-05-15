@@ -24,6 +24,7 @@
         "SESSION_SECURE_COOKIE": "true",
         "SESSION_DOMAIN": "bkk-backend.vercel.app",
         "QUEUE_CONNECTION": "sync",
-        "DB_SSLMODE": "require"
+        "DB_SSLMODE": "require",
+        "APP_KEY": "base64:vHzA7JIk3sIS8KLD8nVV+2aOyakao/xDZE2wD4fVJuk="
     }
 }
