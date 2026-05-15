@@ -1,6 +1,28 @@
 <?php
 
-foreach (['/tmp/views', '/tmp/cache', '/tmp/logs', '/tmp/sessions', '/tmp/storage/app/public', '/tmp/storage/app/private'] as $dir) {
+$storageRoot = '/tmp/storage';
+
+if (empty($_ENV['LARAVEL_STORAGE_PATH'])) {
+    $_ENV['LARAVEL_STORAGE_PATH'] = $storageRoot;
+}
+if (empty($_SERVER['LARAVEL_STORAGE_PATH'])) {
+    $_SERVER['LARAVEL_STORAGE_PATH'] = $storageRoot;
+}
+if (getenv('LARAVEL_STORAGE_PATH') === false) {
+    putenv('LARAVEL_STORAGE_PATH=' . $storageRoot);
+}
+
+if (empty($_ENV['STORAGE_ROOT'])) {
+    $_ENV['STORAGE_ROOT'] = $storageRoot;
+}
+if (empty($_SERVER['STORAGE_ROOT'])) {
+    $_SERVER['STORAGE_ROOT'] = $storageRoot;
+}
+if (getenv('STORAGE_ROOT') === false) {
+    putenv('STORAGE_ROOT=' . $storageRoot);
+}
+
+foreach (['/tmp/views', '/tmp/cache', '/tmp/logs', '/tmp/sessions', '/tmp/storage/app/public', '/tmp/storage/app/private', '/tmp/storage/framework/cache/laravel-excel', '/tmp/storage/framework/sessions'] as $dir) {
     if (!is_dir($dir)) mkdir($dir, 0775, true);
 }
 

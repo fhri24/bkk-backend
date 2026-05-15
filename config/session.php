@@ -60,7 +60,7 @@ return [
     |
     */
 
-    'files' => storage_path('framework/sessions'),
+    'files' => env('STORAGE_ROOT', storage_path('app')).'/framework/sessions',
 
     /*
     |--------------------------------------------------------------------------

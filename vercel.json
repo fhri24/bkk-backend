@@ -20,11 +20,12 @@
         "VIEW_COMPILED_PATH": "/tmp/views",
         "LOG_CHANNEL": "stderr",
         "CACHE_DRIVER": "array",
-        "SESSION_DRIVER": "database",
+        "SESSION_DRIVER": "cookie",
         "QUEUE_CONNECTION": "sync",
         "DB_SSLMODE": "require",
         "FILESYSTEM_DISK": "public",
         "STORAGE_ROOT": "/tmp/storage",
+        "LARAVEL_STORAGE_PATH": "/tmp/storage",
         "APP_KEY": "base64:vHzA7JIk3sIS8KLD8nVV+2aOyakao/xDZE2wD4fVJuk="
     }
 }
