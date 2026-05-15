@@ -6,20 +6,35 @@ foreach (['/tmp/views', '/tmp/cache', '/tmp/logs', '/tmp/sessions'] as $dir) {
 
 $root = __DIR__ . '/..';
 
-// Symlink bootstrap/cache ke /tmp/cache
+// Symlink bootstrap/cache ke /tmp/cache jika memungkinkan
 $bootstrapCache = $root . '/bootstrap/cache';
-if (is_dir($bootstrapCache) && !is_link($bootstrapCache)) {
-    // Pindahkan isi yang ada ke /tmp/cache
+$cacheTarget = '/tmp/cache';
+
+if (!is_dir($cacheTarget)) {
+    mkdir($cacheTarget, 0775, true);
+}
+
+if (is_link($bootstrapCache)) {
+    // Already linked, nothing else to do.
+} elseif (is_dir($bootstrapCache) && !is_writable($bootstrapCache)) {
+    // Vercel runtime filesystem is read-only under /var/task.
+    // Keep the existing bootstrap/cache directory if it already exists.
+} elseif (is_dir($bootstrapCache)) {
+    // Move existing cache files to /tmp/cache and replace directory with symlink.
     foreach (glob($bootstrapCache . '/*') as $file) {
-        $dest = '/tmp/cache/' . basename($file);
-        if (!file_exists($dest)) copy($file, $dest);
+        $dest = $cacheTarget . '/' . basename($file);
+        if (!file_exists($dest)) {
+            copy($file, $dest);
+        }
     }
-    // Hapus directory asli dan buat symlink
-    array_map('unlink', glob($bootstrapCache . '/*'));
-    rmdir($bootstrapCache);
-    symlink('/tmp/cache', $bootstrapCache);
+
+    if (is_writable($bootstrapCache)) {
+        array_map('unlink', glob($bootstrapCache . '/*'));
+        rmdir($bootstrapCache);
+        symlink($cacheTarget, $bootstrapCache);
+    }
 } elseif (!file_exists($bootstrapCache)) {
-    symlink('/tmp/cache', $bootstrapCache);
+    symlink($cacheTarget, $bootstrapCache);
 }
 
 chdir($root);
