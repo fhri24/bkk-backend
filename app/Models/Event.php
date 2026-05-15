@@ -37,7 +37,7 @@ class Event extends Model
      */
     public function registrations()
     {
-        return $this->hasMany(EventRegistration::class, 'event_id', 'id');
+        return $this->hasMany(EventRegistration::class, 'event_id', 'slug');
     }
 
     /**

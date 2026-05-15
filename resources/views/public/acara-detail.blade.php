@@ -243,7 +243,7 @@
 
                 <form action="{{ route('public.event.register', $event->id) }}" method="POST" class="space-y-5">
                     @csrf
-                    <input type="hidden" name="event_id" value="{{ $event->id }}" />
+                    <input type="hidden" name="event_id" value="{{ $event->slug }}" />
 
                     <div class="grid grid-cols-1 gap-5">
                         <div>

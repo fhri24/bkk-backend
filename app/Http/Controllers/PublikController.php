@@ -213,7 +213,9 @@ class PublikController extends Controller
             'institution' => 'nullable|string|max:255',
         ]);
 
-        $existing = EventRegistration::where('event_id', $id)
+        $eventId = $event->slug;
+
+        $existing = EventRegistration::where('event_id', $eventId)
             ->where('email', $validated['email'])
             ->first();
 
@@ -223,13 +225,13 @@ class PublikController extends Controller
 
         if (
             $event->capacity &&
-            EventRegistration::where('event_id', $id)->count() >= $event->capacity
+            EventRegistration::where('event_id', $eventId)->count() >= $event->capacity
         ) {
             return back()->with('error', 'Kuota pendaftaran penuh!');
         }
 
         EventRegistration::create([
-            'event_id'      => $id,
+            'event_id'      => $eventId,
             'name'          => $validated['name'],
             'email'         => $validated['email'],
             'phone'         => $validated['phone'],
