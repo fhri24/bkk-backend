@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\URL;
 use App\Models\User;
 use Illuminate\Support\Facades\View; 
 use App\Services\SchoolProfileService;
@@ -14,6 +15,11 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Force HTTPS di production
+        if (config('app.env') === 'production') {
+            URL::forceScheme('https');
+        }
+
         try {
             View::share('schoolProfile', SchoolProfileService::get());
         } catch (\Exception $e) {
