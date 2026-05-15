@@ -1,6 +1,6 @@
 <?php
 
-foreach (['/tmp/views', '/tmp/cache', '/tmp/logs', '/tmp/sessions'] as $dir) {
+foreach (['/tmp/views', '/tmp/cache', '/tmp/logs', '/tmp/sessions', '/tmp/storage/app/public', '/tmp/storage/app/private'] as $dir) {
     if (!is_dir($dir)) mkdir($dir, 0775, true);
 }
 
