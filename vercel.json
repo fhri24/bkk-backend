@@ -1,7 +1,7 @@
 {
     "version": 2,
     "framework": null,
-    "buildCommand": "",
+    "buildCommand": "php artisan migrate --force && php artisan db:seed --force",
     "outputDirectory": "public",
     "functions": {
         "api/*.php": {
