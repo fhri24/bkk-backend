@@ -45,7 +45,7 @@
       <p class="text-slate-500 text-lg leading-relaxed mb-8">Sistem pelacakan jejak alumni untuk memetakan kualitas pendidikan dan kebutuhan dunia industri.</p>
 
       @auth
-        @if(auth()->user()->role === 'student')
+        @if(in_array(auth()->user()->role->name ?? '', ['siswa', 'alumni']))
           <button onclick="openTracerForm()" class="bg-blue-600 text-white px-8 py-4 rounded-2xl font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-200 mb-8">
             <i class="fas fa-edit mr-2"></i>Isi Data Tracer Study Anda
           </button>
@@ -107,17 +107,17 @@
       @csrf
       <div>
         <label class="block text-sm font-semibold text-slate-700 mb-2">Status Saat Ini</label>
-        <select name="status" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" required>
+        <select name="status_saat_ini" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" required>
           <option value="">-- Pilih Status --</option>
-          <option value="working">Bekerja</option>
-          <option value="studying">Melanjutkan Studi</option>
-          <option value="both">Bekerja & Studi</option>
-          <option value="unemployed">Mencari Kerja</option>
+          <option value="Bekerja">Bekerja</option>
+          <option value="Kuliah">Melanjutkan Pendidikan</option>
+          <option value="Wirausaha">Wirausaha</option>
+          <option value="Belum Bekerja">Mencari Pekerjaan</option>
         </select>
       </div>
       <div>
         <label class="block text-sm font-semibold text-slate-700 mb-2">Nama Perusahaan / Institusi</label>
-        <input type="text" name="institution" class="w-full px-4 py-3 border border-slate-200 rounded-xl outline-none" placeholder="Masukkan nama tempat bekerja/studi">
+        <input type="text" name="company" class="w-full px-4 py-3 border border-slate-200 rounded-xl outline-none" placeholder="Masukkan nama tempat bekerja/studi">
       </div>
       <div>
         <label class="block text-sm font-semibold text-slate-700 mb-2">Posisi / Program Studi</label>

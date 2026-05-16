@@ -262,10 +262,10 @@ class PublikController extends Controller
 
         // Prepare chart data based on status_saat_ini
         $chartData = [
-            'Bekerja' => $tracerStudies->where('status_saat_ini', 'working')->count(),
-            'Kuliah' => $tracerStudies->where('status_saat_ini', 'studying')->count(),
-            'Wirausaha' => $tracerStudies->where('status_saat_ini', 'both')->count(),
-            'Mencari Kerja' => $tracerStudies->where('status_saat_ini', 'unemployed')->count(),
+            'Bekerja' => $tracerStudies->where('status_saat_ini', 'Bekerja')->count(),
+            'Kuliah' => $tracerStudies->where('status_saat_ini', 'Kuliah')->count(),
+            'Wirausaha' => $tracerStudies->where('status_saat_ini', 'Wirausaha')->count(),
+            'Mencari Kerja' => $tracerStudies->where('status_saat_ini', 'Belum Bekerja')->count(),
         ];
 
         // Get statistics
@@ -275,8 +275,8 @@ class PublikController extends Controller
 
         // Get alignment data (keselarasan_jurusan)
         $alignmentData = [
-            'Sesuai' => $tracerStudies->where('keselarasan_jurusan', 'ya')->count(),
-            'Tidak Sesuai' => $tracerStudies->where('keselarasan_jurusan', 'tidak')->count(),
+            'Sesuai' => $tracerStudies->where('keselarasan_jurusan', 'Sesuai')->count(),
+            'Tidak Sesuai' => $tracerStudies->where('keselarasan_jurusan', 'Tidak Sesuai')->count(),
         ];
 
         return view('public.tracer-report', compact(
@@ -294,8 +294,8 @@ class PublikController extends Controller
     public function storeTracer(Request $request)
     {
         $request->validate([
-            'status_kerja' => 'required|string',
-            'company'      => 'nullable|string',
+            'status_saat_ini' => 'required|string|in:Bekerja,Kuliah,Wirausaha,Belum Bekerja',
+            'company'         => 'nullable|string',
         ]);
 
         $user = Auth::user();
@@ -312,7 +312,7 @@ class PublikController extends Controller
 
             TracerStudy::create([
                 'student_id'      => $student->id,
-                'status_saat_ini' => $request->status_kerja,
+                'status_saat_ini' => $request->input('status_saat_ini'),
                 'nama_instansi'   => $request->company,
             ]);
         }

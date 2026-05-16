@@ -10,22 +10,21 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-    {
-        Schema::table('job_applications', function (Blueprint $table) {
-            // Cek satu per satu apakah kolom sudah ada untuk menghindari error duplicate
-            if (!Schema::hasColumn('job_applications', 'full_name')) {
-                $table->string('full_name')->nullable()->after('additional_file');
-            }
-            
-            if (!Schema::hasColumn('job_applications', 'email')) {
-                $table->string('email')->nullable()->after('full_name');
-            }
-            
-            if (!Schema::hasColumn('job_applications', 'phone_number')) {
-                $table->string('phone_number')->nullable()->after('email');
-            }
-        });
-    }
+{
+    Schema::table('job_applications', function (Blueprint $table) {
+        if (!Schema::hasColumn('job_applications', 'full_name')) {
+            $table->string('full_name')->nullable(); // hapus after()
+        }
+        
+        if (!Schema::hasColumn('job_applications', 'email')) {
+            $table->string('email')->nullable();
+        }
+        
+        if (!Schema::hasColumn('job_applications', 'phone_number')) {
+            $table->string('phone_number')->nullable();
+        }
+    });
+}
 
     /**
      * Reverse the migrations.

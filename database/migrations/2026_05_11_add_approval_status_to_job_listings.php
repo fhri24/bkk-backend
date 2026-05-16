@@ -6,15 +6,16 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up(): void
-    {
-        Schema::table('job_listings', function (Blueprint $table) {
+  public function up(): void
+{
+    Schema::table('job_listings', function (Blueprint $table) {
+        if (!Schema::hasColumn('job_listings', 'approval_status')) {
             $table->enum('approval_status', ['pending', 'approved', 'rejected'])
-                ->default('approved') // Default approved agar lowongan lama dari admin BKK tetap jalan
-                ->after('status');
-            $table->text('approval_notes')->nullable()->after('approval_status');
-        });
-    }
+                  ->default('approved')
+                  ->nullable(); // hapus ->after('stsatus')
+        }
+    });
+}
 
     public function down(): void
     {
