@@ -337,6 +337,13 @@
                     @endif
                 </a>
 
+                {{-- Tips & Tricks --}}
+                <a href="{{ route('admin.tips.index') }}"
+                    class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->segment(2) === 'tips' ? 'active' : '' }}">
+                    <i class="fas fa-lightbulb"></i>
+                    <span class="ml-3">Tips & Tricks</span>
+                </a>
+
                 {{-- Broadcast --}}
                 <a href="{{ route('admin.broadcast.index') }}"
                     class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->segment(2) === 'broadcast' ? 'active' : '' }}">

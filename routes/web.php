@@ -35,10 +35,10 @@ use App\Http\Controllers\Admin\EventController as AdminEventController;
 use App\Http\Controllers\Admin\EventRegistrationController as AdminEventRegistrationController;
 use App\Http\Controllers\Admin\PublikController as AdminPublikController;
 use App\Http\Controllers\Admin\BroadcastController as AdminBroadcastController;
-// Import Baru untuk Manajemen Akun Perusahaan
 use App\Http\Controllers\Admin\CompanyAccountController;
-// Import Admin Tracer Study Controller
 use App\Http\Controllers\Admin\TracerStudyController as AdminTracerStudyController;
+// LANGKAH 1: Import Admin Tip Controller
+use App\Http\Controllers\Admin\TipController as AdminTipController;
 
 // Student Controllers
 use App\Http\Controllers\Student\PageController as StudentPageController;
@@ -69,10 +69,8 @@ Route::get('/home-redirect', function () {
     };
 })->name('home');
 
-// Halaman Landing Utama
 Route::get('/', [PublikController::class, 'beranda'])->name('public.beranda');
 
-// Route Publik
 Route::get('/lowongan', [PublikController::class, 'lowongan'])->name('public.lowongan');
 Route::get('/lowongan-tersimpan', [StudentController::class, 'savedJobs'])
     ->middleware(['auth'])
@@ -99,8 +97,9 @@ Route::post('/tracer-study/store', [PublikController::class, 'storeTracer'])
     ->name('student.tracer.store');
 
 Route::get('/tutorial', [PublikController::class, 'tutorial'])->name('public.tutorial');
+Route::get('/tips', [PublikController::class, 'tips'])->name('public.tips');
+Route::get('/tips/{slug}', [PublikController::class, 'tipsDetail'])->name('public.tips.detail');
 
-// Route Public untuk Alumni Stories (Submit dari Beranda)
 Route::post('/alumni-stories', [AlumniStoryController::class, 'store'])->name('alumni-stories.store');
 
 /**
@@ -111,7 +110,6 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'login'])->name('login.process');
     Route::get('/register', fn() => redirect()->route('login'));
 
-    // Social Login
     Route::get('/auth/google', [SocialAuthController::class, 'redirectToGoogle'])->name('auth.google');
     Route::get('/auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
     Route::get('/auth/facebook', [SocialAuthController::class, 'redirectToFacebook'])->name('auth.facebook');
@@ -213,7 +211,6 @@ Route::middleware(['auth', 'role:siswa'])->prefix('student')->name('student.')->
 Route::middleware(['auth', 'role:perusahaan'])->prefix('company')->name('company.')->group(function () {
     Route::get('/dashboard', [CompanyPanelController::class, 'dashboard'])->name('dashboard');
 
-    // Lowongan
     Route::get('/lowongan', [CompanyPanelController::class, 'lowonganIndex'])->name('lowongan.index');
     Route::get('/lowongan/create', [CompanyPanelController::class, 'lowonganCreate'])->name('lowongan.create');
     Route::post('/lowongan', [CompanyPanelController::class, 'lowonganStore'])->name('lowongan.store');
@@ -221,7 +218,6 @@ Route::middleware(['auth', 'role:perusahaan'])->prefix('company')->name('company
     Route::put('/lowongan/{job}', [CompanyPanelController::class, 'lowonganUpdate'])->name('lowongan.update');
     Route::delete('/lowongan/{job}', [CompanyPanelController::class, 'lowonganDestroy'])->name('lowongan.destroy');
 
-    // Lamaran
     Route::get('/lamaran', [CompanyPanelController::class, 'lamaranIndex'])->name('lamaran.index');
     Route::get('/lamaran/{application}', [CompanyPanelController::class, 'lamaranShow'])->name('lamaran.show');
     Route::put('/lamaran/{application}/status', [CompanyPanelController::class, 'lamaranUpdateStatus'])->name('lamaran.update-status');
@@ -266,12 +262,10 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
         Route::put('/{job}', [AdminJobController::class, 'update'])->name('update');
         Route::delete('/{job}', [AdminJobController::class, 'destroy'])->name('destroy');
 
-        // Route Approval Lowongan
         Route::post('/{job}/approve', [AdminJobController::class, 'approve'])->name('approve');
         Route::post('/{job}/reject',  [AdminJobController::class, 'reject'])->name('reject');
     });
 
-    // Manajemen Akun Perusahaan
     Route::prefix('company-accounts')->name('company-accounts.')->group(function () {
         Route::get('/',                 [CompanyAccountController::class, 'index'])->name('index');
         Route::get('/create',           [CompanyAccountController::class, 'create'])->name('create');
@@ -340,14 +334,24 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
 
     Route::get('/activity-logs', [AdminActivityLogController::class, 'index'])->name('activity-logs.index');
 
-    // SOLUSI FIX: Name dilepas jadi 'tracer.' saja karena pembungkus luar sudah membawa 'admin.'
     Route::prefix('tracer')->name('tracer.')->group(function () {
         Route::get('/',            [AdminTracerStudyController::class, 'index'])->name('index');
         Route::get('/export/csv',  [AdminTracerStudyController::class, 'exportCsv'])->name('export.csv');
         Route::get('/print',       [AdminTracerStudyController::class, 'print'])->name('print');
     });
 
-    // MANAGEMENT ALUMNI STORIES (ADMIN)
+    // LANGKAH 2: Menambahkan Route Tips di dalam grup Admin (Aman dari Double Prefix)
+    Route::prefix('tips')->name('tips.')->group(function () {
+        Route::get('/',                 [AdminTipController::class, 'index'])->name('index');
+        Route::get('/create',           [AdminTipController::class, 'create'])->name('create');
+        Route::post('/',                [AdminTipController::class, 'store'])->name('store');
+        Route::get('/{tip}/edit',       [AdminTipController::class, 'edit'])->name('edit');
+        Route::put('/{tip}',            [AdminTipController::class, 'update'])->name('update');
+        Route::delete('/{tip}',         [AdminTipController::class, 'destroy'])->name('destroy');
+        Route::patch('/{tip}/publish',  [AdminTipController::class, 'togglePublish'])->name('publish');
+        Route::patch('/{tip}/featured', [AdminTipController::class, 'toggleFeatured'])->name('featured');
+    });
+
     Route::prefix('alumni-stories')->name('alumni-stories.')->group(function () {
         Route::get('/', [AlumniStoryController::class, 'index'])->name('index');
         Route::get('/{alumniStory}', [AlumniStoryController::class, 'show'])->name('show');

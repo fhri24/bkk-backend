@@ -339,10 +339,60 @@ class PublikController extends Controller
     }
 
     /**
-     * Tutorial
+     * Halaman Panduan Pendaftaran Aplikasi BKK (Statis Langkah 1-4)
      */
     public function tutorial()
     {
+        // Mengembalikan fungsi aslinya untuk membuka halaman panduan pendaftaran
         return view('public.tutorial');
+    }
+
+    /**
+     * Halaman List & Filter Tips & Tricks Karir (Fitur Baru)
+     */
+    public function tips(Request $request)
+    {
+        $query = \App\Models\Tip::published();
+
+        if ($request->filled('kategori')) {
+            $query->where('kategori', $request->kategori);
+        }
+
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('judul', 'like', '%' . $request->search . '%')
+                    ->orWhere('ringkasan', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        $tips         = $query->orderBy('urutan')->orderByDesc('created_at')->paginate(9)->withQueryString();
+        $featured     = \App\Models\Tip::published()->featured()->orderBy('urutan')->get();
+        $kategoriList = \App\Models\Tip::kategoriList();
+
+        $kategoriCount = \App\Models\Tip::published()
+            ->selectRaw('kategori, count(*) as total')
+            ->groupBy('kategori')
+            ->pluck('total', 'kategori');
+
+        return view('public.tips', compact('tips', 'featured', 'kategoriList', 'kategoriCount'));
+    }
+
+    /**
+     * Halaman Detail Artikel Tips Karir (Fitur Baru)
+     */
+    public function tipsDetail($slug)
+    {
+        // Cari artikel berdasarkan slug dan pastikan statusnya sudah di-publish
+        $tip = \App\Models\Tip::published()->where('slug', $slug)->firstOrFail();
+
+        // Ambil artikel terkait di kategori yang sama untuk rekomendasi bacaan di sidebar/bawah
+        $relatedTips = \App\Models\Tip::published()
+            ->where('id', '!=', $tip->id)
+            ->where('kategori', $tip->kategori)
+            ->latest()
+            ->take(3)
+            ->get();
+
+        return view('public.tips-detail', compact('tip', 'relatedTips'));
     }
 }

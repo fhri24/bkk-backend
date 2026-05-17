@@ -37,6 +37,9 @@
                         class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.lowongan*') || request()->routeIs('student.lowongan*') || request()->routeIs('publik.lowongan*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Lowongan</a>
                     <a href="{{ route('public.berita') }}"
                         class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.berita*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Berita</a>
+                    <a href="{{ route('public.tips') }}"
+                        class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.tips*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Tips
+                        Karir</a>
                     <a href="{{ route('public.acara') }}"
                         class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.acara*') || request()->routeIs('student.acara*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Acara</a>
                     <a href="{{ route('public.tracer') }}"
@@ -49,6 +52,9 @@
                         class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.lowongan*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Lowongan</a>
                     <a href="{{ route('public.berita') }}"
                         class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.berita*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Berita</a>
+                    <a href="{{ route('public.tips') }}"
+                        class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.tips*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Tips
+                        Karir</a>
                     <a href="{{ route('public.acara') }}"
                         class="nav-btn transition hover:text-blue-400 {{ request()->routeIs('public.acara*') ? 'text-blue-400 border-b-2 border-blue-400' : '' }}">Acara</a>
                     <a href="{{ route('public.tracer') }}"
@@ -146,6 +152,7 @@
             <a href="{{ $homeRouteMobile }}" class="block py-2">Beranda</a>
             <a href="{{ route('public.lowongan') }}" class="block py-2">Lowongan</a>
             <a href="{{ route('public.berita') }}" class="block py-2">Berita</a>
+            <a href="{{ route('public.tips') }}" class="block py-2">Tips Karir</a>
             <a href="{{ route('public.acara') }}" class="block py-2">Acara</a>
             <a href="{{ route('public.tracer') }}" class="block py-2">Tracer Study</a>
 
@@ -157,6 +164,7 @@
             <a href="{{ route('public.beranda') }}" class="block py-2">Beranda</a>
             <a href="{{ route('public.lowongan') }}" class="block py-2">Lowongan</a>
             <a href="{{ route('public.berita') }}" class="block py-2">Berita</a>
+            <a href="{{ route('public.tips') }}" class="block py-2">Tips Karir</a>
             <a href="{{ route('login') }}" class="block py-2 text-blue-400 font-bold">Masuk</a>
         @endauth
     </div>
