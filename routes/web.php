@@ -94,6 +94,7 @@ Route::post('/acara/{id}/register', [PublikController::class, 'storeEventRegistr
 
 Route::get('/tracer-study', [PublikController::class, 'tracer'])->name('public.tracer');
 Route::get('/tracer-study-report', [PublikController::class, 'tracerReport'])->name('tracer.report');
+Route::get('/tracer-industri', [PublikController::class, 'tracerIndustry'])->name('public.tracer-industri');
 Route::post('/tracer-study/store', [PublikController::class, 'storeTracer'])
     ->middleware(['auth'])
     ->name('student.tracer.store');
