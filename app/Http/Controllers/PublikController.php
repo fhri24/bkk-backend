@@ -293,6 +293,11 @@ class PublikController extends Controller
         ));
     }
 
+    public function tracerIndustry()
+    {
+        return view('public.tracer-industri');
+    }
+
     /**
      * Simpan Tracer — PERBAIKAN:
      * - Tambah validasi field lengkap sesuai migration
