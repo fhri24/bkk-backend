@@ -324,6 +324,19 @@
                     @endif
                 </a>
 
+                {{-- Tracer Study --}}
+                <a href="{{ route('admin.tracer.index') }}"
+                    class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->segment(2) === 'tracer' ? 'active' : '' }}">
+                    <i class="fas fa-chart-line"></i>
+                    <span class="ml-3">Tracer Study</span>
+                    @php $totalTracer = \App\Models\TracerStudy::count(); @endphp
+                    @if ($totalTracer > 0)
+                        <span class="ml-auto bg-blue-400 text-blue-900 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                            {{ $totalTracer }}
+                        </span>
+                    @endif
+                </a>
+
                 {{-- Broadcast --}}
                 <a href="{{ route('admin.broadcast.index') }}"
                     class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->segment(2) === 'broadcast' ? 'active' : '' }}">

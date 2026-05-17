@@ -37,6 +37,8 @@ use App\Http\Controllers\Admin\PublikController as AdminPublikController;
 use App\Http\Controllers\Admin\BroadcastController as AdminBroadcastController;
 // Import Baru untuk Manajemen Akun Perusahaan
 use App\Http\Controllers\Admin\CompanyAccountController;
+// Import Admin Tracer Study Controller
+use App\Http\Controllers\Admin\TracerStudyController as AdminTracerStudyController;
 
 // Student Controllers
 use App\Http\Controllers\Student\PageController as StudentPageController;
@@ -264,12 +266,12 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
         Route::put('/{job}', [AdminJobController::class, 'update'])->name('update');
         Route::delete('/{job}', [AdminJobController::class, 'destroy'])->name('destroy');
 
-        // Route Approval Lowongan (Tambahan Baru)
+        // Route Approval Lowongan
         Route::post('/{job}/approve', [AdminJobController::class, 'approve'])->name('approve');
         Route::post('/{job}/reject',  [AdminJobController::class, 'reject'])->name('reject');
     });
 
-    // Manajemen Akun Perusahaan (Tambahan Baru)
+    // Manajemen Akun Perusahaan
     Route::prefix('company-accounts')->name('company-accounts.')->group(function () {
         Route::get('/',                 [CompanyAccountController::class, 'index'])->name('index');
         Route::get('/create',           [CompanyAccountController::class, 'create'])->name('create');
@@ -337,6 +339,13 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
     });
 
     Route::get('/activity-logs', [AdminActivityLogController::class, 'index'])->name('activity-logs.index');
+
+    // SOLUSI FIX: Name dilepas jadi 'tracer.' saja karena pembungkus luar sudah membawa 'admin.'
+    Route::prefix('tracer')->name('tracer.')->group(function () {
+        Route::get('/',            [AdminTracerStudyController::class, 'index'])->name('index');
+        Route::get('/export/csv',  [AdminTracerStudyController::class, 'exportCsv'])->name('export.csv');
+        Route::get('/print',       [AdminTracerStudyController::class, 'print'])->name('print');
+    });
 
     // MANAGEMENT ALUMNI STORIES (ADMIN)
     Route::prefix('alumni-stories')->name('alumni-stories.')->group(function () {
