@@ -244,15 +244,19 @@ class PublikController extends Controller
     }
 
     /**
-     * Tracer Study
+     * Tracer Study — PERBAIKAN:
+     * - Tambah $chartData yang sebelumnya tidak dikirim ke view (bug chart kosong)
      */
     public function tracer()
     {
-        $alumni = Student::where('alumni_flag', true)
-            ->orderBy('graduation_year', 'desc')
-            ->get();
+        $chartData = [
+            'Bekerja'       => TracerStudy::where('status_saat_ini', 'Bekerja')->count(),
+            'Kuliah'        => TracerStudy::where('status_saat_ini', 'Kuliah')->count(),
+            'Wirausaha'     => TracerStudy::where('status_saat_ini', 'Wirausaha')->count(),
+            'Mencari Kerja' => TracerStudy::where('status_saat_ini', 'Belum Bekerja')->count(),
+        ];
 
-        return view('public.tracer', compact('alumni'));
+        return view('public.tracer', compact('chartData'));
     }
 
     public function tracerReport()
@@ -288,36 +292,50 @@ class PublikController extends Controller
             'alignmentData'
         ));
     }
+
     /**
-     * Simpan Tracer
+     * Simpan Tracer — PERBAIKAN:
+     * - Tambah validasi field lengkap sesuai migration
+     * - Fix student_id: $student->id → $student->student_id
+     * - Ganti create() → updateOrCreate() agar tidak dobel
+     * - Fix nama field: company → nama_instansi
+     * - Hapus field 'position' yang tidak ada di database
      */
     public function storeTracer(Request $request)
     {
         $request->validate([
-            'status_saat_ini' => 'required|string|in:Bekerja,Kuliah,Wirausaha,Belum Bekerja',
-            'company'         => 'nullable|string',
+            'status_saat_ini'     => 'required|in:Bekerja,Kuliah,Wirausaha,Belum Bekerja',
+            'nama_instansi'       => 'nullable|string|max:255',
+            'tgl_mulai_masuk'     => 'nullable|date|before_or_equal:today',
+            'keselarasan_jurusan' => 'nullable|in:Sesuai,Tidak Sesuai',
+            'pendapatan_bulanan'  => 'nullable|numeric|min:0',
         ]);
 
         $user = Auth::user();
 
-        if (
-            $user->role->name === 'siswa' ||
-            $user->role->name === 'alumni'
-        ) {
-            $student = Student::where('user_id', $user->id)->first();
-
-            if (!$student) {
-                return back()->with('error', 'Data profil tidak ditemukan.');
-            }
-
-            TracerStudy::create([
-                'student_id'      => $student->id,
-                'status_saat_ini' => $request->input('status_saat_ini'),
-                'nama_instansi'   => $request->company,
-            ]);
+        if (!in_array($user->role->name, ['siswa', 'alumni'])) {
+            return back()->with('error', 'Akses tidak diizinkan.');
         }
 
-        return back()->with('success', 'Data Tracer berhasil disimpan!');
+        $student = Student::where('user_id', $user->id)->first();
+
+        if (!$student) {
+            return back()->with('error', 'Data profil tidak ditemukan.');
+        }
+
+        // updateOrCreate: update jika sudah pernah isi, insert jika belum
+        TracerStudy::updateOrCreate(
+            ['student_id' => $student->student_id], // ← fix: pakai student_id bukan id
+            [
+                'status_saat_ini'     => $request->status_saat_ini,
+                'nama_instansi'       => $request->nama_instansi,
+                'tgl_mulai_masuk'     => $request->tgl_mulai_masuk,
+                'keselarasan_jurusan' => $request->keselarasan_jurusan,
+                'pendapatan_bulanan'  => $request->pendapatan_bulanan,
+            ]
+        );
+
+        return back()->with('success', 'Data Tracer Study berhasil disimpan. Terima kasih!');
     }
 
     /**
