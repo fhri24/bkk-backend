@@ -17,6 +17,8 @@
         "APP_CONFIG_CACHE": "/tmp/cache/config.php",
         "APP_EVENTS_CACHE": "/tmp/cache/events.php",
         "APP_ROUTES_CACHE": "/tmp/cache/routes.php",
+        "APP_SERVICES_CACHE": "/tmp/cache/services.php",
+        "APP_PACKAGES_CACHE": "/tmp/cache/packages.php",
         "VIEW_COMPILED_PATH": "/tmp/views",
         "LOG_CHANNEL": "stderr",
         "CACHE_DRIVER": "array",
