@@ -1,89 +1,69 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Models\Role;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http as HttpClient;
 
 class AuthController extends Controller
 {
-    // 1. FUNGSI REGISTER
-    public function register(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:8'
-        ]);
-
-        // Cari role 'siswa' secara otomatis untuk pendaftar baru
-        $role = Role::where('role_name', 'siswa')->first();
-
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role_id' => $role ? $role->role_id : 2, // Default ke ID 2 jika role tidak ditemukan
-            'is_active' => true,
-        ]);
-
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        return response()->json([
-            'message' => 'Register berhasil',
-            'access_token' => $token,
-            'token_type' => 'Bearer',
-            'user' => $user
-        ]);
-    }
-
-    // 2. FUNGSI LOGIN
     public function login(Request $request)
     {
-        $request->validate([
+        $credentials = $request->validate([
             'email' => 'required|email',
-            'password' => 'required|min:8',
+            'password' => 'required',
         ]);
 
-        $user = User::where('email', $request->email)->first();
-
-        // Cek email dan password
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        if (! Auth::attempt($credentials)) {
             return response()->json([
-                'message' => 'Email atau password salah.'
+                'status' => 'error',
+                'message' => 'Email atau password salah',
             ], 401);
         }
 
-        // Hapus token lama agar tidak menumpuk (Opsional)
-        $user->tokens()->delete();
+        $user = Auth::user();
+        $token = $user->createToken('api-token')->plainTextToken;
 
-        // Buat Token baru
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        return response()->json([
-            'message' => 'Login berhasil!',
-            'access_token' => $token,
+        $response = [
+            'status' => 'success',
+            'token' => $token,
             'token_type' => 'Bearer',
-            'user' => [
-                'name' => $user->name,
-                'email' => $user->email,
-                'role' => $user->role->role_name ?? 'no role'
-            ]
-        ]);
-    }
+            'user' => $user,
+        ];
 
-    // 3. FUNGSI LOGOUT
-    public function logout(Request $request)
-    {
-        // Menghapus token yang sedang digunakan
-        $request->user()->currentAccessToken()->delete();
+        // Optional: push to Supabase
+        $supabaseUrl = env('SUPABASE_URL');
+        $supabaseKey = env('SUPABASE_KEY');
+        $supabaseTable = env('SUPABASE_TABLE', 'personal_access_tokens');
 
-        return response()->json([
-            'message' => 'Berhasil logout'
-        ]);
+        if ($supabaseUrl && $supabaseKey) {
+            try {
+                $payload = [
+                    'user_id' => $user->id,
+                    'token' => $token,
+                    'name' => 'api-token',
+                    'created_at' => now()->toIso8601String(),
+                ];
+
+                $supResp = HttpClient::withHeaders([
+                    'apikey' => $supabaseKey,
+                    'Authorization' => 'Bearer ' . $supabaseKey,
+                    'Content-Type' => 'application/json',
+                ])->post(rtrim($supabaseUrl, '/') . '/rest/v1/' . $supabaseTable, $payload);
+
+                $response['supabase'] = [
+                    'status' => $supResp->status(),
+                ];
+            } catch (\Exception $e) {
+                $response['supabase'] = [
+                    'status' => 'error',
+                    'message' => $e->getMessage(),
+                ];
+            }
+        }
+
+        return response()->json($response);
     }
 }
