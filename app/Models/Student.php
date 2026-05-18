@@ -33,6 +33,11 @@ class Student extends Model
         'career_path'
     ];
 
+    // ✅ Fix untuk PostgreSQL
+    protected $casts = [
+        'alumni_flag' => 'boolean',
+    ];
+
     // ✅ Relasi ke User
     public function user(): BelongsTo
     {

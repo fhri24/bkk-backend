@@ -14,12 +14,22 @@ class Company extends Model
 
     // Nama tabel di database
     protected $table = 'companies';
-    
+
     // Primary Key kustom sesuai migration kita
     protected $primaryKey = 'company_id';
 
     // Membolehkan pengisian semua kolom (mass assignment)
     protected $guarded = [];
+
+    /**
+     * Casting untuk PostgreSQL compatibility
+     */
+    protected function casts(): array
+    {
+        return [
+            'is_verified' => 'boolean',
+        ];
+    }
 
     /**
      * Relasi ke User

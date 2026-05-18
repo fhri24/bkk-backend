@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Event;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class EventSeeder extends Seeder
 {
@@ -94,10 +95,25 @@ class EventSeeder extends Seeder
         ];
 
         foreach ($events as $event) {
-            Event::firstOrCreate(
+            DB::table('events')->updateOrInsert(
                 ['slug' => $event['slug']],
-                $event
+                [
+                    'title' => $event['title'],
+                    'description' => $event['description'],
+                    'location' => $event['location'],
+                    'start_date' => $event['start_date'],
+                    'end_date' => $event['end_date'],
+                    'capacity' => $event['capacity'],
+                    'organizer' => $event['organizer'],
+                    'category' => $event['category'],
+                    'image' => $event['image'],
+                    'is_published' => DB::raw("'true'::boolean"),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
             );
         }
+
+        $this->command->info('Events seeded successfully!');
     }
 }

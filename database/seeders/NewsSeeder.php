@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\News;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class NewsSeeder extends Seeder
 {
@@ -71,10 +72,23 @@ class NewsSeeder extends Seeder
         ];
 
         foreach ($newsItems as $item) {
-            News::firstOrCreate(
+            DB::table('news')->updateOrInsert(
                 ['slug' => $item['slug']],
-                $item
+                [
+                    'title' => $item['title'],
+                    'category' => $item['category'],
+                    'excerpt' => $item['excerpt'],
+                    'content' => $item['content'],
+                    'image' => $item['image'],
+                    'author_id' => $item['author_id'],
+                    'published_at' => $item['published_at'],
+                    'is_published' => DB::raw("'true'::boolean"),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
             );
         }
+
+        $this->command->info('News seeded successfully!');
     }
 }

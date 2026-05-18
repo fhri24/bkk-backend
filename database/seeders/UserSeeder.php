@@ -7,6 +7,7 @@ use App\Models\Role;
 use App\Models\Company;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class UserSeeder extends Seeder
 {
@@ -22,51 +23,62 @@ class UserSeeder extends Seeder
         $perusahaanRole = Role::firstOrCreate(['name' => 'perusahaan'], ['description' => 'Perusahaan']);
 
         // 1. Create Super Admin
-        $superAdmin = User::firstOrCreate(
+        DB::table('users')->updateOrInsert(
             ['email' => 'superadmin@bkk.com'],
             [
                 'name' => 'Super Admin',
                 'password' => Hash::make('password123'),
                 'role_id' => $superAdminRole->id,
-                'is_active' => true,
+                'is_active' => DB::raw("'true'::boolean"),
+                'created_at' => now(),
+                'updated_at' => now(),
             ]
         );
 
         // 2. Create Admin BKK
-        $adminBkk = User::firstOrCreate(
+        DB::table('users')->updateOrInsert(
             ['email' => 'admin@bkk.com'],
             [
                 'name' => 'Admin BKK',
                 'password' => Hash::make('password123'),
                 'role_id' => $adminBkkRole->id,
-                'is_active' => true,
+                'is_active' => DB::raw("'true'::boolean"),
+                'created_at' => now(),
+                'updated_at' => now(),
             ]
         );
 
         // 3. Create Kepala BKK
-        $kepalaBkk = User::firstOrCreate(
+        DB::table('users')->updateOrInsert(
             ['email' => 'kepala@bkk.com'],
             [
                 'name' => 'Kepala BKK',
                 'password' => Hash::make('password123'),
                 'role_id' => $kepalaBkkRole->id,
-                'is_active' => true,
+                'is_active' => DB::raw("'true'::boolean"),
+                'created_at' => now(),
+                'updated_at' => now(),
             ]
         );
 
         // 4. Create Sample Company with Company Account
-        $companyUser = User::firstOrCreate(
+        DB::table('users')->updateOrInsert(
             ['email' => 'company@majujaya.com'],
             [
                 'name' => 'PT. Maju Jaya',
                 'password' => Hash::make('password123'),
                 'role_id' => $perusahaanRole->id,
-                'is_active' => true,
+                'is_active' => DB::raw("'true'::boolean"),
+                'created_at' => now(),
+                'updated_at' => now(),
             ]
         );
 
+        // Get company user ID
+        $companyUser = User::where('email', 'company@majujaya.com')->first();
+
         // Create company profile linked to user
-        Company::firstOrCreate(
+        DB::table('companies')->updateOrInsert(
             ['user_id' => $companyUser->id],
             [
                 'company_name' => 'PT. Maju Jaya',
@@ -75,7 +87,9 @@ class UserSeeder extends Seeder
                 'phone' => '021-123456',
                 'address' => 'Jakarta',
                 'website' => 'https://majujaya.com',
-                'is_verified' => true,
+                'is_verified' => DB::raw("'true'::boolean"),
+                'created_at' => now(),
+                'updated_at' => now(),
             ]
         );
 
