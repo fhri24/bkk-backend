@@ -15,7 +15,7 @@
             <div class="absolute inset-0 bg-gradient-to-b from-[#001f3f]/80 via-[#001f3f]/60 to-[#001f3f]/90"></div>
         </div>
 
-        <div class="relative z-10 text-center py-24 px-6">
+        <div class="relative z-10 text-center py-20 px-6">
             <span class="inline-block bg-blue-500/20 text-blue-300 text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full border border-blue-400/30 mb-5">
                 📰 Berita & Artikel BKK SMKN 1 Garut
             </span>
@@ -25,13 +25,7 @@
             <p class="text-slate-300 max-w-xl mx-auto text-base md:text-lg leading-relaxed">
                 Informasi terkini seputar dunia karir, industri, dan kegiatan BKK SMKN 1 Garut.
             </p>
-        </div>
-
-        <div class="relative z-10">
-            <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full -mb-1">
-                <path d="M0 60L1440 60L1440 20C1200 60 960 0 720 20C480 40 240 0 0 20L0 60Z" fill="#f1f5f9"/>
-            </svg>
-        </div>
+        </div> 
     </div>
 
     {{-- ===== MAIN CONTENT ===== --}}
