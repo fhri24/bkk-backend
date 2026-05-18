@@ -88,7 +88,6 @@ class UserSeeder extends Seeder
                 'updated_at' => now(),
             ]
         );
-=======
         if (!User::where('email', 'superadmin@bkk.com')->exists()) {
             DB::table('users')->insert([
                 'name'       => 'Super Admin',
