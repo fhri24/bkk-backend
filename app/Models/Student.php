@@ -32,7 +32,6 @@ class Student extends Model
         'career_path'
     ];
 
-    // FIX: cast boolean agar kompatibel dengan PostgreSQL
     protected $casts = [
         'alumni_flag' => 'boolean',
     ];
