@@ -33,6 +33,15 @@ class Event extends Model
     ];
 
     /**
+     * Scope: Filter hanya events yang published
+     * Menggunakan raw query untuk PostgreSQL boolean compatibility
+     */
+    public function scopePublished($query)
+    {
+        return $query->whereRaw("is_published = 'true'::boolean");
+    }
+
+    /**
      * Relationship: Event memiliki banyak registrations
      */
     public function registrations()

@@ -13,8 +13,20 @@ class Company extends Model
     use HasFactory;
 
     protected $table = 'companies';
+
+    // Primary Key kustom sesuai migration kita
     protected $primaryKey = 'company_id';
     protected $guarded = [];
+
+    /**
+     * Casting untuk PostgreSQL compatibility
+     */
+    protected function casts(): array
+    {
+        return [
+            'is_verified' => 'boolean',
+        ];
+    }
 
     // FIX: Cast boolean agar kompatibel dengan PostgreSQL
     protected $casts = [

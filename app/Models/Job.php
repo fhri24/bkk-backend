@@ -37,6 +37,7 @@ class Job extends Model
     protected $casts = [
         'expired_at' => 'datetime',
         'posted_at'  => 'datetime',
+        'is_active' => 'boolean',
     ];
 
     // --- RELASI ---
