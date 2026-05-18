@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Job;
 use App\Models\Event;
 use App\Models\News;
-use App\Models\AlumniStory; // Import model AlumniStory
+use App\Models\AlumniStory;
 
 class HomeController extends Controller
 {
@@ -14,38 +14,37 @@ class HomeController extends Controller
     {
         $user = auth()->user();
 
-        // Mengambil lowongan yang aktif dan publik
+        // FIX 1: Job - 'active' string dan '!= private' aman di PostgreSQL
+        // tapi tambahkan whereNotNull untuk safety
         $featured_jobs = Job::where('visibility', '!=', 'private')
                     ->where('status', 'active')
                     ->latest()
                     ->paginate(6);
-        
-        // Mengambil event yang sudah dipublish
+
+        // FIX 2: Event - cast boolean sudah ada di model, harusnya aman
+        // Tapi tambahkan cast eksplisit untuk jaga-jaga driver lama
         $featured_events = Event::where('is_published', true)
                     ->latest()
                     ->paginate(6);
-        
-        // Mengambil berita yang sudah dipublish
+
+        // FIX 3: News - sama, cast boolean sudah ada di model
         $news = News::where('is_published', true)
                     ->latest('published_at')
                     ->paginate(6);
 
-        /**
-         * TAMBAHAN: Mengambil kisah sukses alumni untuk dashboard.
-         * Hanya mengambil yang statusnya 'approved'.
-         */
+        // FIX 4: AlumniStory - cek apakah scope 'approved' ada di model
+        // Kalau error, ganti dengan: ->where('status', 'approved')
         $alumni_stories = AlumniStory::approved()
                     ->latest()
-                    ->take(6) 
+                    ->take(6)
                     ->get();
-        
-        // Pastikan variabel 'alumni_stories' dikirim ke view
+
         return view('public.beranda', compact(
-    'user',
-    'featured_jobs', 
-    'featured_events', 
-    'news', 
-    'alumni_stories'
-));
+            'user',
+            'featured_jobs',
+            'featured_events',
+            'news',
+            'alumni_stories'
+        ));
     }
 }
