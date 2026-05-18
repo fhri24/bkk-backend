@@ -90,6 +90,12 @@
             background: #eff6ff;
             color: #1d4ed8;
         }
+
+        .chart-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
     </style>
 @endsection
 
@@ -145,8 +151,12 @@
                 </div>
             </div>
 
-            <div class="bg-white p-8 rounded-[40px] shadow-2xl border border-slate-100 h-[360px]">
-                <canvas id="tracerChart" width="400" height="300"></canvas>
+            {{-- Chart Container - FIXED --}}
+            <div class="bg-white p-8 rounded-[40px] shadow-2xl border border-slate-100"
+                style="height: 360px; display: flex; align-items: center; justify-content: center;">
+                <div class="chart-wrapper">
+                    <canvas id="tracerChart"></canvas>
+                </div>
             </div>
         </div>
 
@@ -404,6 +414,17 @@
             @endphp
 
             const chartData = @json($chartData ?? $defaultChartData);
+            const total = Object.values(chartData).reduce((a, b) => a + b, 0);
+
+            // Kalau semua 0, pakai nilai dummy supaya donut tetap render
+            const displayData = total === 0 ? {
+                    'Bekerja': 1,
+                    'Kuliah': 1,
+                    'Wirausaha': 1,
+                    'Mencari Kerja': 1
+                } :
+                chartData;
+
             const labelsWithCounts = Object.entries(chartData).map(([label, value]) => `${label} (${value})`);
 
             new Chart(ctx, {
@@ -411,7 +432,7 @@
                 data: {
                     labels: labelsWithCounts,
                     datasets: [{
-                        data: Object.values(chartData),
+                        data: Object.values(displayData),
                         backgroundColor: ['#2563eb', '#9333ea', '#f59e0b', '#94a3b8'],
                         borderColor: '#ffffff',
                         borderWidth: 2,
@@ -426,7 +447,22 @@
                             position: 'bottom',
                             labels: {
                                 boxWidth: 12,
-                                padding: 16
+                                padding: 16,
+                                font: {
+                                    size: 11,
+                                    weight: 'bold'
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    if (total === 0) return ' Belum ada data';
+                                    const label = Object.keys(chartData)[context.dataIndex];
+                                    const value = Object.values(chartData)[context.dataIndex];
+                                    const pct = Math.round((value / total) * 100);
+                                    return ` ${label}: ${value} (${pct}%)`;
+                                }
                             }
                         }
                     }
