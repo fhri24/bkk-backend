@@ -141,16 +141,16 @@ class AuthController extends Controller
             $query->where(function ($q) use ($request, $nisnInput) {
                 $q->whereHas('role', fn($r) => $r->where('name', 'alumni'))
                     ->whereHas('student', function ($s) use ($request, $nisnInput) {
-                        // Cari dengan NISN persis
-                        $s->where('nisn', $nisnInput);
+    // ✅ Ganti 'nisn' jadi 'nis'
+    $s->where('nis', $nisnInput);
 
-                        if ($request->filled('graduation_year')) {
-                            $s->where('graduation_year', $request->graduation_year);
-                        }
-                        if ($request->filled('major')) {
-                            $s->where('major', $request->major);
-                        }
-                    });
+    if ($request->filled('graduation_year')) {
+        $s->where('graduation_year', $request->graduation_year);
+    }
+    if ($request->filled('major')) {
+        $s->where('major', $request->major);
+    }
+});
             })
 
                 // Login Admin & Perusahaan: pakai email
