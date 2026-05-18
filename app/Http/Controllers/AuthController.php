@@ -141,8 +141,11 @@ class AuthController extends Controller
             $query->where(function ($q) use ($request, $nisnInput) {
                 $q->whereHas('role', fn($r) => $r->where('name', 'alumni'))
                     ->whereHas('student', function ($s) use ($request, $nisnInput) {
-    // ✅ Ganti 'nisn' jadi 'nis'
-    $s->where('nis', $nisnInput);
+    // ✅ Cari di kolom nis ATAU nisn
+    $s->where(function($q) use ($nisnInput) {
+        $q->where('nis', $nisnInput)
+          ->orWhere('nisn', $nisnInput);
+    });
 
     if ($request->filled('graduation_year')) {
         $s->where('graduation_year', $request->graduation_year);
