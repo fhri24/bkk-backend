@@ -21,24 +21,28 @@
                         <p class="text-slate-800">{{ $student->user->email ?? '-' }}</p>
                     </div>
                     <div>
+                        <label class="text-sm font-medium text-slate-600">NIPD:</label>
+                        <p class="text-slate-800">{{ $student->nis ?? '-' }}</p>
+                    </div>
+                    <div>
                         <label class="text-sm font-medium text-slate-600">NISN:</label>
-                        <p class="text-slate-800">{{ $student->nis }}</p>
+                        <p class="text-slate-800">{{ $student->nisn ?? '-' }}</p>
                     </div>
                     <div>
                         <label class="text-sm font-medium text-slate-600">Jenis Kelamin:</label>
-                        <p class="text-slate-800">{{ $student->gender }}</p>
+                        <p class="text-slate-800">{{ $student->gender ?? '-' }}</p>
                     </div>
                     <div>
                         <label class="text-sm font-medium text-slate-600">Tempat/Tanggal Lahir:</label>
-                        <p class="text-slate-800">{{ $student->birth_info }}</p>
+                        <p class="text-slate-800">{{ $student->birth_info ?? '-' }}</p>
                     </div>
                     <div>
                         <label class="text-sm font-medium text-slate-600">Jurusan:</label>
-                        <p class="text-slate-800">{{ $student->major }}</p>
+                        <p class="text-slate-800">{{ $student->major ?? '-' }}</p>
                     </div>
                     <div>
                         <label class="text-sm font-medium text-slate-600">Tahun Lulus:</label>
-                        <p class="text-slate-800">{{ $student->graduation_year }}</p>
+                        <p class="text-slate-800">{{ $student->graduation_year ?? '-' }}</p>
                     </div>
                 </div>
             </div>
@@ -48,11 +52,11 @@
                 <div class="space-y-3">
                     <div>
                         <label class="text-sm font-medium text-slate-600">No HP:</label>
-                        <p class="text-slate-800">{{ $student->phone }}</p>
+                        <p class="text-slate-800">{{ $student->phone ?? '-' }}</p>
                     </div>
                     <div>
                         <label class="text-sm font-medium text-slate-600">Alamat:</label>
-                        <p class="text-slate-800">{{ $student->address }}</p>
+                        <p class="text-slate-800">{{ $student->address ?? '-' }}</p>
                     </div>
                     <div>
                         <label class="text-sm font-medium text-slate-600">CV File:</label>
@@ -65,7 +69,7 @@
                     <div>
                         <label class="text-sm font-medium text-slate-600">Foto Profil:</label>
                         @if($student->profile_picture)
-                            <img src="{{ asset('storage/' . $student->profile_picture) }}" alt="Foto Profil" class="w-20 h-20 rounded-full mt-2">
+                            <img src="{{ asset('storage/' . $student->profile_picture) }}" alt="Foto Profil" class="w-20 h-20 rounded-full mt-2 object-cover">
                         @else
                             <p class="text-slate-500">-</p>
                         @endif
@@ -76,7 +80,9 @@
     </div>
     
     <div class="text-center">
-        <a href="{{ route('admin.students.index') }}" class="bg-slate-600 text-white px-4 py-2 rounded-lg hover:bg-slate-700">Kembali ke Daftar</a>
+        <a href="{{ route('admin.students.index') }}" class="bg-slate-600 text-white px-4 py-2 rounded-lg hover:bg-slate-700">
+            Kembali ke Daftar
+        </a>
     </div>
 </div>
 @endsection

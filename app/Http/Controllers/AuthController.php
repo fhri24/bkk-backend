@@ -132,38 +132,33 @@ class AuthController extends Controller
             'password.required'      => 'Kata sandi wajib diisi.',
         ]);
 
-        // Normalisasi input NISN — hapus spasi, pastikan string
         $nisnInput = trim($request->nis);
 
         $user = User::where(function ($query) use ($request, $nisnInput) {
 
-            // Login Alumni: cari via relasi student dengan NISN
+            // Login Alumni: pakai NISN + tahun lulus + jurusan
             $query->where(function ($q) use ($request, $nisnInput) {
                 $q->whereHas('role', fn($r) => $r->where('name', 'alumni'))
-                    ->whereHas('student', function ($s) use ($request, $nisnInput) {
-                        // Cari dengan NISN persis
-                        $s->where('nisn', $nisnInput);
-
-                        if ($request->filled('graduation_year')) {
-                            $s->where('graduation_year', $request->graduation_year);
-                        }
-                        if ($request->filled('major')) {
-                            $s->where('major', $request->major);
-                        }
-                    });
+                  ->whereHas('student', function ($s) use ($request, $nisnInput) {
+                      // Pakai whereRaw untuk kompatibilitas PostgreSQL
+                      $s->whereRaw('"nisn" = ?', [$nisnInput]);
+                      if ($request->filled('graduation_year')) {
+                          $s->whereRaw('"graduation_year" = ?', [$request->graduation_year]);
+                      }
+                      if ($request->filled('major')) {
+                          $s->whereRaw('"major" = ?', [$request->major]);
+                      }
+                  });
             })
 
-                // Login Admin & Perusahaan: pakai email
-                ->orWhere(function ($q) use ($nisnInput) {
-                    $q->whereHas('role', fn($r) => $r->whereIn('name', [
-                        'super_admin',
-                        'admin_bkk',
-                        'kepala_bkk',
-                        'kepala_sekolah',
-                        'perusahaan',        // ← tambah ini
+            // Login Admin & Perusahaan: pakai email
+            ->orWhere(function ($q) use ($nisnInput) {
+                $q->whereHas('role', fn($r) => $r->whereIn('name', [
+                        'super_admin', 'admin_bkk', 'kepala_bkk', 'kepala_sekolah', 'perusahaan',
                     ]))
-                        ->where('email', $nisnInput);
-                });
+                  ->where('email', $nisnInput);
+            });
+
         })->first();
 
         if ($user && Hash::check($request->password, $user->password)) {
@@ -198,15 +193,15 @@ class AuthController extends Controller
 
         return match (true) {
             in_array($roleName, ['super_admin', 'admin_bkk', 'kepala_bkk', 'kepala_sekolah'])
-            => redirect()->intended(route('admin.dashboard')),
+                => redirect()->intended(route('admin.dashboard')),
             $roleName === 'alumni'
-            => redirect()->intended(route('alumni.home')),
+                => redirect()->intended(route('alumni.home')),
             $roleName === 'publik'
-            => redirect()->intended(route('publik.home')),
+                => redirect()->intended(route('publik.home')),
             $roleName === 'siswa'
-            => redirect()->intended(route('student.home')),
+                => redirect()->intended(route('student.home')),
             $roleName === 'perusahaan'
-            => redirect()->intended(route('company.dashboard')),
+                => redirect()->intended(route('company.dashboard')),
             default => redirect('/'),
         };
     }
@@ -229,4 +224,4 @@ class AuthController extends Controller
 
         return redirect('/');
     }
-}
+} 

@@ -53,9 +53,10 @@ class Student extends Model
         return $query->whereRaw('"alumni_flag" = true');
     }
 
+    // FIX: pakai whereRaw dengan string tunggal khusus PostgreSQL
     public function scopeActive($query)
     {
-        return $query->where('status', 'active');
+        return $query->whereRaw('"status" = \'active\'');
     }
 
     public function getFullNameAttribute($value)
@@ -72,4 +73,4 @@ class Student extends Model
     {
         $this->attributes['full_name'] = strtolower($value);
     }
-} 
+}
