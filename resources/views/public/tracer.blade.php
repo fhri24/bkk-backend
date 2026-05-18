@@ -100,15 +100,31 @@
 @endsection
 
 @section('content')
+
+    {{-- ===== HERO SECTION ===== --}}
+    <div class="relative bg-slate-900 overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=1920&q=80"
+                class="w-full h-full object-cover opacity-30" alt="">
+            <div class="absolute inset-0 bg-gradient-to-r from-blue-900/90 to-slate-900/90"></div>
+        </div>
+        <div class="container mx-auto px-6 py-20 relative z-10 text-center text-white">
+            <span
+                class="inline-block bg-blue-500/20 text-blue-300 text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full border border-blue-400/30 mb-5">
+                📊 BKK SMKN 1 Garut
+            </span>
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-3">Tracer Study & Laporan Karir</h1>
+            <p class="text-lg opacity-90">Sistem pelacakan jejak alumni untuk memetakan kualitas pendidikan dan kebutuhan
+                dunia industri.</p>
+        </div>
+    </div>
+
+    {{-- ===== MAIN CONTENT ===== --}}
     <div class="page-transition container mx-auto px-6 py-16">
 
-        {{-- Header & Statistik --}}
+        {{-- Statistik & Chart --}}
         <div class="grid lg:grid-cols-2 gap-12 items-center mb-20">
             <div>
-                <h2 class="text-4xl font-extrabold text-[#001f3f] mb-6">Tracer Study & <br />Laporan Karir</h2>
-                <p class="text-slate-500 text-lg leading-relaxed mb-8">Sistem pelacakan jejak alumni untuk memetakan kualitas
-                    pendidikan dan kebutuhan dunia industri.</p>
-
                 @auth
                     @if (in_array(auth()->user()->role->name ?? '', ['siswa', 'alumni']))
                         {{-- Flash success --}}
@@ -151,7 +167,7 @@
                 </div>
             </div>
 
-            {{-- Chart Container - FIXED --}}
+            {{-- Chart --}}
             <div class="bg-white p-8 rounded-[40px] shadow-2xl border border-slate-100"
                 style="height: 360px; display: flex; align-items: center; justify-content: center;">
                 <div class="chart-wrapper">
@@ -288,7 +304,7 @@
                             max="{{ date('Y-m-d') }}">
                     </div>
 
-                    {{-- 4. Kesesuaian Jurusan (hanya Bekerja & Wirausaha) --}}
+                    {{-- 4. Kesesuaian Jurusan --}}
                     <div id="keselarasanGroup" class="hidden">
                         <label class="block text-sm font-bold text-slate-700 mb-3">
                             Apakah sesuai dengan jurusan?
@@ -307,7 +323,7 @@
                         </div>
                     </div>
 
-                    {{-- 5. Pendapatan (hanya Bekerja & Wirausaha, opsional) --}}
+                    {{-- 5. Pendapatan --}}
                     <div id="pendapatanGroup" class="hidden">
                         <label class="block text-sm font-bold text-slate-700 mb-2">
                             Kisaran Pendapatan Bulanan
@@ -345,13 +361,11 @@
         </div>
     @endauth
 
-    {{-- MODAL 2: Survey DUDI --}}
 @endsection
 
 @section('extra_js')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // ── Modal functions ──
         function openTracerForm() {
             document.getElementById('tracerFormModal').classList.add('show');
             document.body.style.overflow = 'hidden';
@@ -362,7 +376,6 @@
             document.body.style.overflow = 'auto';
         }
 
-        // ── Kondisional field ──
         function handleStatusChange(status) {
             const instansiGroup = document.getElementById('instansiGroup');
             const instansiLabel = document.getElementById('instansiLabel');
@@ -370,7 +383,6 @@
             const keselarasanGroup = document.getElementById('keselarasanGroup');
             const pendapatanGroup = document.getElementById('pendapatanGroup');
 
-            // Sembunyikan semua dulu
             [instansiGroup, tglGroup, keselarasanGroup, pendapatanGroup]
             .forEach(el => el.classList.add('hidden'));
 
@@ -380,12 +392,10 @@
                 tglGroup.classList.remove('hidden');
                 keselarasanGroup.classList.remove('hidden');
                 pendapatanGroup.classList.remove('hidden');
-
             } else if (status === 'Kuliah') {
                 instansiLabel.textContent = 'Nama Perguruan Tinggi';
                 instansiGroup.classList.remove('hidden');
                 tglGroup.classList.remove('hidden');
-
             } else if (status === 'Wirausaha') {
                 instansiLabel.textContent = 'Nama Usaha / Bisnis';
                 instansiGroup.classList.remove('hidden');
@@ -393,10 +403,8 @@
                 keselarasanGroup.classList.remove('hidden');
                 pendapatanGroup.classList.remove('hidden');
             }
-            // 'Belum Bekerja' → tidak ada field tambahan
         }
 
-        // ── Chart ──
         window.addEventListener('load', function() {
             const canvas = document.getElementById('tracerChart');
             if (!canvas) return;
@@ -416,7 +424,6 @@
             const chartData = @json($chartData ?? $defaultChartData);
             const total = Object.values(chartData).reduce((a, b) => a + b, 0);
 
-            // Kalau semua 0, pakai nilai dummy supaya donut tetap render
             const displayData = total === 0 ? {
                     'Bekerja': 1,
                     'Kuliah': 1,
