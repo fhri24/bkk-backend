@@ -23,7 +23,6 @@ class Student extends Model
         'birth_info',
         'major',
         'graduation_year',
-        'gender',
         'phone',
         'address',
         'resume_url',
@@ -33,22 +32,25 @@ class Student extends Model
         'career_path'
     ];
 
-    // ✅ Relasi ke User
+    // FIX: cast boolean agar kompatibel dengan PostgreSQL
+    protected $casts = [
+        'alumni_flag' => 'boolean',
+    ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    // ✅ Relasi ke Job Applications
     public function jobApplications(): HasMany
     {
         return $this->hasMany(JobApplication::class, 'student_id', 'student_id');
     }
 
-    // ✅ Scope
+    // FIX: pakai whereRaw agar tidak error di PostgreSQL pooler
     public function scopeAlumniFilter($query)
     {
-        return $query->where('alumni_flag', true);
+        return $query->whereRaw('"alumni_flag" = true');
     }
 
     public function scopeActive($query)
@@ -56,7 +58,6 @@ class Student extends Model
         return $query->where('status', 'active');
     }
 
-    // ✅ Accessor
     public function getFullNameAttribute($value)
     {
         return ucwords($value);
@@ -67,9 +68,8 @@ class Student extends Model
         return $this->graduation_year . ' (' . ($this->alumni_flag ? 'Alumni' : 'Siswa Aktif') . ')';
     }
 
-    // ✅ Mutator
     public function setFullNameAttribute($value)
     {
         $this->attributes['full_name'] = strtolower($value);
     }
-}
+} 
