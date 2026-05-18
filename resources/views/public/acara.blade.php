@@ -9,7 +9,7 @@
         {{-- Background Image with Overlay --}}
         <div class="absolute inset-0">
             <img
-                src="https://images.unsplash.com/photo-1540575861501-7ad05823c95b?auto=format&fit=crop&w=1600&q=80"
+                src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1600&q=80"
                 class="w-full h-full object-cover opacity-30"
                 alt="Background"
             />
@@ -17,7 +17,7 @@
         </div>
 
         {{-- Hero Content --}}
-        <div class="relative z-10 text-center py-24 px-6">
+        <div class="relative z-10 text-center py-20 px-6">
             <span class="inline-block bg-blue-500/20 text-blue-300 text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full border border-blue-400/30 mb-5">
                 📅 Agenda BKK SMKN 1 Garut
             </span>
@@ -27,14 +27,7 @@
             <p class="text-slate-300 max-w-xl mx-auto text-base md:text-lg leading-relaxed">
                 Ikuti berbagai kegiatan pengembangan diri dan rekrutmen bersama mitra industri.
             </p>
-        </div>
-
-        {{-- Bottom Wave --}}
-        <div class="relative z-10">
-            <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full -mb-1">
-                <path d="M0 60L1440 60L1440 20C1200 60 960 0 720 20C480 40 240 0 0 20L0 60Z" fill="#f1f5f9"/>
-            </svg>
-        </div>
+        </div> 
     </div>
 
     {{-- ===== MAIN CONTENT ===== --}}
