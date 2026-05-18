@@ -7,88 +7,80 @@ use App\Models\Role;
 use App\Models\Company;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class UserSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // Ensure required roles exist (create if not)
         $superAdminRole = Role::firstOrCreate(['name' => 'super_admin'], ['description' => 'Super Administrator']);
-        $adminBkkRole = Role::firstOrCreate(['name' => 'admin_bkk'], ['description' => 'Admin BKK']);
-        $kepalaBkkRole = Role::firstOrCreate(['name' => 'kepala_bkk'], ['description' => 'Kepala BKK']);
-        $perusahaanRole = Role::firstOrCreate(['name' => 'perusahaan'], ['description' => 'Perusahaan']);
+        $adminBkkRole   = Role::firstOrCreate(['name' => 'admin_bkk'],   ['description' => 'Admin BKK']);
+        $kepalaBkkRole  = Role::firstOrCreate(['name' => 'kepala_bkk'],  ['description' => 'Kepala BKK']);
+        $perusahaanRole = Role::firstOrCreate(['name' => 'perusahaan'],  ['description' => 'Perusahaan']);
 
-        // 1. Create Super Admin
-        $superAdmin = User::firstOrCreate(
-            ['email' => 'superadmin@bkk.com'],
-            [
-                'name' => 'Super Admin',
-                'password' => Hash::make('password123'),
-                'role_id' => $superAdminRole->id,
-                'is_active' => true,
-            ]
-        );
+        if (!User::where('email', 'superadmin@bkk.com')->exists()) {
+            DB::table('users')->insert([
+                'name'       => 'Super Admin',
+                'email'      => 'superadmin@bkk.com',
+                'password'   => Hash::make('password123'),
+                'role_id'    => $superAdminRole->id,
+                'is_active'  => DB::raw('true'),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
 
-        // 2. Create Admin BKK
-        $adminBkk = User::firstOrCreate(
-            ['email' => 'admin@bkk.com'],
-            [
-                'name' => 'Admin BKK',
-                'password' => Hash::make('password123'),
-                'role_id' => $adminBkkRole->id,
-                'is_active' => true,
-            ]
-        );
+        if (!User::where('email', 'admin@bkk.com')->exists()) {
+            DB::table('users')->insert([
+                'name'       => 'Admin BKK',
+                'email'      => 'admin@bkk.com',
+                'password'   => Hash::make('password123'),
+                'role_id'    => $adminBkkRole->id,
+                'is_active'  => DB::raw('true'),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
 
-        // 3. Create Kepala BKK
-        $kepalaBkk = User::firstOrCreate(
-            ['email' => 'kepala@bkk.com'],
-            [
-                'name' => 'Kepala BKK',
-                'password' => Hash::make('password123'),
-                'role_id' => $kepalaBkkRole->id,
-                'is_active' => true,
-            ]
-        );
+        if (!User::where('email', 'kepala@bkk.com')->exists()) {
+            DB::table('users')->insert([
+                'name'       => 'Kepala BKK',
+                'email'      => 'kepala@bkk.com',
+                'password'   => Hash::make('password123'),
+                'role_id'    => $kepalaBkkRole->id,
+                'is_active'  => DB::raw('true'),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
 
-        // 4. Create Sample Company with Company Account
-        $companyUser = User::firstOrCreate(
-            ['email' => 'company@majujaya.com'],
-            [
-                'name' => 'PT. Maju Jaya',
-                'password' => Hash::make('password123'),
-                'role_id' => $perusahaanRole->id,
-                'is_active' => true,
-            ]
-        );
+        if (!User::where('email', 'company@majujaya.com')->exists()) {
+            $companyUserId = DB::table('users')->insertGetId([
+                'name'       => 'PT. Maju Jaya',
+                'email'      => 'company@majujaya.com',
+                'password'   => Hash::make('password123'),
+                'role_id'    => $perusahaanRole->id,
+                'is_active'  => DB::raw('true'),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
 
-        // Create company profile linked to user
-        Company::firstOrCreate(
-            ['user_id' => $companyUser->id],
-            [
-                'company_name' => 'PT. Maju Jaya',
-                'industry' => 'Technology',
-                'contact_person' => 'Budi Santoso',
-                'phone' => '021-123456',
-                'address' => 'Jakarta',
-                'website' => 'https://majujaya.com',
-                'is_verified' => true,
-            ]
-        );
+            if (!Company::where('user_id', $companyUserId)->exists()) {
+                DB::table('companies')->insert([
+                    'user_id'        => $companyUserId,
+                    'company_name'   => 'PT. Maju Jaya',
+                    'industry'       => 'Technology',
+                    'contact_person' => 'Budi Santoso',
+                    'phone'          => '021-123456',
+                    'address'        => 'Jakarta',
+                    'website'        => 'https://majujaya.com',
+                    'is_verified'    => DB::raw('true'),
+                    'created_at'     => now(),
+                    'updated_at'     => now(),
+                ]);
+            }
+        }
 
-        // Note: Students should register themselves through the registration page
-        // Alumni stories will be managed by admins
-
-        $this->command->info('Users seeded successfully!');
-        $this->command->info('Super Admin: superadmin@bkk.com (password: password123)');
-        $this->command->info('Admin BKK: admin@bkk.com (password: password123)');
-        $this->command->info('Kepala BKK: kepala@bkk.com (password: password123)');
-        $this->command->info('Company: company@majujaya.com (password: password123)');
-        $this->command->info('');
-        $this->command->info('Students can register at: http://localhost:8000/register');
-        $this->command->info('Alumni stories can be managed by admins in the admin dashboard');
+        $this->command->info('Seeding selesai!');
     }
 }
