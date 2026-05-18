@@ -5,36 +5,27 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\News;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class NewsController extends Controller
 {
-    /**
-     * Tampilan List Berita di Admin Panel
-     */
     public function index()
     {
         $news = News::latest()->get();
         return view('admin.news.index', compact('news'));
     }
 
-    /**
-     * Tampilan List Berita di Halaman Depan (Public/Student)
-     */
     public function index_student()
     {
-        // Mengambil berita yang dipublikasikan dengan pagination
-        $newsItems = News::where('is_published', true)
-                    ->latest()
-                    ->paginate(6);
+        $newsItems = News::whereRaw('"is_published" = true')
+            ->latest()
+            ->paginate(6);
 
         return view('public.berita', compact('newsItems'));
     }
 
-    /**
-     * Tampilan Form Tambah Berita (Admin)
-     */
     public function create()
     {
         return view('admin.news.create');
@@ -49,26 +40,29 @@ class NewsController extends Controller
             'image'   => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
         ]);
 
-        $data = $request->all();
-        // Generate Slug dari Title
-        $data['slug'] = Str::slug($request->title);
-        $data['author_id'] = auth()->id();
-        $data['excerpt'] = Str::limit(strip_tags($request->content), 150);
-        $data['published_at'] = now();
-        $data['is_published'] = true;
-
+        $imagePath = null;
         if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('news', 'public');
+            $imagePath = $request->file('image')->store('news', 'public');
         }
 
-        News::create($data);
+        // FIX: pakai DB::table insert langsung agar boolean tidak jadi integer
+        DB::table('news')->insert([
+            'title'        => $request->title,
+            'slug'         => Str::slug($request->title),
+            'author_id'    => auth()->id(),
+            'content'      => $request->content,
+            'excerpt'      => Str::limit(strip_tags($request->content), 150),
+            'tags'         => $request->tags,
+            'image'        => $imagePath,
+            'published_at' => now(),
+            'is_published' => DB::raw('true'),
+            'created_at'   => now(),
+            'updated_at'   => now(),
+        ]);
 
         return redirect()->route('admin.news.index')->with('success', 'Berita berhasil diterbitkan!');
     }
 
-    /**
-     * Tampilan Form Edit Berita (Admin)
-     */
     public function edit($id)
     {
         $news = News::findOrFail($id);
@@ -86,10 +80,14 @@ class NewsController extends Controller
             'image'   => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
         ]);
 
-        $data = $request->all();
-        // Update Slug jika judul berubah
-        $data['slug'] = Str::slug($request->title);
-        $data['excerpt'] = Str::limit(strip_tags($request->content), 150);
+        $data = [
+            'title'      => $request->title,
+            'slug'       => Str::slug($request->title),
+            'content'    => $request->content,
+            'excerpt'    => Str::limit(strip_tags($request->content), 150),
+            'tags'       => $request->tags,
+            'updated_at' => now(),
+        ];
 
         if ($request->hasFile('image')) {
             if ($news->image && Storage::disk('public')->exists($news->image)) {
@@ -98,28 +96,21 @@ class NewsController extends Controller
             $data['image'] = $request->file('image')->store('news', 'public');
         }
 
-        $news->update($data);
+        DB::table('news')->where('id', $id)->update($data);
 
         return redirect()->route('admin.news.index')->with('success', 'Berita berhasil diupdate!');
     }
 
-    /**
-     * Tampilan Detail Berita (Public/Student)
-     * Menggunakan slug untuk pencarian agar SEO Friendly dan tidak 404
-     */
     public function show($slug)
     {
-        // Cari berdasarkan slug, kalau tidak ada otomatis 404
         $news = News::where('slug', $slug)->firstOrFail();
 
-        // Ambil berita lain sebagai rekomendasi
         $relatedNews = News::where('id', '!=', $news->id)
-                            ->where('is_published', true)
-                            ->latest()
-                            ->take(2)
-                            ->get();
+            ->whereRaw('"is_published" = true')
+            ->latest()
+            ->take(2)
+            ->get();
 
-        // Mengarah ke file: resources/views/public/berita_detail.blade.php
         return view('public.berita_detail', compact('news', 'relatedNews'));
     }
 
