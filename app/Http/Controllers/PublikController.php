@@ -16,56 +16,21 @@ use App\Models\AlumniStory;
 
 class PublikController extends Controller
 {
-    /**
-     * Halaman Landing Page Utama
-     */
     public function beranda()
     {
-        $news = News::where('is_published', true)->latest()->take(3)->get();
-
-        $featured_jobs = Job::with('company')
-            ->latest()
-            ->take(3)
-            ->get();
-
-        $featured_events = Event::with('registrations')
-            ->where('is_published', true)
-            ->latest()
-            ->take(3)
-            ->get();
-
-        $alumni_stories = AlumniStory::where('status', 'approved')
-            ->latest()
-            ->take(6)
-            ->get();
-
-        $avatarColors = [
-            'from-blue-500 to-blue-700',
-            'from-indigo-500 to-indigo-700',
-            'from-violet-500 to-violet-700'
-        ];
-
-        return view('public.beranda', compact(
-            'news',
-            'featured_jobs',
-            'featured_events',
-            'alumni_stories',
-            'avatarColors'
-        ));
+        $news = News::whereRaw('"is_published" = true')->latest()->take(3)->get();
+        $featured_jobs = Job::with('company')->latest()->take(3)->get();
+        $featured_events = Event::with('registrations')->whereRaw('"is_published" = true')->latest()->take(3)->get();
+        $alumni_stories = AlumniStory::where('status', 'approved')->latest()->take(6)->get();
+        $avatarColors = ['from-blue-500 to-blue-700', 'from-indigo-500 to-indigo-700', 'from-violet-500 to-violet-700'];
+        return view('public.beranda', compact('news', 'featured_jobs', 'featured_events', 'alumni_stories', 'avatarColors'));
     }
 
-    /**
-     * Halaman List Lowongan (Publik)
-     */
     public function lowongan(Request $request)
     {
-        $query = Job::with(['company', 'major'])
-            ->where('approval_status', 'approved')
-            ->latest();
-
+        $query = Job::with(['company', 'major'])->where('approval_status', 'approved')->latest();
         if ($request->filled('search')) {
             $search = $request->search;
-
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
                     ->orWhereHas('company', function ($sq) use ($search) {
@@ -73,49 +38,27 @@ class PublikController extends Controller
                     });
             });
         }
-
         $jobs = $query->get();
         $majors = Major::all();
-
         $savedJobIds = [];
         if (Auth::check()) {
-            $savedJobIds = \App\Models\SavedJob::where('user_id', Auth::id())
-                ->pluck('job_id')
-                ->toArray();
+            $savedJobIds = \App\Models\SavedJob::where('user_id', Auth::id())->pluck('job_id')->toArray();
         }
-
         return view('public.lowongan', compact('jobs', 'majors', 'savedJobIds'));
     }
 
-    /**
-     * Detail Lowongan
-     */
     public function lowonganDetail($id)
     {
-        $job = Job::with('company')
-            ->where('approval_status', 'approved')
-            ->findOrFail($id);
-
-        $similarJobs = Job::with('company')
-            ->where('job_id', '!=', $id)
-            ->latest()
-            ->take(3)
-            ->get();
-
+        $job = Job::with('company')->where('approval_status', 'approved')->findOrFail($id);
+        $similarJobs = Job::with('company')->where('job_id', '!=', $id)->latest()->take(3)->get();
         return view('public.lowongan-detail', compact('job', 'similarJobs'));
     }
 
-    /**
-     * Proses Lamaran Kerja
-     */
     public function applyJob(Request $request, $id)
     {
         if (!Auth::check()) {
-            return redirect()
-                ->route('login')
-                ->with('error', 'Silakan login terlebih dahulu untuk melamar.');
+            return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu untuk melamar.');
         }
-
         $request->validate([
             'full_name'    => 'required|string|max:255',
             'email'        => 'required|email',
@@ -123,113 +66,57 @@ class PublikController extends Controller
             'cv_file'      => 'required|mimes:pdf|max:5120',
             'cover_letter' => 'nullable|string',
         ]);
-
         return back()->with('success', 'Lamaran Anda berhasil dikirim!');
     }
 
-    /**
-     * Detail Perusahaan
-     */
     public function companyDetail($id)
     {
         $company = Company::findOrFail($id);
-
-        $activeJobs = Job::where('company_id', $id)
-            ->latest()
-            ->get();
-
+        $activeJobs = Job::where('company_id', $id)->latest()->get();
         return view('public.company-detail', compact('company', 'activeJobs'));
     }
 
-    /**
-     * Berita
-     */
     public function berita()
     {
-        $newsItems = News::where('is_published', true)
-            ->latest()
-            ->paginate(6);
-
+        $newsItems = News::whereRaw('"is_published" = true')->latest()->paginate(6);
         return view('public.berita', compact('newsItems'));
     }
 
-    /**
-     * Detail Berita
-     */
     public function beritaDetail($slug)
     {
         $news = News::where('slug', $slug)->firstOrFail();
-
-        $relatedNews = News::where('id', '!=', $news->id)
-            ->where('is_published', true)
-            ->latest()
-            ->take(2)
-            ->get();
-
+        $relatedNews = News::where('id', '!=', $news->id)->whereRaw('"is_published" = true')->latest()->take(2)->get();
         return view('public.berita-detail', compact('news', 'relatedNews'));
     }
 
-    /**
-     * Acara
-     */
     public function acara()
     {
-        $events = Event::where('is_published', true)
-            ->latest()
-            ->paginate(10);
-
+        $events = Event::whereRaw('"is_published" = true')->latest()->paginate(10);
         return view('public.acara', compact('events'));
     }
 
-    /**
-     * Detail Acara
-     */
     public function acaraDetail($id)
     {
-        $event = Event::with('registrations')
-            ->where('is_published', true)
-            ->findOrFail($id);
-
-        $relatedEvents = Event::where('is_published', true)
-            ->where('id', '!=', $id)
-            ->where('start_date', '>=', now())
-            ->take(3)
-            ->get();
-
+        $event = Event::with('registrations')->whereRaw('"is_published" = true')->findOrFail($id);
+        $relatedEvents = Event::whereRaw('"is_published" = true')->where('id', '!=', $id)->where('start_date', '>=', now())->take(3)->get();
         return view('public.acara-detail', compact('event', 'relatedEvents'));
     }
 
-    /**
-     * Simpan Pendaftaran Event
-     */
     public function storeEventRegistration(Request $request, $id)
     {
-        $event = Event::where('is_published', true)->findOrFail($id);
-
+        $event = Event::whereRaw('"is_published" = true')->findOrFail($id);
         $validated = $request->validate([
             'name'        => 'required|string|max:255',
             'email'       => 'required|email|max:255',
             'phone'       => 'required|string|max:20',
             'institution' => 'nullable|string|max:255',
         ]);
-
         $eventId = $event->slug;
-
-        $existing = EventRegistration::where('event_id', $eventId)
-            ->where('email', $validated['email'])
-            ->first();
-
-        if ($existing) {
-            return back()->with('error', 'Email ini sudah terdaftar!');
-        }
-
-        if (
-            $event->capacity &&
-            EventRegistration::where('event_id', $eventId)->count() >= $event->capacity
-        ) {
+        $existing = EventRegistration::where('event_id', $eventId)->where('email', $validated['email'])->first();
+        if ($existing) return back()->with('error', 'Email ini sudah terdaftar!');
+        if ($event->capacity && EventRegistration::where('event_id', $eventId)->count() >= $event->capacity) {
             return back()->with('error', 'Kuota pendaftaran penuh!');
         }
-
         EventRegistration::create([
             'event_id'      => $eventId,
             'name'          => $validated['name'],
@@ -239,14 +126,9 @@ class PublikController extends Controller
             'status'        => 'registered',
             'registered_at' => now(),
         ]);
-
         return back()->with('registration_success', 'Pendaftaran berhasil!');
     }
 
-    /**
-     * Tracer Study — PERBAIKAN:
-     * - Tambah $chartData yang sebelumnya tidak dikirim ke view (bug chart kosong)
-     */
     public function tracer()
     {
         $chartData = [
@@ -255,42 +137,26 @@ class PublikController extends Controller
             'Wirausaha'     => TracerStudy::where('status_saat_ini', 'Wirausaha')->count(),
             'Mencari Kerja' => TracerStudy::where('status_saat_ini', 'Belum Bekerja')->count(),
         ];
-
         return view('public.tracer', compact('chartData'));
     }
 
     public function tracerReport()
     {
-        // Get all tracer study data
         $tracerStudies = TracerStudy::with('student')->get();
-
-        // Prepare chart data based on status_saat_ini
         $chartData = [
-            'Bekerja' => $tracerStudies->where('status_saat_ini', 'Bekerja')->count(),
-            'Kuliah' => $tracerStudies->where('status_saat_ini', 'Kuliah')->count(),
-            'Wirausaha' => $tracerStudies->where('status_saat_ini', 'Wirausaha')->count(),
+            'Bekerja'       => $tracerStudies->where('status_saat_ini', 'Bekerja')->count(),
+            'Kuliah'        => $tracerStudies->where('status_saat_ini', 'Kuliah')->count(),
+            'Wirausaha'     => $tracerStudies->where('status_saat_ini', 'Wirausaha')->count(),
             'Mencari Kerja' => $tracerStudies->where('status_saat_ini', 'Belum Bekerja')->count(),
         ];
-
-        // Get statistics
-        $totalRespondents = $tracerStudies->count();
-        $workingPercentage = $totalRespondents > 0 ? round(($chartData['Bekerja'] / $totalRespondents) * 100) : 0;
+        $totalRespondents       = $tracerStudies->count();
+        $workingPercentage      = $totalRespondents > 0 ? round(($chartData['Bekerja'] / $totalRespondents) * 100) : 0;
         $entrepreneurPercentage = $totalRespondents > 0 ? round(($chartData['Wirausaha'] / $totalRespondents) * 100) : 0;
-
-        // Get alignment data (keselarasan_jurusan)
         $alignmentData = [
-            'Sesuai' => $tracerStudies->where('keselarasan_jurusan', 'Sesuai')->count(),
+            'Sesuai'       => $tracerStudies->where('keselarasan_jurusan', 'Sesuai')->count(),
             'Tidak Sesuai' => $tracerStudies->where('keselarasan_jurusan', 'Tidak Sesuai')->count(),
         ];
-
-        return view('public.tracer-report', compact(
-            'tracerStudies',
-            'chartData',
-            'totalRespondents',
-            'workingPercentage',
-            'entrepreneurPercentage',
-            'alignmentData'
-        ));
+        return view('public.tracer-report', compact('tracerStudies', 'chartData', 'totalRespondents', 'workingPercentage', 'entrepreneurPercentage', 'alignmentData'));
     }
 
     public function tracerIndustry()
@@ -298,14 +164,6 @@ class PublikController extends Controller
         return view('public.tracer-industri');
     }
 
-    /**
-     * Simpan Tracer — PERBAIKAN:
-     * - Tambah validasi field lengkap sesuai migration
-     * - Fix student_id: $student->id → $student->student_id
-     * - Ganti create() → updateOrCreate() agar tidak dobel
-     * - Fix nama field: company → nama_instansi
-     * - Hapus field 'position' yang tidak ada di database
-     */
     public function storeTracer(Request $request)
     {
         $request->validate([
@@ -315,22 +173,12 @@ class PublikController extends Controller
             'keselarasan_jurusan' => 'nullable|in:Sesuai,Tidak Sesuai',
             'pendapatan_bulanan'  => 'nullable|numeric|min:0',
         ]);
-
         $user = Auth::user();
-
-        if (!in_array($user->role->name, ['siswa', 'alumni'])) {
-            return back()->with('error', 'Akses tidak diizinkan.');
-        }
-
+        if (!in_array($user->role->name, ['siswa', 'alumni'])) return back()->with('error', 'Akses tidak diizinkan.');
         $student = Student::where('user_id', $user->id)->first();
-
-        if (!$student) {
-            return back()->with('error', 'Data profil tidak ditemukan.');
-        }
-
-        // updateOrCreate: update jika sudah pernah isi, insert jika belum
+        if (!$student) return back()->with('error', 'Data profil tidak ditemukan.');
         TracerStudy::updateOrCreate(
-            ['student_id' => $student->student_id], // ← fix: pakai student_id bukan id
+            ['student_id' => $student->student_id],
             [
                 'status_saat_ini'     => $request->status_saat_ini,
                 'nama_instansi'       => $request->nama_instansi,
@@ -339,65 +187,34 @@ class PublikController extends Controller
                 'pendapatan_bulanan'  => $request->pendapatan_bulanan,
             ]
         );
-
         return back()->with('success', 'Data Tracer Study berhasil disimpan. Terima kasih!');
     }
 
-    /**
-     * Halaman Panduan Pendaftaran Aplikasi BKK (Statis Langkah 1-4)
-     */
     public function tutorial()
     {
-        // Mengembalikan fungsi aslinya untuk membuka halaman panduan pendaftaran
         return view('public.tutorial');
     }
 
-    /**
-     * Halaman List & Filter Tips & Tricks Karir (Fitur Baru)
-     */
     public function tips(Request $request)
     {
         $query = \App\Models\Tip::published();
-
-        if ($request->filled('kategori')) {
-            $query->where('kategori', $request->kategori);
-        }
-
+        if ($request->filled('kategori')) $query->where('kategori', $request->kategori);
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
-                $q->where('judul', 'like', '%' . $request->search . '%')
-                    ->orWhere('ringkasan', 'like', '%' . $request->search . '%');
+                $q->where('judul', 'like', '%' . $request->search . '%')->orWhere('ringkasan', 'like', '%' . $request->search . '%');
             });
         }
-
-        $tips         = $query->orderBy('urutan')->orderByDesc('created_at')->paginate(9)->withQueryString();
-        $featured     = \App\Models\Tip::published()->featured()->orderBy('urutan')->get();
-        $kategoriList = \App\Models\Tip::kategoriList();
-
-        $kategoriCount = \App\Models\Tip::published()
-            ->selectRaw('kategori, count(*) as total')
-            ->groupBy('kategori')
-            ->pluck('total', 'kategori');
-
+        $tips          = $query->orderBy('urutan')->orderByDesc('created_at')->paginate(9)->withQueryString();
+        $featured      = \App\Models\Tip::published()->featured()->orderBy('urutan')->get();
+        $kategoriList  = \App\Models\Tip::kategoriList();
+        $kategoriCount = \App\Models\Tip::published()->selectRaw('kategori, count(*) as total')->groupBy('kategori')->pluck('total', 'kategori');
         return view('public.tips', compact('tips', 'featured', 'kategoriList', 'kategoriCount'));
     }
 
-    /**
-     * Halaman Detail Artikel Tips Karir (Fitur Baru)
-     */
     public function tipsDetail($slug)
     {
-        // Cari artikel berdasarkan slug dan pastikan statusnya sudah di-publish
         $tip = \App\Models\Tip::published()->where('slug', $slug)->firstOrFail();
-
-        // Ambil artikel terkait di kategori yang sama untuk rekomendasi bacaan di sidebar/bawah
-        $relatedTips = \App\Models\Tip::published()
-            ->where('id', '!=', $tip->id)
-            ->where('kategori', $tip->kategori)
-            ->latest()
-            ->take(3)
-            ->get();
-
+        $relatedTips = \App\Models\Tip::published()->where('id', '!=', $tip->id)->where('kategori', $tip->kategori)->latest()->take(3)->get();
         return view('public.tips-detail', compact('tip', 'relatedTips'));
     }
 }
