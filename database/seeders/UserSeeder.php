@@ -150,7 +150,6 @@ class UserSeeder extends Seeder
                 ]);
             }
         }
->>>>>>> be78593ee1f26a5efb19b9484dd2a64eeac87688
 
         $this->command->info('Seeding selesai!');
     }
