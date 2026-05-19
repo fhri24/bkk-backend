@@ -74,11 +74,11 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="md:col-span-2">
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-3">Nama Lengkap *</label>
-                            <input name="nama" type="text" placeholder="Nama Lengkap sesuai Ijazah" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" required />
+                            <input name="nama" type="text" value="{{ old('nama', $authStudent->full_name ?? '') }}" placeholder="Nama Lengkap sesuai Ijazah" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" required />
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-3">NIK *</label>
-                            <input name="nik" type="text" placeholder="16 Digit Nomor Induk Kependudukan" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" required />
+                            <input name="nik" type="text" value="{{ old('nik', $authStudent->nis ?? '') }}" placeholder="16 Digit Nomor Induk Kependudukan" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" required />
                         </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div>
@@ -87,20 +87,20 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-3">Tanggal Lahir</label>
-                                <input name="tgl_lahir" type="date" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" />
+                                <input name="tgl_lahir" type="date" value="{{ old('tgl_lahir') }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" />
                             </div>
                         </div>
                         <div class="md:col-span-2">
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-3">Alamat Lengkap</label>
-                            <textarea name="alamat" placeholder="Alamat Domisili Saat Ini" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 h-20"></textarea>
+                            <textarea name="alamat" placeholder="Alamat Domisili Saat Ini" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 h-20">{{ old('alamat', $authStudent->address ?? '') }}</textarea>
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-3">No. HP / WhatsApp Aktif *</label>
-                            <input name="telepon" type="tel" placeholder="Contoh: 08123456789" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" required />
+                            <input name="telepon" type="tel" value="{{ old('telepon', $authStudent->phone ?? '') }}" placeholder="Contoh: 08123456789" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" required />
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-3">Email (Aktif) *</label>
-                            <input name="email" type="email" placeholder="Alamat Email Aktif" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" required />
+                            <input name="email" type="email" value="{{ old('email', auth()->check() ? auth()->user()->email : '') }}" placeholder="Alamat Email Aktif" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" required />
                         </div>
                     </div>
                 </div>
@@ -110,14 +110,14 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-3">Tahun Lulus *</label>
-                            <input name="tahun_lulus" type="number" placeholder="Contoh: 2024" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" required />
+                            <input name="tahun_lulus" type="number" value="{{ old('tahun_lulus', $authStudent->graduation_year ?? '') }}" placeholder="Contoh: 2024" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" required />
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-3">Konsentrasi Keahlian / Jurusan *</label>
                             <select name="jurusan" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" required>
                                 <option value="">Pilih Jurusan</option>
                                 @foreach($majors as $major)
-                                    <option value="{{ $major->name }}" {{ old('jurusan') == $major->name ? 'selected' : '' }}>{{ $major->name }}</option>
+                                    <option value="{{ $major->name }}" {{ (old('jurusan', $authStudent->major ?? '') == $major->name) ? 'selected' : '' }}>{{ $major->name }}</option>
                                 @endforeach
                             </select>
                         </div>
