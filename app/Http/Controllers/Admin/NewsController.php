@@ -37,7 +37,7 @@ class NewsController extends Controller
             'title'   => 'required|string|max:255',
             'content' => 'required',
             'tags'    => 'nullable|string',
-            'image'   => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+            'image'   => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         $imagePath = null;
@@ -45,7 +45,6 @@ class NewsController extends Controller
             $imagePath = $request->file('image')->store('news', 'public');
         }
 
-        // FIX: pakai DB::table insert langsung agar boolean tidak jadi integer
         DB::table('news')->insert([
             'title'        => $request->title,
             'slug'         => Str::slug($request->title),
@@ -77,7 +76,7 @@ class NewsController extends Controller
             'title'   => 'required|string|max:255',
             'content' => 'required',
             'tags'    => 'nullable|string',
-            'image'   => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+            'image'   => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         $data = [
