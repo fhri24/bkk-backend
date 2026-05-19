@@ -130,7 +130,7 @@
                     </div>
 
                     {{-- Tahun Lulus --}}
-                    <div class="space-y-1">
+                    <!-- <div class="space-y-1">
                         <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-3">
                             📅 Tahun Lulus
                         </label>
@@ -144,10 +144,10 @@
                                 </option>
                             @endforeach
                         </select>
-                    </div>
+                    </div> -->
 
                     {{-- Jurusan --}}
-                    <div class="space-y-1">
+                    <!-- <div class="space-y-1">
                         <label class="block text-xs font-extrabold text-slate-600 uppercase tracking-widest mb-3">
                             🎓 Jurusan
                         </label>
@@ -160,7 +160,7 @@
                                 </option>
                             @endforeach
                         </select>
-                    </div>
+                    </div> -->
 
                     {{-- Kata Sandi --}}
                     <div class="space-y-1">
