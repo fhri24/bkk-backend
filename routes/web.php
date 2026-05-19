@@ -292,9 +292,16 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
         Route::delete('/{id}', [AdminEventRegistrationController::class, 'destroy'])->name('destroy');
     });
 
+    // SEKSI STUDENTS: Ditambahkan Route Hapus Grup & Hapus Satuan
     Route::prefix('students')->name('students.')->group(function () {
         Route::get('/', [AdminStudentController::class, 'index'])->name('index');
         Route::post('/import', [AdminStudentController::class, 'import'])->name('import');
+        
+        // Hapus massal grup wajib ditaruh di atas route {id}
+        Route::delete('/destroy-by-major', [AdminStudentController::class, 'destroyByMajor'])->name('destroy.by.major');
+        Route::delete('/destroy-by-year', [AdminStudentController::class, 'destroyByYear'])->name('destroy.by.year');
+        
+        Route::delete('/{id}', [AdminStudentController::class, 'destroy'])->name('destroy');
         Route::get('/{id}', [AdminStudentController::class, 'show'])->name('show');
     });
 
@@ -370,4 +377,4 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
             'link'  => route('admin.users.index'),
         ]));
     })->name('notifications');
-});
+}); 

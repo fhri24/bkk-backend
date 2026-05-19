@@ -530,21 +530,7 @@
                                 </div>
                             </div>
                         </div>
-                    @endif
-
-                    @if (session('success'))
-                        <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6 flex items-center">
-                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
-                            <p class="text-green-700">{{ session('success') }}</p>
-                        </div>
-                    @endif
-
-                    @if (session('error'))
-                        <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 flex items-center">
-                            <i class="fas fa-exclamation-circle text-red-500 mr-3"></i>
-                            <p class="text-red-700">{{ session('error') }}</p>
-                        </div>
-                    @endif
+                    @endif 
 
                     @yield('content')
                 </div>
