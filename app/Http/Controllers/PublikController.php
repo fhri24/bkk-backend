@@ -18,12 +18,66 @@ class PublikController extends Controller
 {
     public function beranda()
     {
+        // ── Berita, Lowongan, Acara, Alumni Stories (Data Utama) ──
         $news = News::whereRaw('"is_published" = true')->latest()->take(3)->get();
-        $featured_jobs = Job::with('company')->latest()->take(3)->get();
-        $featured_events = Event::with('registrations')->whereRaw('"is_published" = true')->latest()->take(3)->get();
-        $alumni_stories = AlumniStory::where('status', 'approved')->latest()->take(6)->get();
-        $avatarColors = ['from-blue-500 to-blue-700', 'from-indigo-500 to-indigo-700', 'from-violet-500 to-violet-700'];
-        return view('public.beranda', compact('news', 'featured_jobs', 'featured_events', 'alumni_stories', 'avatarColors'));
+
+        $featured_jobs = Job::with('company')
+            ->where('approval_status', 'approved')
+            ->latest()
+            ->take(3)
+            ->get();
+
+        $featured_events = Event::with('registrations')
+            ->whereRaw('"is_published" = true')
+            ->latest()
+            ->take(3)
+            ->get();
+
+        $alumni_stories = AlumniStory::where('status', 'approved')
+            ->latest()
+            ->take(6)
+            ->get();
+
+        $avatarColors = [
+            'from-blue-500 to-blue-700',
+            'from-indigo-500 to-indigo-700',
+            'from-violet-500 to-violet-700',
+        ];
+
+        // ── STAT CARDS — Data Real ──
+
+        // 1. Alumni Terserap: yang status tracer = Bekerja atau Wirausaha
+        $alumniTerserap = \App\Models\TracerStudy::whereIn('status_saat_ini', ['Bekerja', 'Wirausaha'])->count();
+
+        // 2. Tingkat Penyaluran: (Bekerja + Wirausaha) / total yang isi tracer × 100%
+        $totalTracer = \App\Models\TracerStudy::count();
+        $tingkatPenyaluran = $totalTracer > 0
+            ? round(($alumniTerserap / $totalTracer) * 100)
+            : 0;
+
+        // 3. Lowongan Aktif: approved + expired_at belum lewat
+        $lowonganAktif = Job::where('approval_status', 'approved')
+            ->where('expired_at', '>=', now())
+            ->count();
+
+        // 4. MoU Industri: jumlah perusahaan terdaftar
+        $totalPerusahaan = \App\Models\Company::count();
+
+        // School profile (untuk keperluan footer/informasi dinamis di beranda)
+        $schoolProfile = \App\Models\SchoolProfile::first();
+
+        return view('public.beranda', compact(
+            'news',
+            'featured_jobs',
+            'featured_events',
+            'alumni_stories',
+            'avatarColors',
+            'alumniTerserap',
+            'tingkatPenyaluran',
+            'lowonganAktif',
+            'totalPerusahaan',
+            'schoolProfile'
+        ));
     }
 
     public function lowongan(Request $request)

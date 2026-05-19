@@ -243,22 +243,43 @@
 
     <section class="container mx-auto px-6 -mt-16 relative z-20">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+
+            {{-- 1. Alumni Terserap --}}
             <div class="bg-white p-8 rounded-2xl shadow-xl text-center border border-slate-100 stat-card">
-                <div class="text-4xl font-extrabold text-blue-600 mb-2">1.2K+</div>
+                <div class="text-4xl font-extrabold text-blue-600 mb-2">
+                    {{ $alumniTerserap > 999 ? number_format($alumniTerserap / 1000, 1) . 'K+' : $alumniTerserap . '+' }}
+                </div>
                 <div class="text-slate-500 font-bold text-xs uppercase tracking-wider">Alumni Terserap</div>
+                <div class="text-[10px] text-slate-400 mt-1">Bekerja & Wirausaha</div>
             </div>
+
+            {{-- 2. Tingkat Penyaluran --}}
             <div class="bg-white p-8 rounded-2xl shadow-xl text-center border border-slate-100 stat-card">
-                <div class="text-4xl font-extrabold text-blue-600 mb-2">85%</div>
+                <div class="text-4xl font-extrabold text-blue-600 mb-2">
+                    {{ $tingkatPenyaluran }}%
+                </div>
                 <div class="text-slate-500 font-bold text-xs uppercase tracking-wider">Tingkat Penyaluran</div>
+                <div class="text-[10px] text-slate-400 mt-1">Berdasarkan data tracer</div>
             </div>
+
+            {{-- 3. Lowongan Aktif --}}
             <div class="bg-white p-8 rounded-2xl shadow-xl text-center border border-slate-100 stat-card">
-                <div class="text-4xl font-extrabold text-blue-600 mb-2">150+</div>
-                <div class="text-slate-500 font-bold text-xs uppercase tracking-wider">Lowongan Baru</div>
+                <div class="text-4xl font-extrabold text-blue-600 mb-2">
+                    {{ $lowonganAktif }}+
+                </div>
+                <div class="text-slate-500 font-bold text-xs uppercase tracking-wider">Lowongan Aktif</div>
+                <div class="text-[10px] text-slate-400 mt-1">Masih tersedia & terbuka</div>
             </div>
+
+            {{-- 4. MoU Industri --}}
             <div class="bg-white p-8 rounded-2xl shadow-xl text-center border border-slate-100 stat-card">
-                <div class="text-4xl font-extrabold text-blue-600 mb-2">45</div>
+                <div class="text-4xl font-extrabold text-blue-600 mb-2">
+                    {{ $totalPerusahaan }}
+                </div>
                 <div class="text-slate-500 font-bold text-xs uppercase tracking-wider">MoU Industri</div>
+                <div class="text-[10px] text-slate-400 mt-1">Perusahaan terdaftar</div>
             </div>
+
         </div>
     </section>
 
@@ -633,7 +654,7 @@
                 <p class="text-blue-100 mb-12 max-w-2xl mx-auto text-lg leading-relaxed">Daftarkan diri Anda sebagai alumni
                     untuk mendapatkan notifikasi lowongan terbaru yang sesuai dengan jurusan Anda.</p>
                 <div class="flex flex-col sm:flex-row justify-center gap-4 items-center">
-                   @auth
+                    @auth
                         <a href="{{ route('student.home') }}"
                             class="inline-flex items-center justify-center gap-2 bg-white text-[#1e3a8a] px-10 py-4 rounded-full font-semibold shadow-2xl hover:shadow-[0_25px_75px_rgba(15,23,42,0.18)] transition transform hover:-translate-y-0.5 active:translate-y-0">Dashboard</a>
                     @else
@@ -642,7 +663,8 @@
                             Sebagai Alumni</a>
                     @endauth
                     <a href="{{ route('public.tutorial') }}"
-                        class="inline-flex items-center justify-center gap-2 bg-white text-[#1e3a8a] px-10 py-4 rounded-full font-semibold shadow-2xl hover:shadow-[0_25px_75px_rgba(15,23,42,0.18)] transition transform hover:-translate-y-0.5 active:translate-y-0">Tutorial Pendaftaran</a>
+                        class="inline-flex items-center justify-center gap-2 bg-white text-[#1e3a8a] px-10 py-4 rounded-full font-semibold shadow-2xl hover:shadow-[0_25px_75px_rgba(15,23,42,0.18)] transition transform hover:-translate-y-0.5 active:translate-y-0">Tutorial
+                        Pendaftaran</a>
                 </div>
             </div>
         </div>
