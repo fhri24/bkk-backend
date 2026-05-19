@@ -156,7 +156,8 @@ class PublikController extends Controller
             'Sesuai'       => $tracerStudies->where('keselarasan_jurusan', 'Sesuai')->count(),
             'Tidak Sesuai' => $tracerStudies->where('keselarasan_jurusan', 'Tidak Sesuai')->count(),
         ];
-        return view('public.tracer-report', compact('tracerStudies', 'chartData', 'totalRespondents', 'workingPercentage', 'entrepreneurPercentage', 'alignmentData'));
+        $majors = Major::orderBy('name')->get();
+        return view('public.tracer-report', compact('tracerStudies', 'chartData', 'totalRespondents', 'workingPercentage', 'entrepreneurPercentage', 'alignmentData', 'majors'));
     }
 
     public function tracerIndustry()
