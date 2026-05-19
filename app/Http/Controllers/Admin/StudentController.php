@@ -15,7 +15,7 @@ class StudentController extends Controller
     public function index(Request $request)
     {
         // Menggunakan scope bawaan model Anda yaitu alumniFilter()
-        $query = Student::with('user')->alumniFilter()->latest();
+        $query = Student::with('user')->whereRaw('"alumni_flag" = true')->orderBy('full_name', 'asc');
 
         if ($request->filled('year')) {
             $query->where('graduation_year', $request->year);
