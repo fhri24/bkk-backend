@@ -136,17 +136,20 @@ class AuthController extends Controller
 
         $user = User::where(function ($query) use ($request, $nisnInput) {
 
-            // Login Alumni: pakai NISN + tahun lulus + jurusan
+            // Login Alumni / Siswa: pakai NISN/NIS + tahun lulus + jurusan
             $query->where(function ($q) use ($request, $nisnInput) {
-                $q->whereHas('role', fn($r) => $r->where('name', 'alumni'))
+                $q->whereHas('role', fn($r) => $r->whereIn('name', ['alumni', 'siswa']))
                   ->whereHas('student', function ($s) use ($request, $nisnInput) {
-                      // Pakai whereRaw untuk kompatibilitas PostgreSQL
-                      $s->whereRaw('"nisn" = ?', [$nisnInput]);
+                      $s->where(function ($inner) use ($nisnInput) {
+                          $inner->where('nisn', $nisnInput)
+                                ->orWhere('nis', $nisnInput);
+                      });
+
                       if ($request->filled('graduation_year')) {
-                          $s->whereRaw('"graduation_year" = ?', [$request->graduation_year]);
+                          $s->where('graduation_year', $request->graduation_year);
                       }
                       if ($request->filled('major')) {
-                          $s->whereRaw('"major" = ?', [$request->major]);
+                          $s->where('major', $request->major);
                       }
                   });
             })
