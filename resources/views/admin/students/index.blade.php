@@ -5,7 +5,7 @@
 
 @section('content')
 
-    {{-- FIX 2: Alert Success / Error Terpadu (Mencegah Notif Dobel) --}}
+    {{-- Alert Success / Error --}}
     @if (session('success'))
         <div
             class="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 flex items-center gap-2 shadow-sm animate-fade-in">
@@ -20,9 +20,10 @@
         </div>
     @endif
 
-    {{-- ================= WIDGET CARDS SUMMARY & MASS DELETE ================= --}}
+    {{-- WIDGET CARDS SUMMARY --}}
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        {{-- Grup Ringkasan Per Jurusan --}}
+
+        {{-- Ringkasan Per Jurusan --}}
         <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
             <div class="flex items-center justify-between mb-4">
                 <h4 class="text-sm font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
@@ -40,7 +41,6 @@
                                 class="font-semibold text-slate-800 text-sm bg-white border border-slate-200 w-10 h-8 flex items-center justify-center rounded-md shadow-sm">{{ $sm->major }}</span>
                             <span class="text-xs font-medium text-slate-500">{{ $sm->total }} Alumni</span>
                         </div>
-                        {{-- Form Hapus Grup Jurusan --}}
                         <form action="{{ route('admin.students.destroy.by.major') }}" method="POST"
                             onsubmit="return confirm('APAKAH ANDA YAKIN? Semua data alumni dan akun pengguna untuk JURUSAN [{{ $sm->major }}] akan dihapus permanen dari sistem BKK!')">
                             @csrf
@@ -58,13 +58,13 @@
             </div>
         </div>
 
-        {{-- Grup Ringkasan Per Angkatan --}}
+        {{-- Ringkasan Per Tahun Lulus (FIX: ganti dari "Angkatan") --}}
         <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
             <div class="flex items-center justify-between mb-4">
                 <h4 class="text-sm font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
-                    <i class="fas fa-calendar-alt text-slate-500"></i> Ringkasan Per Angkatan
+                    <i class="fas fa-calendar-alt text-slate-500"></i> Ringkasan Per Tahun Lulus
                 </h4>
-                <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-md font-medium">Total Angkatan:
+                <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-md font-medium">Total Tahun Lulus:
                     {{ $summaryByYear->count() }}</span>
             </div>
             <div class="space-y-2 max-h-48 overflow-y-auto pr-1 custom-scrollbar">
@@ -72,14 +72,13 @@
                     <div
                         class="flex items-center justify-between p-2.5 bg-slate-50 rounded-lg border border-slate-100 hover:border-slate-200 transition">
                         <div class="flex items-center gap-2">
-                            <span class="text-sm font-bold text-slate-800">Angkatan {{ $sy->graduation_year }}</span>
+                            <span class="text-sm font-bold text-slate-800">Lulus {{ $sy->graduation_year }}</span>
                             <span
                                 class="text-xs font-medium bg-green-50 text-green-700 border border-green-100 px-2 py-0.5 rounded-full">{{ $sy->total }}
                                 Alumni</span>
                         </div>
-                        {{-- Form Hapus Grup Angkatan --}}
                         <form action="{{ route('admin.students.destroy.by.year') }}" method="POST"
-                            onsubmit="return confirm('APAKAH ANDA YAKIN? Semua data alumni dan akun pengguna untuk ANGKATAN [{{ $sy->graduation_year }}] akan dihapus permanen dari sistem BKK!')">
+                            onsubmit="return confirm('APAKAH ANDA YAKIN? Semua data alumni dan akun pengguna dengan TAHUN LULUS [{{ $sy->graduation_year }}] akan dihapus permanen dari sistem BKK!')">
                             @csrf
                             @method('DELETE')
                             <input type="hidden" name="graduation_year" value="{{ $sy->graduation_year }}">
@@ -90,16 +89,15 @@
                         </form>
                     </div>
                 @empty
-                    <p class="text-xs text-slate-400 text-center py-4">Belum ada kelompok data angkatan.</p>
+                    <p class="text-xs text-slate-400 text-center py-4">Belum ada kelompok data tahun lulus.</p>
                 @endforelse
             </div>
         </div>
     </div>
 
-    {{-- ================= MAIN DATA CONTROLLER ================= --}}
+    {{-- MAIN DATA --}}
     <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
 
-        {{-- Header Panel: Filter Multi-Query & Action --}}
         <div class="p-6 border-b border-slate-200 flex flex-wrap items-center justify-between gap-4 bg-slate-50/50">
             <h3 class="text-lg font-bold text-slate-800 flex items-center">
                 <i class="fas fa-users text-green-600 mr-3 bg-green-50 p-2.5 rounded-lg border border-green-100"></i> Daftar
@@ -107,16 +105,15 @@
             </h3>
 
             <div class="flex items-center gap-3 flex-wrap">
-                {{-- Filter Form Terpadu (Mendukung filter gabungan Tahun + Jurusan) --}}
                 <form method="GET" action="{{ route('admin.students.index') }}"
                     class="flex items-center gap-2 flex-wrap md:flex-nowrap">
-                    {{-- Filter Angkatan --}}
+                    {{-- Filter Tahun Lulus --}}
                     <select name="year" onchange="this.form.submit()"
                         class="text-sm border border-slate-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 cursor-pointer text-slate-700 font-medium">
-                        <option value="">Semua Angkatan</option>
+                        <option value="">Semua Tahun Lulus</option>
                         @foreach ($availableYears as $yr)
                             <option value="{{ $yr }}" {{ request('year') == $yr ? 'selected' : '' }}>
-                                Angkatan {{ $yr }}
+                                Lulus {{ $yr }}
                             </option>
                         @endforeach
                     </select>
@@ -140,7 +137,6 @@
                     @endif
                 </form>
 
-                {{-- Tombol Trigger Import --}}
                 <button onclick="document.getElementById('modalImport').classList.remove('hidden')"
                     class="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition shadow-sm">
                     <i class="fas fa-file-excel text-base"></i> Import Excel
@@ -148,7 +144,7 @@
             </div>
         </div>
 
-        {{-- Tabel Utama Alumni --}}
+        {{-- Tabel --}}
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead
@@ -201,15 +197,11 @@
                             </td>
                             <td class="px-5 py-3.5">
                                 <div class="flex items-center justify-center gap-3">
-                                    {{-- View Detail --}}
                                     <a href="{{ route('admin.students.show', $student->student_id) }}"
                                         class="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 font-semibold hover:underline">
                                         <i class="fas fa-eye"></i> Detail
                                     </a>
-
                                     <span class="text-slate-300">|</span>
-
-                                    {{-- Hapus Satuan (Individual) --}}
                                     <form action="{{ route('admin.students.destroy', $student->student_id) }}"
                                         method="POST"
                                         onsubmit="return confirm('Hapus data alumni atas nama [{{ $student->full_name }}]? Seluruh data akun terkait juga akan terhapus.')"
@@ -233,7 +225,7 @@
                                     <span class="block text-xs text-slate-400 mt-1">
                                         untuk pencarian filter:
                                         @if (request('year'))
-                                            <strong>[Angkatan {{ request('year') }}]</strong>
+                                            <strong>[Tahun Lulus {{ request('year') }}]</strong>
                                         @endif
                                         @if (request('major'))
                                             <strong>[Jurusan {{ request('major') }}]</strong>
@@ -247,19 +239,17 @@
             </table>
         </div>
 
-        {{-- Pagination Terintegrasi Link Query --}}
         <div class="p-4 border-t border-slate-200 bg-slate-50/50">
             {{ $students->appends(request()->query())->links() }}
         </div>
     </div>
 
-    {{-- ===== MODAL IMPORT EXCEL ===== --}}
+    {{-- MODAL IMPORT EXCEL --}}
     <div id="modalImport"
         class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity">
         <div
             class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden transform transition-transform border border-slate-100">
 
-            {{-- Modal Header --}}
             <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50">
                 <h4 class="font-bold text-slate-800 flex items-center gap-2">
                     <i class="fas fa-file-excel text-green-600 text-lg"></i> Import Data Alumni
@@ -270,12 +260,10 @@
                 </button>
             </div>
 
-            {{-- Modal Body --}}
             <form action="{{ route('admin.students.import') }}" method="POST" enctype="multipart/form-data"
                 class="p-6 space-y-5">
                 @csrf
 
-                {{-- Tahun Lulus --}}
                 <div>
                     <label class="block text-sm font-semibold text-slate-700 mb-1">
                         Tahun Lulus <span class="text-red-500">*</span>
@@ -287,7 +275,6 @@
                     <p class="text-xs text-slate-400 mt-1">Isi tahun lulus angkatan yang akan diimport.</p>
                 </div>
 
-                {{-- Upload File --}}
                 <div>
                     <label class="block text-sm font-semibold text-slate-700 mb-1">
                         File Excel (.xlsx / .xls) <span class="text-red-500">*</span>
@@ -300,7 +287,6 @@
                     </p>
                 </div>
 
-                {{-- Info Box --}}
                 <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-700 space-y-1">
                     <p class="font-bold flex items-center gap-1"><i class="fas fa-info-circle"></i> Catatan Penting:</p>
                     <ul class="list-disc pl-4 space-y-0.5">
@@ -310,7 +296,6 @@
                     </ul>
                 </div>
 
-                {{-- Tombol Aksi --}}
                 <div class="flex justify-end gap-3 pt-2 border-t border-slate-100">
                     <button type="button" onclick="document.getElementById('modalImport').classList.add('hidden')"
                         class="px-4 py-2 text-sm font-medium text-slate-600 border border-slate-300 rounded-lg hover:bg-slate-50 transition">
@@ -325,7 +310,6 @@
         </div>
     </div>
 
-    {{-- CSS Tambahan Opsional untuk mempercantik scrollbar widget summary --}}
     <style>
         .custom-scrollbar::-webkit-scrollbar {
             width: 4px;
