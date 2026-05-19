@@ -27,7 +27,7 @@
             <p class="text-slate-300 max-w-xl mx-auto text-base md:text-lg leading-relaxed">
                 Ikuti berbagai kegiatan pengembangan diri dan rekrutmen bersama mitra industri.
             </p>
-        </div> 
+        </div>
     </div>
 
     {{-- ===== MAIN CONTENT ===== --}}
@@ -45,18 +45,20 @@
                     @foreach($events as $event)
                         @php
                             $badgeColors = [
-                                'Rekrutmen'            => 'bg-blue-600',
-                                'Seminar'              => 'bg-purple-600',
-                                'Workshop'             => 'bg-orange-500',
-                                'Pelatihan'            => 'bg-teal-600',
+                                'Rekrutmen'              => 'bg-blue-600',
+                                'Seminar'                => 'bg-purple-600',
+                                'Workshop'               => 'bg-orange-500',
+                                'Pelatihan'              => 'bg-teal-600',
                                 'Sosialisasi Perusahaan' => 'bg-cyan-600',
-                                'Career Fair'          => 'bg-indigo-600',
-                                'Mentoring'            => 'bg-green-600',
+                                'Career Fair'            => 'bg-indigo-600',
+                                'Mentoring'              => 'bg-green-600',
                             ];
                             $badgeColor = $badgeColors[$event->category] ?? 'bg-blue-600';
 
-                            $fallbackImage = 'https://images.unsplash.com/photo-1540575861501-7ad05823c95b?auto=format&fit=crop&w=800&q=80';
-                            $imageUrl = $event->image ? Storage::url($event->image) : $fallbackImage;
+                            $fallbackImage = 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800&q=80';
+                            $imageUrl = ($event->image && Storage::exists($event->image))
+                                ? Storage::url($event->image)
+                                : $fallbackImage;
                         @endphp
 
                         <div class="bg-white rounded-[24px] overflow-hidden shadow-sm border border-slate-100 flex flex-col hover:shadow-xl transition-all duration-500 group">
@@ -66,7 +68,7 @@
                                     src="{{ $imageUrl }}"
                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                                     alt="{{ $event->title }}"
-                                    onerror="this.onerror=null; this.src='{{ $fallbackImage }}';"
+                                    onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800&q=80';"
                                     loading="lazy"
                                 />
                                 {{-- Gradient overlay bottom --}}
@@ -119,5 +121,5 @@
 
 @endsection
 
-@section('extra_js') 
+@section('extra_js')
 @endsection
