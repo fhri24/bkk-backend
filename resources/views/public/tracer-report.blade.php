@@ -324,5 +324,102 @@
                 target.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         }
+
+        // Show a simple modal notification with an OK button. The page will NOT refresh
+        // until the user clicks OK.
+        function showNotificationModal(status, message, onOk) {
+            // remove existing if any
+            const existing = document.getElementById('ajax-notification-modal');
+            if (existing) existing.remove();
+
+            const modal = document.createElement('div');
+            modal.id = 'ajax-notification-modal';
+            modal.className = 'fixed inset-0 z-50 flex items-center justify-center p-4';
+            modal.innerHTML = `
+                <div class="absolute inset-0 bg-black/40"></div>
+                <div class="relative max-w-lg w-full bg-white rounded-2xl shadow-lg p-6">
+                    <h3 class="text-lg font-bold mb-2">${status === 'success' ? 'Berhasil' : 'Perhatian'}</h3>
+                    <div class="text-sm text-slate-700 mb-4">${message}</div>
+                    <div class="text-right">
+                        <button id="ajax-notif-ok" class="bg-blue-600 text-white px-4 py-2 rounded-md font-bold">OK</button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+
+            document.getElementById('ajax-notif-ok').focus();
+            document.getElementById('ajax-notif-ok').addEventListener('click', function() {
+                modal.remove();
+                if (typeof onOk === 'function') onOk();
+            });
+        }
+
+        // Intercept form submit and send via AJAX. Only refresh/redirect after user clicks OK.
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('alumniForm');
+            if (!form) return;
+
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalHtml = submitBtn ? submitBtn.innerHTML : null;
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span class="ml-2">Mengirim...</span>';
+                }
+
+                const formData = new FormData(form);
+                const token = formData.get('_token') || (document.querySelector('input[name="_token"]') || {}).value || '';
+
+                let fetchResponse = null;
+                try {
+                    fetchResponse = await fetch(form.action, {
+                        method: form.method || 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': token,
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json'
+                        },
+                        body: formData,
+                        redirect: 'manual'
+                    });
+
+                    let msg = 'Survei berhasil dikirim. Klik OK untuk melanjutkan.';
+                    let status = 'success';
+                    let redirectUrl = null;
+
+                    if (fetchResponse.redirected) {
+                        // server redirected (likely to a success page)
+                        redirectUrl = fetchResponse.url;
+                    } else {
+                        const data = await fetchResponse.json().catch(() => null);
+                        if (fetchResponse.ok) {
+                            if (data && (data.message || data.success)) msg = data.message || data.success;
+                            if (data && data.redirect) redirectUrl = data.redirect;
+                        } else {
+                            status = 'error';
+                            msg = (data && (data.message || data.error)) ? (data.message || data.error) : 'Gagal mengirim survei.';
+                        }
+                    }
+
+                    showNotificationModal(status, msg, function() {
+                        if (redirectUrl) {
+                            window.location.href = redirectUrl;
+                        } else if (status === 'success') {
+                            window.location.reload();
+                        }
+                    });
+
+                } catch (err) {
+                    showNotificationModal('error', 'Gagal mengirim survei. Silakan coba lagi.', function() {});
+                } finally {
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalHtml;
+                    }
+                }
+            });
+        });
     </script>
 @endsection
