@@ -23,7 +23,7 @@
 
 @section('content')
     <div class="page-transition container mx-auto px-6 py-12">
-        <div id="surveyIntroHeader" class="hidden">
+        <div id="surveyIntroHeader" class="{{ session()->has('success') || session()->has('error') || (isset($hasSubmitted) && $hasSubmitted) ? '' : 'hidden' }}">
             <div class="mb-12">
                 <a href="{{ route('public.tracer') }}" class="text-blue-600 hover:text-blue-700 font-bold mb-4 inline-flex items-center">
                     <i class="fas fa-chevron-left mr-2"></i> Kembali ke Tracer Study
@@ -42,7 +42,7 @@
             </div>
         </div>
 
-        <div id="surveyIntro" class="bg-white rounded-[32px] shadow-xl border border-slate-200 p-8 mb-10 max-w-3xl mx-auto">
+       <div id="surveyIntro" class="{{ session()->has('success') || session()->has('error') || (isset($hasSubmitted) && $hasSubmitted) ? 'hidden' : '' }} bg-white rounded-[32px] shadow-xl border border-slate-200 p-8 mb-10 max-w-3xl mx-auto">
             <div class="text-center mb-8">
                 <div class="w-16 h-16 rounded-full bg-blue-100 mx-auto flex items-center justify-center text-blue-700 text-2xl mb-4">
                     <i class="fas fa-book-reader"></i>
@@ -65,7 +65,27 @@
             </div>
         </div>
 
-        <div id="surveyFormContainer" class="hidden max-w-5xl mx-auto">
+       <div id="surveyFormContainer" class="{{ session()->has('success') || session()->has('error') || (isset($hasSubmitted) && $hasSubmitted) ? '' : 'hidden' }} max-w-5xl mx-auto">
+            @if(session('success'))
+                <div class="mb-6 rounded-2xl border border-green-200 bg-green-50 p-5 text-green-900 shadow-sm">
+                    <strong>Berhasil!</strong> {{ session('success') }}
+                </div>
+            @elseif(session('error'))
+                <div class="mb-6 rounded-2xl border border-red-200 bg-red-50 p-5 text-red-900 shadow-sm">
+                    <strong>Gagal:</strong> {{ session('error') }}
+                </div>
+            @endif
+            @if(isset($hasSubmitted) && $hasSubmitted)
+                <div class="mb-6 rounded-2xl border border-yellow-300 bg-yellow-50 p-5 text-yellow-900 shadow-sm">
+                    <strong>Perhatian:</strong>
+                    @if(isset($myTracer) && $myTracer && $myTracer->created_at)
+                        Anda sudah mengirim survei pada {{ $myTracer->created_at->format('d F Y') }}.
+                    @else
+                        Anda sudah mengirim survei sebelumnya.
+                    @endif
+                    Anda dapat memperbarui data dengan mengirim ulang formulir.
+                </div>
+            @endif
             <form action="{{ route('student.tracer.store') }}" method="POST" id="alumniForm" class="space-y-8">
                 @csrf
 
@@ -96,11 +116,11 @@
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-3">No. HP / WhatsApp Aktif *</label>
-                            <input name="telepon" type="tel" value="{{ old('telepon', $authStudent->phone ?? '') }}" placeholder="Contoh: 08123456789" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" required />
+                            <input name="telepon" type="tel" value="{{ old('telepon') }}" placeholder="Contoh: 08123456789" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" required />
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-3">Email (Aktif) *</label>
-                            <input name="email" type="email" value="{{ old('email', auth()->check() ? auth()->user()->email : '') }}" placeholder="Alamat Email Aktif" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" required />
+                            <input name="email" type="email" value="{{ old('email') }}" placeholder="Alamat Email Aktif" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" required />
                         </div>
                     </div>
                 </div>
@@ -277,7 +297,7 @@
 
                     <button type="submit" class="flex-1 bg-blue-600 text-white px-6 py-4 rounded-xl font-bold hover:bg-blue-700 transition transform hover:scale-105 active:scale-95 shadow-lg flex items-center justify-center space-x-2">
                         <i class="fas fa-paper-plane"></i>
-                        <span>Kirim Survey</span>
+                        <span>{{ (isset($hasSubmitted) && $hasSubmitted) ? 'Perbarui Survey' : 'Kirim Survey' }}</span>
                     </button>
                 </div>
             </form>

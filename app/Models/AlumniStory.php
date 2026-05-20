@@ -9,13 +9,21 @@ class AlumniStory extends Model
 {
     use HasFactory;
 
+    // WAJIB memasukkan user_id ke dalam fillable agar tidak di-block Laravel
     protected $fillable = [
+        'user_id',
         'name',
         'job_title',
         'story',
         'status',
         'photo',
     ];
+
+    // Relasi untuk menarik data foto profil dari tabel students berdasarkan user_id
+    public function student()
+    {
+        return $this->hasOne(Student::class, 'user_id', 'user_id');
+    }
 
     // ── Scopes ──────────────────────────────────────────────
 
@@ -50,7 +58,9 @@ class AlumniStory extends Model
         $words = explode(' ', trim($this->name));
         $initials = '';
         foreach (array_slice($words, 0, 2) as $word) {
-            $initials .= strtoupper(substr($word, 0, 1));
+            if (!empty($word)) {
+                $initials .= strtoupper(substr($word, 0, 1));
+            }
         }
         return $initials ?: '?';
     }

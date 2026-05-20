@@ -33,7 +33,9 @@ class PublikController extends Controller
             ->take(3)
             ->get();
 
-        $alumni_stories = AlumniStory::where('status', 'approved')
+        // OPTIMASI: Eager loading relasi student untuk mengambil foto profil alumni secara instan
+        $alumni_stories = AlumniStory::with('student')
+            ->where('status', 'approved')
             ->latest()
             ->take(6)
             ->get();
@@ -215,7 +217,15 @@ class PublikController extends Controller
         if (auth()->check()) {
             $authStudent = Student::where('user_id', auth()->id())->first();
         }
-        return view('public.tracer-report', compact('tracerStudies', 'chartData', 'totalRespondents', 'workingPercentage', 'entrepreneurPercentage', 'alignmentData', 'majors', 'authStudent'));
+
+        $myTracer = null;
+        $hasSubmitted = false;
+        if ($authStudent) {
+            $myTracer = TracerStudy::where('student_id', $authStudent->student_id)->first();
+            $hasSubmitted = (bool) $myTracer;
+        }
+
+        return view('public.tracer-report', compact('tracerStudies', 'chartData', 'totalRespondents', 'workingPercentage', 'entrepreneurPercentage', 'alignmentData', 'majors', 'authStudent', 'myTracer', 'hasSubmitted'));
     }
 
     public function tracerIndustry()
@@ -276,4 +286,4 @@ class PublikController extends Controller
         $relatedTips = \App\Models\Tip::published()->where('id', '!=', $tip->id)->where('kategori', $tip->kategori)->latest()->take(3)->get();
         return view('public.tips-detail', compact('tip', 'relatedTips'));
     }
-}
+} 
