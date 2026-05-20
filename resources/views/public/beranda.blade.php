@@ -439,7 +439,15 @@
             @if (isset($alumni_stories) && $alumni_stories->count() > 0)
                 <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
                     @foreach ($alumni_stories as $index => $story)
-                        @php $colorClass = $avatarColors[$index % count($avatarColors)]; @endphp
+                        @php
+                            $colorClass = $avatarColors[$index % count($avatarColors)];
+
+                            // Ambil URL foto profil dari data student secara otomatis
+                            $avatarUrl =
+                                $story->student && $story->student->profile_picture
+                                    ? \Illuminate\Support\Facades\Storage::url($story->student->profile_picture)
+                                    : null;
+                        @endphp
 
                         <div
                             class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 story-card relative overflow-hidden">
@@ -458,12 +466,18 @@
                             {{-- Identitas --}}
                             <div class="flex items-center gap-3">
 
-                                {{-- Avatar --}}
-                                @if ($story->photo)
-                                    <img src="{{ asset('storage/' . $story->photo) }}"
-                                        class="w-[52px] h-[52px] rounded-full object-cover border-2 border-white shadow">
+                                {{-- Avatar: Otomatis ambil dari foto profil student, jika kosong pakai inisial nama --}}
+                                @if ($avatarUrl)
+                                    <img src="{{ $avatarUrl }}"
+                                        class="w-[52px] h-[52px] rounded-full object-cover border-2 border-white shadow"
+                                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="avatar-initials {{ $colorClass }} w-[52px] h-[52px] rounded-full flex items-center justify-center text-white font-bold"
+                                        style="display:none;">
+                                        {{ $story->initials }}
+                                    </div>
                                 @else
-                                    <div class="avatar-initials {{ $colorClass }}">
+                                    <div
+                                        class="avatar-initials {{ $colorClass }} w-[52px] h-[52px] rounded-full flex items-center justify-center text-white font-bold">
                                         {{ $story->initials }}
                                     </div>
                                 @endif
@@ -489,45 +503,30 @@
             {{-- ───────────────────────────────────────── --}}
             @auth
                 <div class="max-w-2xl mx-auto relative mb-10">
-
                     {{-- Background Blur --}}
                     <div class="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-purple-600/10 rounded-[40px] blur-3xl">
                     </div>
 
                     <div
                         class="relative bg-white rounded-[40px] custom-shadow p-10 md:p-12 animate-zoom-in border border-slate-100/50">
-
-                        {{-- Success --}}
+                        {{-- Success Alert --}}
                         @if (session('story_success'))
                             <div
                                 class="story-success-alert flex items-start gap-3 bg-green-50 border border-green-200 text-green-800 rounded-2xl p-4 mb-8">
                                 <i class="fas fa-check-circle text-green-500 mt-0.5 flex-shrink-0"></i>
-
-                                <p class="text-sm font-medium">
-                                    {{ session('story_success') }}
-                                </p>
+                                <p class="text-sm font-medium">{{ session('story_success') }}</p>
                             </div>
                         @endif
 
-                        {{-- Error --}}
-                        @if (session('error'))
-                            <div
-                                class="flex items-start gap-3 bg-red-50 border border-red-200 text-red-800 rounded-2xl p-4 mb-8">
-                                <i class="fas fa-times-circle text-red-500 mt-0.5 flex-shrink-0"></i>
-
-                                <p class="text-sm font-medium">
-                                    {{ session('error') }}
-                                </p>
-                            </div>
-                        @endif
-
-                        {{-- Validation --}}
-                        @if ($errors->any())
+                        {{-- Error Alert --}}
+                        @if (session('error') || $errors->any())
                             <div
                                 class="flex items-start gap-3 bg-red-50 border border-red-200 text-red-800 rounded-2xl p-4 mb-8">
                                 <i class="fas fa-exclamation-circle text-red-500 mt-0.5 flex-shrink-0"></i>
-
                                 <ul class="text-sm font-medium space-y-1">
+                                    @if (session('error'))
+                                        <li>{{ session('error') }}</li>
+                                    @endif
                                     @foreach ($errors->all() as $error)
                                         <li>{{ $error }}</li>
                                     @endforeach
@@ -537,89 +536,87 @@
 
                         {{-- Header --}}
                         <div class="text-center mb-8">
-
                             <div class="inline-block">
                                 <span
                                     class="bg-gradient-to-r from-blue-100 to-purple-100 px-5 py-1.5 rounded-full text-blue-700 font-bold text-[10px] uppercase tracking-widest">
                                     Berbagi Pengalaman
                                 </span>
                             </div>
-
                             <h3 class="text-2xl md:text-3xl font-bold text-slate-800 mt-6 tracking-tight">
                                 "Bagikan kisah suksesmu"
                             </h3>
-
                             <p class="text-slate-500 text-sm mt-2">
-                                Inspirasi bagi alumni lain untuk meraih karir impian
-                            </p>
+                                Inspirasi bagi alumni lain untuk meraih karir impian </p>
                         </div>
 
-                        <form action="{{ route('alumni-stories.store') }}" method="POST" enctype="multipart/form-data"
+                        <form action="{{ route('alumni-stories.store') }}" method="POST"
                             class="space-y-4 max-w-md mx-auto text-left">
                             @csrf
 
-                            {{-- Nama --}}
+                            {{-- Nama & Foto Profil (Otomatis & Read-Only) --}}
                             <div>
                                 <label class="block text-xs font-semibold text-slate-700 mb-2 uppercase tracking-wider">
                                     Nama Lengkap
                                 </label>
+                                @php
+                                    $authStudent = \App\Models\Student::where('user_id', auth()->id())->first();
+                                    $profileName = $authStudent->full_name ?? auth()->user()->name;
+                                    $profilePic = $authStudent->profile_picture ?? null;
+                                @endphp
 
-                                <input type="text" name="name" value="{{ old('name', auth()->user()->name ?? '') }}"
-                                    placeholder="Nama Anda"
-                                    class="w-full px-5 py-3.5 custom-input rounded-xl focus:outline-none text-sm font-medium @error('name') border-red-400 @enderror"
-                                    required>
+                                <div
+                                    class="flex items-center gap-3 px-5 py-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                                    @if ($profilePic)
+                                        <img src="{{ \Illuminate\Support\Facades\Storage::url($profilePic) }}"
+                                            class="w-9 h-9 rounded-full object-cover border-2 border-blue-300 flex-shrink-0"
+                                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 items-center justify-center text-white text-sm font-bold flex-shrink-0"
+                                            style="display:none;">
+                                            {{ strtoupper(substr($profileName, 0, 2)) }}
+                                        </div>
+                                    @else
+                                        <div
+                                            class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
+                                            {{ strtoupper(substr($profileName, 0, 2)) }}
+                                        </div>
+                                    @endif
+                                    <span class="text-sm font-bold text-slate-700">{{ $profileName }}</span>
+                                </div>
+                                <input type="hidden" name="name" value="{{ $profileName }}">
                             </div>
 
-                            {{-- Job --}}
+                            {{-- Pekerjaan & Instansi --}}
                             <div>
                                 <label class="block text-xs font-semibold text-slate-700 mb-2 uppercase tracking-wider">
                                     Pekerjaan & Instansi
                                 </label>
-
                                 <input type="text" name="job_title" value="{{ old('job_title') }}"
                                     placeholder="Contoh: Staff IT - PT. Maju Jaya"
                                     class="w-full px-5 py-3.5 custom-input rounded-xl focus:outline-none text-sm font-medium @error('job_title') border-red-400 @enderror"
                                     required>
                             </div>
 
-                            {{-- Foto --}}
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-2 uppercase tracking-wider">
-                                    Upload Foto
-                                </label>
-
-                                <input type="file" name="photo" accept="image/*"
-                                    class="w-full px-5 py-3.5 custom-input rounded-xl focus:outline-none text-sm font-medium @error('photo') border-red-400 @enderror">
-                            </div>
-
-                            {{-- Story --}}
+                            {{-- Cerita Singkat --}}
                             <div>
                                 <label class="block text-xs font-semibold text-slate-700 mb-2 uppercase tracking-wider">
                                     Cerita Singkat
                                 </label>
-
                                 <textarea name="story" id="storyTextarea" placeholder="Bagikan pengalaman menarik Anda..." rows="4"
                                     maxlength="2000"
                                     class="w-full px-5 py-3.5 custom-input rounded-xl focus:outline-none text-sm font-medium resize-none @error('story') border-red-400 @enderror"
                                     required>{{ old('story') }}</textarea>
-
                                 <p class="text-[11px] text-slate-400 mt-1">
                                     <span id="charCount">0</span>/2000 karakter
                                 </p>
                             </div>
 
-                            {{-- Submit --}}
+                            {{-- Submit Button --}}
                             <button type="submit"
                                 class="w-full bg-gradient-to-r from-[#001f3f] to-blue-700 text-white py-4 rounded-xl font-bold flex items-center justify-center space-x-2 hover:shadow-lg hover:-translate-y-1 transition duration-300 shadow-lg mt-6 active:translate-y-0">
                                 <i class="fas fa-paper-plane"></i>
-
-                                <span class="uppercase tracking-widest text-sm">
-                                    Kirim Cerita
-                                </span>
+                                <span class="uppercase tracking-widest text-sm">Kirim Cerita</span>
                             </button>
-
                         </form>
-
                     </div>
                 </div>
             @endauth
@@ -673,17 +670,16 @@
 
 @section('extra_js')
     <script>
-        // Counter karakter textarea
-        const textarea = document.getElementById('storyTextarea');
-        const charCount = document.getElementById('charCount');
-
-        if (textarea && charCount) {
-            // Set initial count (untuk old() value saat validasi gagal)
-            charCount.textContent = textarea.value.length;
-
-            textarea.addEventListener('input', function() {
-                charCount.textContent = this.value.length;
-            });
-        }
+        document.addEventListener("DOMContentLoaded", function() {
+            // Counter karakter textarea cerita singkat
+            const textarea = document.getElementById('storyTextarea');
+            const charCount = document.getElementById('charCount');
+            if (textarea && charCount) {
+                charCount.textContent = textarea.value.length;
+                textarea.addEventListener('input', function() {
+                    charCount.textContent = this.value.length;
+                });
+            }
+        });
     </script>
 @endsection
