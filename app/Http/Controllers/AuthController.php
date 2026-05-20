@@ -136,33 +136,30 @@ class AuthController extends Controller
 
         $user = User::where(function ($query) use ($request, $nisnInput) {
 
-            // Login Alumni: cari via relasi student
+            // Login Alumni / Siswa: pakai NISN/NIS + tahun lulus + jurusan
             $query->where(function ($q) use ($request, $nisnInput) {
-                $q->whereHas('role', fn($r) => $r->where('name', 'alumni'))
-                    ->whereHas('student', function ($s) use ($request, $nisnInput) {
-                        $s->where(function ($q2) use ($nisnInput) {
-                            $q2->where('nis', $nisnInput)
-                               ->orWhere('nisn', $nisnInput);
-                        });
-                        if ($request->filled('graduation_year')) {
-                            $s->where('graduation_year', $request->graduation_year);
-                        }
-                        if ($request->filled('major')) {
-                            $s->where('major', $request->major);
-                        }
-                    });
+                $q->whereHas('role', fn($r) => $r->whereIn('name', ['alumni', 'siswa']))
+                  ->whereHas('student', function ($s) use ($request, $nisnInput) {
+                      $s->where(function ($inner) use ($nisnInput) {
+                          $inner->where('nisn', $nisnInput)
+                                ->orWhere('nis', $nisnInput);
+                      });
+
+                      if ($request->filled('graduation_year')) {
+                          $s->where('graduation_year', $request->graduation_year);
+                      }
+                      if ($request->filled('major')) {
+                          $s->where('major', $request->major);
+                      }
+                  });
             })
 
             // Login Admin & Perusahaan: pakai email
             ->orWhere(function ($q) use ($nisnInput) {
                 $q->whereHas('role', fn($r) => $r->whereIn('name', [
-                    'super_admin',
-                    'admin_bkk',
-                    'kepala_bkk',
-                    'kepala_sekolah',
-                    'perusahaan',
-                ]))
-                ->where('email', $nisnInput);
+                        'super_admin', 'admin_bkk', 'kepala_bkk', 'kepala_sekolah', 'perusahaan',
+                    ]))
+                  ->where('email', $nisnInput);
             });
 
         })->first();
@@ -199,15 +196,15 @@ class AuthController extends Controller
 
         return match (true) {
             in_array($roleName, ['super_admin', 'admin_bkk', 'kepala_bkk', 'kepala_sekolah'])
-            => redirect()->intended(route('admin.dashboard')),
+                => redirect()->intended(route('admin.dashboard')),
             $roleName === 'alumni'
-            => redirect()->intended(route('alumni.home')),
+                => redirect()->intended(route('alumni.home')),
             $roleName === 'publik'
-            => redirect()->intended(route('publik.home')),
+                => redirect()->intended(route('publik.home')),
             $roleName === 'siswa'
-            => redirect()->intended(route('student.home')),
+                => redirect()->intended(route('student.home')),
             $roleName === 'perusahaan'
-            => redirect()->intended(route('company.dashboard')),
+                => redirect()->intended(route('company.dashboard')),
             default => redirect('/'),
         };
     }

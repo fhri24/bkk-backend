@@ -214,14 +214,41 @@
 
         {{-- ===== SIDEBAR ===== --}}
         <aside class="sidebar w-64 text-white flex flex-col fixed h-full lg:relative z-40 lg:z-10">
+            @php
+                $schoolProfile = \App\Models\SchoolProfile::first();
+                $logoPath = $schoolProfile->logo ?? ($schoolProfile->logo_path ?? null);
+                $schoolName = $schoolProfile->school_name ?? 'BKK SMKN 1';
+            @endphp
+
             <div class="p-6 border-b border-white/10">
                 <div class="flex items-center">
-                    <div class="w-12 h-12 bg-blue-400 rounded-lg flex items-center justify-center font-bold text-lg">BKK
+
+                    {{-- Logo --}}
+                    <div
+                        class="w-16 h-16 rounded-lg overflow-hidden flex items-center justify-center flex-shrink-0
+            {{ $logoPath ? 'bg-transparent' : 'bg-blue-400' }}">
+
+                        @if ($logoPath)
+                            <img src="{{ asset('storage/' . $logoPath) }}" class="w-full h-full object-contain p-1"
+                                alt="Logo Sekolah">
+                        @else
+                            <span class="font-bold text-lg text-white">
+                                {{ strtoupper(substr($schoolName, 0, 3)) }}
+                            </span>
+                        @endif
                     </div>
-                    <div class="ml-3">
-                        <h2 class="font-bold text-white text-sm">BKK SMKN 1</h2>
-                        <p class="text-xs text-blue-200">Admin Panel</p>
+
+                    {{-- Nama sekolah --}}
+                    <div class="ml-3 overflow-hidden">
+                        <h2 class="font-bold text-white text-sm truncate">
+                            {{ $schoolName }}
+                        </h2>
+
+                        <p class="text-xs text-blue-200">
+                            Admin Panel
+                        </p>
                     </div>
+
                 </div>
             </div>
 
@@ -529,20 +556,6 @@
                                     </ul>
                                 </div>
                             </div>
-                        </div>
-                    @endif
-
-                    @if (session('success'))
-                        <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6 flex items-center">
-                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
-                            <p class="text-green-700">{{ session('success') }}</p>
-                        </div>
-                    @endif
-
-                    @if (session('error'))
-                        <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 flex items-center">
-                            <i class="fas fa-exclamation-circle text-red-500 mr-3"></i>
-                            <p class="text-red-700">{{ session('error') }}</p>
                         </div>
                     @endif
 
