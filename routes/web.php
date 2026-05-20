@@ -344,6 +344,8 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
 
     Route::prefix('tracer')->name('tracer.')->group(function () {
         Route::get('/',            [AdminTracerStudyController::class, 'index'])->name('index');
+        Route::get('/alumni',      [AdminTracerStudyController::class, 'alumni'])->name('alumni');
+        Route::get('/industri',    [AdminTracerStudyController::class, 'industri'])->name('industri');
         Route::get('/export/csv',  [AdminTracerStudyController::class, 'exportCsv'])->name('export.csv');
         Route::get('/print',       [AdminTracerStudyController::class, 'print'])->name('print');
     });

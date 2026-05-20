@@ -161,4 +161,126 @@ class TracerStudyController extends Controller
             'unemployed'
         ));
     }
+
+    public function alumni(Request $request)
+    {
+        $query = TracerStudy::with('student');
+
+        if ($request->filled('status')) {
+            $query->where('status_saat_ini', $request->status);
+        }
+
+        if ($request->filled('year')) {
+            $query->whereHas(
+                'student',
+                fn($q) =>
+                $q->where('graduation_year', $request->year)
+            );
+        }
+
+        if ($request->filled('search')) {
+            $query->whereHas(
+                'student',
+                fn($q) =>
+                $q->where('full_name', 'like', '%' . $request->search . '%')
+            );
+        }
+
+        $tracerStudies = $query->latest()->paginate(15)->withQueryString();
+
+        $total      = TracerStudy::count();
+        $working    = TracerStudy::where('status_saat_ini', 'Bekerja')->count();
+        $studying   = TracerStudy::where('status_saat_ini', 'Kuliah')->count();
+        $entrepren  = TracerStudy::where('status_saat_ini', 'Wirausaha')->count();
+        $unemployed = TracerStudy::where('status_saat_ini', 'Belum Bekerja')->count();
+
+        $chartData = [
+            'Bekerja'       => $working,
+            'Kuliah'        => $studying,
+            'Wirausaha'     => $entrepren,
+            'Belum Bekerja' => $unemployed,
+        ];
+
+        $graduationYears = DB::table('students')
+            ->select('graduation_year')
+            ->whereNotNull('graduation_year')
+            ->distinct()
+            ->orderByDesc('graduation_year')
+            ->pluck('graduation_year');
+
+        return view('admin.tracer.alumni', compact(
+            'tracerStudies',
+            'total',
+            'working',
+            'studying',
+            'entrepren',
+            'unemployed',
+            'chartData',
+            'graduationYears'
+        ));
+    }
+
+    public function industri(Request $request)
+    {
+        $query = TracerStudy::with('student');
+
+        if ($request->filled('year')) {
+            $query->whereHas(
+                'student',
+                fn($q) =>
+                $q->where('graduation_year', $request->year)
+            );
+        }
+
+        $tracerStudies = $query->latest()->paginate(15)->withQueryString();
+
+        $total          = TracerStudy::count();
+        $withCompany    = TracerStudy::whereNotNull('nama_instansi')->count();
+        $matching       = TracerStudy::where('keselarasan_jurusan', 'Sesuai')->count();
+        $notMatching    = TracerStudy::where('keselarasan_jurusan', 'Tidak Sesuai')->count();
+
+        $chartData = [
+            'Sesuai'        => $matching,
+            'Tidak Sesuai'  => $notMatching,
+        ];
+
+        $graduationYears = DB::table('students')
+            ->select('graduation_year')
+            ->whereNotNull('graduation_year')
+            ->distinct()
+            ->orderByDesc('graduation_year')
+            ->pluck('graduation_year');
+
+        // Get salary distribution
+        $salaryDistribution = TracerStudy::selectRaw('
+            CASE 
+                WHEN pendapatan_bulanan < 3000000 THEN 1
+                WHEN pendapatan_bulanan BETWEEN 3000000 AND 5000000 THEN 2
+                WHEN pendapatan_bulanan BETWEEN 5000001 AND 10000000 THEN 3
+                ELSE 4
+            END as salary_order,
+            CASE 
+                WHEN pendapatan_bulanan < 3000000 THEN \'< 3 Juta\'
+                WHEN pendapatan_bulanan BETWEEN 3000000 AND 5000000 THEN \'3-5 Juta\'
+                WHEN pendapatan_bulanan BETWEEN 5000001 AND 10000000 THEN \'5-10 Juta\'
+                ELSE \'> 10 Juta\'
+            END as salary_range,
+            COUNT(*) as count
+        ')
+            ->whereNotNull('pendapatan_bulanan')
+            ->groupBy('salary_order', 'salary_range')
+            ->orderBy('salary_order')
+            ->get();
+
+        return view('admin.tracer.industri', compact(
+            'tracerStudies',
+            'total',
+            'withCompany',
+            'matching',
+            'notMatching',
+            'chartData',
+            'graduationYears',
+            'salaryDistribution'
+        ));
+    }
 }

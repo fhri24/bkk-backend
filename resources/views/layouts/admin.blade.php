@@ -352,17 +352,45 @@
                 </a>
 
                 {{-- Tracer Study --}}
-                <a href="{{ route('admin.tracer.index') }}"
-                    class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->segment(2) === 'tracer' ? 'active' : '' }}">
-                    <i class="fas fa-chart-line"></i>
-                    <span class="ml-3">Tracer Study</span>
-                    @php $totalTracer = \App\Models\TracerStudy::count(); @endphp
-                    @if ($totalTracer > 0)
-                        <span class="ml-auto bg-blue-400 text-blue-900 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                            {{ $totalTracer }}
-                        </span>
-                    @endif
-                </a>
+@if(auth()->user()->hasPermission('view_reports'))
+    <div class="mb-2">
+        <button type="button"
+            class="sidebar-toggle flex items-center justify-between w-full px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white bg-transparent focus:outline-none">
+            <span class="flex items-center">
+                <i class="fas fa-chart-line"></i>
+                <span class="ml-3">Tracer Study</span>
+            </span>
+            <i class="fas fa-chevron-down transition-transform duration-200"></i>
+        </button>
+        <div class="tracer-submenu ml-8 space-y-1 hidden">
+
+            {{-- Data Tracer Study --}}
+            <a href="{{ route('admin.tracer.index') }}"
+                class="sidebar-link flex items-center justify-between px-3 py-2 rounded-lg text-white/80 hover:text-white {{ request()->routeIs('admin.tracer.index') ? 'active' : '' }}">
+                <span>Data Tracer Study</span>
+                @php $totalTracer = \App\Models\TracerStudy::count(); @endphp
+                @if($totalTracer > 0)
+                    <span class="bg-blue-400 text-blue-900 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                        {{ $totalTracer }}
+                    </span>
+                @endif
+            </a>
+
+            {{-- Laporan Alumni --}}
+            <a href="{{ route('admin.tracer.alumni') }}"
+                class="sidebar-link block px-3 py-2 rounded-lg text-white/80 hover:text-white {{ request()->routeIs('admin.tracer.alumni') ? 'active' : '' }}">
+                Laporan Alumni
+            </a>
+
+            {{-- Laporan Industri --}}
+            <a href="{{ route('admin.tracer.industri') }}"
+                class="sidebar-link block px-3 py-2 rounded-lg text-white/80 hover:text-white {{ request()->routeIs('admin.tracer.industri') ? 'active' : '' }}">
+                Laporan Industri
+            </a>
+
+        </div>
+    </div>
+@endif
 
                 {{-- Tips & Tricks --}}
                 <a href="{{ route('admin.tips.index') }}"
