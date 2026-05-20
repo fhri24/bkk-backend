@@ -25,36 +25,28 @@ class AlumniStoryController extends Controller
                 ->with('error', 'Anda harus login terlebih dahulu untuk membagikan kisah sukses!');
         }
 
-        // Validasi
+        // Validasi data masukan form (Aturan photo dibuang)
         $request->validate([
             'name'      => 'required|string|max:100',
             'job_title' => 'required|string|max:150',
             'story'     => 'required|string|min:30|max:2000',
-            'photo'     => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ], [
             'name.required'      => 'Nama lengkap wajib diisi.',
             'job_title.required' => 'Pekerjaan & instansi wajib diisi.',
             'story.required'     => 'Cerita singkat wajib diisi.',
             'story.min'          => 'Cerita minimal 30 karakter.',
-            'photo.max'          => 'Ukuran foto maksimal 2MB.',
         ]);
 
-        // Ambil data
+        // Nyalakan array mapping data untuk DB
         $data = [
+            'user_id'   => auth()->id(), // Mengunci kepemilikan relasi ke tabel students
             'name'      => $request->name,
             'job_title' => $request->job_title,
             'story'     => $request->story,
             'status'    => 'pending',
-            'user_id'   => auth()->id(),
         ];
 
-        // Upload foto jika ada
-        if ($request->hasFile('photo')) {
-            $data['photo'] = $request->file('photo')
-                ->store('alumni-photos', 'public');
-        }
-
-        // Simpan
+        // Eksekusi Simpan data ke DB (Kolom photo otomatis null/kosong)
         AlumniStory::create($data);
 
         return back()->with(
@@ -74,7 +66,7 @@ class AlumniStoryController extends Controller
     {
         $status = $request->get('status', 'all');
 
-        $query = AlumniStory::latest();
+        $query = AlumniStory::with('student')->latest(); // Ditambahkan eager load student untuk sisi admin jika perlu
 
         if ($status !== 'all') {
             $query->where('status', $status);
@@ -155,4 +147,4 @@ class AlumniStoryController extends Controller
             return back()->with('error', 'Gagal menghapus cerita: ' . $e->getMessage());
         }
     }
-} 
+}

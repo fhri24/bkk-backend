@@ -33,7 +33,9 @@ class PublikController extends Controller
             ->take(3)
             ->get();
 
-        $alumni_stories = AlumniStory::where('status', 'approved')
+        // OPTIMASI: Eager loading relasi student untuk mengambil foto profil alumni secara instan
+        $alumni_stories = AlumniStory::with('student')
+            ->where('status', 'approved')
             ->latest()
             ->take(6)
             ->get();
@@ -284,4 +286,4 @@ class PublikController extends Controller
         $relatedTips = \App\Models\Tip::published()->where('id', '!=', $tip->id)->where('kategori', $tip->kategori)->latest()->take(3)->get();
         return view('public.tips-detail', compact('tip', 'relatedTips'));
     }
-}
+} 
