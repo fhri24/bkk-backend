@@ -790,10 +790,7 @@
         </div>
     @endauth
 
-    </div>
-    </section>
-
-    <section class="bg-gradient-to-b from-white to-slate-100 py-20">
+    <section class="bg-gradient-to-b from-white to-slate-100 py-20"> 
         <div class="container mx-auto px-6 text-center">
             <div class="section-header inline-block mb-10">
                 <p class="text-xs font-bold uppercase tracking-[0.3em] text-slate-400 pl-6">Bekerjasama dengan Industri

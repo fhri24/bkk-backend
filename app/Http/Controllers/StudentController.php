@@ -32,7 +32,10 @@ class StudentController extends Controller
             $query->where('job_type', $request->type);
         }
         if ($request->filled('major') && $request->major != 'Semua Jurusan') {
-            $query->where('major', $request->major);
+            $query->where(function($q) use ($request) {
+                $q->where('major', $request->major)
+                  ->orWhere('major', 'Semua Jurusan');
+            });
         }
 
         $jobs = $query->latest()->paginate(12);
@@ -123,10 +126,10 @@ class StudentController extends Controller
         if (!$user->role) return redirect()->route('login')->with('error', 'Role tidak terdefinisi.');
 
         $roleName   = strtolower($user->role->name);
-        $savedCount = SavedJob::where('user_id', $user->id)->count();
         $majors     = Major::orderBy('name', 'asc')->get();
         $years      = GraduationYear::orderBy('year', 'desc')->get();
         $savedJobs  = SavedJob::where('user_id', $user->id)->with(['job.company'])->latest()->get();
+        $savedCount = $savedJobs->count();
 
         if ($roleName === 'siswa') {
             $student = Student::where('user_id', $user->id)->first();
@@ -140,11 +143,7 @@ class StudentController extends Controller
                 ->latest()
                 ->get();
         } else {
-            $profil = $user->userable;
-
-            if (!$profil) {
-                $profil = $user->student;
-            }
+            $profil = $user->userable ?? $user->student;
 
             if (!$profil) {
                 return redirect()->back()->with('error', 'Data profil tambahan tidak ditemukan.');
@@ -157,8 +156,7 @@ class StudentController extends Controller
                     ->latest()
                     ->get();
             } else {
-                $student = new Student();
-                $student->forceFill([
+                $student = (object) [
                     'student_id'      => $profil->getKey(),
                     'user_id'         => $user->id,
                     'nis'             => $profil->nisn ?? $profil->nis ?? null,
@@ -172,7 +170,7 @@ class StudentController extends Controller
                     'profile_picture' => $profil->foto_profile ?? null,
                     'alumni_flag'     => ($roleName === 'alumni'),
                     'status'          => 'active',
-                ]);
+                ];
 
                 $applications = JobApplication::where('email', $user->email)
                     ->with(['job.company'])
@@ -307,9 +305,8 @@ class StudentController extends Controller
 
         try {
             $fileName = time() . '_' . Auth::id() . '.' . $request->file('cv_file')->getClientOriginalExtension();
-            Storage::disk('public')->putFileAs('cv_applications', $request->file('cv_file'), $fileName);
+            $request->file('cv_file')->storeAs('cv_applications', $fileName, 'public');
 
-            // Simpan & dapat objeknya
             $application = JobApplication::create([
                 'student_id'       => $student ? $student->student_id : null,
                 'job_id'           => $id,
@@ -322,7 +319,6 @@ class StudentController extends Controller
                 'phone_number'     => $student ? $student->phone : ($profil->no_hp ?? $profil->phone ?? null),
             ]);
 
-            // Kirim notifikasi ke admin
             $admins = User::whereHas('role', fn($q) =>
                 $q->whereIn('name', ['super_admin', 'admin_bkk'])
             )->get();
@@ -330,7 +326,7 @@ class StudentController extends Controller
             try {
                 Notification::send($admins, new JobApplicationSubmitted($application->load('job.company')));
             } catch (\Exception $e) {
-                // Lanjut meski notif gagal
+                // Aplikasi tetap berlanjut walau notifikasi gagal
             }
 
             session(['name' => $user->name]);
@@ -348,7 +344,8 @@ class StudentController extends Controller
 
     public function acara()
     {
-        $events = Event::where('is_published', true)
+        // PERBAIKAN: Menggunakan whereRaw agar kompatibel dengan query PostgreSQL bkk-smkn1garut (Eks baris 351)
+        $events = Event::whereRaw('"is_published" = true')
             ->where('start_date', '>=', now())
             ->latest('start_date')
             ->paginate(12);
@@ -422,16 +419,16 @@ class StudentController extends Controller
 
         $application = ($roleName === 'siswa')
             ? JobApplication::where('job_application_id', $id)
-            ->where('student_id', Student::where('user_id', $user->id)->value('student_id'))
-            ->first()
+                ->where('student_id', Student::where('user_id', $user->id)->value('student_id'))
+                ->first()
             : JobApplication::where('job_application_id', $id)
-            ->where('email', $user->email)
-            ->first();
+                ->where('email', $user->email)
+                ->first();
 
         if (!$application) return redirect()->back()->with('error', 'Lamaran tidak ditemukan.');
 
         if ($application->additional_file) {
-            Storage::delete('public/cv_applications/' . $application->additional_file);
+            Storage::disk('public')->delete('cv_applications/' . $application->additional_file);
         }
 
         $application->delete();
