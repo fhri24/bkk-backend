@@ -4,283 +4,102 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\TracerStudy;
+use App\Models\GraduationYear;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class TracerStudyController extends Controller
 {
     public function index(Request $request)
     {
-        $query = TracerStudy::with('student');
+        $query = TracerStudy::with('student')->latest();
 
+        if ($request->filled('search')) {
+            $query->where('nama_lengkap', 'like', '%' . $request->search . '%');
+        }
         if ($request->filled('status')) {
             $query->where('status_saat_ini', $request->status);
         }
-
         if ($request->filled('year')) {
-            $query->whereHas(
-                'student',
-                fn($q) =>
-                $q->where('graduation_year', $request->year)
-            );
+            $query->where('tahun_lulus', $request->year);
         }
 
-        if ($request->filled('search')) {
-            // FIX: cari berdasarkan full_name bukan name
-            $query->whereHas(
-                'student',
-                fn($q) =>
-                $q->where('full_name', 'like', '%' . $request->search . '%')
-            );
-        }
-
-        $tracerStudies = $query->latest()->paginate(15)->withQueryString();
-
-        $total      = TracerStudy::count();
-        $working    = TracerStudy::where('status_saat_ini', 'Bekerja')->count();
-        $studying   = TracerStudy::where('status_saat_ini', 'Kuliah')->count();
-        $entrepren  = TracerStudy::where('status_saat_ini', 'Wirausaha')->count();
-        $unemployed = TracerStudy::where('status_saat_ini', 'Belum Bekerja')->count();
-
-        $chartData = [
+        $tracerStudies   = $query->paginate(15)->withQueryString();
+        $total           = TracerStudy::count();
+        $working         = TracerStudy::where('status_saat_ini', 'Bekerja')->count();
+        $studying        = TracerStudy::where('status_saat_ini', 'Kuliah')->count();
+        $entrepren       = TracerStudy::where('status_saat_ini', 'Wirausaha')->count();
+        $unemployed      = TracerStudy::where('status_saat_ini', 'Belum Bekerja')->count();
+        $graduationYears = TracerStudy::distinct()->pluck('tahun_lulus')->sort();
+        $chartData       = [
             'Bekerja'       => $working,
             'Kuliah'        => $studying,
             'Wirausaha'     => $entrepren,
             'Belum Bekerja' => $unemployed,
         ];
 
-        $graduationYears = DB::table('students')
-            ->select('graduation_year')
-            ->whereNotNull('graduation_year')
-            ->distinct()
-            ->orderByDesc('graduation_year')
-            ->pluck('graduation_year');
-
         return view('admin.tracer.index', compact(
-            'tracerStudies',
-            'total',
-            'working',
-            'studying',
-            'entrepren',
-            'unemployed',
-            'chartData',
-            'graduationYears'
+            'tracerStudies', 'total', 'working', 'studying',
+            'entrepren', 'unemployed', 'graduationYears', 'chartData'
         ));
     }
 
-    public function exportCsv(Request $request)
+    public function show(TracerStudy $tracerStudy)
     {
-        $query = TracerStudy::with('student');
-
-        if ($request->filled('status')) {
-            $query->where('status_saat_ini', $request->status);
-        }
-        if ($request->filled('year')) {
-            $query->whereHas(
-                'student',
-                fn($q) =>
-                $q->where('graduation_year', $request->year)
-            );
-        }
-
-        $data     = $query->latest()->get();
-        $filename = 'tracer-study-' . date('Y-m-d') . '.csv';
-        $headers  = [
-            'Content-Type'        => 'text/csv',
-            'Content-Disposition' => "attachment; filename=\"$filename\"",
-        ];
-
-        $callback = function () use ($data) {
-            $file = fopen('php://output', 'w');
-            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
-
-            fputcsv($file, [
-                'No',
-                'Nama Alumni',
-                'Angkatan',
-                'Status',
-                'Nama Instansi',
-                'Tgl Mulai',
-                'Pendapatan (Rp)',
-                'Kesesuaian Jurusan',
-                'Tanggal Isi',
-            ]);
-
-            foreach ($data as $i => $row) {
-                fputcsv($file, [
-                    $i + 1,
-                    // FIX: pakai full_name bukan name
-                    $row->student->full_name       ?? '-',
-                    $row->student->graduation_year ?? '-',
-                    $row->status_saat_ini,
-                    $row->nama_instansi            ?? '-',
-                    $row->tgl_mulai_masuk          ?? '-',
-                    $row->pendapatan_bulanan
-                        ? number_format($row->pendapatan_bulanan, 0, ',', '.')
-                        : '-',
-                    $row->keselarasan_jurusan      ?? '-',
-                    $row->created_at->format('d/m/Y'),
-                ]);
-            }
-
-            fclose($file);
-        };
-
-        return response()->stream($callback, 200, $headers);
+        return view('admin.tracer.show', compact('tracerStudy'));
     }
 
-    public function print(Request $request)
+    public function destroy(TracerStudy $tracerStudy)
     {
-        $query = TracerStudy::with('student');
-
-        if ($request->filled('status')) {
-            $query->where('status_saat_ini', $request->status);
-        }
-        if ($request->filled('year')) {
-            $query->whereHas(
-                'student',
-                fn($q) =>
-                $q->where('graduation_year', $request->year)
-            );
-        }
-
-        $tracerStudies = $query->latest()->get();
-
-        $total      = $tracerStudies->count();
-        $working    = $tracerStudies->where('status_saat_ini', 'Bekerja')->count();
-        $studying   = $tracerStudies->where('status_saat_ini', 'Kuliah')->count();
-        $entrepren  = $tracerStudies->where('status_saat_ini', 'Wirausaha')->count();
-        $unemployed = $tracerStudies->where('status_saat_ini', 'Belum Bekerja')->count();
-
-        return view('admin.tracer.print', compact(
-            'tracerStudies',
-            'total',
-            'working',
-            'studying',
-            'entrepren',
-            'unemployed'
-        ));
+        $tracerStudy->delete();
+        return redirect()->route('admin.tracer.index')
+            ->with('success', 'Data tracer study berhasil dihapus.');
     }
 
     public function alumni(Request $request)
     {
-        $query = TracerStudy::with('student');
+        $query = TracerStudy::with('student')->latest();
 
+        if ($request->filled('search')) {
+            $query->where('nama_lengkap', 'like', '%' . $request->search . '%');
+        }
         if ($request->filled('status')) {
             $query->where('status_saat_ini', $request->status);
         }
-
         if ($request->filled('year')) {
-            $query->whereHas(
-                'student',
-                fn($q) =>
-                $q->where('graduation_year', $request->year)
-            );
+            $query->where('tahun_lulus', $request->year);
         }
 
-        if ($request->filled('search')) {
-            $query->whereHas(
-                'student',
-                fn($q) =>
-                $q->where('full_name', 'like', '%' . $request->search . '%')
-            );
-        }
-
-        $tracerStudies = $query->latest()->paginate(15)->withQueryString();
-
-        $total      = TracerStudy::count();
-        $working    = TracerStudy::where('status_saat_ini', 'Bekerja')->count();
-        $studying   = TracerStudy::where('status_saat_ini', 'Kuliah')->count();
-        $entrepren  = TracerStudy::where('status_saat_ini', 'Wirausaha')->count();
-        $unemployed = TracerStudy::where('status_saat_ini', 'Belum Bekerja')->count();
-
-        $chartData = [
+        $tracerStudies   = $query->paginate(15)->withQueryString();
+        $total           = TracerStudy::count();
+        $working         = TracerStudy::where('status_saat_ini', 'Bekerja')->count();
+        $studying        = TracerStudy::where('status_saat_ini', 'Kuliah')->count();
+        $entrepren       = TracerStudy::where('status_saat_ini', 'Wirausaha')->count();
+        $graduationYears = TracerStudy::distinct()->pluck('tahun_lulus')->sort();
+        $chartData       = [
             'Bekerja'       => $working,
             'Kuliah'        => $studying,
             'Wirausaha'     => $entrepren,
-            'Belum Bekerja' => $unemployed,
+            'Belum Bekerja' => TracerStudy::where('status_saat_ini', 'Belum Bekerja')->count(),
         ];
 
-        $graduationYears = DB::table('students')
-            ->select('graduation_year')
-            ->whereNotNull('graduation_year')
-            ->distinct()
-            ->orderByDesc('graduation_year')
-            ->pluck('graduation_year');
-
         return view('admin.tracer.alumni', compact(
-            'tracerStudies',
-            'total',
-            'working',
-            'studying',
-            'entrepren',
-            'unemployed',
-            'chartData',
-            'graduationYears'
+            'tracerStudies', 'total', 'working', 'studying',
+            'entrepren', 'graduationYears', 'chartData'
         ));
     }
 
     public function industri(Request $request)
     {
-        $query = TracerStudy::with('student');
+        $data = TracerStudy::where('status_saat_ini', 'Bekerja')
+            ->select('nama_instansi', 'lokasi_kerja', 'posisi_jabatan', 'range_gaji', 'jurusan', 'tahun_lulus')
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
 
-        if ($request->filled('year')) {
-            $query->whereHas(
-                'student',
-                fn($q) =>
-                $q->where('graduation_year', $request->year)
-            );
-        }
+        $totalIndustri  = TracerStudy::where('status_saat_ini', 'Bekerja')->count();
+        $dalamNegeri    = TracerStudy::where('status_saat_ini', 'Bekerja')->where('lokasi_kerja', 'Dalam Negeri')->count();
+        $luarNegeri     = TracerStudy::where('status_saat_ini', 'Bekerja')->where('lokasi_kerja', 'Luar Negeri')->count();
 
-        $tracerStudies = $query->latest()->paginate(15)->withQueryString();
-
-        $total          = TracerStudy::count();
-        $withCompany    = TracerStudy::whereNotNull('nama_instansi')->count();
-        $matching       = TracerStudy::where('keselarasan_jurusan', 'Sesuai')->count();
-        $notMatching    = TracerStudy::where('keselarasan_jurusan', 'Tidak Sesuai')->count();
-
-        $chartData = [
-            'Sesuai'        => $matching,
-            'Tidak Sesuai'  => $notMatching,
-        ];
-
-        $graduationYears = DB::table('students')
-            ->select('graduation_year')
-            ->whereNotNull('graduation_year')
-            ->distinct()
-            ->orderByDesc('graduation_year')
-            ->pluck('graduation_year');
-
-        // Get salary distribution
-        $salaryDistribution = TracerStudy::selectRaw('
-            CASE 
-                WHEN pendapatan_bulanan < 3000000 THEN 1
-                WHEN pendapatan_bulanan BETWEEN 3000000 AND 5000000 THEN 2
-                WHEN pendapatan_bulanan BETWEEN 5000001 AND 10000000 THEN 3
-                ELSE 4
-            END as salary_order,
-            CASE 
-                WHEN pendapatan_bulanan < 3000000 THEN \'< 3 Juta\'
-                WHEN pendapatan_bulanan BETWEEN 3000000 AND 5000000 THEN \'3-5 Juta\'
-                WHEN pendapatan_bulanan BETWEEN 5000001 AND 10000000 THEN \'5-10 Juta\'
-                ELSE \'> 10 Juta\'
-            END as salary_range,
-            COUNT(*) as count
-        ')
-            ->whereNotNull('pendapatan_bulanan')
-            ->groupBy('salary_order', 'salary_range')
-            ->orderBy('salary_order')
-            ->get();
-
-        return view('admin.tracer.industri', compact(
-            'tracerStudies',
-            'total',
-            'withCompany',
-            'matching',
-            'notMatching',
-            'chartData',
-            'graduationYears',
-            'salaryDistribution'
-        ));
+        return view('admin.tracer.industri', compact('data', 'totalIndustri', 'dalamNegeri', 'luarNegeri'));
     }
 }

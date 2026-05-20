@@ -44,6 +44,9 @@ use App\Http\Controllers\Admin\TipController as AdminTipController;
 use App\Http\Controllers\Student\PageController as StudentPageController;
 use App\Http\Controllers\Student\HomeController;
 
+// Import TracerStudyController untuk form publik
+use App\Http\Controllers\TracerStudyController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -90,18 +93,23 @@ Route::get('/acara-mendatang', [PublikController::class, 'acara'])->name('public
 Route::get('/acara/{id}', [PublikController::class, 'acaraDetail'])->name('public.acara.detail');
 Route::post('/acara/{id}/register', [PublikController::class, 'storeEventRegistration'])->name('public.event.register');
 
-Route::get('/tracer-study', [PublikController::class, 'tracer'])->name('public.tracer');
 Route::get('/tracer-study-report', [PublikController::class, 'tracerReport'])->name('tracer.report');
 Route::get('/tracer-industri', [PublikController::class, 'tracerIndustry'])->name('public.tracer-industri');
-Route::post('/tracer-study/store', [PublikController::class, 'storeTracer'])
-    ->middleware(['auth'])
-    ->name('student.tracer.store');
 
 Route::get('/tutorial', [PublikController::class, 'tutorial'])->name('public.tutorial');
 Route::get('/tips', [PublikController::class, 'tips'])->name('public.tips');
 Route::get('/tips/{slug}', [PublikController::class, 'tipsDetail'])->name('public.tips.detail');
 
 Route::post('/alumni-stories', [AlumniStoryController::class, 'store'])->name('alumni-stories.store');
+
+/**
+ * TRACER STUDY PUBLIC ROUTES (requires auth)
+ * Menggabungkan PublikController::tracer + TracerStudyController
+ */
+Route::middleware(['auth'])->group(function () {
+    Route::get('/tracer-study', [TracerStudyController::class, 'index'])->name('public.tracer');
+    Route::post('/tracer-study/store', [TracerStudyController::class, 'store'])->name('student.tracer.store');
+});
 
 /**
  * AUTH ROUTES
@@ -345,12 +353,18 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
 
     Route::get('/activity-logs', [AdminActivityLogController::class, 'index'])->name('activity-logs.index');
 
-    Route::prefix('tracer')->name('tracer.')->group(function () {
-        Route::get('/',            [AdminTracerStudyController::class, 'index'])->name('index');
-        Route::get('/alumni',      [AdminTracerStudyController::class, 'alumni'])->name('alumni');
-        Route::get('/industri',    [AdminTracerStudyController::class, 'industri'])->name('industri');
-        Route::get('/export/csv',  [AdminTracerStudyController::class, 'exportCsv'])->name('export.csv');
-        Route::get('/print',       [AdminTracerStudyController::class, 'print'])->name('print');
+    /**
+     * TRACER STUDY (ADMIN)
+     * Digabung: route lama + route baru (show, destroy) + middleware permission:view_reports
+     */
+    Route::prefix('tracer')->name('tracer.')->middleware('permission:view_reports')->group(function () {
+        Route::get('/',              [AdminTracerStudyController::class, 'index'])   ->name('index');
+        Route::get('/alumni',        [AdminTracerStudyController::class, 'alumni'])  ->name('alumni');
+        Route::get('/industri',      [AdminTracerStudyController::class, 'industri'])->name('industri');
+        Route::get('/export/csv',    [AdminTracerStudyController::class, 'exportCsv'])->name('export.csv');
+        Route::get('/print',         [AdminTracerStudyController::class, 'print'])   ->name('print');
+        Route::get('/{tracerStudy}', [AdminTracerStudyController::class, 'show'])    ->name('show');
+        Route::delete('/{tracerStudy}', [AdminTracerStudyController::class, 'destroy'])->name('destroy');
     });
 
     // LANGKAH 2: Menambahkan Route Tips di dalam grup Admin (Aman dari Double Prefix)
