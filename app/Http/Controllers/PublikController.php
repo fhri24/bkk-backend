@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 use App\Models\Job;
 use App\Models\Event;
 use App\Models\News;
@@ -13,12 +14,13 @@ use App\Models\TracerStudy;
 use App\Models\EventRegistration;
 use App\Models\Major;
 use App\Models\AlumniStory;
+use App\Models\User;
+use App\Notifications\TracerStudySubmitted;
 
 class PublikController extends Controller
 {
     public function beranda()
     {
-        // ── Berita, Lowongan, Acara, Alumni Stories (Data Utama) ──
         $news = News::whereRaw('"is_published" = true')->latest()->take(3)->get();
 
         $featured_jobs = Job::with('company')
@@ -46,26 +48,19 @@ class PublikController extends Controller
             'from-violet-500 to-violet-700',
         ];
 
-        // ── STAT CARDS — Data Real ──
-
-        // 1. Alumni Terserap: yang status tracer = Bekerja atau Wirausaha
         $alumniTerserap = \App\Models\TracerStudy::whereIn('status_saat_ini', ['Bekerja', 'Wirausaha'])->count();
 
-        // 2. Tingkat Penyaluran: (Bekerja + Wirausaha) / total yang isi tracer × 100%
         $totalTracer = \App\Models\TracerStudy::count();
         $tingkatPenyaluran = $totalTracer > 0
             ? round(($alumniTerserap / $totalTracer) * 100)
             : 0;
 
-        // 3. Lowongan Aktif: approved + expired_at belum lewat
         $lowonganAktif = Job::where('approval_status', 'approved')
             ->where('expired_at', '>=', now())
             ->count();
 
-        // 4. MoU Industri: jumlah perusahaan terdaftar
         $totalPerusahaan = \App\Models\Company::count();
 
-        // School profile (untuk keperluan footer/informasi dinamis di beranda)
         $schoolProfile = \App\Models\SchoolProfile::first();
 
         return view('public.beranda', compact(
@@ -242,11 +237,19 @@ class PublikController extends Controller
             'keselarasan_jurusan' => 'nullable|in:Sesuai,Tidak Sesuai',
             'pendapatan_bulanan'  => 'nullable|numeric|min:0',
         ]);
+
         $user = Auth::user();
-        if (!in_array($user->role->name, ['siswa', 'alumni'])) return back()->with('error', 'Akses tidak diizinkan.');
+        if (!in_array($user->role->name, ['siswa', 'alumni'])) {
+            return back()->with('error', 'Akses tidak diizinkan.');
+        }
+
         $student = Student::where('user_id', $user->id)->first();
-        if (!$student) return back()->with('error', 'Data profil tidak ditemukan.');
-        TracerStudy::updateOrCreate(
+        if (!$student) {
+            return back()->with('error', 'Data profil tidak ditemukan.');
+        }
+
+        // Simpan & dapat objeknya
+        $tracer = TracerStudy::updateOrCreate(
             ['student_id' => $student->student_id],
             [
                 'status_saat_ini'     => $request->status_saat_ini,
@@ -256,6 +259,18 @@ class PublikController extends Controller
                 'pendapatan_bulanan'  => $request->pendapatan_bulanan,
             ]
         );
+
+        // Kirim notifikasi ke admin
+        $admins = User::whereHas('role', fn($q) =>
+            $q->whereIn('name', ['super_admin', 'admin_bkk'])
+        )->get();
+
+        try {
+            Notification::send($admins, new TracerStudySubmitted($tracer->load('student')));
+        } catch (\Exception $e) {
+            // Lanjut meski notif gagal
+        }
+
         return back()->with('success', 'Data Tracer Study berhasil disimpan. Terima kasih!');
     }
 

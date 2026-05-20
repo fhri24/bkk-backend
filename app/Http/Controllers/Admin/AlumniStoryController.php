@@ -4,28 +4,22 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\AlumniStory;
+use App\Models\User;
+use App\Notifications\AlumniStorySubmitted;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 
 class AlumniStoryController extends Controller
 {
-    // ─────────────────────────────────────────────────────────
-    // PUBLIC — Submit kisah sukses dari halaman beranda
-    // ─────────────────────────────────────────────────────────
-
-    /**
-     * Simpan cerita baru dari form beranda.
-     */
     public function store(Request $request)
     {
-        // Harus login
         if (!auth()->check()) {
             return redirect()
                 ->route('login')
                 ->with('error', 'Anda harus login terlebih dahulu untuk membagikan kisah sukses!');
         }
 
-        // Validasi data masukan form (Aturan photo dibuang)
         $request->validate([
             'name'      => 'required|string|max:100',
             'job_title' => 'required|string|max:150',
@@ -37,7 +31,6 @@ class AlumniStoryController extends Controller
             'story.min'          => 'Cerita minimal 30 karakter.',
         ]);
 
-        // Nyalakan array mapping data untuk DB
         $data = [
             'user_id'   => auth()->id(), // Mengunci kepemilikan relasi ke tabel students
             'name'      => $request->name,
@@ -46,8 +39,24 @@ class AlumniStoryController extends Controller
             'status'    => 'pending',
         ];
 
-        // Eksekusi Simpan data ke DB (Kolom photo otomatis null/kosong)
-        AlumniStory::create($data);
+        if ($request->hasFile('photo')) {
+            $data['photo'] = $request->file('photo')
+                ->store('alumni-photos', 'public');
+        }
+
+        // Simpan & langsung dapat objeknya
+        $story = AlumniStory::create($data);
+
+        // Kirim notifikasi ke semua admin
+        $admins = User::whereHas('role', fn($q) =>
+            $q->whereIn('name', ['super_admin', 'admin_bkk'])
+        )->get();
+
+        try {
+            Notification::send($admins, new AlumniStorySubmitted($story));
+        } catch (\Exception $e) {
+            // Lanjut meski notif gagal
+        }
 
         return back()->with(
             'story_success',
@@ -55,13 +64,6 @@ class AlumniStoryController extends Controller
         );
     }
 
-    // ─────────────────────────────────────────────────────────
-    // ADMIN — Kelola kisah sukses alumni
-    // ─────────────────────────────────────────────────────────
-
-    /**
-     * Daftar semua kisah sukses (Admin).
-     */
     public function index(Request $request)
     {
         $status = $request->get('status', 'all');
@@ -84,17 +86,11 @@ class AlumniStoryController extends Controller
         return view('admin.alumni-stories.index', compact('stories', 'counts', 'status'));
     }
 
-    /**
-     * Detail kisah sukses (Admin).
-     */
     public function show(AlumniStory $alumniStory)
     {
         return view('admin.alumni-stories.show', compact('alumniStory'));
     }
 
-    /**
-     * Toggle featured (Tampilkan di Beranda).
-     */
     public function toggleFeatured(AlumniStory $alumniStory)
     {
         $alumniStory->update([
@@ -106,9 +102,6 @@ class AlumniStoryController extends Controller
         return back()->with('success', "Kisah {$alumniStory->name} berhasil {$message} di beranda.");
     }
 
-    /**
-     * Approve kisah sukses.
-     */
     public function approve(AlumniStory $alumniStory)
     {
         $alumniStory->update(['status' => 'approved']);
@@ -116,9 +109,6 @@ class AlumniStoryController extends Controller
         return back()->with('success', "Kisah sukses dari {$alumniStory->name} telah disetujui.");
     }
 
-    /**
-     * Reject kisah sukses.
-     */
     public function reject(AlumniStory $alumniStory)
     {
         $alumniStory->update(['status' => 'rejected']);
@@ -126,13 +116,9 @@ class AlumniStoryController extends Controller
         return back()->with('success', "Kisah sukses dari {$alumniStory->name} telah ditolak.");
     }
 
-    /**
-     * Hapus kisah sukses.
-     */
     public function destroy(AlumniStory $alumniStory)
     {
         try {
-            // Hapus foto fisik jika ada
             if ($alumniStory->photo) {
                 Storage::disk('public')->delete($alumniStory->photo);
             }
@@ -142,9 +128,8 @@ class AlumniStoryController extends Controller
             return redirect()
                 ->route('admin.alumni-stories.index')
                 ->with('success', 'Cerita alumni berhasil dihapus permanen.');
-
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal menghapus cerita: ' . $e->getMessage());
         }
     }
-}
+} 

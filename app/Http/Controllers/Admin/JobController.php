@@ -32,7 +32,6 @@ class JobController extends Controller
             $query->where('status', $status);
         }
 
-        // Filter by approval status
         if ($approval = $request->query('approval')) {
             $query->where('approval_status', $approval);
         }
@@ -78,16 +77,16 @@ class JobController extends Controller
             $validated['logo'] = $request->file('image')->store('logos', 'public');
         }
 
-        // Lowongan dari admin langsung approved
-        $validated['admin_id']       = auth()->id();
-        $validated['status']         = 'active';
-        $validated['approval_status'] = 'approved';
-        $validated['is_active']      = true;
-        $validated['posted_at']      = now();
-
         unset($validated['image']);
 
-        Job::create($validated);
+        // Gunakan new Job + save() agar casting boolean berjalan dengan benar di PostgreSQL
+        $job = new Job($validated);
+        $job->admin_id        = auth()->id();
+        $job->status          = 'active';
+        $job->approval_status = 'approved';
+        $job->is_active       = true;
+        $job->posted_at       = now();
+        $job->save();
 
         return redirect()->route('admin.jobs.index')->with('success', 'Lowongan berhasil dipublikasikan!');
     }
@@ -129,9 +128,6 @@ class JobController extends Controller
         return redirect()->route('admin.jobs.index')->with('success', 'Lowongan berhasil diperbarui!');
     }
 
-    /**
-     * Approve lowongan dari perusahaan
-     */
     public function approve(Job $job)
     {
         $job->update([
@@ -144,9 +140,6 @@ class JobController extends Controller
         return redirect()->back()->with('success', "Lowongan \"{$job->title}\" berhasil disetujui dan sekarang tampil ke publik.");
     }
 
-    /**
-     * Reject lowongan dari perusahaan
-     */
     public function reject(Request $request, Job $job)
     {
         $request->validate([

@@ -714,7 +714,8 @@
                                 `<div class='p-3 text-slate-500'>Tidak ada notifikasi</div>` :
                                 res.map(item => `<a href="${item.link}" class="block p-3 border-b hover:bg-slate-100">
                                 <div class="font-semibold text-sm">${item.title}</div>
-                                <div class="text-xs text-slate-500">${item.time}</div>
+                                <div class="text-xs text-slate-400 mt-0.5">${item.body}</div>
+                                <div class="text-xs text-slate-500 mt-1">${item.time}</div>
                             </a>`).join('');
                             notifDropdown.innerHTML = html;
                         })

@@ -233,6 +233,9 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::get('/search', [SearchController::class, 'search'])->name('search');
 
+    Route::get('/notifications', [App\Http\Controllers\Admin\NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/read-all', [App\Http\Controllers\Admin\NotificationController::class, 'markAllRead'])->name('notifications.read-all');
+
     Route::get('publik', [AdminPublikController::class, 'index'])->name('publik.index');
     Route::delete('publik/{id}', [AdminPublikController::class, 'destroy'])->name('publik.destroy');
 
@@ -296,11 +299,11 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
     Route::prefix('students')->name('students.')->group(function () {
         Route::get('/', [AdminStudentController::class, 'index'])->name('index');
         Route::post('/import', [AdminStudentController::class, 'import'])->name('import');
-        
+
         // Hapus massal grup wajib ditaruh di atas route {id}
         Route::delete('/destroy-by-major', [AdminStudentController::class, 'destroyByMajor'])->name('destroy.by.major');
         Route::delete('/destroy-by-year', [AdminStudentController::class, 'destroyByYear'])->name('destroy.by.year');
-        
+
         Route::delete('/{id}', [AdminStudentController::class, 'destroy'])->name('destroy');
         Route::get('/{id}', [AdminStudentController::class, 'show'])->name('show');
     });
@@ -371,12 +374,4 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
         Route::delete('/{alumniStory}', [AlumniStoryController::class, 'destroy'])->name('destroy');
     });
 
-    Route::get('/notifications', function () {
-        $users = User::latest()->limit(5)->get();
-        return response()->json($users->map(fn($u) => [
-            'title' => 'User baru: ' . $u->email,
-            'time'  => $u->created_at->diffForHumans(),
-            'link'  => route('admin.users.index'),
-        ]));
-    })->name('notifications');
-}); 
+});

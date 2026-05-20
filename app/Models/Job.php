@@ -35,9 +35,9 @@ class Job extends Model
     ];
 
     protected $casts = [
-        'expired_at' => 'datetime',
-        'posted_at'  => 'datetime',
-        'is_active' => 'boolean',
+    'is_active' => 'boolean',
+    'posted_at' => 'datetime',
+    'expired_at' => 'datetime',
     ];
 
     // --- RELASI ---
@@ -103,5 +103,9 @@ class Job extends Model
         if ($this->logo) return \Illuminate\Support\Facades\Storage::url($this->logo);
         if ($this->company && $this->company->logo) return \Illuminate\Support\Facades\Storage::url($this->company->logo);
         return null;
+    }
+    public function setIsActiveAttribute($value): void
+    {
+        $this->attributes['is_active'] = filter_var($value, FILTER_VALIDATE_BOOLEAN);
     }
 }

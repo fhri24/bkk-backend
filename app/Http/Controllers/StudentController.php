@@ -13,7 +13,9 @@ use App\Models\SavedJob;
 use App\Models\EventRegistration;
 use App\Models\Role;
 use App\Models\User;
+use App\Notifications\JobApplicationSubmitted;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 
@@ -112,7 +114,6 @@ class StudentController extends Controller
             ->pluck('job')
             ->filter();
 
-        // Gunakan view yang sama, alumni & siswa bisa akses
         return view('student.saved-jobs', compact('savedJobs'));
     }
 
@@ -139,10 +140,8 @@ class StudentController extends Controller
                 ->latest()
                 ->get();
         } else {
-            // Coba ambil dari userable dulu
             $profil = $user->userable;
 
-            // Kalau userable null, ambil langsung dari relasi student (alumni import)
             if (!$profil) {
                 $profil = $user->student;
             }
@@ -151,7 +150,6 @@ class StudentController extends Controller
                 return redirect()->back()->with('error', 'Data profil tambahan tidak ditemukan.');
             }
 
-            // Kalau profil sudah berupa Student langsung (alumni yang diimport via Excel)
             if ($profil instanceof \App\Models\Student) {
                 $student = $profil;
                 $applications = JobApplication::where('student_id', $student->student_id)
@@ -159,7 +157,6 @@ class StudentController extends Controller
                     ->latest()
                     ->get();
             } else {
-                // Map dari polymorphic table ke Student virtual untuk View
                 $student = new Student();
                 $student->forceFill([
                     'student_id'      => $profil->getKey(),
@@ -223,32 +220,30 @@ class StudentController extends Controller
                     $student->profile_picture = $request->file('profile_picture')->store('foto_profile', 'public');
                 }
 
-                $student->full_name      = $request->full_name;
-                $student->nis            = $request->nis;
-                $student->gender         = $request->gender;
-                $student->major          = $request->major;
+                $student->full_name       = $request->full_name;
+                $student->nis             = $request->nis;
+                $student->gender          = $request->gender;
+                $student->major           = $request->major;
                 $student->graduation_year = $request->graduation_year;
-                $student->phone          = $request->phone;
-                $student->address        = $request->address;
-                $student->birth_info     = $request->birth_info;
-                $student->alumni_flag    = ($request->graduation_year <= date('Y'));
+                $student->phone           = $request->phone;
+                $student->address         = $request->address;
+                $student->birth_info      = $request->birth_info;
+                $student->alumni_flag     = ($request->graduation_year <= date('Y'));
                 $student->save();
             } elseif ($profil = $user->student) {
-                // Alumni yang diimport via Excel — update langsung ke tabel students
                 if ($request->hasFile('profile_picture')) {
                     if ($profil->profile_picture) Storage::disk('public')->delete($profil->profile_picture);
                     $profil->profile_picture = $request->file('profile_picture')->store('foto_profile', 'public');
                 }
 
-                $profil->full_name       = $request->full_name;
-                $profil->gender          = $request->gender;
-                $profil->phone           = $request->phone;
-                $profil->address         = $request->address;
-                $profil->major           = $request->major;
-                $profil->graduation_year = $request->graduation_year;
+                $profil->full_name        = $request->full_name;
+                $profil->gender           = $request->gender;
+                $profil->phone            = $request->phone;
+                $profil->address          = $request->address;
+                $profil->major            = $request->major;
+                $profil->graduation_year  = $request->graduation_year;
                 $profil->save();
             } else {
-                // Alumni polymorphic lama
                 $profil = $user->userable;
                 if ($request->hasFile('profile_picture')) {
                     if ($profil->foto_profile) Storage::disk('public')->delete($profil->foto_profile);
@@ -314,7 +309,8 @@ class StudentController extends Controller
             $fileName = time() . '_' . Auth::id() . '.' . $request->file('cv_file')->getClientOriginalExtension();
             Storage::disk('public')->putFileAs('cv_applications', $request->file('cv_file'), $fileName);
 
-            JobApplication::create([
+            // Simpan & dapat objeknya
+            $application = JobApplication::create([
                 'student_id'       => $student ? $student->student_id : null,
                 'job_id'           => $id,
                 'status'           => 'pending',
@@ -325,6 +321,17 @@ class StudentController extends Controller
                 'email'            => $user->email,
                 'phone_number'     => $student ? $student->phone : ($profil->no_hp ?? $profil->phone ?? null),
             ]);
+
+            // Kirim notifikasi ke admin
+            $admins = User::whereHas('role', fn($q) =>
+                $q->whereIn('name', ['super_admin', 'admin_bkk'])
+            )->get();
+
+            try {
+                Notification::send($admins, new JobApplicationSubmitted($application->load('job.company')));
+            } catch (\Exception $e) {
+                // Lanjut meski notif gagal
+            }
 
             session(['name' => $user->name]);
 
