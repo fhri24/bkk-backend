@@ -5,7 +5,7 @@
             {{-- Kolom 1: Logo & Sosmed --}}
             <div>
                 <div class="flex items-center space-x-3 mb-6">
-                    <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center overflow-hidden">
+                    <div class="w-14 h-14 flex items-center justify-center overflow-hidden">
                         @if (!empty($schoolProfile) && !empty($schoolProfile->logo_path))
                             <img src="{{ asset('storage/' . $schoolProfile->logo_path) }}"
                                 class="w-full h-full object-contain p-1" alt="Logo">
