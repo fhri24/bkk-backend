@@ -6,11 +6,16 @@
             <div class="flex items-center cursor-pointer hover:opacity-80 transition"
                 onclick="window.location.href = '{{ route('home') }}'">
 
-                {{-- Logo dinamis --}}
-                <div class="w-24 h-24 rounded-xl overflow-hidden">
-                    @if (isset($schoolProfile) && ($schoolProfile->logo ?? $schoolProfile->logo_path))
-                        <img src="{{ asset('storage/' . ($schoolProfile->logo ?? $schoolProfile->logo_path)) }}"
-                            class="w-full h-full object-contain" alt="Logo">
+                {{-- Logo dinamis — ambil langsung dari DB --}}
+                @php
+                    $navProfile = \App\Models\SchoolProfile::first();
+                    $navLogoPath = $navProfile?->logo ?? ($navProfile?->logo_path ?? null);
+                @endphp
+
+                <div class="w-24 h-24 rounded-xl overflow-hidden flex items-center justify-center">
+                    @if ($navLogoPath)
+                        <img src="{{ asset('storage/' . $navLogoPath) }}" class="w-full h-full object-contain"
+                            alt="Logo BKK">
                     @else
                         <div class="w-full h-full flex items-center justify-center">
                             <i class="fas fa-graduation-cap text-white text-3xl"></i>
