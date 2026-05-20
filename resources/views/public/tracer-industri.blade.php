@@ -33,21 +33,18 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-3">Nama Perusahaan *</label>
-                        <input type="text" placeholder="Masukkan Nama Perusahaan" required
-                            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100" />
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-3">Jenis Perusahaan (Badan Hukum) *</label>
                         <select required
                             class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100">
-                            <option value="">Pilih Jenis Perusahaan</option>
-                            <option>PT (Perseroan Terbatas)</option>
-                            <option>CV (Commanditaire Vennootschap)</option>
-                            <option>Koperasi</option>
-                            <option>BUMN</option>
-                            <option>BUMD</option>
-                            <option>Lainnya</option>
+                            <option value="">Pilih Nama Perusahaan</option>
+                            @foreach($companies as $company)
+                                <option value="{{ $company->company_id }}">{{ $company->company_name }}</option>
+                            @endforeach
                         </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-3">Nama Industri *</label>
+                        <input type="text" placeholder="Masukkan Nama Industri" required
+                            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100" />
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-3">Alamat Perusahaan *</label>

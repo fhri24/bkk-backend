@@ -225,9 +225,9 @@ class PublikController extends Controller
 
     public function tracerIndustry()
     {
-        return view('public.tracer-industri');
+        $companies = Company::orderBy('company_name')->get();
+        return view('public.tracer-industri', compact('companies'));
     }
-
     public function storeTracer(Request $request)
     {
         $request->validate([
@@ -301,4 +301,4 @@ class PublikController extends Controller
         $relatedTips = \App\Models\Tip::published()->where('id', '!=', $tip->id)->where('kategori', $tip->kategori)->latest()->take(3)->get();
         return view('public.tips-detail', compact('tip', 'relatedTips'));
     }
-} 
+}

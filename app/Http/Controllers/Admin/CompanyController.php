@@ -47,7 +47,7 @@ class CompanyController extends Controller
             'website' => 'nullable|url|max:255',
         ]);
 
-        $company = Company::create(array_merge($validated, ['is_verified' => false]));
+       $company = Company::create(array_merge($validated, ['is_verified' => 0]));
 
         $action = $request->input('action', 'save_and_create');
 
