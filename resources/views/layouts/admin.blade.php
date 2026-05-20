@@ -225,8 +225,8 @@
 
                     {{-- Logo --}}
                     <div
-                        class="w-12 h-12 rounded-lg overflow-hidden flex items-center justify-center flex-shrink-0
-            {{ $logoPath ? 'bg-white' : 'bg-blue-400' }}">
+                        class="w-16 h-16 rounded-lg overflow-hidden flex items-center justify-center flex-shrink-0
+            {{ $logoPath ? 'bg-transparent' : 'bg-blue-400' }}">
 
                         @if ($logoPath)
                             <img src="{{ asset('storage/' . $logoPath) }}" class="w-full h-full object-contain p-1"
