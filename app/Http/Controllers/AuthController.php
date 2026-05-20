@@ -89,8 +89,8 @@ class AuthController extends Controller
                 'email'         => $request->email,
                 'password'      => Hash::make($request->password),
                 'role_id'       => $role->id,
-                'userable_id'   => 0,
-                'userable_type' => 'App\Models\User',
+                // 'userable_id'   => 0,
+                // 'userable_type' => 'App\Models\User',
                 'is_active'     => true,
             ]);
 
@@ -122,21 +122,18 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'nis'             => ['required', 'string', 'max:50'],
-            'graduation_year' => ['nullable', 'digits:4', 'integer'],
-            'major'           => ['nullable', 'string', 'max:100'],
-            'password'        => ['required'],
+            'nis'      => ['required', 'string', 'max:50'],
+            'password' => ['required'],
         ], [
-            'nis.required'           => 'NISN wajib diisi.',
-            'graduation_year.digits' => 'Tahun lulus harus 4 digit.',
-            'password.required'      => 'Kata sandi wajib diisi.',
+            'nis.required'      => 'NISN wajib diisi.',
+            'password.required' => 'Kata sandi wajib diisi.',
         ]);
 
         $nisnInput = trim($request->nis);
 
         $user = User::where(function ($query) use ($request, $nisnInput) {
 
-            // Login Alumni / Siswa: pakai NISN/NIS + tahun lulus + jurusan
+            // Login Alumni / Siswa: pakai NISN/NIS, optional tahun lulus dan jurusan
             $query->where(function ($q) use ($request, $nisnInput) {
                 $q->whereHas('role', fn($r) => $r->whereIn('name', ['alumni', 'siswa']))
                   ->whereHas('student', function ($s) use ($request, $nisnInput) {
@@ -186,7 +183,7 @@ class AuthController extends Controller
         }
 
         return back()->withErrors([
-            'nis' => 'NISN, tahun lulus, jurusan, atau password salah.',
+            'nis' => 'NISN atau password salah.',
         ])->onlyInput('nis');
     }
 

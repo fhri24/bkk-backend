@@ -215,7 +215,15 @@ class PublikController extends Controller
         if (auth()->check()) {
             $authStudent = Student::where('user_id', auth()->id())->first();
         }
-        return view('public.tracer-report', compact('tracerStudies', 'chartData', 'totalRespondents', 'workingPercentage', 'entrepreneurPercentage', 'alignmentData', 'majors', 'authStudent'));
+
+        $myTracer = null;
+        $hasSubmitted = false;
+        if ($authStudent) {
+            $myTracer = TracerStudy::where('student_id', $authStudent->student_id)->first();
+            $hasSubmitted = (bool) $myTracer;
+        }
+
+        return view('public.tracer-report', compact('tracerStudies', 'chartData', 'totalRespondents', 'workingPercentage', 'entrepreneurPercentage', 'alignmentData', 'majors', 'authStudent', 'myTracer', 'hasSubmitted'));
     }
 
     public function tracerIndustry()
