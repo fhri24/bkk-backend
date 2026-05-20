@@ -15,7 +15,7 @@ class Job extends Model
     protected $fillable = [
         'company_id',
         'admin_id',
-        'major_id', // Tambahan: Sinkron dengan tabel majors
+        'major_id',
         'title',
         'description',
         'requirements',
@@ -35,9 +35,9 @@ class Job extends Model
     ];
 
     protected $casts = [
-    'is_active' => 'boolean',
-    'posted_at' => 'datetime',
-    'expired_at' => 'datetime',
+        'is_active'  => 'integer',
+        'posted_at'  => 'datetime',
+        'expired_at' => 'datetime',
     ];
 
     // --- RELASI ---
@@ -67,15 +67,18 @@ class Job extends Model
         return $this->hasMany(SavedJob::class, 'job_id', 'job_id');
     }
 
-    // --- SCOPES & HELPERS (Tetap Sama) ---
+    // --- SCOPES ---
+
     public function scopeActive(Builder $query)
     {
         return $query->where('status', 'active');
     }
+
     public function scopePublic(Builder $query)
     {
         return $query->where('visibility', 'public');
     }
+
     public function scopeAlumniOnly(Builder $query)
     {
         return $query->where('visibility', 'alumni_only');
@@ -87,6 +90,8 @@ class Job extends Model
         if ($user->alumni_flag ?? false) return $query;
         return $query->public();
     }
+
+    // --- ACCESSORS ---
 
     public function getIsActiveJobAttribute(): bool
     {
@@ -103,9 +108,5 @@ class Job extends Model
         if ($this->logo) return \Illuminate\Support\Facades\Storage::url($this->logo);
         if ($this->company && $this->company->logo) return \Illuminate\Support\Facades\Storage::url($this->company->logo);
         return null;
-    }
-    public function setIsActiveAttribute($value): void
-    {
-        $this->attributes['is_active'] = filter_var($value, FILTER_VALIDATE_BOOLEAN);
     }
 }

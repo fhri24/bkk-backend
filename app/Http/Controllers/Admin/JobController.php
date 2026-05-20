@@ -7,6 +7,7 @@ use App\Models\Company;
 use App\Models\Job;
 use App\Models\Major;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class JobController extends Controller
 {
@@ -79,12 +80,11 @@ class JobController extends Controller
 
         unset($validated['image']);
 
-        // Gunakan new Job + save() agar casting boolean berjalan dengan benar di PostgreSQL
         $job = new Job($validated);
         $job->admin_id        = auth()->id();
         $job->status          = 'active';
         $job->approval_status = 'approved';
-        $job->is_active       = true;
+        $job->is_active       = 1;
         $job->posted_at       = now();
         $job->save();
 
@@ -133,8 +133,8 @@ class JobController extends Controller
         $job->update([
             'approval_status' => 'approved',
             'status'          => 'active',
-            'is_active'       => true,
-            'approval_notes'  => null,
+            'is_active'       =>  1,
+            'approval_notes'  =>  null,
         ]);
 
         return redirect()->back()->with('success', "Lowongan \"{$job->title}\" berhasil disetujui dan sekarang tampil ke publik.");
@@ -149,7 +149,7 @@ class JobController extends Controller
         $job->update([
             'approval_status' => 'rejected',
             'status'          => 'inactive',
-            'is_active'       => false,
+            'is_active'       => 0,
             'approval_notes'  => $request->approval_notes,
         ]);
 
