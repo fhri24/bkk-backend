@@ -123,7 +123,74 @@
             background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
         }
 
-        /* ── Kisah Sukses Alumni ── */
+        /* ── Marquee ── */
+        .marquee-row {
+            overflow: hidden;
+            width: 100%;
+            position: relative;
+        }
+
+        .marquee-track {
+            display: flex;
+            gap: 20px;
+            width: max-content;
+            align-items: stretch;
+            /* FIX: stretch agar semua card sama tinggi */
+            will-change: transform;
+        }
+
+        /* FIX: card fixed width + height, overflow hidden agar tidak bocor */
+        .marquee-card {
+            width: 300px;
+            min-height: 160px;
+            max-height: 200px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            /* FIX: konten tersebar rata */
+            cursor: pointer;
+            overflow: hidden;
+            /* FIX: potong teks yang melebihi kotak */
+            box-sizing: border-box;
+            word-break: break-word;
+        }
+
+        /* FIX: teks story dibatasi 3 baris */
+        .marquee-card p.story-text {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            flex: 1;
+        }
+
+        /* FIX: bagian bawah (avatar+nama) selalu di bawah */
+        .marquee-card .card-footer {
+            flex-shrink: 0;
+            margin-top: 8px;
+        }
+
+        /* Popup */
+        .marquee-card-popup {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 32px 80px rgba(0, 0, 0, 0.18);
+            border: 1px solid #e2e8f0;
+            width: 360px;
+            max-width: 90vw;
+            pointer-events: none;
+        }
+
+        .marquee-card-popup.active {
+            display: block;
+        }
+
+        /* Story card hover */
         .story-card {
             animation: zoomInUp 0.8s ease-out backwards;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -171,7 +238,6 @@
             flex-shrink: 0;
         }
 
-        /* Quote decoration */
         .quote-mark {
             font-family: Georgia, serif;
             font-size: 80px;
@@ -180,67 +246,8 @@
             user-select: none;
         }
 
-        /* Submit success alert */
         .story-success-alert {
             animation: zoomInUp 0.5s ease-out;
-        }
-
-        /* ── Marquee Infinite Scroll + Popup Hover Layout ── */
-        .marquee-row {
-            overflow: hidden;
-            width: 100%;
-            position: relative;
-        }
-
-        .marquee-track {
-            display: flex;
-            gap: 20px;
-            width: max-content;
-            align-items: flex-start;
-            will-change: transform;
-            /* Akselerasi hardware browser agar gerakan mulus */
-        }
-
-        .marquee-card {
-            width: 300px;
-            flex-shrink: 0;
-            display: flex;
-            flex-direction: column;
-            cursor: pointer;
-            overflow: hidden;
-        }
-
-        /* Popup overlay yang mengikuti kursor mouse */
-        .marquee-card-popup {
-            display: none;
-            position: fixed;
-            z-index: 9999;
-            background: white;
-            border-radius: 20px;
-            padding: 24px;
-            box-shadow: 0 32px 80px rgba(0, 0, 0, 0.18);
-            border: 1px solid #e2e8f0;
-            width: 360px;
-            max-width: 90vw;
-            pointer-events: none;
-            /* Mencegah kedip / memblokir gerakan pointer */
-            animation: popupIn 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-        }
-
-        .marquee-card-popup.active {
-            display: block;
-        }
-
-        @keyframes popupIn {
-            from {
-                opacity: 0;
-                transform: scale(0.92) translateY(8px);
-            }
-
-            to {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
         }
     </style>
 @endsection
@@ -535,40 +542,42 @@
                                     data-job="{{ $story->job_title }}" data-avatar="{{ $avatarUrl ?? '' }}"
                                     data-initials="{{ $story->initials }}" data-color="{{ $gradientColor }}">
 
-                                    <p class="text-slate-600 text-sm leading-relaxed line-clamp-3 mb-4">
-                                        {{ $story->story }}
+                                    <p class="text-slate-600 text-sm leading-relaxed story-text mb-4">
+                                        {{ Str::limit($story->story, 120) }}
                                     </p>
 
-                                    <div class="divider-line mb-3"></div>
+                                    <div class="card-footer">
+                                        <div class="divider-line mb-3"></div>
 
-                                    <div class="flex items-center gap-3">
+                                        <div class="flex items-center gap-3">
 
-                                        @if ($avatarUrl)
-                                            <img src="{{ $avatarUrl }}"
-                                                class="w-10 h-10 rounded-full object-cover border-2 border-white shadow flex-shrink-0"
-                                                onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                                            @if ($avatarUrl)
+                                                <img src="{{ $avatarUrl }}"
+                                                    class="w-10 h-10 rounded-full object-cover border-2 border-white shadow flex-shrink-0"
+                                                    onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
 
-                                            <div class="w-10 h-10 rounded-full bg-gradient-to-br {{ $colorClass }} flex items-center justify-center text-white font-bold text-xs flex-shrink-0"
-                                                style="display:none;">
-                                                {{ $story->initials }}
+                                                <div class="w-10 h-10 rounded-full bg-gradient-to-br {{ $colorClass }} flex items-center justify-center text-white font-bold text-xs flex-shrink-0"
+                                                    style="display:none;">
+                                                    {{ $story->initials }}
+                                                </div>
+                                            @else
+                                                <div
+                                                    class="w-10 h-10 rounded-full bg-gradient-to-br {{ $colorClass }} flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
+                                                    {{ $story->initials }}
+                                                </div>
+                                            @endif
+
+                                            <div>
+                                                <p class="font-bold text-slate-800 text-sm">
+                                                    {{ $story->name }}
+                                                </p>
+
+                                                <p class="text-xs text-slate-500">
+                                                    {{ $story->job_title }}
+                                                </p>
                                             </div>
-                                        @else
-                                            <div
-                                                class="w-10 h-10 rounded-full bg-gradient-to-br {{ $colorClass }} flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
-                                                {{ $story->initials }}
-                                            </div>
-                                        @endif
 
-                                        <div>
-                                            <p class="font-bold text-slate-800 text-sm">
-                                                {{ $story->name }}
-                                            </p>
-
-                                            <p class="text-xs text-slate-500">
-                                                {{ $story->job_title }}
-                                            </p>
                                         </div>
-
                                     </div>
                                 </div>
                             @endforeach
@@ -612,40 +621,42 @@
                                     data-job="{{ $story->job_title }}" data-avatar="{{ $avatarUrl ?? '' }}"
                                     data-initials="{{ $story->initials }}" data-color="{{ $gradientColor }}">
 
-                                    <p class="text-slate-600 text-sm leading-relaxed line-clamp-3 mb-4">
-                                        {{ $story->story }}
+                                    <p class="text-slate-600 text-sm leading-relaxed story-text mb-4">
+                                        {{ Str::limit($story->story, 120) }}
                                     </p>
 
-                                    <div class="divider-line mb-3"></div>
+                                    <div class="card-footer">
+                                        <div class="divider-line mb-3"></div>
 
-                                    <div class="flex items-center gap-3">
+                                        <div class="flex items-center gap-3">
 
-                                        @if ($avatarUrl)
-                                            <img src="{{ $avatarUrl }}"
-                                                class="w-10 h-10 rounded-full object-cover border-2 border-white shadow flex-shrink-0"
-                                                onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                                            @if ($avatarUrl)
+                                                <img src="{{ $avatarUrl }}"
+                                                    class="w-10 h-10 rounded-full object-cover border-2 border-white shadow flex-shrink-0"
+                                                    onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
 
-                                            <div class="w-10 h-10 rounded-full bg-gradient-to-br {{ $colorClass }} flex items-center justify-center text-white font-bold text-xs flex-shrink-0"
-                                                style="display:none;">
-                                                {{ $story->initials }}
+                                                <div class="w-10 h-10 rounded-full bg-gradient-to-br {{ $colorClass }} flex items-center justify-center text-white font-bold text-xs flex-shrink-0"
+                                                    style="display:none;">
+                                                    {{ $story->initials }}
+                                                </div>
+                                            @else
+                                                <div
+                                                    class="w-10 h-10 rounded-full bg-gradient-to-br {{ $colorClass }} flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
+                                                    {{ $story->initials }}
+                                                </div>
+                                            @endif
+
+                                            <div>
+                                                <p class="font-bold text-slate-800 text-sm truncate">
+                                                    {{ Str::limit($story->name, 30) }}
+                                                </p>
+
+                                                <p class="text-xs text-slate-500 truncate">
+                                                    {{ Str::limit($story->job_title, 40) }}
+                                                </p>
                                             </div>
-                                        @else
-                                            <div
-                                                class="w-10 h-10 rounded-full bg-gradient-to-br {{ $colorClass }} flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
-                                                {{ $story->initials }}
-                                            </div>
-                                        @endif
 
-                                        <div>
-                                            <p class="font-bold text-slate-800 text-sm">
-                                                {{ $story->name }}
-                                            </p>
-
-                                            <p class="text-xs text-slate-500">
-                                                {{ $story->job_title }}
-                                            </p>
                                         </div>
-
                                     </div>
                                 </div>
                             @endforeach
@@ -790,7 +801,7 @@
         </div>
     @endauth
 
-    <section class="bg-gradient-to-b from-white to-slate-100 py-20"> 
+    <section class="bg-gradient-to-b from-white to-slate-100 py-20">
         <div class="container mx-auto px-6 text-center">
             <div class="section-header inline-block mb-10">
                 <p class="text-xs font-bold uppercase tracking-[0.3em] text-slate-400 pl-6">Bekerjasama dengan Industri
@@ -838,107 +849,83 @@
     <script>
         document.addEventListener("DOMContentLoaded", function() {
 
-            // ── Counter Karakter Textarea Cerita Singkat ──
+            // ── Counter Karakter ──
             const textarea = document.getElementById('storyTextarea');
             const charCount = document.getElementById('charCount');
-
             if (textarea && charCount) {
                 charCount.textContent = textarea.value.length;
-
                 textarea.addEventListener('input', function() {
                     charCount.textContent = this.value.length;
                 });
             }
 
-            // ── Marquee Infinite Scroll + Popup Hover ──
+            // ── Marquee ──
             (function() {
                 const SPEED = 0.45;
                 const GAP = 20;
 
-                // Buat satu popup element global jika belum ada
-                let popup = document.querySelector('.marquee-card-popup');
-                if (!popup) {
-                    popup = document.createElement('div');
-                    popup.className = 'marquee-card-popup';
-                    popup.innerHTML = `
-                        <p class="popup-story text-slate-700 text-sm leading-relaxed mb-4"></p>
-                        <div style="height:1px;background:linear-gradient(90deg,transparent,#e2e8f0,transparent);margin-bottom:14px;"></div>
-                        <div class="flex items-center gap-3">
-                            <div class="popup-avatar-img" style="display:none;">
-                                <img class="w-11 h-11 rounded-full object-cover border-2 border-white shadow flex-shrink-0" src="" alt="">
-                            </div>
-                            <div class="popup-avatar-initials w-11 h-11 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0" style="display:none;"></div>
-                            <div>
-                                <p class="popup-name font-bold text-slate-800 text-sm"></p>
-                                <p class="popup-job text-xs text-slate-500"></p>
-                            </div>
+                // Buat popup sekali
+                const popup = document.createElement('div');
+                popup.className = 'marquee-card-popup';
+                popup.innerHTML = `
+                    <p class="popup-story" style="color:#475569;font-size:14px;line-height:1.65;margin-bottom:14px;"></p>
+                    <div style="height:1px;background:linear-gradient(90deg,transparent,#e2e8f0,transparent);margin-bottom:12px;"></div>
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <div class="popup-avatar-img" style="display:none;">
+                            <img style="width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.1);" src="" alt="">
                         </div>
-                    `;
-                    document.body.appendChild(popup);
+                        <div class="popup-avatar-initials" style="width:44px;height:44px;border-radius:50%;display:none;align-items:center;justify-content:center;color:white;font-weight:700;font-size:14px;flex-shrink:0;"></div>
+                        <div>
+                            <p class="popup-name" style="font-weight:700;color:#1e293b;font-size:14px;margin:0;"></p>
+                            <p class="popup-job"  style="color:#64748b;font-size:12px;margin:0;"></p>
+                        </div>
+                    </div>`;
+                document.body.appendChild(popup);
+
+                // FIX: posisi pakai clientX/clientY (fixed positioning)
+                function positionPopup(cx, cy) {
+                    const pw = 360;
+                    const ph = popup.offsetHeight || 180;
+                    const gap = 14;
+                    const vw = window.innerWidth;
+                    const vh = window.innerHeight;
+
+                    let x = cx + gap;
+                    let y = cy - ph - gap;
+
+                    if (x + pw > vw - 10) x = cx - pw - gap;
+                    if (y < 10) y = cy + gap;
+                    if (y + ph > vh - 10) y = vh - ph - 10;
+                    if (x < 10) x = 10;
+
+                    popup.style.left = x + 'px';
+                    popup.style.top = y + 'px';
                 }
 
                 function showPopup(card, e) {
-                    const story = card.dataset.story;
-                    const name = card.dataset.name;
-                    const job = card.dataset.job;
-                    const avatar = card.dataset.avatar;
-                    const initials = card.dataset.initials;
-                    const color = card.dataset.color;
-
-                    popup.querySelector('.popup-story').textContent = story;
-                    popup.querySelector('.popup-name').textContent = name;
-                    popup.querySelector('.popup-job').textContent = job;
+                    popup.querySelector('.popup-story').textContent = card.dataset.story || '';
+                    popup.querySelector('.popup-name').textContent = card.dataset.name || '';
+                    popup.querySelector('.popup-job').textContent = card.dataset.job || '';
 
                     const imgWrap = popup.querySelector('.popup-avatar-img');
                     const initWrap = popup.querySelector('.popup-avatar-initials');
+                    const avatar = card.dataset.avatar || '';
+                    const initials = card.dataset.initials || '';
+                    const color = card.dataset.color || '#3b82f6, #1d4ed8';
 
-                    if (avatar && avatar.trim() !== '') {
+                    if (avatar) {
                         imgWrap.querySelector('img').src = avatar;
                         imgWrap.style.display = 'block';
                         initWrap.style.display = 'none';
                     } else {
                         initWrap.textContent = initials;
                         initWrap.style.cssText =
-                            `display:flex; background: linear-gradient(to bottom right, ${color});`;
+                            `width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:14px;flex-shrink:0;background:linear-gradient(to bottom right,${color});`;
                         imgWrap.style.display = 'none';
                     }
 
-                    // Sembunyikan dulu menggunakan visibility, pasang di DOM, baru ukur tingginya agar tidak terpotong
-                    popup.style.visibility = 'hidden';
                     popup.classList.add('active');
-
-                    // Posisi berdasarkan card rect — muncul presisi di atas card
-                    const rect = card.getBoundingClientRect();
-                    const pw = 360;
-                    const margin = 10;
-                    const scrollY = window.scrollY || document.documentElement.scrollTop;
-                    const scrollX = window.scrollX || document.documentElement.scrollLeft;
-
-                    let x = rect.left + scrollX;
-                    let y = rect.top + scrollY - popup.offsetHeight - margin;
-
-                    // Kalau kurang ruang di atas viewport, munculkan di bawah card
-                    if (rect.top - popup.offsetHeight - margin < 0) {
-                        y = rect.bottom + scrollY + margin;
-                    }
-
-                    // Jangan sampai keluar kanan layar
-                    if (x + pw > window.innerWidth + scrollX - 10) {
-                        x = window.innerWidth + scrollX - pw - 10;
-                    }
-
-                    // Jangan sampai keluar kiri layar      
-                    if (x < scrollX + 10) {
-                        x = scrollX + 10;
-                    }
-
-                    popup.style.left = x + 'px';
-                    popup.style.top = y + 'px';
-                    popup.style.visibility = 'visible';
-                }
-
-                function positionPopup(e) {
-                    // Sesuai request: Tidak dipakai lagi — posisi sudah presisi mengikuti bounding box card
+                    positionPopup(e.clientX, e.clientY);
                 }
 
                 function hidePopup() {
@@ -949,45 +936,41 @@
                     const track = document.getElementById(trackId);
                     if (!track) return;
 
-                    const originalCards = Array.from(track.querySelectorAll('.marquee-card'));
-                    if (originalCards.length === 0) return;
+                    const origCards = Array.from(track.querySelectorAll('.marquee-card'));
+                    if (!origCards.length) return;
 
-                    const viewW = window.innerWidth;
                     const cardW = 300 + GAP;
-                    const origW = originalCards.length * cardW;
-                    const clonesets = Math.max(5, Math.ceil((viewW * 5) / origW));
+                    const oneSetW = origCards.length * cardW;
+                    const clonesets = Math.max(5, Math.ceil((window.innerWidth * 5) / oneSetW));
 
+                    // Clone cards
                     for (let i = 0; i < clonesets; i++) {
-                        originalCards.forEach(card => {
-                            track.appendChild(card.cloneNode(true));
-                        });
+                        origCards.forEach(c => track.appendChild(c.cloneNode(true)));
                     }
 
-                    const oneSetW = originalCards.length * cardW;
                     let pos = direction === 'left' ? 0 : -oneSetW;
                     let paused = false;
-                    let currentActiveCard = null; // Menjaga state pencegah kedip (flicker)
 
-                    // Event delegation di level track
+                    // Mouseover → tampilkan popup
                     track.addEventListener('mouseover', (e) => {
                         const card = e.target.closest('.marquee-card');
-                        if (card && card !== currentActiveCard) {
-                            currentActiveCard = card;
+                        if (card) {
                             paused = true;
                             showPopup(card, e);
                         }
                     });
 
+                    // Mousemove → ikuti kursor
+                    track.addEventListener('mousemove', (e) => {
+                        if (popup.classList.contains('active')) positionPopup(e.clientX, e.clientY);
+                    });
+
+                    // Mouseout → sembunyikan
                     track.addEventListener('mouseout', (e) => {
                         const card = e.target.closest('.marquee-card');
-                        if (card) {
-                            const related = e.relatedTarget;
-                            // Pastikan kursor benar-benar keluar dari komponen card, bukan sekadar pindah ke elemen anak
-                            if (!related || !card.contains(related)) {
-                                currentActiveCard = null;
-                                paused = false;
-                                hidePopup();
-                            }
+                        if (card && (!e.relatedTarget || !card.contains(e.relatedTarget))) {
+                            paused = false;
+                            hidePopup();
                         }
                     });
 
@@ -1010,8 +993,8 @@
 
                 setupMarquee('track-1', 'left');
                 setupMarquee('track-2', 'right');
-            })();
 
+            })();
         });
     </script>
 @endsection
