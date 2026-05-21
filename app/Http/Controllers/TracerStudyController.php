@@ -33,7 +33,7 @@ class TracerStudyController extends Controller
             'email'          => 'required|email|max:255',
             'tahun_lulus'    => 'required|digits:4',
             'jurusan'        => 'required|string|max:100',
-            'status_saat_ini'=> 'required|in:Bekerja,Kuliah,Wirausaha,Belum Bekerja',
+            'status_saat_ini'=> 'required|in:Bekerja,Kuliah,Wirausaha,Belum Bekerja,Lainnya',
         ], [
             'nama_lengkap.required'    => 'Nama lengkap wajib diisi.',
             'no_hp.required'           => 'No. HP wajib diisi.',
@@ -42,6 +42,10 @@ class TracerStudyController extends Controller
             'jurusan.required'         => 'Jurusan wajib dipilih.',
             'status_saat_ini.required' => 'Status kegiatan wajib dipilih.',
         ]);
+
+        if ($request->status_saat_ini === 'Lainnya') {
+            $request->merge(['status_saat_ini' => 'Belum Bekerja']);
+        }
 
         $user = Auth::user();
 

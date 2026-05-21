@@ -94,7 +94,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="md:col-span-2">
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-3">Nama Lengkap *</label>
-                            <input name="nama" type="text" value="{{ old('nama', $authStudent->full_name ?? '') }}" placeholder="Nama Lengkap sesuai Ijazah" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" required />
+                            <input name="nama_lengkap" type="text" value="{{ old('nama_lengkap', $authStudent->full_name ?? '') }}" placeholder="Nama Lengkap sesuai Ijazah" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" required />
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-3">NIK *</label>
@@ -107,16 +107,16 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-3">Tanggal Lahir</label>
-                                <input name="tgl_lahir" type="date" value="{{ old('tgl_lahir') }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" />
+                                <input name="tanggal_lahir" type="date" value="{{ old('tanggal_lahir') }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" />
                             </div>
                         </div>
                         <div class="md:col-span-2">
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-3">Alamat Lengkap</label>
-                            <textarea name="alamat" placeholder="Alamat Domisili Saat Ini" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 h-20">{{ old('alamat', $authStudent->address ?? '') }}</textarea>
+                            <textarea name="alamat_lengkap" placeholder="Alamat Domisili Saat Ini" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 h-20">{{ old('alamat_lengkap', $authStudent->address ?? '') }}</textarea>
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-3">No. HP / WhatsApp Aktif *</label>
-                            <input name="telepon" type="tel" value="{{ old('telepon') }}" placeholder="Contoh: 08123456789" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" required />
+                            <input name="no_hp" type="tel" value="{{ old('no_hp') }}" placeholder="Contoh: 08123456789" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" required />
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-3">Email (Aktif) *</label>
@@ -150,19 +150,19 @@
                         <label class="block text-xs font-bold text-blue-200 uppercase mb-4">Apa kegiatan Anda saat ini? *</label>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <label class="flex items-center p-4 bg-white/10 border-2 border-white/20 rounded-xl cursor-pointer hover:bg-white/20 transition group">
-                                <input type="radio" name="kegiatan_utama" value="Bekerja" class="mr-3 w-5 h-5" onclick="showSection('section-bekerja')" required />
+                                <input type="radio" name="status_saat_ini" value="Bekerja" class="mr-3 w-5 h-5" onclick="showSection('section-bekerja')" required />
                                 <span class="font-bold text-white group-hover:translate-x-1 transition">Bekerja</span>
                             </label>
                             <label class="flex items-center p-4 bg-white/10 border-2 border-white/20 rounded-xl cursor-pointer hover:bg-white/20 transition group">
-                                <input type="radio" name="kegiatan_utama" value="Kuliah" class="mr-3 w-5 h-5" onclick="showSection('section-kuliah')" required />
+                                <input type="radio" name="status_saat_ini" value="Kuliah" class="mr-3 w-5 h-5" onclick="showSection('section-kuliah')" required />
                                 <span class="font-bold text-white group-hover:translate-x-1 transition">Melanjutkan Kuliah</span>
                             </label>
                             <label class="flex items-center p-4 bg-white/10 border-2 border-white/20 rounded-xl cursor-pointer hover:bg-white/20 transition group">
-                                <input type="radio" name="kegiatan_utama" value="Wirausaha" class="mr-3 w-5 h-5" onclick="showSection('section-wirausaha')" required />
+                                <input type="radio" name="status_saat_ini" value="Wirausaha" class="mr-3 w-5 h-5" onclick="showSection('section-wirausaha')" required />
                                 <span class="font-bold text-white group-hover:translate-x-1 transition">Wirausaha</span>
                             </label>
                             <label class="flex items-center p-4 bg-white/10 border-2 border-white/20 rounded-xl cursor-pointer hover:bg-white/20 transition group">
-                                <input type="radio" name="kegiatan_utama" value="Lainnya" class="mr-3 w-5 h-5" onclick="showSection('section-lainnya')" required />
+                                <input type="radio" name="status_saat_ini" value="Belum Bekerja" class="mr-3 w-5 h-5" onclick="showSection('section-lainnya')" required />
                                 <span class="font-bold text-white group-hover:translate-x-1 transition">Belum Bekerja / Lainnya</span>
                             </label>
                         </div>
@@ -181,23 +181,23 @@
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-3">Nama Perusahaan / Industri</label>
-                            <input type="text" name="nama_pt" placeholder="PT. ABC Indonesia" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm" />
+                            <input type="text" name="nama_instansi" placeholder="PT. ABC Indonesia" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm" />
                         </div>
                         <div class="md:col-span-2">
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-3">Alamat Perusahaan</label>
-                            <input type="text" name="alamat_pt" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm" />
+                            <input type="text" name="alamat_perusahaan" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm" />
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-3">Posisi / Jabatan</label>
-                            <input type="text" name="jabatan" placeholder="Staff IT / Teknisi" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm" />
+                            <input type="text" name="posisi_jabatan" placeholder="Staff IT / Teknisi" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm" />
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-3">TMT Bekerja</label>
-                            <input type="date" name="tmt_kerja" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm" />
+                            <input type="date" name="tmt_bekerja" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm" />
                         </div>
                         <div class="md:col-span-2">
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-3">Penghasilan per Bulan</label>
-                            <select name="gaji_bekerja" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm">
+                            <select name="range_gaji" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm">
                                 <option value="">Pilih Range Gaji</option>
                                 <option value="< Rp2 Juta">< Rp2 Juta</option>
                                 <option value="Rp2 Juta - Rp5 Juta">Rp2 Juta - Rp5 Juta</option>
@@ -220,15 +220,15 @@
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-3">Nama PT & Fakultas</label>
-                            <input type="text" name="nama_univ" placeholder="Contoh: UNPAD - Teknik" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm" />
+                            <input type="text" name="nama_pt" placeholder="Contoh: UNPAD - Teknik" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm" />
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-3">Jurusan / Prodi</label>
-                            <input type="text" name="prodi_univ" placeholder="Informatika" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm" />
+                            <input type="text" name="jurusan_pt" placeholder="Informatika" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm" />
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-3">Jenjang Kuliah</label>
-                            <select name="jenjang_univ" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm">
+                            <select name="jenjang_kuliah" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm">
                                 <option value="D1">D1</option>
                                 <option value="D2">D2</option>
                                 <option value="D3">D3</option>
@@ -263,7 +263,7 @@
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-3">Omzet Per Bulan</label>
-                            <input type="text" name="omzet_usaha" placeholder="Masukkan nominal omzet (Contoh: Rp 5.000.000)" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" />
+                            <input type="text" name="omzet_per_bulan" placeholder="Masukkan nominal omzet (Contoh: Rp 5.000.000)" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" />
                         </div>
                     </div>
                 </div>
@@ -274,16 +274,16 @@
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-4">Detail Kegiatan Saat Ini</label>
                         <div class="space-y-3">
                             <label class="flex items-center space-x-3">
-                                <input type="radio" name="detail_lainnya" value="Mencari pekerjaan" />
+                                <input type="radio" name="detail_kegiatan" value="Mencari pekerjaan" />
                                 <span>Mencari pekerjaan</span>
                             </label>
                             <label class="flex items-center space-x-3">
-                                <input type="radio" name="detail_lainnya" value="Mencari tempat kuliah" />
+                                <input type="radio" name="detail_kegiatan" value="Mencari tempat kuliah" />
                                 <span>Mencari tempat kuliah</span>
                             </label>
                             <div class="flex items-center space-x-3">
-                                <input type="radio" name="detail_lainnya" value="Lainnya" id="radio-is-lainnya" />
-                                <input type="text" name="is_lainnya_teks" placeholder="Lainnya (Sebutkan...)" class="flex-1 bg-slate-50 border-b border-slate-200 py-1 px-2 text-sm focus:outline-none focus:border-blue-600" />
+                                <input type="radio" name="detail_kegiatan" value="Lainnya" id="radio-is-lainnya" />
+                                <input type="text" name="detail_kegiatan_lainnya" placeholder="Lainnya (Sebutkan...)" class="flex-1 bg-slate-50 border-b border-slate-200 py-1 px-2 text-sm focus:outline-none focus:border-blue-600" />
                             </div>
                         </div>
                     </div>
@@ -399,20 +399,32 @@
                             if (data && data.redirect) redirectUrl = data.redirect;
                         } else {
                             status = 'error';
-                            msg = (data && (data.message || data.error)) ? (data.message || data.error) : 'Gagal mengirim survei.';
+                            if (data) {
+                                if (data.message || data.error) {
+                                    msg = data.message || data.error;
+                                } else if (data.errors) {
+                                    const errors = Object.values(data.errors).flat();
+                                    msg = errors.join(' ');
+                                }
+                            }
+                            if (!msg) {
+                                msg = 'Gagal mengirim survei.';
+                            }
                         }
                     }
 
                     showNotificationModal(status, msg, function() {
                         if (redirectUrl) {
                             window.location.href = redirectUrl;
-                        } else if (status === 'success') {
+                        } else {
                             window.location.reload();
                         }
                     });
 
                 } catch (err) {
-                    showNotificationModal('error', 'Gagal mengirim survei. Silakan coba lagi.', function() {});
+                    showNotificationModal('error', 'Gagal mengirim survei. Silakan coba lagi.', function() {
+                        window.location.reload();
+                    });
                 } finally {
                     if (submitBtn) {
                         submitBtn.disabled = false;
