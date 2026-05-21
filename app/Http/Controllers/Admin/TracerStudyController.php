@@ -55,7 +55,7 @@ class TracerStudyController extends Controller
 
         // 3. SEBELUM view dirender, tandai semua data yang 'false' menjadi 'true' di database.
         // FIX TOTAL: Menggunakan whereRaw dan DB::raw agar PostgreSQL menerima literal boolean murni dari hulu ke hilir
-        TracerStudy::whereRaw("is_read = 'false'")->update(['is_read' => DB::raw('true')]);
+      DB::table('tracer_studies')->where('is_read', 0)->update(['is_read' => 1]);
 
         return view('admin.tracer.index', compact(
             'tracerStudies', 'total', 'working', 'studying',

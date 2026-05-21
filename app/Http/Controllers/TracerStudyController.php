@@ -20,7 +20,14 @@ class TracerStudyController extends Controller
         // Cek apakah sudah pernah isi
         $existing = TracerStudy::where('user_id', $user->id)->first();
 
-        return view('public.tracer', compact('majors', 'years', 'existing'));
+        $chartData = [
+    'Bekerja'      => \App\Models\TracerStudy::where('status_saat_ini', 'Bekerja')->count(),
+    'Kuliah'       => \App\Models\TracerStudy::where('status_saat_ini', 'Kuliah')->count(),
+    'Wirausaha'    => \App\Models\TracerStudy::where('status_saat_ini', 'Wirausaha')->count(),
+    'Mencari Kerja'=> \App\Models\TracerStudy::where('status_saat_ini', 'Belum Bekerja')->count(),
+];
+
+return view('public.tracer', compact('majors', 'years', 'existing', 'chartData'));
     }
 
     // Simpan / update tracer study

@@ -222,16 +222,15 @@
                                 <div class="flex items-center gap-3">
                                     <div
                                         class="w-9 h-9 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-sm flex-shrink-0">
-                                        {{ strtoupper(substr($row->student->full_name ?? 'A', 0, 1)) }}
+                                        {{ strtoupper(substr($row->nama_lengkap ?? 'A', 0, 1)) }}
                                     </div>
                                     <div>
-                                        <p class="font-bold text-slate-800 text-sm">{{ $row->student->full_name ?? 'N/A' }}
-                                        </p>
-                                        <p class="text-xs text-slate-400">{{ $row->student->nis ?? '' }}</p>
+                                        <p class="font-bold text-slate-800 text-sm">{{ $row->nama_lengkap ?? 'N/A' }}</p>
+                                        <p class="text-xs text-slate-400">{{ $row->email ?? '' }}</p>
                                     </div>
                                 </div>
                             </td>
-                            <td class="text-sm text-slate-600 font-semibold">{{ $row->student->graduation_year ?? '-' }}
+                            <td class="text-sm text-slate-600 font-semibold">{{ $row->tahun_lulus ?? '-' }}
                             </td>
                             <td>
                                 @switch($row->status_saat_ini)

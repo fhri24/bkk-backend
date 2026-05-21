@@ -368,7 +368,7 @@
                             <a href="{{ route('admin.tracer.index') }}"
                                 class="sidebar-link flex items-center justify-between px-3 py-2 rounded-lg text-white/80 hover:text-white {{ request()->routeIs('admin.tracer.index') ? 'active' : '' }}">
                                 <span>Data Tracer Study</span>
-                                @php $unreadTracer = \App\Models\TracerStudy::whereRaw('"is_read" = false')->count(); @endphp
+                                @php $unreadTracer = \Illuminate\Support\Facades\DB::table('tracer_studies')->where('is_read', 0)->count(); @endphp
                                 @if ($unreadTracer > 0)
                                     <span
                                         class="ml-auto bg-blue-400 text-blue-900 text-[10px] font-bold px-2 py-0.5 rounded-full">
