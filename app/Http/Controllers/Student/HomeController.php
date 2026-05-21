@@ -24,12 +24,12 @@ class HomeController extends Controller
             ->get();
 
         $featured_events = Event::with('registrations')
-            ->whereRaw('"is_published" = true')
+            ->where('is_published', 1) // ✅ fix
             ->latest()
             ->take(3)
             ->get();
 
-        $news = News::whereRaw('"is_published" = true')
+        $news = News::where('is_published', 1) // ✅ fix
             ->latest('published_at')
             ->take(3)
             ->get();
@@ -45,7 +45,6 @@ class HomeController extends Controller
             'from-violet-500 to-violet-700',
         ];
 
-        // Stat Cards
         $alumniTerserap = TracerStudy::whereIn('status_saat_ini', ['Bekerja', 'Wirausaha'])->count();
 
         $totalTracer = TracerStudy::count();
