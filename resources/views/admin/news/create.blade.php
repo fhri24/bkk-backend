@@ -23,6 +23,19 @@
                 </div>
 
                 <div class="space-y-6">
+
+                    {{-- UPLOAD WORD --}}
+                    <div class="p-6 bg-blue-50 rounded-2xl border border-blue-200">
+                        <label class="block text-sm font-bold text-blue-700 mb-2">
+                            <i class="fas fa-file-word mr-1"></i> Upload dari Word (.docx)
+                        </label>
+                        <input type="file" id="wordFile" accept=".docx"
+                            class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200">
+                        <p class="mt-2 text-xs text-blue-500">Isi berita akan otomatis terisi dari file Word.</p>
+                        <div id="wordStatus" class="mt-2 text-xs font-semibold hidden"></div>
+                    </div>
+
+                    {{-- GAMBAR UTAMA --}}
                     <div class="p-6 bg-slate-50 rounded-2xl border border-slate-200">
                         <label class="block text-sm font-bold text-slate-700 mb-2">Gambar Utama</label>
                         <input type="file" name="image"
@@ -30,6 +43,7 @@
                         <p class="mt-2 text-xs text-slate-400">Rekomendasi ukuran: 1200 x 630 px</p>
                     </div>
 
+                    {{-- TAGS --}}
                     <div class="p-6 bg-slate-50 rounded-2xl border border-slate-200">
                         <label class="block text-sm font-bold text-slate-700 mb-2">Tags (Pisahkan dengan koma)</label>
                         <input type="text" name="tags" value="{{ old('tags') }}"
@@ -55,10 +69,46 @@
 
 @section('extra_js')
     <script src="https://cdn.ckeditor.com/4.16.2/full/ckeditor.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
     <script>
         CKEDITOR.replace('editor', {
             versionCheck: false,
             height: 400,
+        });
+
+        document.getElementById('wordFile').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            const status = document.getElementById('wordStatus');
+
+            if (!file) return;
+
+            if (!file.name.endsWith('.docx')) {
+                status.textContent = '❌ File harus berformat .docx';
+                status.className = 'mt-2 text-xs font-semibold text-red-500';
+                status.classList.remove('hidden');
+                return;
+            }
+
+            status.textContent = '⏳ Sedang memproses file...';
+            status.className = 'mt-2 text-xs font-semibold text-blue-500';
+            status.classList.remove('hidden');
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                mammoth.convertToHtml({ arrayBuffer: e.target.result })
+                    .then(function (result) {
+                        // Set konten ke CKEditor
+                        CKEDITOR.instances.editor.setData(result.value);
+                        status.textContent = '✅ Berhasil! Isi berita sudah terisi dari file Word.';
+                        status.className = 'mt-2 text-xs font-semibold text-green-600';
+                    })
+                    .catch(function (err) {
+                        status.textContent = '❌ Gagal membaca file. Pastikan file valid.';
+                        status.className = 'mt-2 text-xs font-semibold text-red-500';
+                        console.error(err);
+                    });
+            };
+            reader.readAsArrayBuffer(file);
         });
     </script>
 @endsection
