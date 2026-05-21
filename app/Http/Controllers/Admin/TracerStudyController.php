@@ -66,6 +66,47 @@ class TracerStudyController extends Controller
         ));
     }
 
+    /**
+     * Menampilkan daftar semua alumni yang mengisi tracer study.
+     */
+    public function alumni(Request $request)
+    {
+        // 1. Ambil data dengan filter pencarian, status, dan tahun lulus agar fitur filter di Blade berfungsi
+        $query = \App\Models\TracerStudy::with('student')->latest();
+
+        if ($request->filled('search')) {
+            $query->where('nama_lengkap', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status_saat_ini', $request->status);
+        }
+
+        if ($request->filled('year')) {
+            $query->where('tahun_lulus', $request->year);
+        }
+
+        $tracerStudies = $query->paginate(15)->withQueryString();
+        
+        // 2. Menghitung statistik global menggunakan nama variabel sesuai request kamu
+        $total     = \App\Models\TracerStudy::count();
+        $working   = \App\Models\TracerStudy::where('status_saat_ini', 'Bekerja')->count();
+        $kuliah    = \App\Models\TracerStudy::whereIn('status_saat_ini', ['Kuliah', 'Melanjutkan Pendidikan'])->count();
+        $wirausaha = \App\Models\TracerStudy::where('status_saat_ini', 'Wirausaha')->count();
+        $belum     = \App\Models\TracerStudy::where('status_saat_ini', 'Belum Bekerja')->count();
+
+        // 3. Mengambil daftar tahun kelulusan secara dinamis untuk dropdown filter di blade
+        $graduationYears = \App\Models\TracerStudy::select('tahun_lulus')
+            ->whereNotNull('tahun_lulus')
+            ->distinct()
+            ->orderByDesc('tahun_lulus')
+            ->pluck('tahun_lulus');
+
+        // 4. Return ke view beserta variabel yang sudah disesuaikan
+        return view('admin.tracer.alumni', compact(
+            'tracerStudies', 'total', 'working', 'kuliah', 'wirausaha', 'belum', 'graduationYears'
+        ));
+    }
     public function exportCsv(Request $request)
     {
         $query = TracerStudy::with('student');
