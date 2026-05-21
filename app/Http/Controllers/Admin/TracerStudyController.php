@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\TracerStudy;
+use App\Models\IndustryTracer;
 use App\Models\GraduationYear;
 use Illuminate\Http\Request;
 
@@ -74,32 +75,70 @@ class TracerStudyController extends Controller
         $working         = TracerStudy::where('status_saat_ini', 'Bekerja')->count();
         $studying        = TracerStudy::where('status_saat_ini', 'Kuliah')->count();
         $entrepren       = TracerStudy::where('status_saat_ini', 'Wirausaha')->count();
+        $unemployed      = TracerStudy::where('status_saat_ini', 'Belum Bekerja')->count();
         $graduationYears = TracerStudy::distinct()->pluck('tahun_lulus')->sort();
         $chartData       = [
             'Bekerja'       => $working,
             'Kuliah'        => $studying,
             'Wirausaha'     => $entrepren,
-            'Belum Bekerja' => TracerStudy::where('status_saat_ini', 'Belum Bekerja')->count(),
+            'Belum Bekerja' => $unemployed,
         ];
 
         return view('admin.tracer.alumni', compact(
             'tracerStudies', 'total', 'working', 'studying',
-            'entrepren', 'graduationYears', 'chartData'
+            'entrepren', 'unemployed', 'graduationYears', 'chartData'
         ));
     }
 
     public function industri(Request $request)
     {
-        $data = TracerStudy::where('status_saat_ini', 'Bekerja')
-            ->select('nama_instansi', 'lokasi_kerja', 'posisi_jabatan', 'range_gaji', 'jurusan', 'tahun_lulus')
-            ->latest()
-            ->paginate(15)
-            ->withQueryString();
+        // ✅ Fix: hanya with('user'), tidak ada relasi student
+        $query = IndustryTracer::with('user')->latest();
 
-        $totalIndustri  = TracerStudy::where('status_saat_ini', 'Bekerja')->count();
-        $dalamNegeri    = TracerStudy::where('status_saat_ini', 'Bekerja')->where('lokasi_kerja', 'Dalam Negeri')->count();
-        $luarNegeri     = TracerStudy::where('status_saat_ini', 'Bekerja')->where('lokasi_kerja', 'Luar Negeri')->count();
+        if ($request->filled('search')) {
+            // ✅ Fix: hanya search by nama_perusahaan, tidak ada orWhereHas student
+            $query->where('nama_perusahaan', 'like', '%' . $request->search . '%');
+        }
+        if ($request->filled('jenis')) {
+            $query->where('jenis_perusahaan', $request->jenis);
+        }
 
-        return view('admin.tracer.industri', compact('data', 'totalIndustri', 'dalamNegeri', 'luarNegeri'));
+        $data          = $query->paginate(15)->withQueryString();
+        $totalIndustri = IndustryTracer::count();
+        $withCompany   = IndustryTracer::count();
+        $matching      = IndustryTracer::whereRaw(
+            '(nilai_integritas + nilai_keahlian + nilai_bahasa_inggris +
+              nilai_teknologi + nilai_komunikasi + nilai_kerjasama +
+              nilai_analitis + nilai_kepemimpinan + nilai_tekanan) / 9 >= 4'
+        )->count();
+
+        $avgValues = [
+            'Integritas'       => round(IndustryTracer::avg('nilai_integritas') ?? 0, 1),
+            'Keahlian'         => round(IndustryTracer::avg('nilai_keahlian') ?? 0, 1),
+            'Bahasa Inggris'   => round(IndustryTracer::avg('nilai_bahasa_inggris') ?? 0, 1),
+            'Teknologi'        => round(IndustryTracer::avg('nilai_teknologi') ?? 0, 1),
+            'Komunikasi'       => round(IndustryTracer::avg('nilai_komunikasi') ?? 0, 1),
+            'Kerja Sama'       => round(IndustryTracer::avg('nilai_kerjasama') ?? 0, 1),
+            'Analitis'         => round(IndustryTracer::avg('nilai_analitis') ?? 0, 1),
+            'Kepemimpinan'     => round(IndustryTracer::avg('nilai_kepemimpinan') ?? 0, 1),
+            'Kerja di Tekanan' => round(IndustryTracer::avg('nilai_tekanan') ?? 0, 1),
+        ];
+
+        return view('admin.tracer.industri', compact(
+            'data', 'totalIndustri', 'withCompany', 'matching', 'avgValues'
+        ));
+    }
+
+    public function industryShow(IndustryTracer $industryTracer)
+    {
+        $industryTracer->load('user');
+        return view('admin.tracer.industri-show', compact('industryTracer'));
+    }
+
+    public function industryDestroy(IndustryTracer $industryTracer)
+    {
+        $industryTracer->delete();
+        return redirect()->route('admin.tracer.industri')
+            ->with('success', 'Data penilaian industri berhasil dihapus.');
     }
 }

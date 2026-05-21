@@ -37,7 +37,6 @@ use App\Http\Controllers\Admin\PublikController as AdminPublikController;
 use App\Http\Controllers\Admin\BroadcastController as AdminBroadcastController;
 use App\Http\Controllers\Admin\CompanyAccountController;
 use App\Http\Controllers\Admin\TracerStudyController as AdminTracerStudyController;
-// LANGKAH 1: Import Admin Tip Controller
 use App\Http\Controllers\Admin\TipController as AdminTipController;
 
 // Student Controllers
@@ -46,6 +45,7 @@ use App\Http\Controllers\Student\HomeController;
 
 // Import TracerStudyController untuk form publik
 use App\Http\Controllers\TracerStudyController;
+use App\Http\Controllers\IndustryTracerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -104,7 +104,6 @@ Route::post('/alumni-stories', [AlumniStoryController::class, 'store'])->name('a
 
 /**
  * TRACER STUDY PUBLIC ROUTES (requires auth)
- * Menggabungkan PublikController::tracer + TracerStudyController
  */
 Route::middleware(['auth'])->group(function () {
     Route::get('/tracer-study', [TracerStudyController::class, 'index'])->name('public.tracer');
@@ -161,7 +160,7 @@ Route::middleware(['auth', 'role:alumni'])->prefix('alumni')->name('alumni.')->g
 });
 
 /**
- * PUBLIK ROUTES (User Logged In)
+ * PUBLIK ROUTES
  */
 Route::middleware(['auth', 'role:publik'])->prefix('publik')->name('publik.')->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
@@ -194,7 +193,6 @@ Route::middleware(['auth', 'role:siswa'])->prefix('student')->name('student.')->
     Route::get('/lowongan-tersimpan', [StudentController::class, 'savedJobs'])->name('saved-jobs');
     Route::post('/lowongan/save/{id}', [StudentController::class, 'saveJob'])->name('lowongan.save');
     Route::delete('/lowongan/unsave/{id}', [StudentController::class, 'unsaveJob'])->name('lowongan.unsave');
-
     Route::post('/lowongan/apply/{id}', [StudentController::class, 'applyJob'])->name('lowongan.apply');
     Route::get('/lowongan/{id}', [StudentController::class, 'detailLowongan'])->name('lowongan.detail');
 
@@ -230,6 +228,10 @@ Route::middleware(['auth', 'role:perusahaan'])->prefix('company')->name('company
     Route::get('/lamaran', [CompanyPanelController::class, 'lamaranIndex'])->name('lamaran.index');
     Route::get('/lamaran/{application}', [CompanyPanelController::class, 'lamaranShow'])->name('lamaran.show');
     Route::put('/lamaran/{application}/status', [CompanyPanelController::class, 'lamaranUpdateStatus'])->name('lamaran.update-status');
+
+    // ✅ Tracer Industri untuk perusahaan
+    Route::get('/tracer-industri', [IndustryTracerController::class, 'index'])->name('tracer.index');
+    Route::post('/tracer-industri', [IndustryTracerController::class, 'store'])->name('tracer.store');
 });
 
 /**
@@ -273,19 +275,18 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
         Route::get('/{job}/edit', [AdminJobController::class, 'edit'])->name('edit');
         Route::put('/{job}', [AdminJobController::class, 'update'])->name('update');
         Route::delete('/{job}', [AdminJobController::class, 'destroy'])->name('destroy');
-
         Route::post('/{job}/approve', [AdminJobController::class, 'approve'])->name('approve');
-        Route::post('/{job}/reject',  [AdminJobController::class, 'reject'])->name('reject');
+        Route::post('/{job}/reject', [AdminJobController::class, 'reject'])->name('reject');
     });
 
     Route::prefix('company-accounts')->name('company-accounts.')->group(function () {
-        Route::get('/',                 [CompanyAccountController::class, 'index'])->name('index');
-        Route::get('/create',           [CompanyAccountController::class, 'create'])->name('create');
-        Route::post('/',                [CompanyAccountController::class, 'store'])->name('store');
-        Route::put('/{user}/toggle',    [CompanyAccountController::class, 'toggle'])->name('toggle');
+        Route::get('/', [CompanyAccountController::class, 'index'])->name('index');
+        Route::get('/create', [CompanyAccountController::class, 'create'])->name('create');
+        Route::post('/', [CompanyAccountController::class, 'store'])->name('store');
+        Route::put('/{user}/toggle', [CompanyAccountController::class, 'toggle'])->name('toggle');
         Route::get('/{user}/reset-password', [CompanyAccountController::class, 'resetPasswordForm'])->name('reset-password');
         Route::put('/{user}/reset-password', [CompanyAccountController::class, 'resetPassword'])->name('reset-password.update');
-        Route::delete('/{user}',        [CompanyAccountController::class, 'destroy'])->name('destroy');
+        Route::delete('/{user}', [CompanyAccountController::class, 'destroy'])->name('destroy');
     });
 
     Route::prefix('job-applications')->name('job-applications.')->group(function () {
@@ -303,15 +304,11 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
         Route::delete('/{id}', [AdminEventRegistrationController::class, 'destroy'])->name('destroy');
     });
 
-    // SEKSI STUDENTS: Ditambahkan Route Hapus Grup & Hapus Satuan
     Route::prefix('students')->name('students.')->group(function () {
         Route::get('/', [AdminStudentController::class, 'index'])->name('index');
         Route::post('/import', [AdminStudentController::class, 'import'])->name('import');
-
-        // Hapus massal grup wajib ditaruh di atas route {id}
         Route::delete('/destroy-by-major', [AdminStudentController::class, 'destroyByMajor'])->name('destroy.by.major');
         Route::delete('/destroy-by-year', [AdminStudentController::class, 'destroyByYear'])->name('destroy.by.year');
-
         Route::delete('/{id}', [AdminStudentController::class, 'destroy'])->name('destroy');
         Route::get('/{id}', [AdminStudentController::class, 'show'])->name('show');
     });
@@ -355,19 +352,25 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
 
     /**
      * TRACER STUDY (ADMIN)
-     * Digabung: route lama + route baru (show, destroy) + middleware permission:view_reports
+     * ⚠️ Urutan penting: route spesifik (/alumni, /industri, /industri/{id})
+     * harus di atas route wildcard (/{tracerStudy})
      */
-    Route::prefix('tracer')->name('tracer.')->middleware('permission:view_reports')->group(function () {
-        Route::get('/',              [AdminTracerStudyController::class, 'index'])   ->name('index');
-        Route::get('/alumni',        [AdminTracerStudyController::class, 'alumni'])  ->name('alumni');
-        Route::get('/industri',      [AdminTracerStudyController::class, 'industri'])->name('industri');
-        Route::get('/export/csv',    [AdminTracerStudyController::class, 'exportCsv'])->name('export.csv');
-        Route::get('/print',         [AdminTracerStudyController::class, 'print'])   ->name('print');
-        Route::get('/{tracerStudy}', [AdminTracerStudyController::class, 'show'])    ->name('show');
+    Route::prefix('tracer')->name('tracer.')->group(function () {
+        Route::get('/',           [AdminTracerStudyController::class, 'index']) ->name('index');
+        Route::get('/alumni',     [AdminTracerStudyController::class, 'alumni'])->name('alumni');
+        Route::get('/export/csv', [AdminTracerStudyController::class, 'exportCsv'])->name('export.csv');
+        Route::get('/print',      [AdminTracerStudyController::class, 'print']) ->name('print');
+
+        // Industri — spesifik, harus di atas /{tracerStudy}
+        Route::get('/industri',                    [AdminTracerStudyController::class, 'industri'])      ->name('industri');
+        Route::get('/industri/{industryTracer}',    [AdminTracerStudyController::class, 'industryShow']) ->name('industri.show');
+        Route::delete('/industri/{industryTracer}', [AdminTracerStudyController::class, 'industryDestroy'])->name('industri.destroy');
+
+        // TracerStudy show & destroy — wildcard, harus paling bawah
+        Route::get('/{tracerStudy}',    [AdminTracerStudyController::class, 'show'])   ->name('show');
         Route::delete('/{tracerStudy}', [AdminTracerStudyController::class, 'destroy'])->name('destroy');
     });
 
-    // LANGKAH 2: Menambahkan Route Tips di dalam grup Admin (Aman dari Double Prefix)
     Route::prefix('tips')->name('tips.')->group(function () {
         Route::get('/',                 [AdminTipController::class, 'index'])->name('index');
         Route::get('/create',           [AdminTipController::class, 'create'])->name('create');

@@ -1,267 +1,203 @@
 @extends('layouts.admin')
 
-@section('title', 'Laporan Industri - Tracer Study - BKK SMKN 1 Garut')
+@section('title', 'Laporan Industri')
 @section('page_title', 'Laporan Industri')
 
 @section('extra_css')
-    <style>
-        .stat-box-tracer {
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 24px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .stat-box-tracer:hover {
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-            transform: translateY(-2px);
-        }
-
-        .badge-sesuai {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .badge-tidak-sesuai {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-    </style>
+<style>
+    .nilai-bar { height: 8px; border-radius: 4px; background: #e2e8f0; overflow: hidden; }
+    .nilai-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, #3b82f6, #1d4ed8); transition: width 0.6s ease; }
+</style>
 @endsection
 
 @section('content')
 
-    {{-- STATISTIK CARDS --}}
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+{{-- STAT CARDS --}}
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    <div class="bg-white border border-slate-200 rounded-2xl p-5 flex items-center gap-4">
+        <div class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center">
+            <i class="fas fa-building text-slate-500 text-xl"></i>
+        </div>
+        <div>
+            <p class="text-xs text-slate-500 font-semibold">Total Perusahaan</p>
+            <p class="text-2xl font-black text-slate-800">{{ $totalIndustri }}</p>
+        </div>
+    </div>
+    <div class="bg-white border-l-4 border-green-500 border border-slate-200 rounded-2xl p-5 flex items-center gap-4">
+        <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center">
+            <i class="fas fa-check-circle text-green-600 text-xl"></i>
+        </div>
+        <div>
+            <p class="text-xs text-slate-500 font-semibold">Nilai Rata-rata ≥ 4</p>
+            <p class="text-2xl font-black text-green-600">{{ $matching }}</p>
+            <p class="text-xs text-slate-400">Perusahaan dengan nilai baik</p>
+        </div>
+    </div>
+    <div class="bg-white border-l-4 border-blue-500 border border-slate-200 rounded-2xl p-5 flex items-center gap-4">
+        <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
+            <i class="fas fa-star text-blue-600 text-xl"></i>
+        </div>
+        <div>
+            <p class="text-xs text-slate-500 font-semibold">Rata-rata Penilaian</p>
+            <p class="text-2xl font-black text-blue-600">
+                {{ $withCompany > 0 ? round(collect($avgValues)->avg(), 1) : 0 }}/5
+            </p>
+        </div>
+    </div>
+</div>
 
-        <div class="stat-box-tracer">
-            <div class="stat-icon bg-slate-100"><i class="fas fa-building text-slate-500"></i></div>
-            <div>
-                <p class="text-sm text-slate-500 font-semibold">Total Alumni Bekerja</p>
-                <p class="text-3xl font-black text-slate-800">{{ $withCompany }}</p>
+{{-- RATA-RATA PER ASPEK --}}
+<div class="bg-white border border-slate-200 rounded-2xl p-6 mb-6">
+    <h3 class="font-bold text-slate-800 mb-5 flex items-center gap-2">
+        <i class="fas fa-chart-bar text-blue-500"></i> Rata-rata Penilaian Per Aspek
+    </h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        @foreach($avgValues as $label => $nilai)
+        <div>
+            <div class="flex justify-between items-center mb-1.5">
+                <span class="text-sm font-semibold text-slate-700">{{ $label }}</span>
+                <span class="text-sm font-black text-blue-600">{{ $nilai }}/5</span>
+            </div>
+            <div class="nilai-bar">
+                <div class="nilai-fill" style="width: {{ ($nilai/5)*100 }}%"></div>
             </div>
         </div>
+        @endforeach
+    </div>
+</div>
 
-        <div class="stat-box-tracer" style="border-left:4px solid #16a34a;">
-            <div class="stat-icon bg-green-50"><i class="fas fa-check-circle text-green-600"></i></div>
-            <div>
-                <p class="text-sm text-slate-500 font-semibold">Kesesuaian Jurusan</p>
-                <p class="text-3xl font-black text-green-600">{{ $matching }}</p>
-                <p class="text-xs text-slate-400">{{ $withCompany > 0 ? round(($matching / $withCompany) * 100) : 0 }}%</p>
-            </div>
+{{-- FILTER --}}
+<div class="bg-white border border-slate-200 rounded-2xl p-6 mb-6">
+    <form method="GET" action="{{ route('admin.tracer.industri') }}" class="flex flex-wrap gap-4 items-end">
+        <div class="flex-1 min-w-[180px]">
+            <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Cari Perusahaan</label>
+            <input type="text" name="search" value="{{ request('search') }}"
+                   placeholder="Nama perusahaan..."
+                   class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500">
         </div>
-
-        <div class="stat-box-tracer" style="border-left:4px solid #dc2626;">
-            <div class="stat-icon bg-red-50"><i class="fas fa-times-circle text-red-600"></i></div>
-            <div>
-                <p class="text-sm text-slate-500 font-semibold">Tidak Sesuai</p>
-                <p class="text-3xl font-black text-red-600">{{ $notMatching }}</p>
-                <p class="text-xs text-slate-400">{{ $withCompany > 0 ? round(($notMatching / $withCompany) * 100) : 0 }}%</p>
-            </div>
+        <div class="min-w-[180px]">
+            <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Jenis Perusahaan</label>
+            <select name="jenis" class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500">
+                <option value="">Semua Jenis</option>
+                <option value="PT"                {{ request('jenis')==='PT' ? 'selected' : '' }}>PT</option>
+                <option value="CV"                {{ request('jenis')==='CV' ? 'selected' : '' }}>CV</option>
+                <option value="BUMN"              {{ request('jenis')==='BUMN' ? 'selected' : '' }}>BUMN</option>
+                <option value="Instansi Pemerintah" {{ request('jenis')==='Instansi Pemerintah' ? 'selected' : '' }}>Instansi Pemerintah</option>
+                <option value="Lainnya"           {{ request('jenis')==='Lainnya' ? 'selected' : '' }}>Lainnya</option>
+            </select>
         </div>
-
-        <div class="stat-box-tracer" style="border-left:4px solid #2563eb;">
-            <div class="stat-icon bg-blue-50"><i class="fas fa-chart-line text-blue-600"></i></div>
-            <div>
-                <p class="text-sm text-slate-500 font-semibold">Total Data Alumni</p>
-                <p class="text-3xl font-black text-blue-600">{{ $total }}</p>
-            </div>
+        <div class="flex gap-2">
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition">
+                <i class="fas fa-search mr-1"></i> Filter
+            </button>
+            <a href="{{ route('admin.tracer.industri') }}" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-5 py-2.5 rounded-xl text-sm font-bold transition">
+                <i class="fas fa-redo mr-1"></i> Reset
+            </a>
         </div>
+    </form>
+</div>
 
+{{-- TABEL --}}
+<div class="bg-white border border-slate-200 rounded-2xl overflow-hidden">
+    <div class="px-6 py-4 border-b border-slate-100">
+        <h3 class="font-bold text-slate-800">Data Penilaian Industri</h3>
+        <p class="text-xs text-slate-400 mt-0.5">
+            {{ $data->firstItem() ?? 0 }}–{{ $data->lastItem() ?? 0 }}
+            dari {{ $data->total() }} data
+        </p>
     </div>
 
-    {{-- CHART + FILTER --}}
-    <div class="grid lg:grid-cols-3 gap-6 mb-6">
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+            <thead class="bg-slate-50 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                <tr>
+                    <th class="px-4 py-4 text-left">#</th>
+                    <th class="px-4 py-4 text-left">Perusahaan</th>
+                    <th class="px-4 py-4 text-left">Jenis</th>
+                    <th class="px-4 py-4 text-left">Bisnis Utama</th>
+                    <th class="px-4 py-4 text-left">Responden</th>
+                    <th class="px-4 py-4 text-center">Rata-rata Nilai</th>
+                    <th class="px-4 py-4 text-left">Tanggal Isi</th>
+                    <th class="px-4 py-4 text-center">Aksi</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-50">
+                @forelse($data as $i => $row)
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="px-4 py-4 text-slate-400">{{ $data->firstItem() + $i }}</td>
 
-        <div class="table-custom p-6">
-            <h3 class="font-bold text-slate-700 mb-4 text-sm uppercase tracking-wider flex items-center gap-2">
-                <i class="fas fa-chart-pie text-green-500"></i> Kesesuaian Jurusan
-            </h3>
-            <div style="height:220px;display:flex;align-items:center;justify-content:center;">
-                <canvas id="industriChart"></canvas>
-            </div>
-        </div>
+                    {{-- Perusahaan --}}
+                    <td class="px-4 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-green-100 text-green-700 flex items-center justify-center font-bold text-sm shrink-0">
+                                {{ strtoupper(substr($row->nama_perusahaan, 0, 1)) }}
+                            </div>
+                            <div>
+                                <p class="font-semibold text-slate-800">{{ $row->nama_perusahaan }}</p>
+                                <p class="text-xs text-slate-400 truncate max-w-[180px]">{{ $row->alamat_perusahaan }}</p>
+                            </div>
+                        </div>
+                    </td>
 
-        <div class="lg:col-span-2 table-custom p-6">
-            <h3 class="font-bold text-slate-700 mb-4 text-sm uppercase tracking-wider flex items-center gap-2">
-                <i class="fas fa-filter text-green-500"></i> Filter
-            </h3>
-            <form method="GET" action="{{ route('admin.tracer.industri') }}" class="grid sm:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Angkatan</label>
-                    <select name="year"
-                        class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
-                        <option value="">Semua Angkatan</option>
-                        @foreach ($graduationYears as $year)
-                            <option value="{{ $year }}" {{ request('year') == $year ? 'selected' : '' }}>
-                                {{ $year }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="flex items-end gap-3">
-                    <button type="submit" class="btn-action flex-1"
-                        style="background:#16a34a;color:white;border-color:#16a34a;padding:0 20px;">
-                        <i class="fas fa-search"></i> Terapkan Filter
-                    </button>
-                    <a href="{{ route('admin.tracer.industri') }}" class="btn-action" style="padding:0 20px;">
-                        <i class="fas fa-redo"></i> Reset
-                    </a>
-                </div>
-            </form>
-        </div>
+                    {{-- Jenis --}}
+                    <td class="px-4 py-4">
+                        <span class="bg-slate-100 text-slate-700 text-xs font-bold px-2.5 py-1 rounded-lg">
+                            {{ $row->jenis_perusahaan }}
+                        </span>
+                    </td>
 
+                    {{-- Bisnis Utama --}}
+                    <td class="px-4 py-4 text-slate-600 text-sm">{{ $row->bisnis_utama }}</td>
+
+                    {{-- Responden --}}
+                    <td class="px-4 py-4">
+                        <p class="font-semibold text-slate-700">{{ $row->nama_responden }}</p>
+                        <p class="text-xs text-slate-400">{{ $row->jabatan_responden }}</p>
+                    </td>
+
+                    {{-- Rata-rata Nilai --}}
+                    <td class="px-4 py-4 text-center">
+                        @php $avg = $row->rata_rata; @endphp
+                        <span class="inline-flex items-center gap-1 px-3 py-1 rounded-xl font-bold text-sm
+                            {{ $avg >= 4 ? 'bg-green-100 text-green-700' : ($avg >= 3 ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700') }}">
+                            <i class="fas fa-star text-xs"></i> {{ $avg }}/5
+                        </span>
+                    </td>
+
+                    {{-- Tanggal --}}
+                    <td class="px-4 py-4 text-xs text-slate-400">{{ $row->created_at->format('d M Y') }}</td>
+
+                    {{-- Aksi --}}
+                    <td class="px-4 py-4 text-center">
+                        <a href="{{ route('admin.tracer.industri.show', $row) }}"
+                           class="w-8 h-8 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg inline-flex items-center justify-center transition"
+                           title="Detail">
+                            <i class="fas fa-eye text-xs"></i>
+                        </a>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="8" class="px-4 py-16 text-center text-slate-400">
+                        <i class="fas fa-building text-4xl text-slate-200 block mb-3"></i>
+                        <p class="font-semibold">Belum ada data penilaian industri</p>
+                        <p class="text-xs mt-1">Data akan muncul setelah perusahaan mengisi form</p>
+                    </td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
     </div>
 
-    {{-- DISTRIBUSI GAJI --}}
-    @if($salaryDistribution->count() > 0)
-        <div class="table-custom p-6 mb-6">
-            <h3 class="font-bold text-slate-700 mb-6 text-sm uppercase tracking-wider flex items-center gap-2">
-                <i class="fas fa-money-bill text-amber-500"></i> Distribusi Pendapatan Alumni
-            </h3>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                @foreach($salaryDistribution as $salary)
-                    <div class="bg-gradient-to-br from-amber-50 to-orange-50 p-4 rounded-lg border border-amber-200">
-                        <p class="text-xs font-bold text-amber-700 uppercase tracking-wider mb-2">{{ $salary->salary_range }}</p>
-                        <p class="text-2xl font-black text-amber-600">{{ $salary->count }}</p>
-                        <p class="text-xs text-amber-500 mt-1">
-                            {{ $total > 0 ? round(($salary->count / $total) * 100) : 0 }}% dari total
-                        </p>
-                    </div>
-                @endforeach
-            </div>
+    @if($data->hasPages())
+        <div class="px-6 py-4 border-t border-slate-100">
+            {{ $data->links() }}
         </div>
     @endif
+</div>
 
-    {{-- TABEL DATA INDUSTRI --}}
-    <div class="table-custom overflow-hidden">
-        <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
-            <div>
-                <h3 class="font-bold text-slate-800">Laporan Alumni di Industri</h3>
-                <p class="text-slate-400 text-xs mt-0.5">
-                    Menampilkan {{ $tracerStudies->firstItem() ?? 0 }}–{{ $tracerStudies->lastItem() ?? 0 }}
-                    dari {{ $tracerStudies->total() }} data
-                </p>
-            </div>
-            @if (request()->hasAny(['year']))
-                <span class="badge-pill badge-info"><i class="fas fa-filter mr-1"></i>Filter aktif</span>
-            @endif
-        </div>
+@endsection
 
-        <div class="overflow-x-auto">
-            <table class="w-full">
-                <thead>
-                    <tr>
-                        <th style="width:48px;">No</th>
-                        <th>Nama Alumni</th>
-                        <th>Angkatan</th>
-                        <th>Nama Instansi</th>
-                        <th>Bidang Pekerjaan</th>
-                        <th>Kesesuaian</th>
-                        <th>Pendapatan</th>
-                        <th>Tgl Mulai</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($tracerStudies as $i => $row)
-                        <tr>
-                            <td class="text-slate-400 font-medium">{{ $tracerStudies->firstItem() + $i }}</td>
-                            <td>
-                                <div class="flex items-center gap-3">
-                                    <div
-                                        class="w-9 h-9 rounded-full bg-green-100 text-green-700 flex items-center justify-center font-bold text-sm flex-shrink-0">
-                                        {{ strtoupper(substr($row->student->full_name ?? 'A', 0, 1)) }}
-                                    </div>
-                                    <div>
-                                        <p class="font-bold text-slate-800 text-sm">{{ $row->student->full_name ?? 'N/A' }}
-                                        </p>
-                                        <p class="text-xs text-slate-400">{{ $row->student->nis ?? '' }}</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="text-sm text-slate-600 font-semibold">{{ $row->student->graduation_year ?? '-' }}
-                            </td>
-                            <td class="text-sm font-semibold text-slate-700">{{ $row->nama_instansi ?? '-' }}</td>
-                            <td class="text-sm text-slate-600">{{ $row->deskripsi_pekerjaan ?? '-' }}</td>
-                            <td>
-                                @if ($row->keselarasan_jurusan === 'Sesuai')
-                                    <span class="badge-pill badge-sesuai"><i class="fas fa-check mr-1"></i>Sesuai</span>
-                                @elseif($row->keselarasan_jurusan === 'Tidak Sesuai')
-                                    <span class="badge-pill badge-tidak-sesuai"><i class="fas fa-times mr-1"></i>Tidak
-                                        Sesuai</span>
-                                @else
-                                    <span class="text-slate-300 text-sm">—</span>
-                                @endif
-                            </td>
-                            <td class="text-sm text-slate-500">
-                                {{ $row->pendapatan_bulanan ? 'Rp ' . number_format($row->pendapatan_bulanan, 0, ',', '.') : '-' }}
-                            </td>
-                            <td class="text-sm text-slate-500">
-                                {{ $row->tgl_mulai_masuk ? \Carbon\Carbon::parse($row->tgl_mulai_masuk)->format('d M Y') : '-' }}
-                            </td>
-                        </tr>
-                        @empty
-                            <tr>
-                                <td colspan="8" style="text-align:center;padding:48px 16px;color:#94a3b8;">
-                                    <i class="fas fa-folder-open"
-                                        style="font-size:36px;color:#e2e8f0;display:block;margin-bottom:12px;"></i>
-                                    <p class="font-semibold">Belum ada data tracer industri</p>
-                                    <p class="text-xs mt-1">Coba ubah filter atau tunggu data industri terpenuhi</p>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-
-            @if ($tracerStudies->hasPages())
-                <div class="px-6 py-4 border-t border-slate-100">
-                    {{ $tracerStudies->links() }}
-                </div>
-            @endif
-        </div>
-
-    @endsection
-
-    @section('extra_js')
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script>
-            window.addEventListener('load', function() {
-                const ctx = document.getElementById('industriChart');
-                if (!ctx) return;
-                const chartData = @json($chartData);
-                new Chart(ctx.getContext('2d'), {
-                    type: 'doughnut',
-                    data: {
-                        labels: Object.keys(chartData),
-                        datasets: [{
-                            data: Object.values(chartData),
-                            backgroundColor: ['#16a34a', '#dc2626'],
-                            borderWidth: 0,
-                            hoverOffset: 10,
-                        }]
-                    },
-                    options: {
-                        cutout: '65%',
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: {
-                                    usePointStyle: true,
-                                    padding: 14,
-                                    font: {
-                                        size: 11
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-            });
-        </script>
-    @endsection
+@section('extra_js')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+@endsection
