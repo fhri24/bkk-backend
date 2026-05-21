@@ -32,7 +32,7 @@ class TracerStudy extends Model
         'tmt_bekerja'   => 'date',
         'tmt_kuliah'    => 'date',
         'tmt_wirausaha' => 'date',
-        'is_read' => 'boolean',
+        'is_read'       => 'boolean', // Tetap pertahankan ini untuk pembacaan data di View
     ];
 
     public function student()

@@ -54,7 +54,8 @@ class TracerStudyController extends Controller
             ->pluck('graduation_year');
 
         // 3. SEBELUM view dirender, tandai semua data yang 'false' menjadi 'true' di database.
-        TracerStudy::where('is_read', false)->update(['is_read' => true]);
+        // FIX TOTAL: Menggunakan whereRaw dan DB::raw agar PostgreSQL menerima literal boolean murni dari hulu ke hilir
+        TracerStudy::whereRaw("is_read = 'false'")->update(['is_read' => DB::raw('true')]);
 
         return view('admin.tracer.index', compact(
             'tracerStudies', 'total', 'working', 'studying',
