@@ -23,8 +23,7 @@ class PublikController extends Controller
 {
     public function beranda()
     {
-        // PERBAIKAN: Menggunakan whereRaw agar kompatibel dengan query PostgreSQL bkk-smkn1garut
-        $news = News::whereRaw('"is_published" = true')->latest()->take(3)->get();
+        $news = News::where('is_published', 1)->latest()->take(3)->get(); // ✅ fix
 
         $featured_jobs = Job::with('company')
             ->where('approval_status', 'approved')
@@ -33,10 +32,10 @@ class PublikController extends Controller
             ->get();
 
         $featured_events = Event::with('registrations')
-            ->whereRaw('"is_published" = true')
+            ->where('is_published', 1) // ✅ fix
             ->latest()
             ->take(3)
-            ->get(); 
+            ->get();
 
         $alumni_stories = AlumniStory::with('student')
             ->where('status', 'approved')
@@ -52,7 +51,7 @@ class PublikController extends Controller
 
         $alumniTerserap = TracerStudy::whereIn('status_saat_ini', ['Bekerja', 'Wirausaha'])->count();
         $totalTracer = TracerStudy::count();
-        
+
         $tingkatPenyaluran = $totalTracer > 0
             ? round(($alumniTerserap / $totalTracer) * 100)
             : 0;
@@ -66,7 +65,7 @@ class PublikController extends Controller
 
         return view('public.beranda', compact(
             'news', 'featured_jobs', 'featured_events', 'alumni_stories',
-            'avatarColors', 'alumniTerserap', 'tingkatPenyaluran', 
+            'avatarColors', 'alumniTerserap', 'tingkatPenyaluran',
             'lowonganAktif', 'totalPerusahaan', 'schoolProfile'
         ));
     }
@@ -74,7 +73,7 @@ class PublikController extends Controller
     public function lowongan(Request $request)
     {
         $query = Job::with(['company', 'major'])->where('approval_status', 'approved')->latest();
-        
+
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -84,15 +83,15 @@ class PublikController extends Controller
                   });
             });
         }
-        
+
         $jobs = $query->paginate(9)->withQueryString();
         $majors = Major::all();
         $savedJobIds = [];
-        
+
         if (Auth::check()) {
             $savedJobIds = \App\Models\SavedJob::where('user_id', Auth::id())->pluck('job_id')->toArray();
         }
-        
+
         return view('public.lowongan', compact('jobs', 'majors', 'savedJobIds'));
     }
 
@@ -105,7 +104,7 @@ class PublikController extends Controller
             ->latest()
             ->take(3)
             ->get();
-            
+
         return view('public.lowongan-detail', compact('job', 'similarJobs'));
     }
 
@@ -124,7 +123,7 @@ class PublikController extends Controller
         ]);
 
         $job = Job::findOrFail($id);
-        
+
         if ($request->hasFile('cv_file')) {
             $path = $request->file('cv_file')->store('cv_applications', 'local');
         }
@@ -139,13 +138,13 @@ class PublikController extends Controller
             ->where('approval_status', 'approved')
             ->latest()
             ->get();
-            
+
         return view('public.company-detail', compact('company', 'activeJobs'));
     }
 
     public function berita()
     {
-        $newsItems = News::whereRaw('"is_published" = true')->latest()->paginate(6);
+        $newsItems = News::where('is_published', 1)->latest()->paginate(6); // ✅ fix
         return view('public.berita', compact('newsItems'));
     }
 
@@ -153,36 +152,39 @@ class PublikController extends Controller
     {
         $news = News::where('slug', $slug)->firstOrFail();
         $relatedNews = News::where('id', '!=', $news->id)
-            ->whereRaw('"is_published" = true')
+            ->where('is_published', 1) // ✅ fix
             ->latest()
             ->take(2)
             ->get();
-            
+
         return view('public.berita-detail', compact('news', 'relatedNews'));
     }
 
     public function acara()
     {
-        $events = Event::whereRaw('"is_published" = true')->latest()->paginate(10);
+        $events = Event::where('is_published', 1)->latest()->paginate(10); // ✅ fix
         return view('public.acara', compact('events'));
     }
 
     public function acaraDetail($id)
     {
-        $event = Event::with('registrations')->whereRaw('"is_published" = true')->findOrFail($id);
-        $relatedEvents = Event::whereRaw('"is_published" = true')
+        $event = Event::with('registrations')
+            ->where('is_published', 1) // ✅ fix
+            ->findOrFail($id);
+
+        $relatedEvents = Event::where('is_published', 1) // ✅ fix
             ->where('id', '!=', $id)
             ->where('start_date', '>=', now())
             ->take(3)
             ->get();
-            
+
         return view('public.acara-detail', compact('event', 'relatedEvents'));
     }
 
     public function storeEventRegistration(Request $request, $id)
     {
-        $event = Event::whereRaw('"is_published" = true')->findOrFail($id);
-        
+        $event = Event::where('is_published', 1)->findOrFail($id); // ✅ fix
+
         $validated = $request->validate([
             'name'        => 'required|string|max:255',
             'email'       => 'required|email|max:255',
@@ -193,11 +195,11 @@ class PublikController extends Controller
         $existing = EventRegistration::where('event_id', $event->id)
             ->where('email', $validated['email'])
             ->first();
-            
+
         if ($existing) {
             return back()->with('error', 'Email ini sudah terdaftar!');
         }
-        
+
         if ($event->capacity && EventRegistration::where('event_id', $event->id)->count() >= $event->capacity) {
             return back()->with('error', 'Kuota pendaftaran penuh!');
         }
@@ -235,19 +237,19 @@ class PublikController extends Controller
             'Wirausaha'     => $tracerStudies->where('status_saat_ini', 'Wirausaha')->count(),
             'Mencari Kerja' => $tracerStudies->where('status_saat_ini', 'Belum Bekerja')->count(),
         ];
-        
+
         $totalRespondents       = $tracerStudies->count();
         $workingPercentage      = $totalRespondents > 0 ? round(($chartData['Bekerja'] / $totalRespondents) * 100) : 0;
         $entrepreneurPercentage = $totalRespondents > 0 ? round(($chartData['Wirausaha'] / $totalRespondents) * 100) : 0;
-        
+
         $alignmentData = [
             'Sesuai'       => $tracerStudies->where('keselarasan_jurusan', 'Sesuai')->count(),
             'Tidak Sesuai' => $tracerStudies->where('keselarasan_jurusan', 'Tidak Sesuai')->count(),
         ];
-        
+
         $majors = Major::orderBy('name')->get();
         $authStudent = null;
-        
+
         if (auth()->check()) {
             $authStudent = Student::where('user_id', auth()->id())->first();
         }
@@ -260,7 +262,7 @@ class PublikController extends Controller
         }
 
         return view('public.tracer-report', compact(
-            'tracerStudies', 'chartData', 'totalRespondents', 'workingPercentage', 
+            'tracerStudies', 'chartData', 'totalRespondents', 'workingPercentage',
             'entrepreneurPercentage', 'alignmentData', 'majors', 'authStudent', 'myTracer', 'hasSubmitted'
         ));
     }
@@ -317,7 +319,6 @@ class PublikController extends Controller
 
     public function tutorial()
     {
-        // ... (Kodingan penting kamu tetap ada di sini)
         return view('public.tutorial');
     }
 
@@ -331,11 +332,11 @@ class PublikController extends Controller
                   ->orWhere('ringkasan', 'like', '%' . $request->search . '%');
             });
         }
-        $tips          = $query->orderBy('urutan')->orderByDesc('created_at')->paginate(9)->withQueryString();
-        $featured      = \App\Models\Tip::published()->featured()->orderBy('urutan')->get();
-        $kategoriList  = \App\Models\Tip::kategoriList();
+        $tips         = $query->orderBy('urutan')->orderByDesc('created_at')->paginate(9)->withQueryString();
+        $featured     = \App\Models\Tip::published()->featured()->orderBy('urutan')->get();
+        $kategoriList = \App\Models\Tip::kategoriList();
         $kategoriCount = \App\Models\Tip::published()->selectRaw('kategori, count(*) as total')->groupBy('kategori')->pluck('total', 'kategori');
-        
+
         return view('public.tips', compact('tips', 'featured', 'kategoriList', 'kategoriCount'));
     }
 
@@ -348,13 +349,10 @@ class PublikController extends Controller
             ->latest()
             ->take(3)
             ->get();
-            
+
         return view('public.tips-detail', compact('tip', 'relatedTips'));
     }
 
-    /**
-     * METHOD UNTUK UPDATE FOTO PROFIL (Dengan Log Sementara)
-     */
     public function updateProfilePicture(Request $request)
     {
         $request->validate([
@@ -363,27 +361,20 @@ class PublikController extends Controller
 
         $user = Auth::user();
 
-        // FIX LOGIKA: Cek eksistensi relasi dengan benar menggunakan kondisi terpisah
         if ($user->company) {
             $profil = $user->company;
             Log::info('Masuk blok company');
-        } elseif ($user->student) { // Menggunakan pemeriksaan boolean yang aman
+        } elseif ($user->student) {
             $profil = $user->student;
-            
             Log::info('Masuk blok student, hasFile: ' . ($request->hasFile('profile_picture') ? 'yes' : 'no'));
-            
+
             if ($request->hasFile('profile_picture')) {
                 Log::info('Menyimpan foto...');
-                
-                // Hapus foto lama jika ada
                 if ($profil->profile_picture) {
                     Storage::disk('public')->delete($profil->profile_picture);
                 }
-                
-                // Simpan foto baru
                 $profil->profile_picture = $request->file('profile_picture')->store('foto_profile', 'public');
-                $profil->save(); // Pastikan data di-save ke database
-                
+                $profil->save();
                 Log::info('Foto tersimpan di DB: ' . $profil->profile_picture);
             }
         } else {
