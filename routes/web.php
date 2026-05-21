@@ -361,8 +361,8 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
         Route::get('/export/csv', [AdminTracerStudyController::class, 'exportCsv'])->name('export.csv');
         Route::get('/print',      [AdminTracerStudyController::class, 'print']) ->name('print');
 
-        // Industri — spesifik, harus di atas /{tracerStudy}
-        Route::get('/industri',                    [AdminTracerStudyController::class, 'industri'])      ->name('industri');
+        // Industri — Mengarah ke method industri() baru di AdminTracerStudyController
+        Route::get('/industri',                     [AdminTracerStudyController::class, 'industri'])->name('industri');
         Route::get('/industri/{industryTracer}',    [AdminTracerStudyController::class, 'industryShow']) ->name('industri.show');
         Route::delete('/industri/{industryTracer}', [AdminTracerStudyController::class, 'industryDestroy'])->name('industri.destroy');
 
