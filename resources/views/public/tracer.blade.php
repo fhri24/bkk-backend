@@ -228,6 +228,63 @@
                 <form method="POST" action="{{ route('student.tracer.store') }}" class="p-8 space-y-6">
                     @csrf
 
+                    {{-- Data Diri --}}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Nama Lengkap <span
+                                    class="text-red-500">*</span></label>
+                            <input type="text" name="nama_lengkap" required
+                                value="{{ $existing->nama_lengkap ?? auth()->user()->name }}"
+                                class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                                placeholder="Nama lengkap sesuai ijazah">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">No. HP <span
+                                    class="text-red-500">*</span></label>
+                            <input type="text" name="no_hp" required value="{{ $existing->no_hp ?? '' }}"
+                                class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                                placeholder="08xxxxxxxxxx">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Email <span
+                                    class="text-red-500">*</span></label>
+                            <input type="email" name="email" required
+                                value="{{ $existing->email ?? auth()->user()->email }}"
+                                class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                                placeholder="email@gmail.com">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Tahun Lulus <span
+                                    class="text-red-500">*</span></label>
+                            <select name="tahun_lulus" required
+                                class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                                <option value="">-- Pilih tahun --</option>
+                                @foreach ($years as $year)
+                                    <option value="{{ $year->year }}"
+                                        {{ ($existing->tahun_lulus ?? '') == $year->year ? 'selected' : '' }}>
+                                        {{ $year->year }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Jurusan <span
+                                    class="text-red-500">*</span></label>
+                            <select name="jurusan" required
+                                class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                                <option value="">-- Pilih jurusan --</option>
+                                @foreach ($majors as $major)
+                                    <option value="{{ $major->name }}"
+                                        {{ ($existing->jurusan ?? '') == $major->name ? 'selected' : '' }}>
+                                        {{ $major->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <hr class="border-slate-100">
+
                     {{-- 1. Status --}}
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-3">
@@ -272,8 +329,8 @@
                             </label>
 
                             <label class="block">
-                                <input type="radio" name="status_saat_ini" value="Belum Bekerja" class="status-radio sr-only"
-                                    onchange="handleStatusChange('Belum Bekerja')">
+                                <input type="radio" name="status_saat_ini" value="Belum Bekerja"
+                                    class="status-radio sr-only" onchange="handleStatusChange('Belum Bekerja')">
                                 <div class="status-card">
                                     <div
                                         class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-500 flex-shrink-0">
