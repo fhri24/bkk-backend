@@ -50,6 +50,16 @@
             background: #f1f5f9;
             color: #475569;
         }
+
+        /* Highlight baris baru yang belum dibaca */
+        tr.is-new {
+            background: #eff6ff !important;
+            border-left: 3px solid #2563eb;
+        }
+
+        tr.is-new:hover {
+            background: #dbeafe !important;
+        }
     </style>
 @endsection
 
@@ -57,7 +67,6 @@
 
     {{-- STATISTIK CARDS --}}
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-
         <div class="stat-box-tracer">
             <div class="stat-icon bg-slate-100"><i class="fas fa-users text-slate-500"></i></div>
             <div>
@@ -92,12 +101,10 @@
                 <p class="text-xs text-slate-400">{{ $total > 0 ? round(($entrepren / $total) * 100) : 0 }}% dari total</p>
             </div>
         </div>
-
     </div>
 
     {{-- CHART + FILTER --}}
     <div class="grid lg:grid-cols-3 gap-6 mb-6">
-
         <div class="table-custom p-6">
             <h3 class="font-bold text-slate-700 mb-4 text-sm uppercase tracking-wider flex items-center gap-2">
                 <i class="fas fa-chart-pie text-blue-500"></i> Distribusi Status
@@ -161,7 +168,6 @@
                 </div>
             </form>
         </div>
-
     </div>
 
     {{-- TABEL DATA --}}
@@ -170,13 +176,21 @@
             <div>
                 <h3 class="font-bold text-slate-800">Data Tracer Study Alumni</h3>
                 <p class="text-slate-400 text-xs mt-0.5">
-                    Menampilkan {{ $tracerStudies->firstItem() ?? 0 }}–{{ $tracerStudies->lastItem() ?? 0 }}
-                    dari {{ $tracerStudies->total() }} data
+                    Menampilkan {{ $tracerStudies->firstItem() ?? 0 }}–{{ $tracerStudies->lastItem() ?? 0 }} dari
+                    {{ $tracerStudies->total() }} data
                 </p>
             </div>
-            @if (request()->hasAny(['status', 'year', 'search']))
-                <span class="badge-pill badge-info"><i class="fas fa-filter mr-1"></i>Filter aktif</span>
-            @endif
+            <div class="flex items-center gap-3">
+                {{-- Legend baru --}}
+                <div
+                    class="flex items-center gap-1.5 text-xs text-blue-600 font-semibold bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100">
+                    <div class="w-3 h-3 rounded-sm bg-blue-200 border-l-2 border-blue-600"></div>
+                    = Data baru
+                </div>
+                @if (request()->hasAny(['status', 'year', 'search']))
+                    <span class="badge-pill badge-info"><i class="fas fa-filter mr-1"></i>Filter aktif</span>
+                @endif
+            </div>
         </div>
 
         <div class="overflow-x-auto">
@@ -196,8 +210,14 @@
                 </thead>
                 <tbody>
                     @forelse($tracerStudies as $i => $row)
-                        <tr>
-                            <td class="text-slate-400 font-medium">{{ $tracerStudies->firstItem() + $i }}</td>
+                        {{-- Highlight baris yang belum dibaca --}}
+                        <tr class="{{ !$row->is_read ? 'is-new' : '' }}">
+                            <td class="text-slate-400 font-medium">
+                                {{ $tracerStudies->firstItem() + $i }}
+                                @if (!$row->is_read)
+                                    <span class="inline-block w-2 h-2 rounded-full bg-blue-500 ml-1" title="Baru"></span>
+                                @endif
+                            </td>
                             <td>
                                 <div class="flex items-center gap-3">
                                     <div
@@ -216,13 +236,13 @@
                             <td>
                                 @switch($row->status_saat_ini)
                                     @case('Bekerja')
-                                        <span class="badge-status badge-bekerja"><i class="fas fa-circle" style="font-size:6px"></i>
-                                            Bekerja</span>
+                                        <span class="badge-status badge-bekerja"><i class="fas fa-circle"
+                                                style="font-size:6px"></i> Bekerja</span>
                                     @break
 
                                     @case('Kuliah')
-                                        <span class="badge-status badge-kuliah"><i class="fas fa-circle" style="font-size:6px"></i>
-                                            Kuliah</span>
+                                        <span class="badge-status badge-kuliah"><i class="fas fa-circle"
+                                                style="font-size:6px"></i> Kuliah</span>
                                     @break
 
                                     @case('Wirausaha')
@@ -286,7 +306,9 @@
             window.addEventListener('load', function() {
                 const ctx = document.getElementById('adminTracerChart');
                 if (!ctx) return;
+
                 const chartData = @json($chartData);
+
                 new Chart(ctx.getContext('2d'), {
                     type: 'doughnut',
                     data: {
