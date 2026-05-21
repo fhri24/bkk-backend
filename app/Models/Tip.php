@@ -25,8 +25,8 @@ class Tip extends Model
     ];
 
     protected $casts = [
-        'is_featured'  => 'boolean',
-        'is_published' => 'boolean',
+        'is_featured'  => 'integer',
+        'is_published' => 'integer',
         'urutan'       => 'integer',
     ];
 
