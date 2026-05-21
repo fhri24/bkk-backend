@@ -23,7 +23,11 @@ class PublikController extends Controller
 {
     public function beranda()
     {
+<<<<<<< Updated upstream
         $news = News::where('is_published', 1)->latest()->take(3)->get(); // ✅ fix
+=======
+        $news = News::where('is_published', 1)->latest()->take(3)->get();
+>>>>>>> Stashed changes
 
         $featured_jobs = Job::with('company')
             ->where('approval_status', 'approved')
@@ -32,7 +36,11 @@ class PublikController extends Controller
             ->get();
 
         $featured_events = Event::with('registrations')
+<<<<<<< Updated upstream
             ->where('is_published', 1) // ✅ fix
+=======
+            ->where('is_published', 1)
+>>>>>>> Stashed changes
             ->latest()
             ->take(3)
             ->get();
@@ -144,7 +152,11 @@ class PublikController extends Controller
 
     public function berita()
     {
+<<<<<<< Updated upstream
         $newsItems = News::where('is_published', 1)->latest()->paginate(6); // ✅ fix
+=======
+        $newsItems = News::where('is_published', 1)->latest()->paginate(6);
+>>>>>>> Stashed changes
         return view('public.berita', compact('newsItems'));
     }
 
@@ -152,7 +164,11 @@ class PublikController extends Controller
     {
         $news = News::where('slug', $slug)->firstOrFail();
         $relatedNews = News::where('id', '!=', $news->id)
+<<<<<<< Updated upstream
             ->where('is_published', 1) // ✅ fix
+=======
+            ->where('is_published', 1)
+>>>>>>> Stashed changes
             ->latest()
             ->take(2)
             ->get();
@@ -162,17 +178,26 @@ class PublikController extends Controller
 
     public function acara()
     {
+<<<<<<< Updated upstream
         $events = Event::where('is_published', 1)->latest()->paginate(10); // ✅ fix
+=======
+        $events = Event::where('is_published', 1)->latest()->paginate(10);
+>>>>>>> Stashed changes
         return view('public.acara', compact('events'));
     }
 
     public function acaraDetail($id)
     {
+<<<<<<< Updated upstream
         $event = Event::with('registrations')
             ->where('is_published', 1) // ✅ fix
             ->findOrFail($id);
 
         $relatedEvents = Event::where('is_published', 1) // ✅ fix
+=======
+        $event = Event::with('registrations')->where('is_published', 1)->findOrFail($id);
+        $relatedEvents = Event::where('is_published', 1)
+>>>>>>> Stashed changes
             ->where('id', '!=', $id)
             ->where('start_date', '>=', now())
             ->take(3)
@@ -183,7 +208,11 @@ class PublikController extends Controller
 
     public function storeEventRegistration(Request $request, $id)
     {
+<<<<<<< Updated upstream
         $event = Event::where('is_published', 1)->findOrFail($id); // ✅ fix
+=======
+        $event = Event::where('is_published', 1)->findOrFail($id);
+>>>>>>> Stashed changes
 
         $validated = $request->validate([
             'name'        => 'required|string|max:255',
@@ -192,7 +221,7 @@ class PublikController extends Controller
             'institution' => 'nullable|string|max:255',
         ]);
 
-        $existing = EventRegistration::where('event_id', $event->id)
+        $existing = EventRegistration::where('event_id', $event->slug)
             ->where('email', $validated['email'])
             ->first();
 
@@ -200,12 +229,16 @@ class PublikController extends Controller
             return back()->with('error', 'Email ini sudah terdaftar!');
         }
 
+<<<<<<< Updated upstream
         if ($event->capacity && EventRegistration::where('event_id', $event->id)->count() >= $event->capacity) {
+=======
+        if ($event->capacity && EventRegistration::where('event_id', $event->slug)->count() >= $event->capacity) {
+>>>>>>> Stashed changes
             return back()->with('error', 'Kuota pendaftaran penuh!');
         }
 
         EventRegistration::create([
-            'event_id'      => $event->id,
+            'event_id'      => $event->slug,
             'name'          => $validated['name'],
             'email'         => $validated['email'],
             'phone'         => $validated['phone'],
@@ -366,15 +399,30 @@ class PublikController extends Controller
             Log::info('Masuk blok company');
         } elseif ($user->student) {
             $profil = $user->student;
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
             Log::info('Masuk blok student, hasFile: ' . ($request->hasFile('profile_picture') ? 'yes' : 'no'));
 
             if ($request->hasFile('profile_picture')) {
                 Log::info('Menyimpan foto...');
+<<<<<<< Updated upstream
                 if ($profil->profile_picture) {
                     Storage::disk('public')->delete($profil->profile_picture);
                 }
                 $profil->profile_picture = $request->file('profile_picture')->store('foto_profile', 'public');
                 $profil->save();
+=======
+
+                if ($profil->profile_picture) {
+                    Storage::disk('public')->delete($profil->profile_picture);
+                }
+
+                $profil->profile_picture = $request->file('profile_picture')->store('foto_profile', 'public');
+                $profil->save();
+
+>>>>>>> Stashed changes
                 Log::info('Foto tersimpan di DB: ' . $profil->profile_picture);
             }
         } else {

@@ -12,46 +12,28 @@ class Event extends Model
     protected $table = 'events';
 
     protected $fillable = [
-        'title',
-        'slug',
-        'description',
-        'location',
-        'start_date',
-        'end_date',
-        'capacity',
-        'organizer',
-        'category',
-        'image',
-        'is_published',
+        'title', 'slug', 'description', 'location',
+        'start_date', 'end_date', 'capacity', 'organizer',
+        'category', 'image', 'thumbnail', 'is_published',
     ];
 
     protected $casts = [
-        'start_date' => 'datetime',
-        'end_date' => 'datetime',
-        'is_published' => 'boolean',
-        'capacity' => 'integer',
+        'start_date'   => 'datetime',
+        'end_date'     => 'datetime',
+        'is_published' => 'integer',
+        'capacity'     => 'integer',
     ];
 
-    /**
-     * Scope: Filter hanya events yang published
-     * Menggunakan raw query untuk PostgreSQL boolean compatibility
-     */
     public function scopePublished($query)
     {
-        return $query->whereRaw("is_published = 'true'::boolean");
+        return $query->where('is_published', 1);
     }
 
-    /**
-     * Relationship: Event memiliki banyak registrations
-     */
     public function registrations()
     {
         return $this->hasMany(EventRegistration::class, 'event_id', 'slug');
     }
 
-    /**
-     * Accessor: Hitung jumlah registrasi
-     */
     public function getRegistrationCountAttribute()
     {
         return $this->registrations()->count();

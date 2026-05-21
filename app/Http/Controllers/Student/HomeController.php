@@ -29,7 +29,11 @@ class HomeController extends Controller
             ->take(3)
             ->get();
 
+<<<<<<< Updated upstream
         $news = News::where('is_published', 1) // ✅ fix
+=======
+        $news = News::where('is_published', 1)
+>>>>>>> Stashed changes
             ->latest('published_at')
             ->take(3)
             ->get();

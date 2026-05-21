@@ -29,7 +29,7 @@ class TracerStudyController extends Controller
             );
         }
 
-        // 1. Ambil data untuk pagination terlebih dahulu 
+        // 1. Ambil data untuk pagination terlebih dahulu
         $tracerStudies = $query->latest()->paginate(15)->withQueryString();
 
         // 2. Hitung statistik total data global untuk card/widget informasi
@@ -55,7 +55,11 @@ class TracerStudyController extends Controller
 
         // 3. SEBELUM view dirender, tandai semua data yang 'false' menjadi 'true' di database.
         // FIX TOTAL: Menggunakan whereRaw dan DB::raw agar PostgreSQL menerima literal boolean murni dari hulu ke hilir
+<<<<<<< Updated upstream
       DB::table('tracer_studies')->where('is_read', 0)->update(['is_read' => 1]);
+=======
+        TracerStudy::where('is_read', 0)->update(['is_read' => 1]);
+>>>>>>> Stashed changes
 
         return view('admin.tracer.index', compact(
             'tracerStudies', 'total', 'working', 'studying',
@@ -84,7 +88,7 @@ class TracerStudyController extends Controller
         }
 
         $tracerStudies = $query->paginate(15)->withQueryString();
-        
+
         // 2. Menghitung statistik global
         $total     = \App\Models\TracerStudy::count();
         $working   = \App\Models\TracerStudy::where('status_saat_ini', 'Bekerja')->count();

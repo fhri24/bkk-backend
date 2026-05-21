@@ -6,7 +6,6 @@
 
     {{-- ===== HERO SECTION ===== --}}
     <div class="relative bg-[#001f3f] overflow-hidden">
-        {{-- Background Image with Overlay --}}
         <div class="absolute inset-0">
             <img
                 src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1600&q=80"
@@ -16,7 +15,6 @@
             <div class="absolute inset-0 bg-gradient-to-b from-[#001f3f]/80 via-[#001f3f]/60 to-[#001f3f]/90"></div>
         </div>
 
-        {{-- Hero Content --}}
         <div class="relative z-10 text-center py-20 px-6">
             <span class="inline-block bg-blue-500/20 text-blue-300 text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full border border-blue-400/30 mb-5">
                 📅 Agenda BKK SMKN 1 Garut
@@ -56,13 +54,12 @@
                             $badgeColor = $badgeColors[$event->category] ?? 'bg-blue-600';
 
                             $fallbackImage = 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800&q=80';
-                            $imageUrl = ($event->image && Storage::exists($event->image))
-                                ? Storage::url($event->image)
+                            $imageUrl = ($event->thumbnail && Storage::disk('public')->exists($event->thumbnail))
+                                ? Storage::url($event->thumbnail)
                                 : $fallbackImage;
                         @endphp
 
                         <div class="bg-white rounded-[24px] overflow-hidden shadow-sm border border-slate-100 flex flex-col hover:shadow-xl transition-all duration-500 group">
-                            {{-- Image Container --}}
                             <div class="h-52 overflow-hidden relative bg-slate-200">
                                 <img
                                     src="{{ $imageUrl }}"
@@ -71,16 +68,12 @@
                                     onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800&q=80';"
                                     loading="lazy"
                                 />
-                                {{-- Gradient overlay bottom --}}
                                 <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
-
-                                {{-- Badge --}}
                                 <div class="absolute top-4 left-4 {{ $badgeColor }} text-white px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-lg">
                                     {{ $event->category ?? 'Umum' }}
                                 </div>
                             </div>
 
-                            {{-- Card Body --}}
                             <div class="p-6 flex-1 flex flex-col">
                                 <div class="flex items-center text-blue-600 text-xs font-bold mb-3">
                                     <i class="far fa-calendar-alt mr-2"></i>
@@ -109,7 +102,6 @@
                     @endforeach
                 </div>
 
-                {{-- Pagination --}}
                 @if($events->hasPages())
                     <div class="mt-12 flex justify-center">
                         {{ $events->links() }}
@@ -119,7 +111,4 @@
         </div>
     </div>
 
-@endsection
-
-@section('extra_js')
 @endsection

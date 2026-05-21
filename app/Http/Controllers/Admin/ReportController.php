@@ -15,7 +15,7 @@ class ReportController extends Controller
 {
     public function index()
     {
-        $totalAlumni = Student::whereRaw('"alumni_flag" = true')->count();
+        $totalAlumni = Student::where('alumni_flag', 1)->count();
         $totalJobs = Job::count();
         $totalApplications = JobApplication::count();
 

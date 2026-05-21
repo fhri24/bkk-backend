@@ -54,7 +54,7 @@ class NewsController extends Controller
             'tags'         => $request->tags,
             'image'        => $imagePath,
             'published_at' => now(),
-            'is_published' => DB::raw('true'),
+            'is_published' => 1,
             'created_at'   => now(),
             'updated_at'   => now(),
         ]);
@@ -105,7 +105,7 @@ class NewsController extends Controller
         $news = News::where('slug', $slug)->firstOrFail();
 
         $relatedNews = News::where('id', '!=', $news->id)
-            ->whereRaw('"is_published" = true')
+            ->where('is_published', 1)
             ->latest()
             ->take(2)
             ->get();

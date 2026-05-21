@@ -345,7 +345,7 @@ class StudentController extends Controller
     public function acara()
     {
         // PERBAIKAN: Menggunakan whereRaw agar kompatibel dengan query PostgreSQL bkk-smkn1garut (Eks baris 351)
-        $events = Event::whereRaw('"is_published" = true')
+        $events = Event::where('is_published', 1)
             ->where('start_date', '>=', now())
             ->latest('start_date')
             ->paginate(12);
