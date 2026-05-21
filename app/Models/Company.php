@@ -24,13 +24,13 @@ class Company extends Model
     protected function casts(): array
     {
         return [
-            'is_verified' => 'boolean',
+            'is_verified' => 'integer',
         ];
     }
 
     // FIX: Cast boolean agar kompatibel dengan PostgreSQL
     protected $casts = [
-        'is_verified' => 'boolean',
+        'is_verified' => 'integer',
     ];
 
     public function user(): BelongsTo

@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Company;
 use App\Models\Job;
 use App\Models\JobApplication;
-use App\Models\Student;
 use App\Models\SchoolProfile;
+use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Schema;
@@ -16,7 +15,7 @@ class ReportController extends Controller
 {
     public function index()
     {
-        $totalAlumni = Student::where('alumni_flag', true)->count();
+        $totalAlumni = Student::whereRaw('"alumni_flag" = true')->count();
         $totalJobs = Job::count();
         $totalApplications = JobApplication::count();
 
@@ -28,7 +27,7 @@ class ReportController extends Controller
         ];
 
         if (Schema::hasColumn('students', 'career_path')) {
-            $alumniCareerCounts = Student::where('alumni_flag', true)
+            $alumniCareerCounts = Student::whereRaw('"alumni_flag" = true')
                 ->selectRaw('career_path, COUNT(*) as total')
                 ->groupBy('career_path')
                 ->pluck('total', 'career_path')
@@ -43,8 +42,8 @@ class ReportController extends Controller
                 'month' => $month,
                 'total' => $group->count(),
                 'accepted' => $group->where('status', 'accepted')->count(),
-                'by_company' => $group->groupBy(fn($item) => $item->job->company->company_name ?? 'Tidak Diketahui')
-                    ->map(fn($items) => $items->count())
+                'by_company' => $group->groupBy(fn ($item) => $item->job->company->company_name ?? 'Tidak Diketahui')
+                    ->map(fn ($items) => $items->count())
                     ->toArray(),
             ];
         })->values();
@@ -60,8 +59,8 @@ class ReportController extends Controller
 
     public function exportAlumniCsv()
     {
-        $alumni = Student::where('alumni_flag', true)->with('user')->get();
-        $filename = 'alumni_export_' . now()->format('Ymd_His') . '.csv';
+        $alumni = Student::whereRaw('"alumni_flag" = true')->with('user')->get();
+        $filename = 'alumni_export_'.now()->format('Ymd_His').'.csv';
         $headers = [
             'Content-Type' => 'text/csv; charset=UTF-8',
             'Content-Disposition' => "attachment; filename=\"{$filename}\"",
@@ -72,7 +71,6 @@ class ReportController extends Controller
         $callback = function () use ($alumni, $columns) {
             $handle = fopen('php://output', 'w');
             fputcsv($handle, $columns);
-
             foreach ($alumni as $student) {
                 fputcsv($handle, [
                     $student->nis,
@@ -87,7 +85,6 @@ class ReportController extends Controller
                     $student->user->email ?? '-',
                 ]);
             }
-
             fclose($handle);
         };
 
@@ -97,7 +94,7 @@ class ReportController extends Controller
     public function exportJobsCsv()
     {
         $jobs = Job::with('company')->get();
-        $filename = 'lowongan_export_' . now()->format('Ymd_His') . '.csv';
+        $filename = 'lowongan_export_'.now()->format('Ymd_His').'.csv';
         $headers = [
             'Content-Type' => 'text/csv; charset=UTF-8',
             'Content-Disposition' => "attachment; filename=\"{$filename}\"",
@@ -108,7 +105,6 @@ class ReportController extends Controller
         $callback = function () use ($jobs, $columns) {
             $handle = fopen('php://output', 'w');
             fputcsv($handle, $columns);
-
             foreach ($jobs as $job) {
                 fputcsv($handle, [
                     $job->title,
@@ -119,39 +115,32 @@ class ReportController extends Controller
                     $job->created_at?->format('Y-m-d') ?? '-',
                 ]);
             }
-
             fclose($handle);
         };
 
         return Response::stream($callback, 200, $headers);
     }
 
-    /**
-     * Cetak Laporan Alumni dengan Profil Sekolah
-     */
     public function printAlumni(Request $request)
     {
-        $query = Student::where('alumni_flag', true)->with('user');
+        $query = Student::whereRaw('"alumni_flag" = true')->with('user');
 
-        // Filter per tahun lulus
         if ($request->filled('year')) {
             $query->where('graduation_year', $request->year);
         }
 
-        // Filter per jurusan
         if ($request->filled('major')) {
             $query->where('major', $request->major);
         }
 
         $alumni = $query->orderBy('full_name')->get();
 
-        // Untuk dropdown filter
-        $availableYears = Student::where('alumni_flag', true)
+        $availableYears = Student::whereRaw('"alumni_flag" = true')
             ->select('graduation_year')->distinct()
             ->orderBy('graduation_year', 'desc')
             ->pluck('graduation_year');
 
-        $availableMajors = Student::where('alumni_flag', true)
+        $availableMajors = Student::whereRaw('"alumni_flag" = true')
             ->select('major')->distinct()
             ->orderBy('major')
             ->pluck('major');
@@ -159,21 +148,13 @@ class ReportController extends Controller
         $profile = SchoolProfile::latest()->first();
 
         return view('admin.reports.print-alumni', compact(
-            'alumni',
-            'profile',
-            'availableYears',
-            'availableMajors'
+            'alumni', 'profile', 'availableYears', 'availableMajors'
         ));
     }
 
-    /**
-     * Cetak Laporan Lowongan dengan Profil Sekolah
-     */
     public function printJobs()
     {
         $jobs = Job::with('company')->get();
-
-        // Mengambil data profil sekolah yang terakhir diupdate
         $profile = SchoolProfile::latest()->first();
 
         return view('admin.reports.print-jobs', compact('jobs', 'profile'));

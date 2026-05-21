@@ -470,8 +470,8 @@
             const fallback = document.getElementById('preview-fallback');
             const label = document.getElementById('file-name-label');
 
-            if (input.files && input.files) {
-                const file = input.files;
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
                 const reader = new FileReader();
 
                 reader.onload = function(e) {

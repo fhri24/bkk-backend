@@ -36,8 +36,6 @@
         <form action="{{ route('company.tracer.store') }}" method="POST" class="space-y-8">
             @csrf
 
-            {{-- ✅ Section "Pilih Lulusan" DIHAPUS karena student_id tidak ada di tabel --}}
-
             {{-- Informasi Perusahaan --}}
             <div class="bg-white rounded-2xl shadow-lg p-8">
                 <h3 class="text-2xl font-bold text-slate-900 mb-6 flex items-center">
@@ -58,12 +56,12 @@
                         <select name="jenis_perusahaan" required
                                 class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100 @error('jenis_perusahaan') border-red-500 @enderror">
                             <option value="">Pilih Jenis Perusahaan</option>
-                            <option value="PT"        {{ old('jenis_perusahaan') == 'PT' ? 'selected' : '' }}>PT (Perseroan Terbatas)</option>
-                            <option value="CV"        {{ old('jenis_perusahaan') == 'CV' ? 'selected' : '' }}>CV (Commanditaire Vennootschap)</option>
-                            <option value="Koperasi"  {{ old('jenis_perusahaan') == 'Koperasi' ? 'selected' : '' }}>Koperasi</option>
-                            <option value="BUMN"      {{ old('jenis_perusahaan') == 'BUMN' ? 'selected' : '' }}>BUMN</option>
-                            <option value="BUMD"      {{ old('jenis_perusahaan') == 'BUMD' ? 'selected' : '' }}>BUMD</option>
-                            <option value="Lainnya"   {{ old('jenis_perusahaan') == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
+                            <option value="PT"       {{ old('jenis_perusahaan') == 'PT' ? 'selected' : '' }}>PT (Perseroan Terbatas)</option>
+                            <option value="CV"       {{ old('jenis_perusahaan') == 'CV' ? 'selected' : '' }}>CV (Commanditaire Vennootschap)</option>
+                            <option value="Koperasi" {{ old('jenis_perusahaan') == 'Koperasi' ? 'selected' : '' }}>Koperasi</option>
+                            <option value="BUMN"     {{ old('jenis_perusahaan') == 'BUMN' ? 'selected' : '' }}>BUMN</option>
+                            <option value="BUMD"     {{ old('jenis_perusahaan') == 'BUMD' ? 'selected' : '' }}>BUMD</option>
+                            <option value="Lainnya"  {{ old('jenis_perusahaan') == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
                         </select>
                         @error('jenis_perusahaan')
                             <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span>
