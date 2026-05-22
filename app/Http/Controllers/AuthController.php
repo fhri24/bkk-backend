@@ -201,7 +201,7 @@ class AuthController extends Controller
             $roleName === 'siswa'
                 => redirect()->intended(route('student.home')),
             $roleName === 'perusahaan'
-                => redirect()->intended(route('company.dashboard')),
+                => redirect()->intended(route('public.beranda')),
             default => redirect('/'),
         };
     }

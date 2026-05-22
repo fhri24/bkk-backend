@@ -8,8 +8,16 @@
 
     {{-- Welcome --}}
     <div class="bg-gradient-to-r from-[#001f3f] to-[#003d6b] rounded-2xl p-6 text-white">
-        <h2 class="text-2xl font-bold mb-1">Selamat Datang, {{ $company->company_name }}!</h2>
-        <p class="text-blue-200 text-sm">Kelola lowongan dan pantau lamaran masuk dari panel ini.</p>
+        <div class="flex items-start justify-between mb-3">
+            <div>
+                <h2 class="text-2xl font-bold mb-1">Selamat Datang, {{ $company->company_name }}!</h2>
+                <p class="text-blue-200 text-sm">Kelola lowongan dan pantau lamaran masuk dari panel ini.</p>
+            </div>
+            <a href="{{ route('public.beranda') }}" class="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg text-sm font-semibold transition">
+                <i class="fas fa-arrow-left"></i>
+                <span>Kembali ke Beranda</span>
+            </a>
+        </div>
         @if($lowonganPending > 0)
             <div class="mt-3 inline-flex items-center gap-2 bg-yellow-400/20 border border-yellow-400/40 text-yellow-300 px-4 py-2 rounded-xl text-sm font-semibold">
                 <i class="fas fa-clock"></i>

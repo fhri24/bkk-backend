@@ -238,4 +238,22 @@ class TracerStudyController extends Controller
             'tracerStudies', 'total', 'working', 'studying', 'entrepren', 'unemployed'
         ));
     }
+
+    /**
+     * Show detail industri tracer
+     */
+    public function industryShow(\App\Models\IndustryTracer $industryTracer)
+    {
+        return view('admin.tracer.industri-show', compact('industryTracer'));
+    }
+
+    /**
+     * Delete industri tracer
+     */
+    public function industryDestroy(\App\Models\IndustryTracer $industryTracer)
+    {
+        $industryTracer->delete();
+        return redirect()->route('admin.tracer.industri')
+            ->with('success', 'Data industri tracer berhasil dihapus.');
+    }
 }

@@ -129,7 +129,15 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
  * PROFILE GLOBAL
  */
 Route::middleware(['auth'])->group(function () {
-    Route::get('/profile', [StudentController::class, 'showProfile'])->name('profile');
+    Route::get('/profile', function () {
+        $user = auth()->user();
+        // Redirect company users to company dashboard
+        if ($user->role->name === 'perusahaan') {
+            return redirect()->route('company.dashboard');
+        }
+        // For other users (students, alumni, publik), show profile
+        return app(StudentController::class)->showProfile();
+    })->name('profile');
     Route::post('/profile', [StudentController::class, 'updateProfile'])->name('profile.update');
     Route::get('/lamaran-saya', [StudentController::class, 'myApplications'])->name('universal.applications');
 });
