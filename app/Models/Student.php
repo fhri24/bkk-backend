@@ -22,7 +22,7 @@ class Student extends Model
     ];
 
     protected $casts = [
-        'alumni_flag' => 'boolean',
+        'alumni_flag' => 'integer', // ✅ sesuai tipe kolom integer di DB
     ];
 
     public function user(): BelongsTo
@@ -37,7 +37,7 @@ class Student extends Model
 
     public function scopeAlumniFilter($query)
     {
-        return $query->whereRaw('"alumni_flag" = true');
+        return $query->whereRaw('"alumni_flag" = 1'); // ✅ integer, bukan boolean
     }
 
     public function scopeActive($query)
