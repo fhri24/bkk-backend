@@ -23,7 +23,7 @@ class PublikController extends Controller
 {
     public function beranda()
     {
-        $news = News::where('is_published', 1)->latest()->take(3)->get(); // ✅ fix
+        $news = News::where('is_published', 1)->latest()->take(3)->get();
 
         $featured_jobs = Job::with('company')
             ->where('approval_status', 'approved')
@@ -32,7 +32,7 @@ class PublikController extends Controller
             ->get();
 
         $featured_events = Event::with('registrations')
-            ->where('is_published', 1) // ✅ fix
+            ->where('is_published', 1)
             ->latest()
             ->take(3)
             ->get();
@@ -124,9 +124,22 @@ class PublikController extends Controller
 
         $job = Job::findOrFail($id);
 
+        $path = null;
         if ($request->hasFile('cv_file')) {
             $path = $request->file('cv_file')->store('cv_applications', 'local');
         }
+
+        // ⚠️ CATATAN LOGIKA: Anda perlu menyimpan data pelamar ke database di sini!
+        // Contoh jika Anda punya model JobApplication:
+        // \App\Models\JobApplication::create([
+        //     'job_id' => $job->id,
+        //     'user_id' => Auth::id(),
+        //     'full_name' => $request->full_name,
+        //     'email' => $request->email,
+        //     'phone_number' => $request->phone_number,
+        //     'cv_file' => $path,
+        //     'cover_letter' => $request->cover_letter,
+        // ]);
 
         return back()->with('success', 'Lamaran Anda berhasil dikirim!');
     }
@@ -144,7 +157,7 @@ class PublikController extends Controller
 
     public function berita()
     {
-        $newsItems = News::where('is_published', 1)->latest()->paginate(6); // ✅ fix
+        $newsItems = News::where('is_published', 1)->latest()->paginate(6);
         return view('public.berita', compact('newsItems'));
     }
 
@@ -152,7 +165,7 @@ class PublikController extends Controller
     {
         $news = News::where('slug', $slug)->firstOrFail();
         $relatedNews = News::where('id', '!=', $news->id)
-            ->where('is_published', 1) // ✅ fix
+            ->where('is_published', 1)
             ->latest()
             ->take(2)
             ->get();
@@ -162,18 +175,18 @@ class PublikController extends Controller
 
     public function acara()
     {
-        $events = Event::where('is_published', 1)->latest()->paginate(10); // ✅ fix
+        $events = Event::where('is_published', 1)->latest()->paginate(10);
         return view('public.acara', compact('events'));
     }
 
     public function acaraDetail($id)
     {
         $event = Event::with('registrations')
-            ->where('is_published', 1) // ✅ fix
+            ->where('is_published', 1)
             ->findOrFail($id);
 
-        $relatedEvents = Event::where('is_published', 1) // ✅ fix
-            ->where('id', '!=', $id)
+        $relatedEvents = Event::where('is_published', 1)
+            ->where('job_id', '!=', $id)
             ->where('start_date', '>=', now())
             ->take(3)
             ->get();
@@ -183,7 +196,7 @@ class PublikController extends Controller
 
     public function storeEventRegistration(Request $request, $id)
     {
-        $event = Event::where('is_published', 1)->findOrFail($id); // ✅ fix
+        $event = Event::where('is_published', 1)->findOrFail($id);
 
         $validated = $request->validate([
             'name'        => 'required|string|max:255',
@@ -192,7 +205,8 @@ class PublikController extends Controller
             'institution' => 'nullable|string|max:255',
         ]);
 
-        $existing = EventRegistration::where('event_id', $event->slug)
+        // ✅ PERBAIKAN: Samakan pengecekan duplikasi menggunakan event_id = $event->id (bukan slug)
+        $existing = EventRegistration::where('event_id', $event->id)
             ->where('email', $validated['email'])
             ->first();
 
@@ -204,8 +218,9 @@ class PublikController extends Controller
             return back()->with('error', 'Kuota pendaftaran penuh!');
         }
 
+        // ✅ PERBAIKAN: Menyimpan event_id dengan $event->id
         EventRegistration::create([
-            'event_id'      => $event->slug,
+            'event_id'      => $event->id,
             'name'          => $validated['name'],
             'email'         => $validated['email'],
             'phone'         => $validated['phone'],
@@ -354,27 +369,33 @@ class PublikController extends Controller
         ]);
 
         $user = Auth::user();
+        $profil = null;
 
         if ($user->company) {
             $profil = $user->company;
             Log::info('Masuk blok company');
         } elseif ($user->student) {
             $profil = $user->student;
-
-            Log::info('Masuk blok student, hasFile: ' . ($request->hasFile('profile_picture') ? 'yes' : 'no'));
-
-            if ($request->hasFile('profile_picture')) {
-                Log::info('Menyimpan foto...');
-                if ($profil->profile_picture) {
-                    Storage::disk('public')->delete($profil->profile_picture);
-                }
-                $profil->profile_picture = $request->file('profile_picture')->store('foto_profile', 'public');
-                $profil->save();
-                Log::info('Foto tersimpan di DB: ' . $profil->profile_picture);
-            }
+            Log::info('Masuk blok student');
         } else {
             Log::warning('User tidak memiliki profil student maupun company. User ID: ' . $user->id);
             return back()->with('error', 'Tipe akun tidak dikenali.');
+        }
+
+        // ✅ PERBAIKAN: Logika upload disatukan di luar agar berjalan untuk Student maupun Company
+        if ($request->hasFile('profile_picture')) {
+            Log::info('Menyimpan foto untuk User ID: ' . $user->id);
+
+            // Hapus foto lama jika ada
+            if ($profil->profile_picture) {
+                Storage::disk('public')->delete($profil->profile_picture);
+            }
+
+            // Simpan foto baru
+            $profil->profile_picture = $request->file('profile_picture')->store('foto_profile', 'public');
+            $profil->save();
+
+            Log::info('Foto tersimpan di DB: ' . $profil->profile_picture);
         }
 
         return back()->with('success', 'Foto profil berhasil diperbarui!');
