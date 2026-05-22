@@ -94,7 +94,6 @@ Route::get('/acara/{id}', [PublikController::class, 'acaraDetail'])->name('publi
 Route::post('/acara/{id}/register', [PublikController::class, 'storeEventRegistration'])->name('public.event.register');
 
 Route::get('/tracer-study-report', [PublikController::class, 'tracerReport'])->name('tracer.report');
-Route::get('/tracer-industri', [PublikController::class, 'tracerIndustry'])->name('public.tracer-industri');
 
 Route::get('/tutorial', [PublikController::class, 'tutorial'])->name('public.tutorial');
 Route::get('/tips', [PublikController::class, 'tips'])->name('public.tips');

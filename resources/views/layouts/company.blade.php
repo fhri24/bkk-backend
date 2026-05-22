@@ -243,6 +243,12 @@
                     @endif
                 </a>
 
+                <a href="{{ route('company.tracer.index') }}"
+                    class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->routeIs('company.tracer*') ? 'active' : '' }}">
+                    <i class="fas fa-clipboard-check"></i>
+                    <span class="ml-3">Tracer Industri</span>
+                </a>
+
                 <div class="nav-divider"></div>
 
                 {{-- Info Perusahaan --}}

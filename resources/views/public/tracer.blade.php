@@ -200,7 +200,7 @@
                 <h3 class="text-2xl font-bold text-slate-800 mb-4">User Study Report (DUDI)</h3>
                 <p class="text-slate-500 mb-8 leading-relaxed">Survei tingkat kepuasan mitra industri terhadap performa
                     kerja alumni SMKN 1 Garut.</p>
-                <button onclick="window.location.href='{{ route('public.tracer-industri') }}'"
+                <button onclick="window.location.href='{{ route('company.tracer.index') }}'"
                     class="block bg-slate-100 text-slate-800 px-8 py-3.5 rounded-xl font-bold hover:bg-green-600 hover:text-white transition text-center w-full">
                     Lihat Laporan Industri
                 </button>

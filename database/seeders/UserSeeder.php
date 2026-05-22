@@ -26,7 +26,7 @@ class UserSeeder extends Seeder
                 'name' => 'Super Admin',
                 'password' => Hash::make('password123'),
                 'role_id' => $superAdminRole->id,
-                'is_active' => DB::raw('true'),
+                'is_active' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]
@@ -38,7 +38,7 @@ class UserSeeder extends Seeder
                 'name' => 'Admin BKK',
                 'password' => Hash::make('password123'),
                 'role_id' => $adminBkkRole->id,
-                'is_active' => DB::raw('true'),
+                'is_active' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]
@@ -50,7 +50,7 @@ class UserSeeder extends Seeder
                 'name' => 'Kepala BKK',
                 'password' => Hash::make('password123'),
                 'role_id' => $kepalaBkkRole->id,
-                'is_active' => DB::raw('true'),
+                'is_active' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]
@@ -62,7 +62,7 @@ class UserSeeder extends Seeder
                 'name' => 'PT. Maju Jaya',
                 'password' => Hash::make('password123'),
                 'role_id' => $perusahaanRole->id,
-                'is_active' => DB::raw('true'),
+                'is_active' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]
@@ -85,6 +85,11 @@ class UserSeeder extends Seeder
                 'updated_at' => now(),
             ]
         );
+
+        $seededCompany = DB::table('companies')->where('user_id', $companyUser->id)->first();
+        if ($seededCompany) {
+            $companyUser->update(['company_id' => $seededCompany->company_id]);
+        }
 
         $this->command->info('Seeding selesai!');
         $this->command->info('superadmin@bkk.com / password123');
