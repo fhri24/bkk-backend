@@ -239,6 +239,18 @@ class TracerStudyController extends Controller
         ));
     }
 
+    public function show(\App\Models\TracerStudy $tracerStudy)
+{
+    return view('admin.tracer.show', compact('tracerStudy'));
+}
+
+public function destroy(\App\Models\TracerStudy $tracerStudy)
+{
+    $tracerStudy->delete();
+    return redirect()->route('admin.tracer.index')
+        ->with('success', 'Data tracer study berhasil dihapus.');
+}
+
     /**
      * Show detail industri tracer
      */

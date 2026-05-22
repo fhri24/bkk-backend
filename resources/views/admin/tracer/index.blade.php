@@ -66,42 +66,52 @@
 @section('content')
 
     {{-- STATISTIK CARDS --}}
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-        <div class="stat-box-tracer">
-            <div class="stat-icon bg-slate-100"><i class="fas fa-users text-slate-500"></i></div>
-            <div>
-                <p class="text-sm text-slate-500 font-semibold">Total Responden</p>
-                <p class="text-3xl font-black text-slate-800">{{ $total }}</p>
-            </div>
-        </div>
-
-        <div class="stat-box-tracer" style="border-left:4px solid #16a34a;">
-            <div class="stat-icon bg-green-50"><i class="fas fa-briefcase text-green-600"></i></div>
-            <div>
-                <p class="text-sm text-slate-500 font-semibold">Bekerja</p>
-                <p class="text-3xl font-black text-green-600">{{ $working }}</p>
-                <p class="text-xs text-slate-400">{{ $total > 0 ? round(($working / $total) * 100) : 0 }}% dari total</p>
-            </div>
-        </div>
-
-        <div class="stat-box-tracer" style="border-left:4px solid #2563eb;">
-            <div class="stat-icon bg-blue-50"><i class="fas fa-graduation-cap text-blue-600"></i></div>
-            <div>
-                <p class="text-sm text-slate-500 font-semibold">Melanjutkan Studi</p>
-                <p class="text-3xl font-black text-blue-600">{{ $studying }}</p>
-                <p class="text-xs text-slate-400">{{ $total > 0 ? round(($studying / $total) * 100) : 0 }}% dari total</p>
-            </div>
-        </div>
-
-        <div class="stat-box-tracer" style="border-left:4px solid #d97706;">
-            <div class="stat-icon bg-amber-50"><i class="fas fa-store text-amber-600"></i></div>
-            <div>
-                <p class="text-sm text-slate-500 font-semibold">Wirausaha</p>
-                <p class="text-3xl font-black text-amber-600">{{ $entrepren }}</p>
-                <p class="text-xs text-slate-400">{{ $total > 0 ? round(($entrepren / $total) * 100) : 0 }}% dari total</p>
-            </div>
+<div class="grid grid-cols-2 lg:grid-cols-5 gap-6 mb-6">
+    <div class="stat-box-tracer">
+        <div class="stat-icon bg-slate-100"><i class="fas fa-users text-slate-500"></i></div>
+        <div>
+            <p class="text-sm text-slate-500 font-semibold">Total Responden</p>
+            <p class="text-3xl font-black text-slate-800">{{ $total }}</p>
         </div>
     </div>
+
+    <div class="stat-box-tracer" style="border-left:4px solid #16a34a;">
+        <div class="stat-icon bg-green-50"><i class="fas fa-briefcase text-green-600"></i></div>
+        <div>
+            <p class="text-sm text-slate-500 font-semibold">Bekerja</p>
+            <p class="text-3xl font-black text-green-600">{{ $working }}</p>
+            <p class="text-xs text-slate-400">{{ $total > 0 ? round(($working / $total) * 100) : 0 }}% dari total</p>
+        </div>
+    </div>
+
+    <div class="stat-box-tracer" style="border-left:4px solid #2563eb;">
+        <div class="stat-icon bg-blue-50"><i class="fas fa-graduation-cap text-blue-600"></i></div>
+        <div>
+            <p class="text-sm text-slate-500 font-semibold">Melanjutkan Studi</p>
+            <p class="text-3xl font-black text-blue-600">{{ $studying }}</p>
+            <p class="text-xs text-slate-400">{{ $total > 0 ? round(($studying / $total) * 100) : 0 }}% dari total</p>
+        </div>
+    </div>
+
+    <div class="stat-box-tracer" style="border-left:4px solid #d97706;">
+        <div class="stat-icon bg-amber-50"><i class="fas fa-store text-amber-600"></i></div>
+        <div>
+            <p class="text-sm text-slate-500 font-semibold">Wirausaha</p>
+            <p class="text-3xl font-black text-amber-600">{{ $entrepren }}</p>
+            <p class="text-xs text-slate-400">{{ $total > 0 ? round(($entrepren / $total) * 100) : 0 }}% dari total</p>
+        </div>
+    </div>
+
+    {{-- ✅ Card baru: Belum Bekerja --}}
+    <div class="stat-box-tracer" style="border-left:4px solid #94a3b8;">
+        <div class="stat-icon bg-slate-100"><i class="fas fa-clock text-slate-500"></i></div>
+        <div>
+            <p class="text-sm text-slate-500 font-semibold">Belum Bekerja</p>
+            <p class="text-3xl font-black text-slate-600">{{ $unemployed }}</p>
+            <p class="text-xs text-slate-400">{{ $total > 0 ? round(($unemployed / $total) * 100) : 0 }}% dari total</p>
+        </div>
+    </div>
+</div>
 
     {{-- CHART + FILTER --}}
     <div class="grid lg:grid-cols-3 gap-6 mb-6">

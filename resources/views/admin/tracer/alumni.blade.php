@@ -104,7 +104,7 @@
 
     {{-- FILTER --}}
     <div class="bg-white border border-slate-200 rounded-2xl p-6 mb-6">
-        <form method="GET" action="{{ route('admin.tracer.index') }}" class="flex flex-wrap gap-4 items-end">
+        <form method="GET" action="{{ route('admin.tracer.alumni') }}" class="flex flex-wrap gap-4 items-end">
             <div class="flex-1 min-w-[180px]">
                 <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Cari Nama</label>
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama alumni..."
@@ -138,7 +138,7 @@
                     class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition">
                     <i class="fas fa-search mr-1"></i> Filter
                 </button>
-                <a href="{{ route('admin.tracer.index') }}"
+                <a href="{{ route('admin.tracer.alumni') }}"
                     class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-5 py-2.5 rounded-xl text-sm font-bold transition">
                     <i class="fas fa-redo mr-1"></i> Reset
                 </a>
