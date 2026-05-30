@@ -61,7 +61,7 @@
                     <div>
                         <label class="text-sm font-medium text-slate-600">CV File:</label>
                         @if($student->resume_url)
-                            <a href="{{ asset('storage/' . $student->resume_url) }}" target="_blank" class="text-blue-600 hover:underline">Lihat CV</a>
+                            <a href="{{ Storage::disk('public')->url($student->resume_url) }}" target="_blank" class="text-blue-600 hover:underline">Lihat CV</a>
                         @else
                             <p class="text-slate-500">-</p>
                         @endif
@@ -69,7 +69,7 @@
                     <div>
                         <label class="text-sm font-medium text-slate-600">Foto Profil:</label>
                         @if($student->profile_picture)
-                            <img src="{{ asset('storage/' . $student->profile_picture) }}" alt="Foto Profil" class="w-20 h-20 rounded-full mt-2 object-cover">
+                            <img src="{{ Storage::disk('public')->url($student->profile_picture) }}" alt="Foto Profil" class="w-20 h-20 rounded-full mt-2 object-cover">
                         @else
                             <p class="text-slate-500">-</p>
                         @endif

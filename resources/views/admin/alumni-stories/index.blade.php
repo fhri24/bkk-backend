@@ -105,7 +105,7 @@
                                             $photoSrc = $profilePic
                                                 ? \Illuminate\Support\Facades\Storage::url($profilePic)
                                                 : ($story->photo
-                                                    ? asset('storage/' . $story->photo)
+                                                    ? Storage::disk('public')->url($story->photo)
                                                     : null);
                                         @endphp
 
@@ -199,3 +199,4 @@
         </div>
     </div>
 @endsection
+

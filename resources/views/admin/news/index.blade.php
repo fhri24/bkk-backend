@@ -31,7 +31,7 @@
                     <td class="px-5 py-5 text-sm bg-white">
                         <div class="w-16 h-12 rounded overflow-hidden bg-gray-200">
                             @if($item->image)
-                                <img src="{{ asset('storage/' . $item->image) }}" class="w-full h-full object-cover">
+                                <img src="{{ Storage::disk('public')->url($item->image) }}" class="w-full h-full object-cover">
                             @else
                                 <div class="w-full h-full flex items-center justify-center text-gray-400">
                                     <i class="fas fa-image"></i>
@@ -70,3 +70,4 @@
     </div>
 </div>
 @endsection
+

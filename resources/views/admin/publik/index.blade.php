@@ -52,7 +52,7 @@
                         {{-- Foto --}}
                         <td class="px-4 py-4">
                             @if($p->foto_profile)
-                                <img src="{{ asset('storage/' . $p->foto_profile) }}"
+                                <img src="{{ Storage::disk('public')->url($p->foto_profile) }}"
                                     class="w-10 h-10 rounded-full object-cover ring-2 ring-gray-100"
                                     alt="foto {{ $p->nama_lengkap }}">
                             @else

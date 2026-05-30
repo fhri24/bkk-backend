@@ -83,7 +83,7 @@
                             class="text-slate-400">(Opsional)</span></label>
                     @if ($job->logo)
                         <div class="mt-2 mb-2">
-                            <img src="{{ asset('storage/' . $job->logo) }}" alt="Banner saat ini"
+                            <img src="{{ Storage::disk('public')->url($job->logo) }}" alt="Banner saat ini"
                                 class="h-24 rounded-xl object-cover border border-slate-200">
                             <p class="text-xs text-slate-400 mt-1">Banner saat ini. Upload baru untuk mengganti.</p>
                         </div>
@@ -202,3 +202,4 @@
         </form>
     </div>
 @endsection
+

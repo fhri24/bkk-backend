@@ -45,7 +45,7 @@
             @if($news->image)
                 <div class="mb-3">
                     <p class="text-xs text-gray-500 mb-1">Gambar saat ini:</p>
-                    <img src="{{ asset('storage/' . $news->image) }}" class="w-40 h-24 object-cover rounded-lg border">
+                    <img src="{{ Storage::disk('public')->url($news->image) }}" class="w-40 h-24 object-cover rounded-lg border">
                 </div>
             @endif
 
@@ -66,3 +66,4 @@
     </form>
 </div>
 @endsection
+

@@ -182,7 +182,7 @@
                             $cp = auth()->user()->company;
                         @endphp
                         @if ($cp && $cp->logo)
-                            <img src="{{ asset('storage/' . $cp->logo) }}" class="w-full h-full object-cover"
+                            <img src="{{ Storage::disk('public')->url($cp->logo) }}" class="w-full h-full object-cover"
                                 alt="Logo">
                         @else
                             <i class="fas fa-building text-white"></i>
@@ -349,3 +349,4 @@
 </body>
 
 </html>
+

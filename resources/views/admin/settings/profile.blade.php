@@ -19,7 +19,7 @@
                     <div
                         class="w-20 h-20 rounded-2xl bg-white shadow-lg border-4 border-white mx-auto flex items-center justify-center overflow-hidden">
                         @if (!empty($profile->logo ?? $profile->logo_path))
-                            <img src="{{ asset('storage/' . ($profile->logo ?? $profile->logo_path)) }}"
+                            <img src="{{ Storage::disk('public')->url(($profile->logo ?? $profile->logo_path)) }}"
                                 class="w-full h-full object-contain p-1" alt="Logo" id="preview-logo">
                         @else
                             <i class="fas fa-graduation-cap text-[#001f3f] text-2xl" id="logo-placeholder"></i>
@@ -118,7 +118,7 @@
                                 <div class="w-20 h-20 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden shrink-0"
                                     id="logo-drop-zone">
                                     @if (!empty($profile->logo ?? $profile->logo_path))
-                                        <img src="{{ asset('storage/' . ($profile->logo ?? $profile->logo_path)) }}"
+                                        <img src="{{ Storage::disk('public')->url(($profile->logo ?? $profile->logo_path)) }}"
                                             class="w-full h-full object-contain p-2" id="logo-thumb">
                                     @else
                                         <div id="logo-thumb-placeholder" class="text-center">
@@ -369,3 +369,4 @@
         });
     </script>
 @endsection
+

@@ -49,7 +49,7 @@
                     <div>
                         <label class="text-sm font-medium text-slate-600">File Pendukung:</label>
                         @if($application->additional_file)
-                            <a href="{{ asset('storage/' . $application->additional_file) }}" target="_blank" class="text-blue-600 hover:underline">Lihat File</a>
+                            <a href="{{ Storage::disk('public')->url('cv_applications/' . $application->additional_file) }}" target="_blank" class="text-blue-600 hover:underline">Lihat File</a>
                         @else
                             <p class="text-slate-500">-</p>
                         @endif

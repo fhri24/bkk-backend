@@ -23,7 +23,7 @@
     {{-- Poster / Banner --}}
     @if ($job->image)
         <div class="mb-6">
-            <img src="{{ asset('storage/' . $job->image) }}" alt="Poster {{ $job->title }}" class="w-full max-h-64 object-cover rounded-3xl border border-slate-200 shadow-sm">
+            <img src="{{ Storage::disk('public')->url($job->image) }}" alt="Poster {{ $job->title }}" class="w-full max-h-64 object-cover rounded-3xl border border-slate-200 shadow-sm">
         </div>
     @endif
 

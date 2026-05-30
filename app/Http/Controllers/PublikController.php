@@ -126,7 +126,10 @@ class PublikController extends Controller
 
         $path = null;
         if ($request->hasFile('cv_file')) {
-            $path = $request->file('cv_file')->store('cv_applications', 'local');
+            // Simpan ke disk public agar bisa diakses lewat browser (storage/cv_applications/...)
+            $file = $request->file('cv_file');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('cv_applications', $fileName, 'public');
         }
 
         // ⚠️ CATATAN LOGIKA: Anda perlu menyimpan data pelamar ke database di sini!

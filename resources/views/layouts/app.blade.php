@@ -11,7 +11,7 @@
 
     {{-- Favicon Dinamis --}}
     @if (isset($schoolProfile) && $schoolProfile->logo)
-        <link rel="icon" type="image/png" href="{{ asset('storage/' . $schoolProfile->logo) }}">
+        <link rel="icon" type="image/png" href="{{ Storage::disk('public')->url($schoolProfile->logo) }}">
     @endif
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -310,3 +310,4 @@
 </body>
 
 </html>
+

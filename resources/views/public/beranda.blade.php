@@ -359,7 +359,7 @@
                         <div
                             class="w-14 h-14 bg-slate-50 rounded-xl flex items-center justify-center border group-hover:bg-blue-50 transition overflow-hidden">
                             @if ($job->company && $job->company->logo)
-                                <img src="{{ asset('storage/' . $job->company->logo) }}" class="w-full h-full object-cover">
+                                <img src="{{ Storage::disk('public')->url($job->company->logo) }}" class="w-full h-full object-cover">
                             @else
                                 <i class="fas fa-industry text-blue-600 text-2xl"></i>
                             @endif
@@ -452,7 +452,7 @@
                         class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-xl transition card-zoom job-card">
                         <div class="h-48 overflow-hidden relative">
                             @if ($item->image)
-                                <img src="{{ asset('storage/' . $item->image) }}"
+                                <img src="{{ Storage::disk('public')->url($item->image) }}"
                                     class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
                             @else
                                 <div
@@ -522,7 +522,7 @@
                                             $story->student->profile_picture,
                                         );
                                     } elseif ($story->photo) {
-                                        $avatarUrl = asset('storage/' . $story->photo);
+                                        $avatarUrl = Storage::disk('public')->url($story->photo);
                                     }
 
                                     $gradientMap = [
@@ -601,7 +601,7 @@
                                             $story->student->profile_picture,
                                         );
                                     } elseif ($story->photo) {
-                                        $avatarUrl = asset('storage/' . $story->photo);
+                                        $avatarUrl = Storage::disk('public')->url($story->photo);
                                     }
 
                                     $gradientMap = [
@@ -998,3 +998,4 @@
         });
     </script>
 @endsection
+

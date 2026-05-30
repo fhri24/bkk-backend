@@ -14,7 +14,7 @@
 
                 <div class="w-24 h-24 rounded-xl overflow-hidden flex items-center justify-center">
                     @if ($navLogoPath)
-                        <img src="{{ asset('storage/' . $navLogoPath) }}" class="w-full h-full object-contain"
+                        <img src="{{ Storage::disk('public')->url($navLogoPath) }}" class="w-full h-full object-contain"
                             alt="Logo BKK">
                     @else
                         <div class="w-full h-full flex items-center justify-center">
@@ -181,3 +181,4 @@
         menu.classList.toggle('hidden');
     }
 </script>
+

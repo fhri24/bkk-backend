@@ -229,7 +229,7 @@
             {{ $logoPath ? 'bg-transparent' : 'bg-blue-400' }}">
 
                         @if ($logoPath)
-                            <img src="{{ asset('storage/' . $logoPath) }}" class="w-full h-full object-contain p-1"
+                            <img src="{{ Storage::disk('public')->url($logoPath) }}" class="w-full h-full object-contain p-1"
                                 alt="Logo Sekolah">
                         @else
                             <span class="font-bold text-lg text-white">
@@ -750,3 +750,4 @@
 </body>
 
 </html>
+
