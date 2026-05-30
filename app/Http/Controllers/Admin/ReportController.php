@@ -27,7 +27,7 @@ class ReportController extends Controller
         ];
 
         if (Schema::hasColumn('students', 'career_path')) {
-            $alumniCareerCounts = Student::whereRaw('"alumni_flag" = true')
+            $alumniCareerCounts = Student::where('alumni_flag', 1) // ✅ fix
                 ->selectRaw('career_path, COUNT(*) as total')
                 ->groupBy('career_path')
                 ->pluck('total', 'career_path')
@@ -59,7 +59,7 @@ class ReportController extends Controller
 
     public function exportAlumniCsv()
     {
-        $alumni = Student::whereRaw('"alumni_flag" = true')->with('user')->get();
+        $alumni = Student::where('alumni_flag', 1)->with('user')->get(); // ✅ fix
         $filename = 'alumni_export_'.now()->format('Ymd_His').'.csv';
         $headers = [
             'Content-Type' => 'text/csv; charset=UTF-8',
@@ -123,7 +123,7 @@ class ReportController extends Controller
 
     public function printAlumni(Request $request)
     {
-        $query = Student::whereRaw('"alumni_flag" = true')->with('user');
+        $query = Student::where('alumni_flag', 1)->with('user'); // ✅ fix
 
         if ($request->filled('year')) {
             $query->where('graduation_year', $request->year);
@@ -135,12 +135,12 @@ class ReportController extends Controller
 
         $alumni = $query->orderBy('full_name')->get();
 
-        $availableYears = Student::whereRaw('"alumni_flag" = true')
+        $availableYears = Student::where('alumni_flag', 1) // ✅ fix
             ->select('graduation_year')->distinct()
             ->orderBy('graduation_year', 'desc')
             ->pluck('graduation_year');
 
-        $availableMajors = Student::whereRaw('"alumni_flag" = true')
+        $availableMajors = Student::where('alumni_flag', 1) // ✅ fix
             ->select('major')->distinct()
             ->orderBy('major')
             ->pluck('major');
