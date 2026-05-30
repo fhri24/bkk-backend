@@ -10,28 +10,34 @@ class Role extends Model
 {
     protected $fillable = ['name', 'display_name', 'description'];
 
-    /**
-     * Relasi ke User
-     * Satu role bisa dimiliki banyak user
-     */
     public function users(): HasMany
     {
         return $this->hasMany(User::class);
     }
 
-    // Helper constants biar tidak typo di mana-mana
-    const SUPER_ADMIN    = 'super_admin';
-    const ADMIN_BKK      = 'admin_bkk';
-    const KEPALA_BKK     = 'kepala_bkk';
+    const SUPER_ADMIN = 'super_admin';
+
+    const ADMIN_BKK = 'admin_bkk';
+
+    const KEPALA_BKK = 'kepala_bkk';
+
     const KEPALA_SEKOLAH = 'kepala_sekolah';
-    const SISWA          = 'siswa';
-    const PERUSAHAAN     = 'perusahaan';
-    const ALUMNI         = 'alumni';
-    const PUBLIK         = 'publik';
+
+    const SISWA = 'siswa';
+
+    const PERUSAHAAN = 'perusahaan';
+
+    const ALUMNI = 'alumni';
+
+    const PUBLIK = 'publik';
 
     public function permissions(): BelongsToMany
     {
-        // BARU: Sesuaikan nama tabel pivot agar pakai 'system_permission_role'
         return $this->belongsToMany(Permission::class, 'system_permission_role', 'role_id', 'permission_id');
     }
-} 
+
+    public function menus(): BelongsToMany
+    {
+        return $this->belongsToMany(Menu::class, 'role_menu', 'role_id', 'menu_id');
+    }
+}
