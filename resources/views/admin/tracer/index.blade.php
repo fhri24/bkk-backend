@@ -211,10 +211,10 @@
                         <th>Nama Alumni</th>
                         <th>Angkatan</th>
                         <th>Status</th>
-                        <th>Instansi</th>
+                        <th>Instansi / PT / Usaha</th>
+                        <th>Posisi / Jurusan</th>
                         <th>Tgl Mulai</th>
-                        <th style="text-align:center;">Kesesuaian</th>
-                        <th>Pendapatan</th>
+                        <th>Penghasilan / Omzet</th>
                         <th>Tanggal Isi</th>
                     </tr>
                 </thead>
@@ -268,21 +268,20 @@
                                         <span class="badge-status badge-belum">-</span>
                                 @endswitch
                             </td>
-                            <td class="text-sm font-semibold text-slate-700">{{ $row->nama_instansi ?? '-' }}</td>
-                            <td class="text-sm text-slate-500">
-                                {{ $row->tgl_mulai_masuk ? \Carbon\Carbon::parse($row->tgl_mulai_masuk)->format('d M Y') : '-' }}
-                            </td>
-                            <td style="text-align:center;">
-                                @if ($row->keselarasan_jurusan === 'Sesuai')
-                                    <span class="badge-pill badge-info">✓ Sesuai</span>
-                                @elseif($row->keselarasan_jurusan === 'Tidak Sesuai')
-                                    <span class="badge-pill badge-danger">✕ Tidak</span>
-                                @else
-                                    <span class="text-slate-300 text-sm">—</span>
-                                @endif
+                            <td class="text-sm font-semibold text-slate-700">
+                                {{ $row->nama_instansi ?? ($row->nama_pt ?? ($row->nama_usaha ?? '-')) }}
                             </td>
                             <td class="text-sm text-slate-500">
-                                {{ $row->pendapatan_bulanan ? 'Rp ' . number_format($row->pendapatan_bulanan, 0, ',', '.') : '-' }}
+                                {{ $row->posisi_jabatan ?? ($row->jurusan_pt ?? ($row->detail_kegiatan ?? '-')) }}
+                            </td>
+                            <td class="text-sm text-slate-500">
+                                @php
+                                    $tglMulai = $row->tmt_bekerja ?? ($row->tmt_kuliah ?? ($row->tmt_wirausaha ?? null));
+                                @endphp
+                                {{ $tglMulai ? \Carbon\Carbon::parse($tglMulai)->format('d M Y') : '-' }}
+                            </td>
+                            <td class="text-sm text-slate-500">
+                                {{ $row->range_gaji ?? ($row->omzet_per_bulan ?? '-') }}
                             </td>
                             <td class="text-xs text-slate-400 font-medium">{{ $row->created_at->format('d M Y') }}</td>
                         </tr>

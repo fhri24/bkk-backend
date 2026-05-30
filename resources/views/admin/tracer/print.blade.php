@@ -256,9 +256,10 @@
                     <th>Nama Alumni</th>
                     <th>Angkatan</th>
                     <th>Status</th>
-                    <th>Instansi</th>
+                    <th>Instansi / PT / Usaha</th>
+                    <th>Posisi / Jurusan</th>
                     <th>Tgl Mulai</th>
-                    <th style="text-align:center;">Kesesuaian</th>
+                    <th>Penghasilan / Omzet</th>
                     <th>Tanggal Isi</th>
                 </tr>
             </thead>
@@ -266,9 +267,8 @@
                 @forelse($tracerStudies as $i => $row)
                     <tr>
                         <td style="color:#94a3b8;font-weight:600;">{{ $i + 1 }}</td>
-                        {{-- FIX: pakai full_name bukan name --}}
-                        <td style="font-weight:700;">{{ $row->student->full_name ?? '-' }}</td>
-                        <td>{{ $row->student->graduation_year ?? '-' }}</td>
+                        <td style="font-weight:700;">{{ $row->student->full_name ?? ($row->nama_lengkap ?? '-') }}</td>
+                        <td>{{ $row->student->graduation_year ?? ($row->tahun_lulus ?? '-') }}</td>
                         <td>
                             @switch($row->status_saat_ini)
                                 @case('Bekerja')
@@ -291,17 +291,15 @@
                                     <span class="badge badge-belum">-</span>
                             @endswitch
                         </td>
-                        <td>{{ $row->nama_instansi ?? '-' }}</td>
-                        <td>{{ $row->tgl_mulai_masuk ?? '-' }}</td>
-                        <td style="text-align:center;">
-                            @if ($row->keselarasan_jurusan === 'Sesuai')
-                                <span class="badge badge-sesuai">✓ Sesuai</span>
-                            @elseif($row->keselarasan_jurusan === 'Tidak Sesuai')
-                                <span class="badge badge-tidak">✕ Tidak</span>
-                            @else
-                                <span style="color:#cbd5e1;">—</span>
-                            @endif
+                        <td>{{ $row->nama_instansi ?? ($row->nama_pt ?? ($row->nama_usaha ?? '-')) }}</td>
+                        <td>{{ $row->posisi_jabatan ?? ($row->jurusan_pt ?? ($row->detail_kegiatan ?? '-')) }}</td>
+                        <td>
+                            @php
+                                $tglMulai = $row->tmt_bekerja ?? ($row->tmt_kuliah ?? ($row->tmt_wirausaha ?? null));
+                            @endphp
+                            {{ $tglMulai ? \Carbon\Carbon::parse($tglMulai)->format('d/m/Y') : '-' }}
                         </td>
+                        <td>{{ $row->range_gaji ?? ($row->omzet_per_bulan ?? '-') }}</td>
                         <td style="color:#94a3b8;">{{ $row->created_at->format('d/m/Y') }}</td>
                     </tr>
                     @empty

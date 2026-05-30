@@ -11,56 +11,7 @@ class TracerStudyController extends Controller
 {
     public function index(Request $request)
     {
-        $query = TracerStudy::with('student');
-
-        if ($request->filled('status')) {
-            $query->where('status_saat_ini', $request->status);
-        }
-
-        if ($request->filled('year')) {
-            $query->whereHas('student', fn($q) =>
-                $q->where('graduation_year', $request->year)
-            );
-        }
-
-        if ($request->filled('search')) {
-            $query->whereHas('student', fn($q) =>
-                $q->where('full_name', 'like', '%' . $request->search . '%')
-            );
-        }
-
-        // 1. Ambil data untuk pagination terlebih dahulu
-        $tracerStudies = $query->latest()->paginate(15)->withQueryString();
-
-        // 2. Hitung statistik total data global untuk card/widget informasi
-        $total      = TracerStudy::count();
-        $working    = TracerStudy::where('status_saat_ini', 'Bekerja')->count();
-        $studying   = TracerStudy::where('status_saat_ini', 'Kuliah')->count();
-        $entrepren  = TracerStudy::where('status_saat_ini', 'Wirausaha')->count();
-        $unemployed = TracerStudy::where('status_saat_ini', 'Belum Bekerja')->count();
-
-        $chartData = [
-            'Bekerja'       => $working,
-            'Kuliah'        => $studying,
-            'Wirausaha'     => $entrepren,
-            'Belum Bekerja' => $unemployed,
-        ];
-
-        $graduationYears = DB::table('students')
-            ->select('graduation_year')
-            ->whereNotNull('graduation_year')
-            ->distinct()
-            ->orderByDesc('graduation_year')
-            ->pluck('graduation_year');
-
-        // 3. SEBELUM view dirender, tandai semua data yang 'false' menjadi 'true' di database.
-        // FIX TOTAL: Menggunakan whereRaw dan DB::raw agar PostgreSQL menerima literal boolean murni dari hulu ke hilir
-        DB::table('tracer_studies')->where('is_read', 0)->update(['is_read' => 1]);
-
-        return view('admin.tracer.index', compact(
-            'tracerStudies', 'total', 'working', 'studying',
-            'entrepren', 'unemployed', 'chartData', 'graduationYears'
-        ));
+        return redirect()->route('admin.tracer.alumni');
     }
 
     /**
@@ -92,12 +43,14 @@ class TracerStudyController extends Controller
         $wirausaha = \App\Models\TracerStudy::where('status_saat_ini', 'Wirausaha')->count();
         $belum     = \App\Models\TracerStudy::where('status_saat_ini', 'Belum Bekerja')->count();
 
-        // 3. Mengambil daftar tahun kelulusan secara dinamis
+        // Mengambil daftar tahun kelulusan secara dinamis
         $graduationYears = \App\Models\TracerStudy::select('tahun_lulus')
             ->whereNotNull('tahun_lulus')
             ->distinct()
             ->orderByDesc('tahun_lulus')
             ->pluck('tahun_lulus');
+
+        DB::table('tracer_studies')->where('is_read', 0)->update(['is_read' => 1]);
 
         return view('admin.tracer.alumni', compact(
             'tracerStudies', 'total', 'working', 'kuliah', 'wirausaha', 'belum', 'graduationYears'
@@ -187,22 +140,20 @@ class TracerStudyController extends Controller
 
             fputcsv($file, [
                 'No', 'Nama Alumni', 'Angkatan', 'Status',
-                'Nama Instansi', 'Tgl Mulai', 'Pendapatan (Rp)',
-                'Kesesuaian Jurusan', 'Tanggal Isi',
+                'Instansi / PT / Usaha', 'Posisi / Jurusan', 'Tgl Mulai',
+                'Penghasilan / Omzet', 'Tanggal Isi',
             ]);
 
             foreach ($data as $i => $row) {
                 fputcsv($file, [
                     $i + 1,
-                    $row->student->full_name       ?? '-',
-                    $row->student->graduation_year ?? '-',
+                    $row->student->full_name       ?? ($row->nama_lengkap ?? '-'),
+                    $row->student->graduation_year ?? ($row->tahun_lulus ?? '-'),
                     $row->status_saat_ini,
-                    $row->nama_instansi            ?? '-',
-                    $row->tgl_mulai_masuk          ?? '-',
-                    $row->pendapatan_bulanan
-                        ? number_format($row->pendapatan_bulanan, 0, ',', '.')
-                        : '-',
-                    $row->keselarasan_jurusan      ?? '-',
+                    $row->nama_instansi            ?? ($row->nama_pt ?? ($row->nama_usaha ?? '-')),
+                    $row->posisi_jabatan           ?? ($row->jurusan_pt ?? ($row->detail_kegiatan ?? '-')),
+                    $row->tmt_bekerja              ?? ($row->tmt_kuliah ?? ($row->tmt_wirausaha ?? '-')),
+                    $row->range_gaji               ?? ($row->omzet_per_bulan ?? '-'),
                     $row->created_at->format('d/m/Y'),
                 ]);
             }

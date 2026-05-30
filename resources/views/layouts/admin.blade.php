@@ -364,10 +364,10 @@
                         </button>
                         <div class="tracer-submenu ml-8 space-y-1 hidden">
 
-                            {{-- Data Tracer Study --}}
-                            <a href="{{ route('admin.tracer.index') }}"
-                                class="sidebar-link flex items-center justify-between px-3 py-2 rounded-lg text-white/80 hover:text-white {{ request()->routeIs('admin.tracer.index') ? 'active' : '' }}">
-                                <span>Data Tracer Study</span>
+                            {{-- Laporan Alumni --}}
+                            <a href="{{ route('admin.tracer.alumni') }}"
+                                class="sidebar-link flex items-center justify-between px-3 py-2 rounded-lg text-white/80 hover:text-white {{ request()->routeIs('admin.tracer.alumni') ? 'active' : '' }}">
+                                <span>Laporan Alumni</span>
                                 @php $unreadTracer = \Illuminate\Support\Facades\DB::table('tracer_studies')->where('is_read', 0)->count(); @endphp
                                 @if ($unreadTracer > 0)
                                     <span
@@ -375,12 +375,6 @@
                                         {{ $unreadTracer }}
                                     </span>
                                 @endif
-                            </a>
-
-                            {{-- Laporan Alumni --}}
-                            <a href="{{ route('admin.tracer.alumni') }}"
-                                class="sidebar-link block px-3 py-2 rounded-lg text-white/80 hover:text-white {{ request()->routeIs('admin.tracer.alumni') ? 'active' : '' }}">
-                                Laporan Alumni
                             </a>
 
                             {{-- Laporan Industri --}}

@@ -175,8 +175,13 @@
                 </thead>
                 <tbody class="divide-y divide-slate-50">
                     @forelse($tracerStudies as $i => $row)
-                        <tr class="hover:bg-slate-50 transition">
-                            <td class="px-4 py-4 text-slate-400 font-medium">{{ $tracerStudies->firstItem() + $i }}</td>
+                        <tr class="{{ !$row->is_read ? 'bg-blue-50/50' : 'hover:bg-slate-50' }} transition">
+                            <td class="px-4 py-4 text-slate-400 font-medium">
+                                {{ $tracerStudies->firstItem() + $i }}
+                                @if (!$row->is_read)
+                                    <span class="ml-2 bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">Baru</span>
+                                @endif
+                            </td>
                             <td class="px-4 py-4">
                                 <div class="flex items-center gap-3">
                                     <div
