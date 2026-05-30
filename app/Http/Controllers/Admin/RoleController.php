@@ -16,7 +16,7 @@ class RoleController extends Controller
     {
         $roles = Role::with(['permissions', 'menus'])->get();
         $permissions = Permission::all();
-        $menus = Menu::orderBy('order')->get()->unique('name')->values();
+        $menus = Menu::orderBy('order')->get()->unique('id')->values();
 
         return view('admin.roles.index', compact('roles', 'permissions', 'menus'));
     }
@@ -35,7 +35,7 @@ class RoleController extends Controller
             'metadata' => ['role_id' => $role->id, 'permissions' => $permissionIds],
         ]);
 
-        return redirect()->back()->with('success', 'Hak akses role berhasil disimpan.');
+        return redirect()->back()->with('success', 'Hak akses role '.$role->display_name.' berhasil disimpan.');
     }
 
     public function updateMenus(Request $request, $roleId)
@@ -51,6 +51,17 @@ class RoleController extends Controller
             'user_agent' => $request->userAgent(),
             'metadata' => ['role_id' => $role->id, 'menus' => $menuIds],
         ]);
+
+        // Jika request dari AJAX (XMLHttpRequest), kembalikan JSON
+        // Jika dari form biasa, redirect seperti biasa
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Menu role '.$role->display_name.' berhasil disimpan.',
+                'role_id' => $role->id,
+                'menus' => $menuIds,
+            ]);
+        }
 
         return redirect()->back()->with('success', 'Menu role '.$role->display_name.' berhasil disimpan.');
     }
