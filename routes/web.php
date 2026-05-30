@@ -1,51 +1,43 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Models\User;
-
-// Import Controllers Utama
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\PublikController;
-use App\Http\Controllers\StudentController;
-use App\Http\Controllers\SearchController;
-use App\Http\Controllers\Admin\AlumniStoryController;
-
-// Import Controller Baru (Auth Tambahan)
-use App\Http\Controllers\Auth\ForgotPasswordController;
-use App\Http\Controllers\Auth\SocialAuthController;
-use App\Http\Controllers\Auth\OtpController;
-
-// Import Company Controller
-use App\Http\Controllers\Company\CompanyPanelController;
-
-// Admin Controllers
-use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\Admin\JobController as AdminJobController;
-use App\Http\Controllers\Admin\CompanyController as AdminCompanyController;
-use App\Http\Controllers\Admin\JobApplicationController as AdminJobApplicationController;
-use App\Http\Controllers\Admin\StudentController as AdminStudentController;
-use App\Http\Controllers\Admin\ReportController as AdminReportController;
-use App\Http\Controllers\Admin\SettingController as AdminSettingController;
-use App\Http\Controllers\Admin\UserController as AdminUserController;
-use App\Http\Controllers\Admin\RoleController as AdminRoleController;
 use App\Http\Controllers\Admin\ActivityLogController as AdminActivityLogController;
-use App\Http\Controllers\Admin\DashboardActionController;
-use App\Http\Controllers\Admin\NewsController as AdminNewsController;
-use App\Http\Controllers\Admin\EventController as AdminEventController;
-use App\Http\Controllers\Admin\EventRegistrationController as AdminEventRegistrationController;
-use App\Http\Controllers\Admin\PublikController as AdminPublikController;
+// Import Controllers Utama
+use App\Http\Controllers\Admin\AlumniStoryController;
 use App\Http\Controllers\Admin\BroadcastController as AdminBroadcastController;
 use App\Http\Controllers\Admin\CompanyAccountController;
-use App\Http\Controllers\Admin\TracerStudyController as AdminTracerStudyController;
+use App\Http\Controllers\Admin\CompanyController as AdminCompanyController;
+use App\Http\Controllers\Admin\DashboardActionController;
+// Import Controller Baru (Auth Tambahan)
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+// Import Company Controller
+use App\Http\Controllers\Admin\EventController as AdminEventController;
+// Admin Controllers
+use App\Http\Controllers\Admin\EventRegistrationController as AdminEventRegistrationController;
+use App\Http\Controllers\Admin\JobApplicationController as AdminJobApplicationController;
+use App\Http\Controllers\Admin\JobController as AdminJobController;
+use App\Http\Controllers\Admin\NewsController as AdminNewsController;
+use App\Http\Controllers\Admin\NotificationController;
+use App\Http\Controllers\Admin\PublikController as AdminPublikController;
+use App\Http\Controllers\Admin\ReportController as AdminReportController;
+use App\Http\Controllers\Admin\RoleController as AdminRoleController;
+use App\Http\Controllers\Admin\SettingController as AdminSettingController;
+use App\Http\Controllers\Admin\StudentController as AdminStudentController;
 use App\Http\Controllers\Admin\TipController as AdminTipController;
-
-// Student Controllers
-use App\Http\Controllers\Student\PageController as StudentPageController;
-use App\Http\Controllers\Student\HomeController;
-
-// Import TracerStudyController untuk form publik
-use App\Http\Controllers\TracerStudyController;
+use App\Http\Controllers\Admin\TracerStudyController as AdminTracerStudyController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Auth\SocialAuthController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Company\CompanyPanelController;
 use App\Http\Controllers\IndustryTracerController;
+use App\Http\Controllers\PublikController;
+use App\Http\Controllers\SearchController;
+// Student Controllers
+use App\Http\Controllers\Student\HomeController;
+use App\Http\Controllers\Student\PageController as StudentPageController;
+// Import TracerStudyController untuk form publik
+use App\Http\Controllers\StudentController;
+use App\Http\Controllers\TracerStudyController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -57,18 +49,18 @@ use App\Http\Controllers\IndustryTracerController;
  * PUBLIC ROUTES
  */
 Route::get('/home-redirect', function () {
-    if (!auth()->check()) {
+    if (! auth()->check()) {
         return redirect()->route('public.beranda');
     }
 
     $role = auth()->user()->role->name;
 
     return match ($role) {
-        'publik'     => redirect()->route('publik.home'),
-        'alumni'     => redirect()->route('alumni.home'),
-        'siswa'      => redirect()->route('student.home'),
+        'publik' => redirect()->route('publik.home'),
+        'alumni' => redirect()->route('alumni.home'),
+        'siswa' => redirect()->route('student.home'),
         'perusahaan' => redirect()->route('company.dashboard'),
-        default      => redirect()->route('admin.dashboard'),
+        default => redirect()->route('admin.dashboard'),
     };
 })->name('home');
 
@@ -115,8 +107,9 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'index'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.process');
-    Route::get('/register', fn() => redirect()->route('login'));
+    Route::get('/register', fn () => redirect()->route('login'));
 
+    // OAuth Routes
     Route::get('/auth/google', [SocialAuthController::class, 'redirectToGoogle'])->name('auth.google');
     Route::get('/auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
     Route::get('/auth/facebook', [SocialAuthController::class, 'redirectToFacebook'])->name('auth.facebook');
@@ -135,6 +128,7 @@ Route::middleware(['auth'])->group(function () {
         if ($user->role->name === 'perusahaan') {
             return redirect()->route('company.dashboard');
         }
+
         // For other users (students, alumni, publik), show profile
         return app(StudentController::class)->showProfile();
     })->name('profile');
@@ -147,7 +141,7 @@ Route::middleware(['auth'])->group(function () {
  */
 Route::middleware(['auth', 'role:alumni'])->prefix('alumni')->name('alumni.')->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
-    Route::get('/', fn() => redirect()->route('alumni.home'));
+    Route::get('/', fn () => redirect()->route('alumni.home'));
 
     Route::get('/daftar-lowongan', [StudentController::class, 'lowongan'])->name('lowongan');
     Route::get('/lowongan/{id}', [StudentController::class, 'detailLowongan'])->name('lowongan.detail');
@@ -171,7 +165,7 @@ Route::middleware(['auth', 'role:alumni'])->prefix('alumni')->name('alumni.')->g
  */
 Route::middleware(['auth', 'role:publik'])->prefix('publik')->name('publik.')->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
-    Route::get('/', fn() => redirect()->route('publik.home'));
+    Route::get('/', fn () => redirect()->route('publik.home'));
 
     Route::get('/daftar-lowongan', [StudentController::class, 'lowongan'])->name('lowongan');
     Route::get('/lowongan/{id}', [StudentController::class, 'detailLowongan'])->name('lowongan.detail');
@@ -184,7 +178,7 @@ Route::middleware(['auth', 'role:publik'])->prefix('publik')->name('publik.')->g
     Route::get('/acara/{id}', [StudentController::class, 'detailAcara'])->name('acara.detail');
     Route::post('/acara/{id}/daftar', [StudentController::class, 'daftarAcara'])->name('acara.daftar');
 
-    Route::get('/tracer', fn() => redirect()->route('public.tracer'))->name('tracer');
+    Route::get('/tracer', fn () => redirect()->route('public.tracer'))->name('tracer');
 });
 
 /**
@@ -192,7 +186,7 @@ Route::middleware(['auth', 'role:publik'])->prefix('publik')->name('publik.')->g
  */
 Route::middleware(['auth', 'role:siswa'])->prefix('student')->name('student.')->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
-    Route::get('/', fn() => redirect()->route('student.home'));
+    Route::get('/', fn () => redirect()->route('student.home'));
 
     Route::get('/profile-detail', [StudentController::class, 'profileDetail'])->name('profile.detail');
 
@@ -210,7 +204,7 @@ Route::middleware(['auth', 'role:siswa'])->prefix('student')->name('student.')->
     Route::get('/lamaran', [StudentController::class, 'myApplications'])->name('applications');
     Route::delete('/lamaran/{id}', [StudentController::class, 'deleteApplication'])->name('applications.delete');
 
-    Route::get('/tracer', fn() => redirect()->route('public.tracer'))->name('tracer');
+    Route::get('/tracer', fn () => redirect()->route('public.tracer'))->name('tracer');
 
     Route::get('/berita', [AdminNewsController::class, 'index_student'])->name('berita');
     Route::get('/berita/{slug}', [AdminNewsController::class, 'show'])->name('berita.detail');
@@ -236,7 +230,7 @@ Route::middleware(['auth', 'role:perusahaan'])->prefix('company')->name('company
     Route::get('/lamaran/{application}', [CompanyPanelController::class, 'lamaranShow'])->name('lamaran.show');
     Route::put('/lamaran/{application}/status', [CompanyPanelController::class, 'lamaranUpdateStatus'])->name('lamaran.update-status');
 
-    // ✅ Tracer Industri untuk perusahaan
+    // Tracer Industri untuk perusahaan
     Route::get('/tracer-industri', [IndustryTracerController::class, 'index'])->name('tracer.index');
     Route::post('/tracer-industri', [IndustryTracerController::class, 'store'])->name('tracer.store');
 });
@@ -250,8 +244,8 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::get('/search', [SearchController::class, 'search'])->name('search');
 
-    Route::get('/notifications', [App\Http\Controllers\Admin\NotificationController::class, 'index'])->name('notifications.index');
-    Route::post('/notifications/read-all', [App\Http\Controllers\Admin\NotificationController::class, 'markAllRead'])->name('notifications.read-all');
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.read-all');
 
     Route::get('publik', [AdminPublikController::class, 'index'])->name('publik.index');
     Route::delete('publik/{id}', [AdminPublikController::class, 'destroy'])->name('publik.destroy');
@@ -325,9 +319,11 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
         Route::put('/{id}/status', [AdminUserController::class, 'updateStatus'])->name('update-status');
     });
 
+    // Perubahan ada di sini: ditambahkan route update menu untuk roles matrix toggle
     Route::prefix('roles')->name('roles.')->group(function () {
         Route::get('/', [AdminRoleController::class, 'index'])->name('index');
         Route::put('/{role}', [AdminRoleController::class, 'update'])->name('update');
+        Route::put('/{role}/menus', [AdminRoleController::class, 'updateMenus'])->name('menus');
     });
 
     Route::prefix('settings')->name('settings.')->group(function () {
@@ -363,29 +359,29 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
      * harus di atas route wildcard (/{tracerStudy})
      */
     Route::prefix('tracer')->name('tracer.')->group(function () {
-        Route::get('/',           [AdminTracerStudyController::class, 'index']) ->name('index');
-        Route::get('/alumni',     [AdminTracerStudyController::class, 'alumni'])->name('alumni');
+        Route::get('/', [AdminTracerStudyController::class, 'index'])->name('index');
+        Route::get('/alumni', [AdminTracerStudyController::class, 'alumni'])->name('alumni');
         Route::get('/export/csv', [AdminTracerStudyController::class, 'exportCsv'])->name('export.csv');
-        Route::get('/print',      [AdminTracerStudyController::class, 'print']) ->name('print');
+        Route::get('/print', [AdminTracerStudyController::class, 'print'])->name('print');
 
         // Industri — Mengarah ke method industri() baru di AdminTracerStudyController
-        Route::get('/industri',                     [AdminTracerStudyController::class, 'industri'])->name('industri');
-        Route::get('/industri/{industryTracer}',    [AdminTracerStudyController::class, 'industryShow']) ->name('industri.show');
+        Route::get('/industri', [AdminTracerStudyController::class, 'industri'])->name('industri');
+        Route::get('/industri/{industryTracer}', [AdminTracerStudyController::class, 'industryShow'])->name('industry.show');
         Route::delete('/industri/{industryTracer}', [AdminTracerStudyController::class, 'industryDestroy'])->name('industri.destroy');
 
         // TracerStudy show & destroy — wildcard, harus paling bawah
-        Route::get('/{tracerStudy}',    [AdminTracerStudyController::class, 'show'])   ->name('show');
+        Route::get('/{tracerStudy}', [AdminTracerStudyController::class, 'show'])->name('show');
         Route::delete('/{tracerStudy}', [AdminTracerStudyController::class, 'destroy'])->name('destroy');
     });
 
     Route::prefix('tips')->name('tips.')->group(function () {
-        Route::get('/',                 [AdminTipController::class, 'index'])->name('index');
-        Route::get('/create',           [AdminTipController::class, 'create'])->name('create');
-        Route::post('/',                [AdminTipController::class, 'store'])->name('store');
-        Route::get('/{tip}/edit',       [AdminTipController::class, 'edit'])->name('edit');
-        Route::put('/{tip}',            [AdminTipController::class, 'update'])->name('update');
-        Route::delete('/{tip}',         [AdminTipController::class, 'destroy'])->name('destroy');
-        Route::patch('/{tip}/publish',  [AdminTipController::class, 'togglePublish'])->name('publish');
+        Route::get('/', [AdminTipController::class, 'index'])->name('index');
+        Route::get('/create', [AdminTipController::class, 'create'])->name('create');
+        Route::post('/', [AdminTipController::class, 'store'])->name('store');
+        Route::get('/{tip}/edit', [AdminTipController::class, 'edit'])->name('edit');
+        Route::put('/{tip}', [AdminTipController::class, 'update'])->name('update');
+        Route::delete('/{tip}', [AdminTipController::class, 'destroy'])->name('destroy');
+        Route::patch('/{tip}/publish', [AdminTipController::class, 'togglePublish'])->name('publish');
         Route::patch('/{tip}/featured', [AdminTipController::class, 'toggleFeatured'])->name('featured');
     });
 

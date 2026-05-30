@@ -252,36 +252,47 @@
                 </div>
             </div>
 
+            {{-- 
+    GANTI SELURUH BAGIAN <nav class="flex-1 ..."> di layouts/admin.blade.php 
+    dengan kode di bawah ini.
+    
+    Cara: cari baris "<nav class="flex-1 overflow-y-auto px-4 py-6">"
+    sampai tag "</nav>" penutupnya, lalu replace dengan ini.
+--}}
+
             <nav class="flex-1 overflow-y-auto px-4 py-6">
+                @php
+                    $userMenus = auth()->user()->role->menus->pluck('name')->toArray();
+                    $hasMenu = fn($name) => in_array($name, $userMenus);
+                @endphp
+
                 <h3 class="text-xs font-semibold text-blue-200 uppercase tracking-wider px-3 mb-4">Menu Utama</h3>
 
-                {{-- Dashboard --}}
-                <a href="{{ route('admin.dashboard') }}"
-                    class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                    <i class="fas fa-chart-line"></i>
-                    <span class="ml-3">Dashboard</span>
-                </a>
+                {{-- Dashboard (selalu tampil) --}}
+                @if ($hasMenu('dashboard'))
+                    <a href="{{ route('admin.dashboard') }}"
+                        class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                        <i class="fas fa-chart-line"></i>
+                        <span class="ml-3">Dashboard</span>
+                    </a>
+                @endif
 
                 {{-- Lowongan Kerja --}}
-                @if (auth()->user()->hasPermission('manage_jobs'))
+                @if ($hasMenu('jobs') && auth()->user()->hasPermission('manage_jobs'))
                     <a href="{{ route('admin.jobs.index') }}"
                         class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->segment(2) === 'jobs' ? 'active' : '' }}">
                         <i class="fas fa-briefcase"></i>
                         <span class="ml-3">Lowongan Kerja</span>
-                        @php
-                            $pendingJobsCount = \App\Models\Job::where('approval_status', 'pending')->count();
-                        @endphp
+                        @php $pendingJobsCount = \App\Models\Job::where('approval_status', 'pending')->count(); @endphp
                         @if ($pendingJobsCount > 0)
                             <span
-                                class="ml-auto bg-yellow-400 text-yellow-900 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                                {{ $pendingJobsCount }}
-                            </span>
+                                class="ml-auto bg-yellow-400 text-yellow-900 text-[10px] font-bold px-2 py-0.5 rounded-full">{{ $pendingJobsCount }}</span>
                         @endif
                     </a>
                 @endif
 
                 {{-- Lamaran --}}
-                @if (auth()->user()->hasPermission('manage_job_applications'))
+                @if ($hasMenu('job_applications') && auth()->user()->hasPermission('manage_job_applications'))
                     <a href="{{ route('admin.job-applications.index') }}"
                         class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->segment(2) === 'job-applications' ? 'active' : '' }}">
                         <i class="fas fa-file-alt"></i>
@@ -290,7 +301,7 @@
                 @endif
 
                 {{-- Alumni --}}
-                @if (auth()->user()->hasPermission('manage_students'))
+                @if ($hasMenu('students') && auth()->user()->hasPermission('manage_students'))
                     <a href="{{ route('admin.students.index') }}"
                         class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->segment(2) === 'students' ? 'active' : '' }}">
                         <i class="fas fa-users"></i>
@@ -299,7 +310,7 @@
                 @endif
 
                 {{-- Perusahaan --}}
-                @if (auth()->user()->hasPermission('manage_companies'))
+                @if ($hasMenu('companies') && auth()->user()->hasPermission('manage_companies'))
                     <a href="{{ route('admin.companies.index') }}"
                         class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->segment(2) === 'companies' ? 'active' : '' }}">
                         <i class="fas fa-building"></i>
@@ -307,8 +318,10 @@
                     </a>
                 @endif
 
-                {{-- ★ AKUN PERUSAHAAN (BARU) --}}
-                @if (auth()->user()->hasPermission('manage_companies') || auth()->user()->hasPermission('manage_users'))
+                {{-- Akun Perusahaan --}}
+                @if (
+                    $hasMenu('company_accounts') &&
+                        (auth()->user()->hasPermission('manage_companies') || auth()->user()->hasPermission('manage_users')))
                     <a href="{{ route('admin.company-accounts.index') }}"
                         class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->segment(2) === 'company-accounts' ? 'active' : '' }}">
                         <i class="fas fa-user-tie"></i>
@@ -317,42 +330,48 @@
                 @endif
 
                 {{-- Manajemen Acara --}}
-                <a href="{{ route('admin.events.index') }}"
-                    class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->routeIs('admin.events.*') ? 'active' : '' }}">
-                    <i class="fas fa-calendar-alt w-5 text-center"></i>
-                    <span class="mx-4 font-medium">Manajemen Acara</span>
-                </a>
+                @if ($hasMenu('events'))
+                    <a href="{{ route('admin.events.index') }}"
+                        class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->routeIs('admin.events.*') ? 'active' : '' }}">
+                        <i class="fas fa-calendar-alt w-5 text-center"></i>
+                        <span class="mx-4 font-medium">Manajemen Acara</span>
+                    </a>
+                @endif
 
                 {{-- Peserta Acara --}}
-                <a href="{{ route('admin.event-registrations.index') }}"
-                    class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->routeIs('admin.event-registrations.*') ? 'active' : '' }}">
-                    <i class="fas fa-users w-5 text-center"></i>
-                    <span class="mx-4 font-medium">Peserta Acara</span>
-                </a>
+                @if ($hasMenu('event_registrations'))
+                    <a href="{{ route('admin.event-registrations.index') }}"
+                        class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->routeIs('admin.event-registrations.*') ? 'active' : '' }}">
+                        <i class="fas fa-users w-5 text-center"></i>
+                        <span class="mx-4 font-medium">Peserta Acara</span>
+                    </a>
+                @endif
 
                 {{-- Berita --}}
-                <a href="{{ route('admin.news.index') }}"
-                    class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->segment(2) === 'news' ? 'active' : '' }}">
-                    <i class="fas fa-newspaper"></i>
-                    <span class="ml-3">Berita</span>
-                </a>
+                @if ($hasMenu('news'))
+                    <a href="{{ route('admin.news.index') }}"
+                        class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->segment(2) === 'news' ? 'active' : '' }}">
+                        <i class="fas fa-newspaper"></i>
+                        <span class="ml-3">Berita</span>
+                    </a>
+                @endif
 
                 {{-- Kisah Sukses --}}
-                <a href="{{ route('admin.alumni-stories.index') }}"
-                    class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->routeIs('admin.alumni-stories.*') ? 'active' : '' }}">
-                    <i class="fas fa-star"></i>
-                    <span class="ml-3">Kisah Sukses</span>
-                    @php $pendingStories = \App\Models\AlumniStory::where('status','pending')->count(); @endphp
-                    @if ($pendingStories > 0)
-                        <span
-                            class="ml-auto bg-yellow-400 text-yellow-900 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                            {{ $pendingStories }}
-                        </span>
-                    @endif
-                </a>
+                @if ($hasMenu('alumni_stories'))
+                    <a href="{{ route('admin.alumni-stories.index') }}"
+                        class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->routeIs('admin.alumni-stories.*') ? 'active' : '' }}">
+                        <i class="fas fa-star"></i>
+                        <span class="ml-3">Kisah Sukses</span>
+                        @php $pendingStories = \App\Models\AlumniStory::where('status','pending')->count(); @endphp
+                        @if ($pendingStories > 0)
+                            <span
+                                class="ml-auto bg-yellow-400 text-yellow-900 text-[10px] font-bold px-2 py-0.5 rounded-full">{{ $pendingStories }}</span>
+                        @endif
+                    </a>
+                @endif
 
                 {{-- Tracer Study --}}
-                @if (auth()->user()->hasPermission('view_reports'))
+                @if ($hasMenu('tracer') && auth()->user()->hasPermission('view_reports'))
                     <div class="mb-2">
                         <button type="button"
                             class="sidebar-toggle flex items-center justify-between w-full px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white bg-transparent focus:outline-none">
@@ -363,46 +382,46 @@
                             <i class="fas fa-chevron-down transition-transform duration-200"></i>
                         </button>
                         <div class="tracer-submenu ml-8 space-y-1 hidden">
-
-                            {{-- Laporan Alumni --}}
-                            <a href="{{ route('admin.tracer.alumni') }}"
-                                class="sidebar-link flex items-center justify-between px-3 py-2 rounded-lg text-white/80 hover:text-white {{ request()->routeIs('admin.tracer.alumni') ? 'active' : '' }}">
-                                <span>Laporan Alumni</span>
                                 @php $unreadTracer = \Illuminate\Support\Facades\DB::table('tracer_studies')->where('is_read', 0)->count(); @endphp
                                 @if ($unreadTracer > 0)
                                     <span
-                                        class="ml-auto bg-blue-400 text-blue-900 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                                        {{ $unreadTracer }}
-                                    </span>
+                                        class="ml-auto bg-blue-400 text-blue-900 text-[10px] font-bold px-2 py-0.5 rounded-full">{{ $unreadTracer }}</span>
                                 @endif
                             </a>
 
                             {{-- Laporan Industri --}}
+                            <a href="{{ route('admin.tracer.alumni') }}"
+                                class="sidebar-link block px-3 py-2 rounded-lg text-white/80 hover:text-white {{ request()->routeIs('admin.tracer.alumni') ? 'active' : '' }}">
+                                Laporan Alumni
+                            </a>
                             <a href="{{ route('admin.tracer.industri') }}"
                                 class="sidebar-link block px-3 py-2 rounded-lg text-white/80 hover:text-white {{ request()->routeIs('admin.tracer.industri') ? 'active' : '' }}">
                                 Laporan Industri
                             </a>
-
                         </div>
                     </div>
                 @endif
 
                 {{-- Tips & Tricks --}}
-                <a href="{{ route('admin.tips.index') }}"
-                    class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->segment(2) === 'tips' ? 'active' : '' }}">
-                    <i class="fas fa-lightbulb"></i>
-                    <span class="ml-3">Tips & Tricks</span>
-                </a>
+                @if ($hasMenu('tips'))
+                    <a href="{{ route('admin.tips.index') }}"
+                        class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->segment(2) === 'tips' ? 'active' : '' }}">
+                        <i class="fas fa-lightbulb"></i>
+                        <span class="ml-3">Tips & Tricks</span>
+                    </a>
+                @endif
 
                 {{-- Broadcast --}}
-                <a href="{{ route('admin.broadcast.index') }}"
-                    class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->segment(2) === 'broadcast' ? 'active' : '' }}">
-                    <i class="fas fa-bullhorn"></i>
-                    <span class="ml-3">Broadcast</span>
-                </a>
+                @if ($hasMenu('broadcast'))
+                    <a href="{{ route('admin.broadcast.index') }}"
+                        class="sidebar-link flex items-center px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white {{ request()->segment(2) === 'broadcast' ? 'active' : '' }}">
+                        <i class="fas fa-bullhorn"></i>
+                        <span class="ml-3">Broadcast</span>
+                    </a>
+                @endif
 
                 {{-- Laporan --}}
-                @if (auth()->user()->hasPermission('view_reports'))
+                @if ($hasMenu('reports') && auth()->user()->hasPermission('view_reports'))
                     <div class="mb-2">
                         <button type="button"
                             class="sidebar-toggle flex items-center justify-between w-full px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white bg-transparent focus:outline-none">
@@ -427,7 +446,7 @@
                 @endif
 
                 {{-- Pengaturan --}}
-                @if (auth()->user()->hasPermission('manage_settings'))
+                @if ($hasMenu('settings') && auth()->user()->hasPermission('manage_settings'))
                     <div class="mb-2">
                         <button type="button"
                             class="sidebar-toggle flex items-center justify-between w-full px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white bg-transparent focus:outline-none">
@@ -454,9 +473,7 @@
                 <div class="nav-divider"></div>
 
                 {{-- Manajemen --}}
-                @if (auth()->user()->hasPermission('manage_users') ||
-                        auth()->user()->hasPermission('manage_settings') ||
-                        auth()->user()->hasPermission('view_activity_logs'))
+                @if ($hasMenu('users') || $hasMenu('roles') || $hasMenu('activity_logs'))
                     <div class="mb-2">
                         <button type="button"
                             class="sidebar-toggle flex items-center justify-between w-full px-3 py-2.5 rounded-lg mb-2 text-white/80 hover:text-white bg-transparent focus:outline-none">
@@ -467,16 +484,16 @@
                             <i class="fas fa-chevron-down transition-transform duration-200"></i>
                         </button>
                         <div class="management-submenu ml-8 space-y-1 hidden">
-                            @if (auth()->user()->hasPermission('manage_users'))
+                            @if ($hasMenu('users') && auth()->user()->hasPermission('manage_users'))
                                 <a href="{{ route('admin.users.index') }}"
                                     class="sidebar-link block px-3 py-2 rounded-lg text-white/80 hover:text-white {{ request()->segment(2) === 'users' ? 'active' : '' }}">Pengguna</a>
                             @endif
-                            @if (auth()->user()->hasPermission('manage_settings'))
+                            @if ($hasMenu('roles') && auth()->user()->hasPermission('manage_settings'))
                                 <a href="{{ route('admin.roles.index') }}"
                                     class="sidebar-link block px-3 py-2 rounded-lg text-white/80 hover:text-white {{ request()->segment(2) === 'roles' ? 'active' : '' }}">Hak
                                     Akses</a>
                             @endif
-                            @if (auth()->user()->hasPermission('view_activity_logs'))
+                            @if ($hasMenu('activity_logs') && auth()->user()->hasPermission('view_activity_logs'))
                                 <a href="{{ route('admin.activity-logs.index') }}"
                                     class="sidebar-link block px-3 py-2 rounded-lg text-white/80 hover:text-white {{ request()->segment(2) === 'activity-logs' ? 'active' : '' }}">Log
                                     Aktivitas</a>
