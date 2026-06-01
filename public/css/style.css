@@ -1,42 +1,157 @@
 @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap");
 
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+
 body {
-  font-family: "Plus Jakarta Sans", sans-serif;
-  scroll-behavior: smooth;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+}
+
+html {
+    font-size: 16px;
+}
+
+/* Mobile responsive base styles */
+@media (max-width: 640px) {
+    html {
+        font-size: 15px;
+    }
+
+    body {
+        font-size: 14px;
+    }
+
+    input,
+    textarea,
+    select,
+    button {
+        font-size: 16px !important; /* Prevent iOS zoom on input focus */
+    }
 }
 
 .active-link {
-  color: #3b82f6;
-  border-bottom: 2px solid #3b82f6;
+    color: #3b82f6;
+    border-bottom: 2px solid #3b82f6;
 }
 
 .glass-card {
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .hero-bg {
-  background: linear-gradient(rgba(0, 31, 63, 0.8), rgba(0, 31, 63, 0.8)), url("https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1920&q=80");
-  background-size: cover;
-  background-position: center;
+    background:
+        linear-gradient(rgba(0, 31, 63, 0.8), rgba(0, 31, 63, 0.8)),
+        url("https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1920&q=80");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+@media (max-width: 768px) {
+    .hero-bg {
+        background-attachment: scroll;
+    }
 }
 
 .page-transition {
-  animation: fadeIn 0.4s ease-out;
+    animation: fadeIn 0.4s ease-out;
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .hide-scrollbar::-webkit-scrollbar {
-  display: none;
+    display: none;
+}
+
+/* Mobile menu toggle animation */
+#mobile-menu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+
+#mobile-menu.show {
+    max-height: 500px;
+}
+
+/* Ensure images are responsive */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Touch-friendly button sizes */
+button,
+a.btn,
+input[type="button"],
+input[type="submit"] {
+    min-height: 44px;
+    min-width: 44px;
+}
+
+/* Better spacing for mobile */
+.container {
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+@media (min-width: 640px) {
+    .container {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .container {
+        max-width: 1280px;
+    }
+}
+
+/* Better focus states for accessibility */
+a:focus,
+button:focus,
+input:focus,
+textarea:focus,
+select:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+/* Remove default focus outline and provide better one */
+input:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+}
+
+/* Better readability on mobile */
+@media (max-width: 640px) {
+    h1 {
+        font-size: 1.5rem;
+    }
+    h2 {
+        font-size: 1.25rem;
+    }
+    h3 {
+        font-size: 1.125rem;
+    }
+    h4 {
+        font-size: 1rem;
+    }
 }

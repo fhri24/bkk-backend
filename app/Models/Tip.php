@@ -50,7 +50,7 @@ class Tip extends Model
      */
     public function scopePublished($query)
     {
-        return $query->whereRaw('"is_published" = true');
+        return $query->where('is_published', 1);
     }
 
     /**
@@ -58,7 +58,7 @@ class Tip extends Model
      */
     public function scopeFeatured($query)
     {
-        return $query->whereRaw('"is_featured" = true');
+        return $query->where('is_featured', 1);
     }
 
     /**

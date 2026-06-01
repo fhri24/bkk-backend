@@ -32,11 +32,10 @@ class News extends Model
 
     /**
      * Scope: Filter hanya news yang published
-     * Menggunakan raw query untuk PostgreSQL boolean compatibility
      */
     public function scopePublished($query)
     {
-        return $query->whereRaw("is_published = 'true'::boolean");
+        return $query->where('is_published', 1);
     }
 
     // Relasi ke User (Penulis)

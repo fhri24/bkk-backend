@@ -19,7 +19,7 @@ class NewsController extends Controller
 
     public function index_student()
     {
-        $newsItems = News::whereRaw('"is_published" = true')
+        $newsItems = News::where('is_published', 1)
             ->latest()
             ->paginate(6);
 
