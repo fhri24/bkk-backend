@@ -91,6 +91,7 @@ Route::get('/tutorial', [PublikController::class, 'tutorial'])->name('public.tut
 Route::get('/tips', [PublikController::class, 'tips'])->name('public.tips');
 Route::get('/tips/{slug}', [PublikController::class, 'tipsDetail'])->name('public.tips.detail');
 
+Route::get('/alumni-stories', [PublikController::class, 'alumniStories'])->name('public.alumni-stories');
 Route::post('/alumni-stories', [AlumniStoryController::class, 'store'])->name('alumni-stories.store');
 
 /**

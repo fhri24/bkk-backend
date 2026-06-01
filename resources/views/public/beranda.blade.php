@@ -123,108 +123,6 @@
             background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
         }
 
-        /* ── Marquee ── */
-        .marquee-row {
-            overflow: hidden;
-            width: 100%;
-            position: relative;
-        }
-
-        .marquee-track {
-            display: flex;
-            gap: 20px;
-            width: max-content;
-            align-items: stretch;
-            /* FIX: stretch agar semua card sama tinggi */
-            will-change: transform;
-        }
-
-        /* FIX: card fixed width + height, overflow hidden agar tidak bocor */
-        .marquee-card {
-            width: 300px;
-            min-height: 160px;
-            max-height: 200px;
-            flex-shrink: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            /* FIX: konten tersebar rata */
-            cursor: pointer;
-            overflow: hidden;
-            /* FIX: potong teks yang melebihi kotak */
-            box-sizing: border-box;
-            word-break: break-word;
-        }
-
-        /* FIX: teks story dibatasi 3 baris */
-        .marquee-card p.story-text {
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            flex: 1;
-        }
-
-        /* FIX: bagian bawah (avatar+nama) selalu di bawah */
-        .marquee-card .card-footer {
-            flex-shrink: 0;
-            margin-top: 8px;
-        }
-
-        /* Popup */
-        .marquee-card-popup {
-            display: none;
-            position: fixed;
-            z-index: 9999;
-            background: white;
-            border-radius: 20px;
-            padding: 24px;
-            box-shadow: 0 32px 80px rgba(0, 0, 0, 0.18);
-            border: 1px solid #e2e8f0;
-            width: 360px;
-            max-width: 90vw;
-            pointer-events: none;
-        }
-
-        .marquee-card-popup.active {
-            display: block;
-        }
-
-        /* Story card hover */
-        .story-card {
-            animation: zoomInUp 0.8s ease-out backwards;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .story-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.10);
-        }
-
-        .story-card:nth-child(1) {
-            animation-delay: 0.1s;
-        }
-
-        .story-card:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .story-card:nth-child(3) {
-            animation-delay: 0.3s;
-        }
-
-        .story-card:nth-child(4) {
-            animation-delay: 0.4s;
-        }
-
-        .story-card:nth-child(5) {
-            animation-delay: 0.5s;
-        }
-
-        .story-card:nth-child(6) {
-            animation-delay: 0.6s;
-        }
-
         .avatar-initials {
             width: 52px;
             height: 52px;
@@ -248,15 +146,6 @@
 
         .story-success-alert {
             animation: zoomInUp 0.5s ease-out;
-        }
-
-        #alumniModal {
-            opacity: 0;
-            transition: opacity .2s ease;
-        }
-
-        #alumniModal.flex {
-            opacity: 1;
         }
     </style>
 @endsection
@@ -499,216 +388,65 @@
 <section class="py-20 bg-gradient-to-b from-slate-50 to-white overflow-hidden">
     <div class="container mx-auto px-6">
 
-        <div class="section-header mb-12">
-            <h2 class="text-3xl font-extrabold text-[#001f3f] pl-6">
-                Kisah Sukses Alumni
-            </h2>
-            <p class="text-slate-500 mt-2 pl-6">
-                Inspirasi karir dari para lulusan terbaik kami
-            </p>
+        <div class="section-header mb-12 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <h2 class="text-3xl font-extrabold text-[#001f3f] pl-6">
+                    Kisah Sukses Alumni
+                </h2>
+                <p class="text-slate-500 mt-2 pl-6">
+                    Inspirasi karir dari para lulusan terbaik kami
+                </p>
+            </div>
+            <a href="{{ route('public.alumni-stories') }}"
+                class="inline-flex items-center justify-center rounded-full border border-blue-500 bg-white px-6 py-3 text-sm font-semibold text-blue-600 shadow-sm transition hover:bg-blue-50">
+                Semua Kisah
+            </a>
         </div>
 
         @if (isset($alumni_stories) && $alumni_stories->count() > 0)
+            <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+                @foreach ($alumni_stories as $index => $story)
+                    @php
+                        $colorClass = $avatarColors[$index % count($avatarColors)];
+                        $avatarUrl = null;
 
-            {{-- ═══════════════════════════════════════ --}}
-            {{-- DUAL ROW MARQUEE                        --}}
-            {{-- ═══════════════════════════════════════ --}}
-            <div class="relative mb-16 overflow-hidden">
+                        if ($story->student && $story->student->profile_picture) {
+                            $avatarUrl = \Illuminate\Support\Facades\Storage::url($story->student->profile_picture);
+                        } elseif ($story->photo) {
+                            $avatarUrl = Storage::disk('public')->url($story->photo);
+                        }
+                    @endphp
 
-                {{-- ====================================================== --}}
-                {{-- BARIS 1 --}}
-                {{-- ====================================================== --}}
-                <div class="marquee-row mb-5">
-                    <div class="marquee-track" id="track-1">
+                    <article class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 transition hover:-translate-y-1 hover:shadow-md">
+                        <p class="text-slate-600 text-sm leading-relaxed mb-6 line-clamp-5">
+                            {{ Str::limit($story->story, 180) }}
+                        </p>
 
-                        @foreach ($alumni_stories->take(ceil($alumni_stories->count() / 2)) as $index => $story)
-                            @php
-                                $colorClass = $avatarColors[$index % count($avatarColors)];
-                                $avatarUrl = null;
-
-                                if ($story->student && $story->student->profile_picture) {
-                                    $avatarUrl = \Illuminate\Support\Facades\Storage::url(
-                                        $story->student->profile_picture,
-                                    );
-                                } elseif ($story->photo) {
-                                    $avatarUrl = Storage::disk('public')->url($story->photo);
-                                }
-
-                                $gradientMap = [
-                                    'bg-gradient-to-br from-blue-500 to-blue-700' => '#3b82f6, #1d4ed8',
-                                    'bg-gradient-to-br from-indigo-500 to-indigo-700' => '#6366f1, #4338ca',
-                                    'bg-gradient-to-br from-violet-500 to-violet-700' => '#8b5cf6, #6d28d9',
-                                    'bg-gradient-to-br from-sky-500 to-sky-700' => '#0ea5e9, #0369a1',
-                                    'bg-gradient-to-br from-cyan-500 to-cyan-700' => '#06b6d4, #0e7490',
-                                    'bg-gradient-to-br from-teal-500 to-teal-700' => '#14b8a6, #0f766e',
-                                ];
-
-                                $gradientColor = $gradientMap[$colorClass] ?? '#3b82f6, #1d4ed8';
-                            @endphp
-
-                            {{-- Ditambahkan class: cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 --}}
-                            <div class="marquee-card cursor-pointer hover:shadow-md hover:-translate-y-0.5 hover:border-blue-200 transition-all duration-300 bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex-shrink-0"
-                                data-story="{{ e($story->story) }}"
-                                data-name="{{ e($story->name) }}"
-                                data-job="{{ e($story->job_title) }}"
-                                data-avatar="{{ $avatarUrl ?? '' }}"
-                                data-initials="{{ $story->initials }}" data-color="{{ $gradientColor }}">
-
-                                <p class="text-slate-600 text-sm leading-relaxed story-text mb-4">
-                                    {{ Str::limit($story->story, 120) }}
-                                </p>
-
-                                <div class="card-footer">
-                                    <div class="divider-line mb-3"></div>
-
-                                    <div class="flex items-center gap-3">
-
-                                        @if ($avatarUrl)
-                                            <img src="{{ $avatarUrl }}"
-                                                class="w-10 h-10 rounded-full object-cover border-2 border-white shadow flex-shrink-0"
-                                                onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-
-                                            <div class="w-10 h-10 rounded-full bg-gradient-to-br {{ $colorClass }} flex items-center justify-center text-white font-bold text-xs flex-shrink-0"
-                                                style="display:none;">
-                                                {{ $story->initials }}
-                                            </div>
-                                        @else
-                                            <div
-                                                class="w-10 h-10 rounded-full bg-gradient-to-br {{ $colorClass }} flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
-                                                {{ $story->initials }}
-                                            </div>
-                                        @endif
-
-                                        <div>
-                                            <p class="font-bold text-slate-800 text-sm">
-                                                {{ $story->name }}
-                                            </p>
-
-                                            <p class="text-xs text-slate-500">
-                                                {{ $story->job_title }}
-                                            </p>
-                                        </div>
-
-                                    </div>
+                        <div class="flex items-center gap-4">
+                            @if ($avatarUrl)
+                                <img src="{{ $avatarUrl }}"
+                                    class="w-14 h-14 rounded-full object-cover border border-slate-200 shadow-sm"
+                                    alt="{{ $story->name }}" />
+                            @else
+                                <div class="w-14 h-14 rounded-full bg-gradient-to-br {{ $colorClass }} flex items-center justify-center text-white font-bold text-lg">
+                                    {{ $story->initials }}
                                 </div>
+                            @endif
+
+                            <div>
+                                <p class="font-bold text-slate-900">{{ $story->name }}</p>
+                                <p class="text-xs text-slate-500">{{ $story->job_title }}</p>
                             </div>
-                        @endforeach
-
-                    </div>
-                </div>
-
-                {{-- ====================================================== --}}
-                {{-- BARIS 2 --}}
-                {{-- ====================================================== --}}
-                <div class="marquee-row">
-                    <div class="marquee-track" id="track-2">
-
-                        @foreach ($alumni_stories->skip(ceil($alumni_stories->count() / 2)) as $index => $story)
-                            @php
-                                $colorClass = $avatarColors[$index % count($avatarColors)];
-                                $avatarUrl = null;
-
-                                if ($story->student && $story->student->profile_picture) {
-                                    $avatarUrl = \Illuminate\Support\Facades\Storage::url(
-                                        $story->student->profile_picture,
-                                    );
-                                } elseif ($story->photo) {
-                                    $avatarUrl = Storage::disk('public')->url($story->photo);
-                                }
-
-                                $gradientMap = [
-                                    'bg-gradient-to-br from-blue-500 to-blue-700' => '#3b82f6, #1d4ed8',
-                                    'bg-gradient-to-br from-indigo-500 to-indigo-700' => '#6366f1, #4338ca',
-                                    'bg-gradient-to-br from-violet-500 to-violet-700' => '#8b5cf6, #6d28d9',
-                                    'bg-gradient-to-br from-sky-500 to-sky-700' => '#0ea5e9, #0369a1',
-                                    'bg-gradient-to-br from-cyan-500 to-cyan-700' => '#06b6d4, #0e7490',
-                                    'bg-gradient-to-br from-teal-500 to-teal-700' => '#14b8a6, #0f766e',
-                                ];
-
-                                $gradientColor = $gradientMap[$colorClass] ?? '#3b82f6, #1d4ed8';
-                            @endphp
-
-                            {{-- Ditambahkan class: cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 --}}
-                            <div class="marquee-card cursor-pointer hover:shadow-md hover:-translate-y-0.5 hover:border-blue-200 transition-all duration-300 bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex-shrink-0"
-                                data-story="{{ $story->story }}" data-name="{{ $story->name }}"
-                                data-job="{{ $story->job_title }}" data-avatar="{{ $avatarUrl ?? '' }}"
-                                data-initials="{{ $story->initials }}" data-color="{{ $gradientColor }}">
-
-                                <p class="text-slate-600 text-sm leading-relaxed story-text mb-4">
-                                    {{ Str::limit($story->story, 120) }}
-                                </p>
-
-                                <div class="card-footer">
-                                    <div class="divider-line mb-3"></div>
-
-                                    <div class="flex items-center gap-3">
-
-                                        @if ($avatarUrl)
-                                            <img src="{{ $avatarUrl }}"
-                                                class="w-10 h-10 rounded-full object-cover border-2 border-white shadow flex-shrink-0"
-                                                onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-
-                                            <div class="w-10 h-10 rounded-full bg-gradient-to-br {{ $colorClass }} flex items-center justify-center text-white font-bold text-xs flex-shrink-0"
-                                                style="display:none;">
-                                                {{ $story->initials }}
-                                            </div>
-                                        @else
-                                            <div
-                                                class="w-10 h-10 rounded-full bg-gradient-to-br {{ $colorClass }} flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
-                                                {{ $story->initials }}
-                                            </div>
-                                        @endif
-
-                                        <div>
-                                            <p class="font-bold text-slate-800 text-sm truncate">
-                                                {{ Str::limit($story->name, 30) }}
-                                            </p>
-
-                                            <p class="text-xs text-slate-500 truncate">
-                                                {{ Str::limit($story->job_title, 40) }}
-                                            </p>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-
-                    </div>
-                </div>
-
+                        </div>
+                    </article>
+                @endforeach
+            </div>
+        @else
+            <div class="py-16 text-center">
+                <p class="text-slate-600 text-lg">Belum ada kisah alumni yang dipublikasikan.</p>
             </div>
         @endif
 
-    </div>
-
-    {{-- ══════════════════════════════════════════════════════════════════════ --}}
-    {{-- MODAL DETAIL ALUMNI (POP-UP)                                           --}}
-    {{-- ══════════════════════════════════════════════════════════════════════ --}}
-   <div id="alumniModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300">
-        
-        <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl transform scale-95 transition-transform duration-300 relative overflow-hidden mx-auto">
-            
-            <button id="closeModal" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2 rounded-full hover:bg-slate-100 transition-colors">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
-            
-            <div class="flex items-center gap-4 mb-4 pb-4 border-b border-slate-100">
-                <div id="modalAvatarSlot"></div>
-                
-                <div>
-                    <h3 id="modalName" class="text-lg font-extrabold text-[#001f3f]"></h3>
-                    <p id="modalJob" class="text-xs text-slate-500 font-medium"></p>
-                </div>
-            </div>
-            
-            <div class="max-h-[60vh] overflow-y-auto pr-1">
-                <p id="modalStory" class="text-slate-600 text-sm leading-relaxed whitespace-pre-line"></p>
-            </div>
-            
-        </div>
     </div>
 </section>
 
@@ -880,182 +618,20 @@
 @endsection
 
 @section('extra_js')
-   <script>
-document.addEventListener("DOMContentLoaded", function() {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const textarea = document.getElementById('storyTextarea');
+            const charCount = document.getElementById('charCount');
 
-    // ── Counter Karakter ─────────────────────────────
-    const textarea = document.getElementById('storyTextarea');
-    const charCount = document.getElementById('charCount');
+            if (textarea && charCount) {
+                charCount.textContent = textarea.value.length;
 
-    if (textarea && charCount) {
-        charCount.textContent = textarea.value.length;
-
-        textarea.addEventListener('input', function() {
-            charCount.textContent = this.value.length;
-        });
-    }
-
-    // ── Modal Alumni ─────────────────────────────
-    const modal = document.getElementById('alumniModal');
-    const closeModalBtn = document.getElementById('closeModal');
-
-    const modalName = document.getElementById('modalName');
-    const modalJob = document.getElementById('modalJob');
-    const modalStory = document.getElementById('modalStory');
-    const modalAvatarSlot = document.getElementById('modalAvatarSlot');
-
-    function openModal(card) {
-
-        const name = card.getAttribute('data-name');
-        const job = card.getAttribute('data-job');
-        const story = card.getAttribute('data-story');
-        const avatar = card.getAttribute('data-avatar');
-        const initials = card.getAttribute('data-initials');
-        const color = card.getAttribute('data-color');
-
-        modalName.textContent = name;
-        modalJob.textContent = job;
-        modalStory.textContent = story;
-
-        if (avatar && avatar.trim() !== '') {
-
-            modalAvatarSlot.innerHTML = `
-                <img src="${avatar}"
-                    class="w-14 h-14 rounded-full object-cover border-2 border-white shadow flex-shrink-0">
-            `;
-
-        } else {
-
-            modalAvatarSlot.innerHTML = `
-                <div
-                    class="w-14 h-14 rounded-full flex items-center justify-center text-white font-bold text-sm shadow flex-shrink-0"
-                    style="background: linear-gradient(to bottom right, ${color})">
-                    ${initials}
-                </div>
-            `;
-        }
-
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-
-        setTimeout(() => {
-            modal.firstElementChild.classList.remove('scale-95');
-            modal.firstElementChild.classList.add('scale-100');
-        }, 10);
-    }
-
-    function bindModal(card) {
-        card.addEventListener('click', function() {
-            openModal(this);
-        });
-    }
-
-    document.querySelectorAll('.marquee-card').forEach(bindModal);
-
-    function closeModal() {
-
-        modal.firstElementChild.classList.remove('scale-100');
-        modal.firstElementChild.classList.add('scale-95');
-
-        setTimeout(() => {
-            modal.classList.remove('flex');
-            modal.classList.add('hidden');
-        }, 150);
-    }
-
-    closeModalBtn?.addEventListener('click', closeModal);
-
-    modal?.addEventListener('click', function(e) {
-        if (e.target === modal) {
-            closeModal();
-        }
-    });
-
-    // ESC untuk menutup modal
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && modal.classList.contains('flex')) {
-            closeModal();
-        }
-    });
-
-    // ── Marquee Infinite ─────────────────────────────
-    (function() {
-
-        const SPEED = 0.5;
-
-        function setupMarquee(trackId, direction = 'left') {
-
-            const track = document.getElementById(trackId);
-
-            if (!track) return;
-
-            const originalCards = [...track.children];
-
-            // Clone semua card agar looping mulus
-            originalCards.forEach(card => {
-
-                const clone = card.cloneNode(true);
-
-                // clone tetap bisa buka modal
-                bindModal(clone);
-
-                track.appendChild(clone);
-            });
-
-            let paused = false;
-
-            const oneSetWidth = track.scrollWidth / 2;
-
-            let position =
-                direction === 'left'
-                ? 0
-                : -oneSetWidth;
-
-            track.addEventListener('mouseenter', () => {
-                paused = true;
-            });
-
-            track.addEventListener('mouseleave', () => {
-                paused = false;
-            });
-
-            function animate() {
-
-                if (!paused) {
-
-                    if (direction === 'left') {
-
-                        position -= SPEED;
-
-                        if (Math.abs(position) >= oneSetWidth) {
-                            position = 0;
-                        }
-
-                    } else {
-
-                        position += SPEED;
-
-                        if (position >= 0) {
-                            position = -oneSetWidth;
-                        }
-                    }
-
-                    track.style.transform =
-                        `translateX(${position}px)`;
-                }
-
-                requestAnimationFrame(animate);
+                textarea.addEventListener('input', function() {
+                    charCount.textContent = this.value.length;
+                });
             }
-
-            animate();
-        }
-
-        setupMarquee('track-1', 'left');
-        setupMarquee('track-2', 'right');
-
-    })();
-
-});
-</script>
+        });
+    </script>
+@endsection
 @endsection
 

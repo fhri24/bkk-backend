@@ -70,6 +70,16 @@ class PublikController extends Controller
         ));
     }
 
+    public function alumniStories(Request $request)
+    {
+        $stories = AlumniStory::with('student')
+            ->where('status', 'approved')
+            ->latest()
+            ->paginate(12);
+
+        return view('public.alumni-stories', compact('stories'));
+    }
+
     public function lowongan(Request $request)
     {
         $query = Job::with(['company', 'major'])->where('approval_status', 'approved')->latest();
