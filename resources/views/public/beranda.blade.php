@@ -623,15 +623,17 @@
             const textarea = document.getElementById('storyTextarea');
             const charCount = document.getElementById('charCount');
 
-            if (textarea && charCount) {
-                charCount.textContent = textarea.value.length;
+            function updateCharCount() {
+                if (textarea && charCount) {
+                    charCount.textContent = textarea.value.length;
+                }
+            }
 
-                textarea.addEventListener('input', function() {
-                    charCount.textContent = this.value.length;
-                });
+            if (textarea && charCount) {
+                updateCharCount();
+                textarea.addEventListener('input', updateCharCount);
             }
         });
     </script>
-@endsection
 @endsection
 
