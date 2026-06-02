@@ -2,10 +2,12 @@
 /public/storage
 .env
 vendor
+storage/app
+storage/framework
 storage/logs
-storage/framework/cache
-storage/framework/sessions
-storage/framework/views
 bootstrap/cache
 .git
 tests
+*.sql
+*.zip
+*.rar
