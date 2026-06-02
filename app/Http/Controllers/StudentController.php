@@ -305,7 +305,23 @@ class StudentController extends Controller
 
         try {
             $fileName = time() . '_' . Auth::id() . '.' . $request->file('cv_file')->getClientOriginalExtension();
-            $request->file('cv_file')->storeAs('cv_applications', $fileName, 'public');
+            
+            // Debug: Log upload attempt
+            \Log::info('Attempting to upload CV', [
+                'fileName' => $fileName,
+                'disk' => 'public',
+                'disk_driver' => config('filesystems.disks.public.driver'),
+                'aws_bucket' => config('filesystems.disks.public.bucket'),
+            ]);
+            
+            // Upload file with error handling
+            $uploadPath = $request->file('cv_file')->storeAs('cv_applications', $fileName, 'public');
+            
+            if (!$uploadPath) {
+                throw new \Exception('File upload returned false. Check S3 credentials and bucket permissions.');
+            }
+            
+            \Log::info('CV upload successful', ['path' => $uploadPath]);
 
             $application = JobApplication::create([
                 'student_id'       => $student ? $student->student_id : null,

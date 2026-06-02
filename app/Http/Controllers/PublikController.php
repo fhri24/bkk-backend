@@ -134,25 +134,42 @@ class PublikController extends Controller
 
         $job = Job::findOrFail($id);
 
-        $path = null;
+        $fileName = null;
         if ($request->hasFile('cv_file')) {
-            // Simpan ke disk public agar bisa diakses lewat browser (storage/cv_applications/...)
+            // Simpan ke disk public agar bisa diakses lewat browser
             $file = $request->file('cv_file');
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('cv_applications', $fileName, 'public');
+            $fileName = time() . '_' . Auth::id() . '.' . $file->getClientOriginalExtension();
+            
+            \Log::info('Attempting public CV upload', [
+                'fileName' => $fileName,
+                'disk' => 'public',
+                'disk_driver' => config('filesystems.disks.public.driver'),
+            ]);
+            
+            $uploadPath = $file->storeAs('cv_applications', $fileName, 'public');
+            
+            if (!$uploadPath) {
+                \Log::error('Public CV upload failed', ['fileName' => $fileName]);
+                return back()->with('error', 'File upload gagal. Hubungi administrator.');
+            }
+            
+            \Log::info('Public CV upload successful', ['path' => $uploadPath]);
         }
 
-        // ⚠️ CATATAN LOGIKA: Anda perlu menyimpan data pelamar ke database di sini!
-        // Contoh jika Anda punya model JobApplication:
-        // \App\Models\JobApplication::create([
-        //     'job_id' => $job->id,
-        //     'user_id' => Auth::id(),
-        //     'full_name' => $request->full_name,
-        //     'email' => $request->email,
-        //     'phone_number' => $request->phone_number,
-        //     'cv_file' => $path,
-        //     'cover_letter' => $request->cover_letter,
-        // ]);
+        // Simpan data aplikasi ke database
+        if ($fileName) {
+            JobApplication::create([
+                'job_id'           => $job->job_id,
+                'student_id'       => null,
+                'full_name'        => $request->full_name,
+                'email'            => $request->email,
+                'phone_number'     => $request->phone_number,
+                'additional_file'  => $fileName,
+                'cover_letter'     => $request->cover_letter,
+                'status'           => 'pending',
+                'application_date' => now(),
+            ]);
+        }
 
         return back()->with('success', 'Lamaran Anda berhasil dikirim!');
     }
