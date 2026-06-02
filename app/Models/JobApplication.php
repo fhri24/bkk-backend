@@ -38,7 +38,7 @@ class JobApplication extends Model
     ];
 
     /**
-     * Relasi ke Siswa (Tetap dipertahankan)
+     * Relasi ke Siswa
      */
     public function student(): BelongsTo
     {
@@ -59,7 +59,7 @@ class JobApplication extends Model
 
     /**
      * Get CV file URL
-     * Handles both old (applications/cvs/) and new (cv_applications/) paths
+     * Menangani link full URL Supabase maupun fallback nama file saja
      */
     public function getCvUrl()
     {
@@ -67,41 +67,22 @@ class JobApplication extends Model
             return null;
         }
 
-        // Check jika file ada di cv_applications folder (format baru)
-        $newPath = 'cv_applications/' . $this->additional_file;
-        if (\Illuminate\Support\Facades\Storage::disk('public')->exists($newPath)) {
-            try {
-                return \Illuminate\Support\Facades\Storage::disk('public')->temporaryUrl(
-                    $newPath,
-                    now()->addHours(1)
-                );
-            } catch (\Exception $e) {
-                // Fallback ke URL biasa jika temporaryUrl gagal
-                return \Illuminate\Support\Facades\Storage::disk('public')->url($newPath);
-            }
+        // KONDISI 1: Jika di database sudah berupa URL utuh (berawalan http/https)
+        // Langsung kembalikan datanya secara bersih tanpa embel-embel asset() atau Storage
+        if (str_starts_with($this->additional_file, 'http://') || str_starts_with($this->additional_file, 'https://')) {
+            return $this->additional_file;
         }
 
-        // Check jika file ada di applications/cvs folder (format lama)
-        if (\Illuminate\Support\Facades\Storage::disk('public')->exists('applications/cvs/' . $this->additional_file)) {
-            $oldPath = 'applications/cvs/' . $this->additional_file;
-            try {
-                return \Illuminate\Support\Facades\Storage::disk('public')->temporaryUrl(
-                    $oldPath,
-                    now()->addHours(1)
-                );
-            } catch (\Exception $e) {
-                return \Illuminate\Support\Facades\Storage::disk('public')->url($oldPath);
-            }
+        // KONDISI 2: Jika di database hanya tersimpan nama filenya saja (misal: 1780386264_27.pdf)
+        // Kita rakit langsung ke URL Public Supabase menggunakan config yang sudah dibuat
+        $supabaseUrl = rtrim(config('services.supabase.url', ''), '/');
+        $bucket      = config('services.supabase.bucket', 'bkk-storage');
+
+        if (!empty($supabaseUrl)) {
+            return "{$supabaseUrl}/storage/v1/object/public/{$bucket}/{$this->additional_file}";
         }
 
-        // Fallback: assume file ada di cv_applications folder
-        try {
-            return \Illuminate\Support\Facades\Storage::disk('public')->temporaryUrl(
-                $newPath,
-                now()->addHours(1)
-            );
-        } catch (\Exception $e) {
-            return \Illuminate\Support\Facades\Storage::disk('public')->url($newPath);
-        }
+        // Fallback terakhir ke local storage jika konfigurasi kosong
+        return asset('storage/cv_applications/' . $this->additional_file);
     }
 }
