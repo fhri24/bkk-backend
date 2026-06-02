@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
+use Exception; // Tambahkan ini di atas
 
 class SupabaseStorageService
 {
@@ -13,9 +14,16 @@ class SupabaseStorageService
 
     public function __construct()
     {
-        $this->url    = rtrim(env('SUPABASE_URL'), '/');
-        $this->key    = env('SUPABASE_KEY');
+        // Berikan default string kosong '' agar tidak jadi null
+        $this->url    = rtrim(env('SUPABASE_URL', ''), '/');
+        $this->key    = env('SUPABASE_KEY', '');
         $this->bucket = env('SUPABASE_BUCKET', 'cv-applications');
+
+        // (Opsional tapi sangat disarankan) Kasih peringatan jelas kalau key belum diisi
+        if (empty($this->key) || empty($this->url)) {
+            // Ini akan memunculkan error yang lebih mudah dipahami olehmu jika env lupa diisi
+            throw new Exception("Konfigurasi SUPABASE_URL atau SUPABASE_KEY belum diisi di file .env atau Vercel!");
+        }
     }
 
     public function upload(UploadedFile $file, string $filename): string|false
