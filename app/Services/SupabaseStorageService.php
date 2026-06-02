@@ -30,6 +30,7 @@ class SupabaseStorageService
         $endpoint = "{$this->url}/storage/v1/object/{$this->bucket}/{$filename}";
 
         $response = Http::withHeaders([
+            'apikey'        => $this->key,
             'Authorization' => 'Bearer ' . $this->key,
             'Content-Type'  => $file->getMimeType(),
         ])->withBody(
@@ -40,6 +41,12 @@ class SupabaseStorageService
         if ($response->successful()) {
             return $filename;
         }
+
+        \Illuminate\Support\Facades\Log::error("Supabase Storage Upload Failed", [
+            'status' => $response->status(),
+            'body'   => $response->body(),
+            'url'    => $endpoint
+        ]);
 
         return false;
     }
@@ -54,9 +61,20 @@ class SupabaseStorageService
         $endpoint = "{$this->url}/storage/v1/object/{$this->bucket}/{$filename}";
 
         $response = Http::withHeaders([
+            'apikey'        => $this->key,
             'Authorization' => 'Bearer ' . $this->key,
         ])->delete($endpoint);
 
-        return $response->successful();
+        if ($response->successful()) {
+            return true;
+        }
+
+        \Illuminate\Support\Facades\Log::error("Supabase Storage Delete Failed", [
+            'status' => $response->status(),
+            'body'   => $response->body(),
+            'url'    => $endpoint
+        ]);
+
+        return false;
     }
 }

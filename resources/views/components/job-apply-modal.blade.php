@@ -29,7 +29,7 @@
             {{-- CV Upload --}}
             <div>
                 <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Upload CV (PDF, max 2MB)</label>
-                <input type="file" name="cv" accept=".pdf"
+                <input type="file" name="cv_file" accept=".pdf"
                     class="w-full px-4 py-3 rounded-2xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-blue-600">
             </div>
 

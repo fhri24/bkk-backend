@@ -443,9 +443,23 @@ class StudentController extends Controller
 
         if (!$application) return redirect()->back()->with('error', 'Lamaran tidak ditemukan.');
 
-        // Proteksi jika file berupa URL Supabase agar fungsi hapus local disk bawaan tidak error
-        if ($application->additional_file && !filter_var($application->additional_file, FILTER_VALIDATE_URL)) {
-            Storage::disk('public')->delete('cv_applications/' . $application->additional_file);
+        // Proteksi jika file berupa URL Supabase atau local disk
+        if ($application->additional_file) {
+            if (filter_var($application->additional_file, FILTER_VALIDATE_URL)) {
+                // Jika URL Supabase, coba hapus via service
+                if (str_contains($application->additional_file, config('services.supabase.url'))) {
+                    try {
+                        $supabase = new SupabaseStorageService();
+                        $pathParts = explode('/', parse_url($application->additional_file, PHP_URL_PATH));
+                        $filename = end($pathParts);
+                        $supabase->delete($filename);
+                    } catch (\Exception $e) {
+                        \Log::error("Gagal menghapus file di Supabase: " . $e->getMessage());
+                    }
+                }
+            } else {
+                Storage::disk('public')->delete('cv_applications/' . $application->additional_file);
+            }
         }
 
         $application->delete();
