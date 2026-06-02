@@ -56,4 +56,52 @@ class JobApplication extends Model
             'title' => 'Lowongan Telah Dihapus',
         ]);
     }
+
+    /**
+     * Get CV file URL
+     * Handles both old (applications/cvs/) and new (cv_applications/) paths
+     */
+    public function getCvUrl()
+    {
+        if (!$this->additional_file) {
+            return null;
+        }
+
+        // Check jika file ada di cv_applications folder (format baru)
+        $newPath = 'cv_applications/' . $this->additional_file;
+        if (\Illuminate\Support\Facades\Storage::disk('public')->exists($newPath)) {
+            try {
+                return \Illuminate\Support\Facades\Storage::disk('public')->temporaryUrl(
+                    $newPath,
+                    now()->addHours(1)
+                );
+            } catch (\Exception $e) {
+                // Fallback ke URL biasa jika temporaryUrl gagal
+                return \Illuminate\Support\Facades\Storage::disk('public')->url($newPath);
+            }
+        }
+
+        // Check jika file ada di applications/cvs folder (format lama)
+        if (\Illuminate\Support\Facades\Storage::disk('public')->exists('applications/cvs/' . $this->additional_file)) {
+            $oldPath = 'applications/cvs/' . $this->additional_file;
+            try {
+                return \Illuminate\Support\Facades\Storage::disk('public')->temporaryUrl(
+                    $oldPath,
+                    now()->addHours(1)
+                );
+            } catch (\Exception $e) {
+                return \Illuminate\Support\Facades\Storage::disk('public')->url($oldPath);
+            }
+        }
+
+        // Fallback: assume file ada di cv_applications folder
+        try {
+            return \Illuminate\Support\Facades\Storage::disk('public')->temporaryUrl(
+                $newPath,
+                now()->addHours(1)
+            );
+        } catch (\Exception $e) {
+            return \Illuminate\Support\Facades\Storage::disk('public')->url($newPath);
+        }
+    }
 }

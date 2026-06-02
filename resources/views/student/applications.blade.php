@@ -103,7 +103,7 @@
                                         </span>
 
                                         @if ($app->additional_file)
-                                            <a href="{{ Storage::disk('public')->url('cv_applications/' . $app->additional_file) }}"
+                                            <a href="{{ $app->getCvUrl() }}"
                                                 target="_blank" class="text-blue-500 hover:text-blue-700">
                                                 <i class="fas fa-file-pdf mr-1"></i> CV/Lampiran
                                             </a>

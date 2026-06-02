@@ -42,8 +42,8 @@
             </div>
             <div>
                 <p class="text-slate-400 font-semibold mb-1">CV / Resume</p>
-                @if($application->additional_file)
-                    <a href="{{ Storage::disk('public')->url('cv_applications/' . $application->additional_file) }}" target="_blank"
+                                @if($application->additional_file)
+                    <a href="{{ $application->getCvUrl() }}" target="_blank"
                        class="inline-flex items-center gap-2 text-blue-600 font-bold hover:underline">
                         <i class="fas fa-file-pdf"></i> Unduh CV
                     </a>

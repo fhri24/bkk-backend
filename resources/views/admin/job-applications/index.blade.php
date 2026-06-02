@@ -57,7 +57,12 @@
                         <td class="p-4">
                             {{-- ✅ SEKARANG LANGSUNG MENGGUNAKAN URL PUBLIC SUPABASE --}}
                             @if($app->additional_file)
+<<<<<<< HEAD
                                 <a href="{{ $app->additional_file }}" target="_blank" class="text-blue-600 hover:text-blue-800 flex items-center font-medium">
+=======
+                                {{-- Gunakan method getCvUrl() dari model untuk generate URL yang benar --}}
+                                <a href="{{ $app->getCvUrl() }}" target="_blank" class="text-blue-600 hover:text-blue-800 flex items-center font-medium">
+>>>>>>> c27b0b1da0bcaabf88d6f93ae350063403d33f45
                                     <i class="fas fa-file-pdf mr-2 text-lg"></i> CV
                                 </a>
                             @else
@@ -99,6 +104,13 @@
                                 <a href="{{ route('admin.job-applications.show', $app->job_application_id) }}" class="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded shadow-sm transition" title="Detail">
                                     <i class="fas fa-eye"></i>
                                 </a>
+                                <form action="{{ route('admin.job-applications.destroy', $app->job_application_id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus lamaran ini?')" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="bg-red-500 hover:bg-red-600 text-white p-2 rounded shadow-sm transition" title="Hapus Lamaran">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>

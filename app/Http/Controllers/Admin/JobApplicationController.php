@@ -10,23 +10,23 @@ use Illuminate\Support\Facades\Auth;
 
 class JobApplicationController extends Controller
 {
-   public function index()
+    public function index()
     {
-    // Ambil semua lamaran
-    $applications = JobApplication::with(['student.user', 'job.company'])->latest()->paginate(10);
+        // Ambil semua lamaran
+        $applications = JobApplication::with(['student.user', 'job.company'])->latest()->paginate(10);
 
-    // Kita "oles" datanya biar namanya bener
-    $applications->getCollection()->transform(function ($app) {
-        // Cari user asli di tabel users berdasarkan student_id (userable_id)
-        $actualUser = \App\Models\User::where('userable_id', $app->student_id)->first();
+        // Kita "oles" datanya biar namanya bener
+        $applications->getCollection()->transform(function ($app) {
+            // Cari user asli di tabel users berdasarkan student_id (userable_id)
+            $actualUser = \App\Models\User::where('userable_id', $app->student_id)->first();
 
-        // Simpan nama aslinya ke atribut baru
-        $app->real_name = $actualUser ? $actualUser->name : ($app->student->full_name ?? 'Anonim');
+            // Simpan nama aslinya ke atribut baru
+            $app->real_name = $actualUser ? $actualUser->name : ($app->student->full_name ?? 'Anonim');
 
-        return $app;
-    });
+            return $app;
+        });
 
-    return view('admin.job-applications.index', compact('applications'));
+        return view('admin.job-applications.index', compact('applications'));
     }
 
     public function show($id)
@@ -57,5 +57,38 @@ class JobApplicationController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Status lamaran berhasil diperbarui');
+    }
+
+    /**
+     * Menghapus data lamaran kerja beserta mencatat log aktivitasnya.
+     */
+    public function destroy(Request $request, $id)
+    {
+        try {
+            // Cari data lamaran berdasarkan ID-nya
+            $application = JobApplication::findOrFail($id);
+
+            // Simpan ID lamaran ke variabel sebelum dihapus untuk kebutuhan log aktivitas
+            $applicationId = $application->job_application_id;
+
+            // Proses hapus dari database
+            $application->delete();
+
+            // Catat ke log aktivitas admin
+            ActivityLog::create([
+                'user_id' => Auth::id(),
+                'action' => sprintf('Menghapus data lamaran ID %s', $applicationId),
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+                'metadata' => ['job_application_id' => $applicationId],
+            ]);
+
+            return redirect()->route('admin.job-applications.index')
+                             ->with('success', 'Data lamaran berhasil dihapus.');
+
+        } catch (\Exception $e) {
+            return redirect()->route('admin.job-applications.index')
+                             ->with('error', 'Gagal menghapus lamaran: ' . $e->getMessage());
+        }
     }
 }

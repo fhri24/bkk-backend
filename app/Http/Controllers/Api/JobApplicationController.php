@@ -102,7 +102,13 @@ class JobApplicationController extends Controller
         $application->cover_letter = $request->notes;
 
         if ($request->hasFile('cv')) {
-            $application->additional_file = $request->file('cv')->store('applications/cvs', 'public');
+            $fileName = time() . '_' . Auth::id() . '.' . $request->file('cv')->getClientOriginalExtension();
+            $uploadPath = $request->file('cv')->storeAs('cv_applications', $fileName, 'public');
+            if ($uploadPath) {
+                $application->additional_file = $fileName;
+            } else {
+                throw new \Exception('File upload failed');
+            }
         }
 
         $application->save();
@@ -147,11 +153,14 @@ class JobApplicationController extends Controller
 
                 if ($request->hasFile('cv')) {
                     if ($application->additional_file) {
-                        Storage::disk('public')->delete($application->additional_file);
+                        Storage::disk('public')->delete('cv_applications/' . $application->additional_file);
                     }
                     $file = $request->file('cv');
-                    $filename = time() . '_updated_cv.pdf';
-                    $application->additional_file = $file->storeAs('applications/cvs', $filename, 'public');
+                    $filename = time() . '_' . Auth::id() . '_updated_cv.pdf';
+                    $uploadPath = $file->storeAs('cv_applications', $filename, 'public');
+                    if ($uploadPath) {
+                        $application->additional_file = $filename;
+                    }
                 }
 
                 if ($request->has('notes')) {
@@ -171,7 +180,7 @@ class JobApplicationController extends Controller
         try {
             $application = JobApplication::findOrFail($id);
             if ($application->additional_file) {
-                Storage::disk('public')->delete($application->additional_file);
+                Storage::disk('public')->delete('cv_applications/' . $application->additional_file);
             }
             $application->delete();
             return response()->json(['status' => 'success', 'message' => 'Lamaran dihapus']);
