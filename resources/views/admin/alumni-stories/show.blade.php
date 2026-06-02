@@ -30,7 +30,7 @@
                         if ($alumniStory->photo) {
                             $photoUrl = Storage::disk('public')->url($alumniStory->photo);
                         } elseif ($alumniStory->student && $alumniStory->student->profile_picture) {
-                            $photoUrl = \Illuminate\Support\Facades\Storage::url(
+                            $photoUrl = \Illuminate\Support\Facades\Storage::disk('public')->url(
                                 $alumniStory->student->profile_picture,
                             );
                         }

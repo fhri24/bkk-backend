@@ -417,9 +417,9 @@
 
         $logoUrl = null;
         if (!empty($job->logo)) {
-            $logoUrl = Storage::url($job->logo);
+            $logoUrl = Storage::disk('public')->url($job->logo);
         } elseif (!empty(optional($job->company)->logo)) {
-            $logoUrl = Storage::url($job->company->logo);
+            $logoUrl = Storage::disk('public')->url($job->company->logo);
         }
 
         $responsibilities = array_values(array_filter(array_map('trim', explode("\n", $job->responsibilities ?? ''))));

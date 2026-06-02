@@ -83,7 +83,7 @@
                             class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none">
                         @if($event->thumbnail)
                             <div class="mt-2 flex items-center gap-3">
-                                <img src="{{ Storage::url($event->thumbnail) }}" class="w-20 h-14 object-cover rounded-lg border">
+                                <img src="{{ Storage::disk('public')->url($event->thumbnail) }}" class="w-20 h-14 object-cover rounded-lg border">
                                 <span class="text-xs text-blue-600"><i class="fas fa-image mr-1"></i> Thumbnail saat ini</span>
                             </div>
                         @endif
@@ -98,7 +98,7 @@
                             class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none">
                         @if($event->image)
                             <div class="mt-2 flex items-center gap-3">
-                                <img src="{{ Storage::url($event->image) }}" class="w-20 h-14 object-cover rounded-lg border">
+                                <img src="{{ Storage::disk('public')->url($event->image) }}" class="w-20 h-14 object-cover rounded-lg border">
                                 <span class="text-xs text-blue-600"><i class="fas fa-image mr-1"></i> Banner saat ini</span>
                             </div>
                         @endif

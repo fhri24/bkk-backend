@@ -37,9 +37,9 @@
                     @php
                         $companyName = $job->company->company_name ?? 'Perusahaan';
                         if ($job->logo)
-                            $logoUrl = Storage::url($job->logo);
+                            $logoUrl = Storage::disk('public')->url($job->logo);
                         elseif ($job->company && $job->company->logo)
-                            $logoUrl = Storage::url($job->company->logo);
+                            $logoUrl = Storage::disk('public')->url($job->company->logo);
                         else
                             $logoUrl = null;
                     @endphp

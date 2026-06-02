@@ -50,7 +50,7 @@
                             $catColor = $catColors[$news->category] ?? 'text-blue-600';
 
                             $fallbackImage = 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=800&q=80';
-                            $imageUrl = $news->image ? Storage::url($news->image) : $fallbackImage;
+                            $imageUrl = $news->image ? Storage::disk('public')->url($news->image) : $fallbackImage;
                         @endphp
 
                         <article class="space-y-4 group cursor-pointer" onclick="window.location.href='{{ route('public.berita.detail', $news->slug) }}'">

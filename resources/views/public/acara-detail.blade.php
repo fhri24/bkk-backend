@@ -6,7 +6,7 @@
     <style>
         .event-header {
             background: linear-gradient(135deg, rgba(30, 58, 138, 0.9), rgba(0, 31, 63, 0.9)),
-                url("{{ $event->image ? Storage::url($event->image) : 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1920&q=80' }}");
+                url("{{ $event->image ? Storage::disk('public')->url($event->image) : 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1920&q=80' }}");
             background-size: cover;
             background-position: center;
             color: white;
@@ -93,7 +93,7 @@
                 {{-- Event Image --}}
                 <div class="rounded-3xl overflow-hidden shadow-2xl mb-10">
                     @if($event->image)
-                        <img src="{{ Storage::url($event->image) }}" alt="{{ $event->title }}" class="w-full h-auto object-cover" />
+                        <img src="{{ Storage::disk('public')->url($event->image) }}" alt="{{ $event->title }}" class="w-full h-auto object-cover" />
                     @else
                         <div class="w-full h-80 bg-gradient-to-br from-blue-600 to-indigo-800 flex flex-col items-center justify-center text-white">
                             <i class="fas fa-calendar-alt text-7xl mb-4 opacity-20"></i>

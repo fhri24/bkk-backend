@@ -54,7 +54,7 @@
         .table-custom {
             background: white;
             border-radius: 12px;
-            overflow: hidden;
+            overflow-x: auto;
             border: 1px solid #e2e8f0;
         }
 
@@ -170,6 +170,11 @@
 <body>
     <div class="flex h-screen bg-gray-50">
 
+        {{-- ===== SIDEBAR OVERLAY (Mobile) ===== --}}
+        <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/50 z-30 hidden lg:hidden"
+             onclick="document.querySelector('.sidebar').classList.remove('mobile-active'); this.classList.add('hidden')">
+        </div>
+
         {{-- ===== SIDEBAR ===== --}}
         <aside class="sidebar w-64 text-white flex flex-col fixed h-full lg:relative z-40 lg:z-10">
 
@@ -277,7 +282,7 @@
             <header class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
                 <div class="flex items-center">
                     <button class="mobile-menu-btn lg:hidden mr-4"
-                        onclick="document.querySelector('.sidebar').classList.toggle('mobile-active')">
+                        onclick="document.querySelector('.sidebar').classList.toggle('mobile-active'); document.getElementById('sidebar-overlay').classList.toggle('hidden')">
                         <i class="fas fa-bars text-2xl text-slate-800"></i>
                     </button>
                     <div>

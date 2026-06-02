@@ -54,7 +54,7 @@
             {{-- Featured Image --}}
             @if($news->image)
                 <div class="mb-10 rounded-[32px] overflow-hidden shadow-2xl">
-                    <img src="{{ Storage::url($news->image) }}" alt="{{ $news->title }}" class="w-full h-auto md:h-[500px] object-cover" />
+                    <img src="{{ Storage::disk('public')->url($news->image) }}" alt="{{ $news->title }}" class="w-full h-auto md:h-[500px] object-cover" />
                 </div>
             @endif
 
@@ -93,7 +93,7 @@
                         @foreach($relatedNews as $related)
                             @php
                                 $relFallback = 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=500&q=80';
-                                $relImage = $related->image ? Storage::url($related->image) : $relFallback;
+                                $relImage = $related->image ? Storage::disk('public')->url($related->image) : $relFallback;
                             @endphp
                             <article class="group cursor-pointer bg-white rounded-2xl border border-transparent hover:border-blue-100 hover:shadow-xl transition-all duration-300 overflow-hidden" 
                                      onclick="window.location.href='{{ route('public.berita.detail', $related->slug) }}'">

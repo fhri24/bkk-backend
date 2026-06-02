@@ -109,7 +109,7 @@ class PublikController extends Controller
     {
         $job = Job::with('company')->where('approval_status', 'approved')->findOrFail($id);
         $similarJobs = Job::with('company')
-            ->where('job_id', '!=', $id)
+            ->where('id', '!=', $id)
             ->where('approval_status', 'approved')
             ->latest()
             ->take(3)
@@ -199,7 +199,7 @@ class PublikController extends Controller
             ->findOrFail($id);
 
         $relatedEvents = Event::where('is_published', 1)
-            ->where('job_id', '!=', $id)
+            ->where('id', '!=', $id)
             ->where('start_date', '>=', now())
             ->take(3)
             ->get();

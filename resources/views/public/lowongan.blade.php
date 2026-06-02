@@ -109,9 +109,9 @@
                             $src = $job->source ?? 'internal';
 
                             $logo = $job->logo
-                                ? Storage::url($job->logo)
+                                ? Storage::disk('public')->url($job->logo)
                                 : ($job->company && $job->company->logo
-                                    ? Storage::url($job->company->logo)
+                                    ? Storage::disk('public')->url($job->company->logo)
                                     : 'https://ui-avatars.com/api/?name=' .
                                         urlencode($cName) .
                                         '&background=e2e8f0&color=001f3f&size=80');

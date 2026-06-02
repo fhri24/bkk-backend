@@ -14,7 +14,7 @@
                         {{-- Foto Profil --}}
                         <div class="relative w-24 h-24 mx-auto mb-4">
                             @if ($student && $student->profile_picture)
-                                <img id="avatar-img" src="{{ Storage::url($student->profile_picture) }}" alt="Profile Picture"
+                                <img id="avatar-img" src="{{ Storage::disk('public')->url($student->profile_picture) }}" alt="Profile Picture"
                                     class="w-24 h-24 rounded-full object-cover shadow-lg border-2 border-blue-500"
                                     onerror="this.style.display='none'; document.getElementById('avatar-fallback').style.display='flex';">
                                 <div id="avatar-fallback"
@@ -389,7 +389,7 @@
                         <div class="mb-4 flex items-center gap-4">
                             <div class="relative">
                                 <img id="preview-foto"
-                                    src="{{ $student && $student->profile_picture ? Storage::url($student->profile_picture) : '' }}"
+                                    src="{{ $student && $student->profile_picture ? Storage::disk('public')->url($student->profile_picture) : '' }}"
                                     alt="Preview"
                                     class="w-20 h-20 rounded-full object-cover border-2 border-blue-300 {{ $student && $student->profile_picture ? '' : 'hidden' }}" />
                                 <div id="preview-fallback"

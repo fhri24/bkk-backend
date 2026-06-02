@@ -55,7 +55,7 @@
 
                             $fallbackImage = 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800&q=80';
                             $imageUrl = ($event->thumbnail && Storage::disk('public')->exists($event->thumbnail))
-                                ? Storage::url($event->thumbnail)
+                                ? Storage::disk('public')->url($event->thumbnail)
                                 : $fallbackImage;
                         @endphp
 

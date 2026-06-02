@@ -57,9 +57,9 @@
                             // Logika Logo (disesuaikan dengan job atau company)
                             $logoUrl = null;
                             if ($app->job->logo) {
-                                $logoUrl = Storage::url($app->job->logo);
+                                $logoUrl = Storage::disk('public')->url($app->job->logo);
                             } elseif ($app->job->company && $app->job->company->logo) {
-                                $logoUrl = Storage::url($app->job->company->logo);
+                                $logoUrl = Storage::disk('public')->url($app->job->company->logo);
                             }
                         @endphp
 
@@ -103,7 +103,7 @@
                                         </span>
 
                                         @if ($app->additional_file)
-                                            <a href="{{ Storage::url('cv_applications/' . $app->additional_file) }}"
+                                            <a href="{{ Storage::disk('public')->url('cv_applications/' . $app->additional_file) }}"
                                                 target="_blank" class="text-blue-500 hover:text-blue-700">
                                                 <i class="fas fa-file-pdf mr-1"></i> CV/Lampiran
                                             </a>
