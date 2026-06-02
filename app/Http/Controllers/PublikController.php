@@ -362,17 +362,31 @@ class PublikController extends Controller
         return view('public.tips', compact('tips', 'featured', 'kategoriList', 'kategoriCount'));
     }
 
-    public function tipsDetail($slug)
-    {
-        $tip = \App\Models\Tip::published()->where('slug', $slug)->firstOrFail();
-        $relatedTips = \App\Models\Tip::published()
-            ->where('id', '!=', $tip->id)
-            ->where('kategori', $tip->kategori)
-            ->latest()
-            ->take(3)
-            ->get();
+   public function tipsDetail($slug)
+{
+    $tip = \App\Models\Tip::with('steps')->published()->where('slug', $slug)->firstOrFail();
 
-        return view('public.tips-detail', compact('tip', 'relatedTips'));
+    $relatedTips = \App\Models\Tip::published()
+        ->where('id', '!=', $tip->id)
+        ->where('kategori', $tip->kategori)
+        ->latest()
+        ->take(3)
+        ->get();
+
+    if ($relatedTips->count() < 3) {
+        $existingIds = $relatedTips->pluck('id')->push($tip->id);
+        $additional = \App\Models\Tip::published()
+            ->whereNotIn('id', $existingIds)
+            ->latest()
+            ->take(3 - $relatedTips->count())
+            ->get();
+        $relatedTips = $relatedTips->merge($additional);
+    }
+
+    return view('public.tips-detail', compact('tip', 'relatedTips'));
+
+
+    return view('public.tips-detail', compact('tip', 'relatedTips'));
     }
 
     public function updateProfilePicture(Request $request)

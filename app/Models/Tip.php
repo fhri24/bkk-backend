@@ -18,7 +18,10 @@ class Tip extends Model
         'kategori',
         'ringkasan',
         'konten',
+        'pro_tips',
+        'avoid_mistakes',
         'icon',
+        'image',
         'is_featured',
         'is_published',
         'urutan',
@@ -28,42 +31,30 @@ class Tip extends Model
         'is_featured'  => 'integer',
         'is_published' => 'integer',
         'urutan'       => 'integer',
+        'pro_tips'     => 'array',
+        'avoid_mistakes' => 'array',
     ];
 
-    /**
-     * Boot function untuk handling events model
-     */
     public static function boot()
     {
         parent::boot();
-
         static::creating(function ($tip) {
             if (empty($tip->slug)) {
-                // Menggunakan random string tambahan agar slug selalu unik
                 $tip->slug = Str::slug($tip->judul) . '-' . Str::random(5);
             }
         });
     }
 
-    /**
-     * Scope untuk mengambil tips yang sudah dipublikasikan
-     */
     public function scopePublished($query)
     {
         return $query->where('is_published', 1);
     }
 
-    /**
-     * Scope untuk mengambil tips unggulan (featured)
-     */
     public function scopeFeatured($query)
     {
         return $query->where('is_featured', 1);
     }
 
-    /**
-     * Mengambil daftar seluruh kategori yang tersedia
-     */
     public static function kategoriList(): array
     {
         return [
@@ -76,9 +67,6 @@ class Tip extends Model
         ];
     }
 
-    /**
-     * Mendapatkan default icon berdasarkan kategori
-     */
     public static function defaultIcon(string $kategori): string
     {
         return match ($kategori) {
@@ -90,4 +78,10 @@ class Tip extends Model
             default           => 'fas fa-lightbulb',
         };
     }
+
+    public function steps()
+    {
+        return $this->hasMany(TipStep::class)->orderBy('step_order');
+    }
+
 }
