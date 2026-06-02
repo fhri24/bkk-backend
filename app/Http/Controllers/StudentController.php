@@ -14,6 +14,7 @@ use App\Models\EventRegistration;
 use App\Models\Role;
 use App\Models\User;
 use App\Notifications\JobApplicationSubmitted;
+use App\Services\SupabaseStorageService; // ✅ Ditambahkan untuk Supabase
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
@@ -277,16 +278,17 @@ class StudentController extends Controller
         $user     = User::find(Auth::id());
         $roleName = strtolower($user->role->name);
 
+        // ✅ Menggunakan validasi 'cover_letter' sesuai tambahan baru kamu
         $request->validate([
-            'cv_file' => 'required|mimes:pdf|max:5120',
-            'notes'   => 'nullable|string|max:2000',
+            'cv_file'      => 'required|mimes:pdf|max:5120',
+            'cover_letter' => 'nullable|string|max:2000',
         ]);
 
         $student = ($roleName === 'siswa') ? Student::where('user_id', $user->id)->first() : null;
         $profil  = ($roleName !== 'siswa') ? ($user->userable ?? $user->student) : null;
 
         if (!$student && !$profil) {
-            $msg = 'Lengkapi profil terlebih dahulu.';
+            $msg = 'Silahkan lengkapi profil terlebih dahulu.';
             return $request->ajax()
                 ? response()->json(['status' => 'error', 'message' => $msg], 403)
                 : back()->with('error', $msg);
@@ -304,37 +306,36 @@ class StudentController extends Controller
         }
 
         try {
-            $fileName = time() . '_' . Auth::id() . '.' . $request->file('cv_file')->getClientOriginalExtension();
-            
-            // Debug: Log upload attempt
-            \Log::info('Attempting to upload CV', [
-                'fileName' => $fileName,
-                'disk' => 'public',
-                'disk_driver' => config('filesystems.disks.public.driver'),
-                'aws_bucket' => config('filesystems.disks.public.bucket'),
-            ]);
-            
-            // Upload file with error handling
-            $uploadPath = $request->file('cv_file')->storeAs('cv_applications', $fileName, 'public');
-            
-            if (!$uploadPath) {
-                throw new \Exception('File upload returned false. Check S3 credentials and bucket permissions.');
+            $fileName = null;
+
+            // ✅ Upload ke Supabase Storage menggunakan SupabaseStorageService bawaan kamu
+            if ($request->hasFile('cv_file')) {
+                $supabase   = new SupabaseStorageService();
+                $identifier = $student ? $student->student_id : $user->id;
+                $filename   = time() . '_' . $identifier . '.pdf';
+                
+                $result = $supabase->upload($request->file('cv_file'), $filename);
+
+                if ($result) {
+                    $fileName = $supabase->getPublicUrl($filename); // Menyimpan URL Publik Supabase
+                } else {
+                    throw new \Exception('Gagal mengunggah file CV ke Supabase Storage.');
+                }
             }
-            
-            \Log::info('CV upload successful', ['path' => $uploadPath]);
 
             $application = JobApplication::create([
                 'student_id'       => $student ? $student->student_id : null,
                 'job_id'           => $id,
                 'status'           => 'pending',
                 'application_date' => now(),
-                'cover_letter'     => $request->notes,
-                'additional_file'  => $fileName,
+                'cover_letter'     => $request->cover_letter, // ✅ Menyimpan field cover_letter
+                'additional_file'  => $fileName,             // ✅ Menyimpan URL Supabase kedalam DB
                 'full_name'        => DB::table('users')->where('id', Auth::id())->value('name'),
                 'email'            => $user->email,
                 'phone_number'     => $student ? $student->phone : ($profil->no_hp ?? $profil->phone ?? null),
             ]);
 
+            // Mempertahankan pengiriman notifikasi ke admin sistem
             $admins = User::whereHas('role', fn($q) =>
                 $q->whereIn('name', ['super_admin', 'admin_bkk'])
             )->get();
@@ -342,12 +343,12 @@ class StudentController extends Controller
             try {
                 Notification::send($admins, new JobApplicationSubmitted($application->load('job.company')));
             } catch (\Exception $e) {
-                // Aplikasi tetap berlanjut walau notifikasi gagal
+                // Proses tetap aman berjalan walaupun sistem mail/notifikasi error
             }
 
             session(['name' => $user->name]);
 
-            $successMsg = 'MANTAP! Lamaran berhasil dikirim!';
+            $successMsg = 'Lamaran berhasil terkirim!';
             return $request->ajax()
                 ? response()->json(['status' => 'success', 'message' => $successMsg])
                 : back()->with('success', $successMsg);
@@ -360,7 +361,6 @@ class StudentController extends Controller
 
     public function acara()
     {
-        // PERBAIKAN: Menggunakan whereRaw agar kompatibel dengan query PostgreSQL bkk-smkn1garut (Eks baris 351)
         $events = Event::where('is_published', 1)
             ->where('start_date', '>=', now())
             ->latest('start_date')
@@ -443,7 +443,8 @@ class StudentController extends Controller
 
         if (!$application) return redirect()->back()->with('error', 'Lamaran tidak ditemukan.');
 
-        if ($application->additional_file) {
+        // Proteksi jika file berupa URL Supabase agar fungsi hapus local disk bawaan tidak error
+        if ($application->additional_file && !filter_var($application->additional_file, FILTER_VALIDATE_URL)) {
             Storage::disk('public')->delete('cv_applications/' . $application->additional_file);
         }
 

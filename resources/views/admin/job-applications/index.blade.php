@@ -48,7 +48,6 @@
 
                         <td class="p-4">
                             <span class="font-bold text-blue-700 px-2 py-1 bg-blue-50 rounded text-sm">
-                                {{-- AMBIL DARI FULL_NAME SESUAI DATABASE --}}
                                 {{ $app->full_name ?? ($app->student->full_name ?? 'Tanpa Nama') }}
                             </span>
                         </td>
@@ -56,9 +55,9 @@
                         <td class="p-4 text-sm">{{ $app->application_date->format('d M Y') }}</td>
 
                         <td class="p-4">
+                            {{-- ✅ SEKARANG LANGSUNG MENGGUNAKAN URL PUBLIC SUPABASE --}}
                             @if($app->additional_file)
-                                {{-- UPDATE PATH AGAR SESUAI DENGAN FOLDER DI STORAGE --}}
-                                <a href="{{ Storage::disk('public')->url('cv_applications/' . $app->additional_file) }}" target="_blank" class="text-blue-600 hover:text-blue-800 flex items-center font-medium">
+                                <a href="{{ $app->additional_file }}" target="_blank" class="text-blue-600 hover:text-blue-800 flex items-center font-medium">
                                     <i class="fas fa-file-pdf mr-2 text-lg"></i> CV
                                 </a>
                             @else
@@ -116,4 +115,3 @@
     </div>
 </div>
 @endsection
-
