@@ -55,14 +55,9 @@
                         <td class="p-4 text-sm">{{ $app->application_date->format('d M Y') }}</td>
 
                         <td class="p-4">
-                            {{-- ✅ SEKARANG LANGSUNG MENGGUNAKAN URL PUBLIC SUPABASE --}}
                             @if($app->additional_file)
-<<<<<<< HEAD
-                                <a href="{{ $app->additional_file }}" target="_blank" class="text-blue-600 hover:text-blue-800 flex items-center font-medium">
-=======
-                                {{-- Gunakan method getCvUrl() dari model untuk generate URL yang benar --}}
+                                {{-- Menggunakan method getCvUrl() dari model untuk generate URL Supabase yang benar --}}
                                 <a href="{{ $app->getCvUrl() }}" target="_blank" class="text-blue-600 hover:text-blue-800 flex items-center font-medium">
->>>>>>> c27b0b1da0bcaabf88d6f93ae350063403d33f45
                                     <i class="fas fa-file-pdf mr-2 text-lg"></i> CV
                                 </a>
                             @else
