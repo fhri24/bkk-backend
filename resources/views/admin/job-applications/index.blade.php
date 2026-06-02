@@ -57,8 +57,8 @@
 
                         <td class="p-4">
                             @if($app->additional_file)
-                                {{-- UPDATE PATH AGAR SESUAI DENGAN FOLDER DI STORAGE --}}
-                                <a href="{{ Storage::disk('public')->url('cv_applications/' . $app->additional_file) }}" target="_blank" class="text-blue-600 hover:text-blue-800 flex items-center font-medium">
+                                {{-- Gunakan method getCvUrl() dari model untuk generate URL yang benar --}}
+                                <a href="{{ $app->getCvUrl() }}" target="_blank" class="text-blue-600 hover:text-blue-800 flex items-center font-medium">
                                     <i class="fas fa-file-pdf mr-2 text-lg"></i> CV
                                 </a>
                             @else
