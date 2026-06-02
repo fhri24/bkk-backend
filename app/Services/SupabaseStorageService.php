@@ -4,7 +4,7 @@ namespace App\Services;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
-use Exception; // Tambahkan ini di atas
+use Exception;
 
 class SupabaseStorageService
 {
@@ -14,15 +14,14 @@ class SupabaseStorageService
 
     public function __construct()
     {
-        // Berikan default string kosong '' agar tidak jadi null
-        $this->url    = rtrim(env('SUPABASE_URL', ''), '/');
-        $this->key    = env('SUPABASE_KEY', '');
-        $this->bucket = env('SUPABASE_BUCKET', 'cv-applications');
+        // Diubah menggunakan config() agar aman dari jebakan cache Laravel di server production
+        $this->url    = rtrim(config('services.supabase.url', ''), '/');
+        $this->key    = config('services.supabase.key', '');
+        $this->bucket = config('services.supabase.bucket', 'bkk-storage');
 
-        // (Opsional tapi sangat disarankan) Kasih peringatan jelas kalau key belum diisi
+        // Memastikan variable tidak kosong saat aplikasi berjalan
         if (empty($this->key) || empty($this->url)) {
-            // Ini akan memunculkan error yang lebih mudah dipahami olehmu jika env lupa diisi
-            throw new Exception("Konfigurasi SUPABASE_URL atau SUPABASE_KEY belum diisi di file .env atau Vercel!");
+            throw new Exception("Konfigurasi SUPABASE_URL atau SUPABASE_KEY tidak terbaca oleh sistem! Periksa kembali Environment Variables di Vercel atau file .env kamu.");
         }
     }
 

@@ -60,4 +60,11 @@ return [
         'token' => env('FONNTE_TOKEN'),
     ],
 
+    // Tambahan Integrasi Supabase Storage
+    'supabase' => [
+        'url'    => env('SUPABASE_URL'),
+        'key'    => env('SUPABASE_KEY'),
+        'bucket' => env('SUPABASE_BUCKET', 'bkk-storage'),
+    ],
+
 ];
