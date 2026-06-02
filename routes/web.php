@@ -295,6 +295,7 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
         Route::get('/', [AdminJobApplicationController::class, 'index'])->name('index');
         Route::get('/{id}', [AdminJobApplicationController::class, 'show'])->name('show');
         Route::put('/{id}/status', [AdminJobApplicationController::class, 'updateStatus'])->name('update-status');
+        Route::delete('/{id}', [AdminJobApplicationController::class, 'destroy'])->name('destroy');
     });
 
     Route::prefix('event-registrations')->name('event-registrations.')->group(function () {

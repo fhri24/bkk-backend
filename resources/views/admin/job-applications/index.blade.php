@@ -100,6 +100,13 @@
                                 <a href="{{ route('admin.job-applications.show', $app->job_application_id) }}" class="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded shadow-sm transition" title="Detail">
                                     <i class="fas fa-eye"></i>
                                 </a>
+                                <form action="{{ route('admin.job-applications.destroy', $app->job_application_id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus lamaran ini?')" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="bg-red-500 hover:bg-red-600 text-white p-2 rounded shadow-sm transition" title="Hapus Lamaran">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>
@@ -116,4 +123,3 @@
     </div>
 </div>
 @endsection
-
