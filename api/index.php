@@ -53,10 +53,10 @@ if (is_link($bootstrapCache)) {
     if (is_writable($bootstrapCache)) {
         array_map('unlink', glob($bootstrapCache . '/*'));
         rmdir($bootstrapCache);
-        symlink($cacheTarget, $bootstrapCache);
+        @symlink($cacheTarget, $bootstrapCache);
     }
 } elseif (!file_exists($bootstrapCache)) {
-    symlink($cacheTarget, $bootstrapCache);
+    @symlink($cacheTarget, $bootstrapCache);
 }
 
 chdir($root);
