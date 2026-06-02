@@ -109,7 +109,7 @@ class PublikController extends Controller
     {
         $job = Job::with('company')->where('approval_status', 'approved')->findOrFail($id);
         $similarJobs = Job::with('company')
-            ->where('id', '!=', $id)
+            ->where('job_id', '!=', $id)
             ->where('approval_status', 'approved')
             ->latest()
             ->take(3)
