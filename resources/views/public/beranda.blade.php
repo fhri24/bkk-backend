@@ -169,7 +169,7 @@
             'bg-gradient-to-br from-teal-500 to-teal-700',
         ];
     @endphp
-    <section class="hero-bg h-[400px] md:h-[600px] flex items-center justify-center text-center text-white relative">
+    <section class="hero-bg min-h-[260px] md:h-[600px] py-12 md:py-0 flex items-center justify-center text-center text-white relative">
         <div class="container mx-auto px-6 z-10">
 
             {{-- Hero Title & Description Dinamis --}}
@@ -193,7 +193,7 @@
         </div>
     </section>
 
-    <section class="container mx-auto px-6 -mt-16 relative z-20">
+    <section class="container mx-auto px-6 -mt-8 md:-mt-16 relative z-20">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
 
             {{-- 1. Alumni Terserap --}}
