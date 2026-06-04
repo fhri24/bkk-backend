@@ -275,12 +275,6 @@
         
         <div class="relative group">
             {{-- Carousel Navigation (Sides) - Mobile Only --}}
-            <button onclick="scrollContainer('jobs-carousel', -1)" class="flex md:hidden absolute left-0 top-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full border border-slate-200 items-center justify-center text-slate-600 hover:bg-blue-50 hover:text-blue-600 shadow-md transition z-10 focus:outline-none opacity-80 hover:opacity-100">
-                <i class="fas fa-chevron-left text-[10px]"></i>
-            </button>
-            <button onclick="scrollContainer('jobs-carousel', 1)" class="flex md:hidden absolute right-0 top-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full border border-slate-200 items-center justify-center text-slate-600 hover:bg-blue-50 hover:text-blue-600 shadow-md transition z-10 focus:outline-none opacity-80 hover:opacity-100">
-                <i class="fas fa-chevron-right text-[10px]"></i>
-            </button>
 
             <div id="jobs-carousel" class="flex overflow-x-auto scroll-smooth snap-x snap-mandatory gap-4 pb-6 md:pb-0 md:grid md:grid-cols-3 md:gap-8 no-scrollbar -mx-6 px-6 md:mx-0 md:px-0">
                 @forelse($featured_jobs as $job)
@@ -375,13 +369,6 @@
             </div>
             
             <div class="relative group">
-                <button onclick="scrollContainer('news-carousel', -1)" class="flex md:hidden absolute left-0 top-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full border border-slate-200 items-center justify-center text-slate-600 hover:bg-blue-50 hover:text-blue-600 shadow-md transition z-10 focus:outline-none opacity-80 hover:opacity-100">
-                    <i class="fas fa-chevron-left text-[10px]"></i>
-                </button>
-                <button onclick="scrollContainer('news-carousel', 1)" class="flex md:hidden absolute right-0 top-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full border border-slate-200 items-center justify-center text-slate-600 hover:bg-blue-50 hover:text-blue-600 shadow-md transition z-10 focus:outline-none opacity-80 hover:opacity-100">
-                    <i class="fas fa-chevron-right text-[10px]"></i>
-                </button>
-
                 <div id="news-carousel" class="flex overflow-x-auto scroll-smooth snap-x snap-mandatory gap-4 pb-6 md:pb-0 md:grid md:grid-cols-3 md:gap-8 no-scrollbar -mx-6 px-6 md:mx-0 md:px-0">
                     @forelse($news as $item)
                         <div class="w-[85vw] md:w-auto shrink-0 snap-center bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-xl transition card-zoom job-card flex flex-col justify-between">
@@ -449,13 +436,6 @@
 
         @if (isset($alumni_stories) && $alumni_stories->count() > 0)
             <div class="relative group">
-                <button onclick="scrollContainer('alumni-carousel', -1)" class="flex md:hidden absolute left-0 top-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full border border-slate-200 items-center justify-center text-slate-600 hover:bg-blue-50 hover:text-blue-600 shadow-md transition z-10 focus:outline-none opacity-80 hover:opacity-100">
-                    <i class="fas fa-chevron-left text-[10px]"></i>
-                </button>
-                <button onclick="scrollContainer('alumni-carousel', 1)" class="flex md:hidden absolute right-0 top-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full border border-slate-200 items-center justify-center text-slate-600 hover:bg-blue-50 hover:text-blue-600 shadow-md transition z-10 focus:outline-none opacity-80 hover:opacity-100">
-                    <i class="fas fa-chevron-right text-[10px]"></i>
-                </button>
-                
                 <div id="alumni-carousel" class="flex overflow-x-auto scroll-smooth snap-x snap-mandatory gap-4 pb-6 md:pb-0 md:grid md:gap-6 md:grid-cols-2 xl:grid-cols-3 no-scrollbar -mx-6 px-6 md:mx-0 md:px-0">
                     @foreach ($alumni_stories as $index => $story)
                         @php
