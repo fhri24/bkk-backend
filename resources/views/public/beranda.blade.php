@@ -695,23 +695,6 @@
                 textarea.addEventListener('input', updateCharCount);
             }
         });
-
-        @auth
-<script>
-    // Kode ini HANYA akan muncul dan dieksekusi jika user SUDAH LOGIN
-    if (window.ReactNativeWebView) {
-        const loginData = {
-            status: "success",
-            // Aman dikerjakan karena Auth::user() dipastikan tidak null
-            token: "{{ Auth::user()->createToken('MobileToken')->plainTextToken }}",
-            nama: "{{ Auth::user()->name }}"
-        };
-
-        // Lempar data token ke React Native
-        window.ReactNativeWebView.postMessage(JSON.stringify(loginData));
-    }
-</script>
-@endauth
     </script>
 @endsection
 
