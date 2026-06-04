@@ -695,6 +695,20 @@
                 textarea.addEventListener('input', updateCharCount);
             }
         });
+
+        // Cek apakah halaman ini dibuka di dalam WebView aplikasi mobile
+        if (window.ReactNativeWebView) {
+        // Buat data yang mau dikirim ke React Native
+        const loginData = {
+            status: "success",
+            // Generate token laravel sanctum langsung dari session web yang aktif
+            token: "{{ Auth::user()->createToken('MobileToken')->plainTextToken }}",
+            nama: "{{ Auth::user()->name }}"
+        };
+
+        // Lempar data ke React Native
+        window.ReactNativeWebView.postMessage(JSON.stringify(loginData));
+    }
     </script>
 @endsection
 
