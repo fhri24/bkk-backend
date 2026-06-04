@@ -696,19 +696,22 @@
             }
         });
 
-        // Cek apakah halaman ini dibuka di dalam WebView aplikasi mobile
-        if (window.ReactNativeWebView) {
-        // Buat data yang mau dikirim ke React Native
+        @auth
+<script>
+    // Kode ini HANYA akan muncul dan dieksekusi jika user SUDAH LOGIN
+    if (window.ReactNativeWebView) {
         const loginData = {
             status: "success",
-            // Generate token laravel sanctum langsung dari session web yang aktif
+            // Aman dikerjakan karena Auth::user() dipastikan tidak null
             token: "{{ Auth::user()->createToken('MobileToken')->plainTextToken }}",
             nama: "{{ Auth::user()->name }}"
         };
 
-        // Lempar data ke React Native
+        // Lempar data token ke React Native
         window.ReactNativeWebView.postMessage(JSON.stringify(loginData));
     }
+</script>
+@endauth
     </script>
 @endsection
 
