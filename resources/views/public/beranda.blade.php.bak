@@ -169,13 +169,11 @@
             'bg-gradient-to-br from-teal-500 to-teal-700',
         ];
     @endphp
-    <section
-        class="hero-bg min-h-[260px] md:h-[600px] py-12 md:py-0 flex items-center justify-center text-center text-white relative">
+    <section class="hero-bg min-h-[260px] md:h-[600px] py-12 md:py-0 flex items-center justify-center text-center text-white relative">
         <div class="container mx-auto px-6 z-10">
 
             {{-- Hero Title & Description Dinamis --}}
-            <h1
-                class="text-4xl md:text-6xl font-black leading-tight mb-4 md:mb-6 whitespace-pre-line break-words mt-10 md:mt-0">
+            <h1 class="text-4xl md:text-6xl font-black leading-tight mb-4 md:mb-6 whitespace-pre-line break-words mt-10 md:mt-0">
                 {{ $schoolProfile->site_title ?? 'SISTEM INFORMASI BURSA KERJA KHUSUS' }}
             </h1>
             <p class="text-sm md:text-xl text-blue-100 mb-8 md:mb-10 max-w-2xl mx-auto leading-relaxed">
@@ -199,10 +197,8 @@
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
 
             {{-- 1. Alumni Terserap --}}
-            <div
-                class="bg-white p-5 md:p-8 rounded-2xl shadow-xl text-left md:text-center border border-slate-100 stat-card flex flex-row md:flex-col items-center md:justify-center gap-4 md:gap-0">
-                <div
-                    class="w-10 h-10 md:w-auto md:h-auto bg-green-50 md:bg-transparent rounded-lg flex items-center justify-center flex-shrink-0">
+            <div class="bg-white p-5 md:p-8 rounded-2xl shadow-xl text-left md:text-center border border-slate-100 stat-card flex flex-row md:flex-col items-center md:justify-center gap-4 md:gap-0">
+                <div class="w-10 h-10 md:w-auto md:h-auto bg-green-50 md:bg-transparent rounded-lg flex items-center justify-center flex-shrink-0">
                     <i class="fas fa-users text-green-500 md:text-blue-600 text-lg md:text-transparent md:hidden"></i>
                     <div class="text-4xl font-extrabold text-blue-600 mb-2 hidden md:block">
                         {{ $alumniTerserap > 999 ? number_format($alumniTerserap / 1000, 1) . 'K+' : $alumniTerserap . '+' }}
@@ -212,17 +208,14 @@
                     <div class="text-lg md:hidden font-extrabold text-slate-800 leading-none mb-1">
                         {{ $alumniTerserap > 999 ? number_format($alumniTerserap / 1000, 1) . 'K+' : $alumniTerserap . '+' }}
                     </div>
-                    <div class="text-slate-500 font-bold text-[9px] md:text-xs uppercase tracking-wider leading-tight">
-                        Alumni<br class="md:hidden" />Terserap</div>
+                    <div class="text-slate-500 font-bold text-[9px] md:text-xs uppercase tracking-wider leading-tight">Alumni<br class="md:hidden"/>Terserap</div>
                     <div class="text-[10px] text-slate-400 mt-1 hidden md:block">Bekerja & Wirausaha</div>
                 </div>
             </div>
 
             {{-- 2. Tingkat Penyaluran --}}
-            <div
-                class="bg-white p-5 md:p-8 rounded-2xl shadow-xl text-left md:text-center border border-slate-100 stat-card flex flex-row md:flex-col items-center md:justify-center gap-4 md:gap-0">
-                <div
-                    class="w-10 h-10 md:w-auto md:h-auto bg-blue-50 md:bg-transparent rounded-lg md:rounded-none flex items-center justify-center flex-shrink-0">
+            <div class="bg-white p-5 md:p-8 rounded-2xl shadow-xl text-left md:text-center border border-slate-100 stat-card flex flex-row md:flex-col items-center md:justify-center gap-4 md:gap-0">
+                <div class="w-10 h-10 md:w-auto md:h-auto bg-blue-50 md:bg-transparent rounded-lg md:rounded-none flex items-center justify-center flex-shrink-0">
                     <i class="fas fa-chart-line text-blue-500 md:text-blue-600 text-lg md:text-transparent md:hidden"></i>
                     <div class="text-4xl font-extrabold text-blue-600 mb-2 hidden md:block">
                         {{ $tingkatPenyaluran }}%
@@ -232,17 +225,14 @@
                     <div class="text-lg md:hidden font-extrabold text-slate-800 leading-none mb-1">
                         {{ $tingkatPenyaluran }}%
                     </div>
-                    <div class="text-slate-500 font-bold text-[9px] md:text-xs uppercase tracking-wider leading-tight">
-                        Tingkat<br class="md:hidden" />Penyaluran</div>
+                    <div class="text-slate-500 font-bold text-[9px] md:text-xs uppercase tracking-wider leading-tight">Tingkat<br class="md:hidden"/>Penyaluran</div>
                     <div class="text-[10px] text-slate-400 mt-1 hidden md:block">Berdasarkan data tracer</div>
                 </div>
             </div>
 
             {{-- 3. Lowongan Aktif --}}
-            <div
-                class="bg-white p-5 md:p-8 rounded-2xl shadow-xl text-left md:text-center border border-slate-100 stat-card flex flex-row md:flex-col items-center md:justify-center gap-4 md:gap-0">
-                <div
-                    class="w-10 h-10 md:w-auto md:h-auto bg-purple-50 md:bg-transparent rounded-lg flex items-center justify-center flex-shrink-0">
+            <div class="bg-white p-5 md:p-8 rounded-2xl shadow-xl text-left md:text-center border border-slate-100 stat-card flex flex-row md:flex-col items-center md:justify-center gap-4 md:gap-0">
+                <div class="w-10 h-10 md:w-auto md:h-auto bg-purple-50 md:bg-transparent rounded-lg flex items-center justify-center flex-shrink-0">
                     <i class="fas fa-briefcase text-purple-500 md:text-blue-600 text-lg md:text-transparent md:hidden"></i>
                     <div class="text-4xl font-extrabold text-blue-600 mb-2 hidden md:block">
                         {{ $lowonganAktif }}+
@@ -252,17 +242,14 @@
                     <div class="text-lg md:hidden font-extrabold text-slate-800 leading-none mb-1">
                         {{ $lowonganAktif }}+
                     </div>
-                    <div class="text-slate-500 font-bold text-[9px] md:text-xs uppercase tracking-wider leading-tight">
-                        Lowongan<br class="md:hidden" />Aktif</div>
+                    <div class="text-slate-500 font-bold text-[9px] md:text-xs uppercase tracking-wider leading-tight">Lowongan<br class="md:hidden"/>Aktif</div>
                     <div class="text-[10px] text-slate-400 mt-1 hidden md:block">Masih tersedia & terbuka</div>
                 </div>
             </div>
 
             {{-- 4. MoU Industri --}}
-            <div
-                class="bg-white p-5 md:p-8 rounded-2xl shadow-xl text-left md:text-center border border-slate-100 stat-card flex flex-row md:flex-col items-center md:justify-center gap-4 md:gap-0">
-                <div
-                    class="w-10 h-10 md:w-auto md:h-auto bg-orange-50 md:bg-transparent rounded-lg flex items-center justify-center flex-shrink-0">
+            <div class="bg-white p-5 md:p-8 rounded-2xl shadow-xl text-left md:text-center border border-slate-100 stat-card flex flex-row md:flex-col items-center md:justify-center gap-4 md:gap-0">
+                <div class="w-10 h-10 md:w-auto md:h-auto bg-orange-50 md:bg-transparent rounded-lg flex items-center justify-center flex-shrink-0">
                     <i class="fas fa-handshake text-orange-500 md:text-blue-600 text-lg md:text-transparent md:hidden"></i>
                     <div class="text-4xl font-extrabold text-blue-600 mb-2 hidden md:block">
                         {{ $totalPerusahaan }}
@@ -272,8 +259,7 @@
                     <div class="text-lg md:hidden font-extrabold text-slate-800 leading-none mb-1">
                         {{ $totalPerusahaan }}
                     </div>
-                    <div class="text-slate-500 font-bold text-[9px] md:text-xs uppercase tracking-wider leading-tight">
-                        Mitra<br class="md:hidden" />Industri</div>
+                    <div class="text-slate-500 font-bold text-[9px] md:text-xs uppercase tracking-wider leading-tight">Mitra<br class="md:hidden"/>Industri</div>
                     <div class="text-[10px] text-slate-400 mt-1 hidden md:block">Perusahaan terdaftar</div>
                 </div>
             </div>
@@ -284,38 +270,29 @@
     <section class="container mx-auto px-6 py-12 md:py-20 overflow-hidden relative">
         <div class="flex justify-between items-center mb-6 md:mb-12">
             <h2 class="text-xl md:text-3xl font-extrabold text-[#001f3f]">Lowongan Unggulan</h2>
-            <a href="{{ $routeLowongan }}"
-                class="text-blue-600 font-bold text-xs md:text-base hover:underline uppercase md:capitalize">Lihat Semua <i
-                    class="fas fa-arrow-right ml-1 md:ml-2 text-[10px] md:text-xs"></i></a>
+            <a href="{{ $routeLowongan }}" class="text-blue-600 font-bold text-xs md:text-base hover:underline uppercase md:capitalize">Lihat Semua <i class="fas fa-arrow-right ml-1 md:ml-2 text-[10px] md:text-xs"></i></a>
         </div>
-
+        
         <div class="relative group">
             {{-- Carousel Navigation (Sides) - Mobile Only --}}
 
-            <div id="jobs-carousel"
-                class="flex overflow-x-auto scroll-smooth snap-x snap-mandatory gap-4 pb-6 md:pb-0 md:grid md:grid-cols-3 md:gap-8 no-scrollbar -mx-6 px-6 md:mx-0 md:px-0">
+            <div id="jobs-carousel" class="flex overflow-x-auto scroll-smooth snap-x snap-mandatory gap-4 pb-6 md:pb-0 md:grid md:grid-cols-3 md:gap-8 no-scrollbar -mx-6 px-6 md:mx-0 md:px-0">
                 @forelse($featured_jobs as $job)
-                    <div
-                        class="w-[85vw] md:w-auto shrink-0 snap-center bg-white rounded-2xl p-5 md:p-6 shadow-sm border border-slate-100 hover:shadow-xl transition group card-zoom job-card flex flex-col justify-between">
+                    <div class="w-[85vw] md:w-auto shrink-0 snap-center bg-white rounded-2xl p-5 md:p-6 shadow-sm border border-slate-100 hover:shadow-xl transition group card-zoom job-card flex flex-col justify-between">
                         <div>
                             <div class="flex justify-between items-start mb-4 md:mb-6">
-                                <div
-                                    class="w-12 h-12 md:w-14 md:h-14 bg-slate-50 rounded-xl flex items-center justify-center border group-hover:bg-blue-50 transition overflow-hidden flex-shrink-0">
+                                <div class="w-12 h-12 md:w-14 md:h-14 bg-slate-50 rounded-xl flex items-center justify-center border group-hover:bg-blue-50 transition overflow-hidden flex-shrink-0">
                                     @if ($job->company && $job->company->logo)
-                                        <img src="{{ Storage::disk('public')->url($job->company->logo) }}"
-                                            class="w-full h-full object-cover">
+                                        <img src="{{ Storage::disk('public')->url($job->company->logo) }}" class="w-full h-full object-cover">
                                     @else
                                         <i class="fas fa-industry text-blue-600 text-xl md:text-2xl"></i>
                                     @endif
                                 </div>
-                                <span
-                                    class="text-[9px] md:text-xs font-bold text-green-600 bg-green-50 px-2.5 py-1 rounded-md uppercase">{{ $job->job_type }}</span>
+                                <span class="text-[9px] md:text-xs font-bold text-green-600 bg-green-50 px-2.5 py-1 rounded-md uppercase">{{ $job->job_type }}</span>
                             </div>
                             <div class="mb-4">
-                                <h4 class="font-bold text-base md:text-lg text-slate-800 line-clamp-2 md:leading-snug">
-                                    {{ $job->title }}</h4>
-                                <p class="text-xs md:text-sm text-slate-500 mt-1 line-clamp-1">
-                                    {{ $job->company->company_name ?? 'Perusahaan' }}</p>
+                                <h4 class="font-bold text-base md:text-lg text-slate-800 line-clamp-2 md:leading-snug">{{ $job->title }}</h4>
+                                <p class="text-xs md:text-sm text-slate-500 mt-1 line-clamp-1">{{ $job->company->company_name ?? 'Perusahaan' }}</p>
                             </div>
                         </div>
                         <div>
@@ -323,16 +300,12 @@
                                 <i class="fas fa-map-marker-alt w-5 text-slate-400"></i>
                                 <span class="truncate">{{ $job->location }}</span>
                             </div>
-                            <div
-                                class="flex flex-col space-y-2 md:space-y-3 mb-6 md:mb-8 text-xs md:text-sm text-slate-600 font-medium">
-                                <div class="flex items-center"><i class="fas fa-graduation-cap w-5 text-slate-400"></i>
-                                    {{ $job->job_type }}</div>
-                                <div class="flex items-center"><i class="fas fa-calendar-alt w-5 text-slate-400"></i> Tutup:
-                                    {{ \Carbon\Carbon::parse($job->expired_at)->format('d M Y') }}</div>
+                            <div class="flex flex-col space-y-2 md:space-y-3 mb-6 md:mb-8 text-xs md:text-sm text-slate-600 font-medium">
+                                <div class="flex items-center"><i class="fas fa-graduation-cap w-5 text-slate-400"></i> {{ $job->job_type }}</div>
+                                <div class="flex items-center"><i class="fas fa-calendar-alt w-5 text-slate-400"></i> Tutup: {{ \Carbon\Carbon::parse($job->expired_at)->format('d M Y') }}</div>
                             </div>
                             <a href="{{ route($isStudent ? 'student.lowongan.detail' : 'public.lowongan.detail', $job->job_id ?? $job->id) }}"
-                                class="w-full bg-slate-100 py-2.5 md:py-3 rounded-xl font-bold text-slate-800 hover:bg-blue-600 hover:text-white transition text-center block text-sm md:text-base">Lamar
-                                Sekarang</a>
+                                class="w-full bg-slate-100 py-2.5 md:py-3 rounded-xl font-bold text-slate-800 hover:bg-blue-600 hover:text-white transition text-center block text-sm md:text-base">Lamar Sekarang</a>
                         </div>
                     </div>
                 @empty
@@ -348,49 +321,35 @@
         <div class="container mx-auto px-6">
             <div class="flex justify-between items-center mb-6 md:mb-12">
                 <h2 class="text-xl md:text-3xl font-extrabold text-[#001f3f]">Acara Mendatang</h2>
-                <a href="{{ $routeAcara }}"
-                    class="text-blue-600 font-bold text-xs md:text-base hover:underline uppercase md:capitalize">Arsip <span
-                        class="hidden md:inline">Semua Acara</span> <i
-                        class="fas fa-arrow-right ml-1 md:ml-2 text-[10px] md:text-xs"></i></a>
+                <a href="{{ $routeAcara }}" class="text-blue-600 font-bold text-xs md:text-base hover:underline uppercase md:capitalize">Arsip <span class="hidden md:inline">Semua Acara</span> <i class="fas fa-arrow-right ml-1 md:ml-2 text-[10px] md:text-xs"></i></a>
             </div>
             <div class="flex flex-col md:grid md:grid-cols-3 gap-4 md:gap-8">
                 @forelse($featured_events as $event)
-                    <div
-                        class="bg-white rounded-2xl p-4 md:p-6 shadow-sm border border-slate-100 hover:shadow-xl transition group card-zoom job-card flex flex-row md:flex-col items-center md:items-start gap-4 md:gap-0">
-                        <div
-                            class="w-[72px] h-[72px] md:w-14 md:h-14 bg-[#001f3f] md:bg-blue-50 rounded-[20px] md:rounded-xl flex flex-col md:flex-row items-center justify-center border md:group-hover:bg-blue-100 transition flex-shrink-0 text-white md:text-slate-800 md:mb-6">
-                            <span
-                                class="text-[10px] md:hidden font-bold uppercase tracking-widest text-blue-200 mt-1">{{ \Carbon\Carbon::parse($event->start_date)->translatedFormat('M') }}</span>
-                            <span
-                                class="text-[28px] md:hidden font-black leading-none mt-0">{{ \Carbon\Carbon::parse($event->start_date)->format('d') }}</span>
+                    <div class="bg-white rounded-2xl p-4 md:p-6 shadow-sm border border-slate-100 hover:shadow-xl transition group card-zoom job-card flex flex-row md:flex-col items-center md:items-start gap-4 md:gap-0">
+                        <div class="w-[72px] h-[72px] md:w-14 md:h-14 bg-[#001f3f] md:bg-blue-50 rounded-[20px] md:rounded-xl flex flex-col md:flex-row items-center justify-center border md:group-hover:bg-blue-100 transition flex-shrink-0 text-white md:text-slate-800 md:mb-6">
+                            <span class="text-[10px] md:hidden font-bold uppercase tracking-widest text-blue-200 mt-1">{{ \Carbon\Carbon::parse($event->start_date)->translatedFormat('M') }}</span>
+                            <span class="text-[28px] md:hidden font-black leading-none mt-0">{{ \Carbon\Carbon::parse($event->start_date)->format('d') }}</span>
                             <i class="fas fa-briefcase text-blue-600 text-2xl hidden md:block"></i>
                         </div>
                         <div class="flex-1 min-w-0">
-                            <h4 class="font-bold text-sm md:text-lg truncate md:w-48 text-slate-800">{{ $event->title }}
-                            </h4>
-
-                            <div
-                                class="flex items-center text-[10px] md:text-sm text-slate-500 mb-2 md:mb-8 font-medium mt-1">
+                            <h4 class="font-bold text-sm md:text-lg truncate md:w-48 text-slate-800">{{ $event->title }}</h4>
+                            
+                            <div class="flex items-center text-[10px] md:text-sm text-slate-500 mb-2 md:mb-8 font-medium mt-1">
                                 <i class="far fa-clock w-3.5 md:w-4 text-slate-400"></i>
-                                {{ \Carbon\Carbon::parse($event->start_date)->format('H:i') }} -
-                                {{ \Carbon\Carbon::parse($event->end_date ?? $event->start_date)->format('H:i') }} WIB
+                                {{ \Carbon\Carbon::parse($event->start_date)->format('H:i') }} - {{ \Carbon\Carbon::parse($event->end_date ?? $event->start_date)->format('H:i') }} WIB
                             </div>
-
+                            
                             <div class="md:hidden">
-                                <span class="text-[9px] font-bold text-teal-600 bg-teal-50 px-2.5 py-1 rounded-full"><i
-                                        class="fas fa-map-marker-alt mr-1"></i> {{ $event->location }}</span>
+                                <span class="text-[9px] font-bold text-teal-600 bg-teal-50 px-2.5 py-1 rounded-full"><i class="fas fa-map-marker-alt mr-1"></i> {{ $event->location }}</span>
                             </div>
 
                             <div class="hidden md:flex flex-col space-y-3 text-sm text-slate-600 font-medium mb-8">
-                                <div class="flex items-center"><i class="fas fa-map-marker-alt w-5 text-slate-400"></i>
-                                    {{ $event->location }}</div>
-                                <div class="flex items-center"><i class="fas fa-users w-5 text-slate-400"></i>
-                                    {{ $event->capacity }} Peserta</div>
+                                <div class="flex items-center"><i class="fas fa-map-marker-alt w-5 text-slate-400"></i> {{ $event->location }}</div>
+                                <div class="flex items-center"><i class="fas fa-users w-5 text-slate-400"></i> {{ $event->capacity }} Peserta</div>
                             </div>
 
                             <a href="{{ route($isStudent ? 'student.acara.detail' : 'public.acara.detail', $event->id) }}"
-                                class="hidden md:block w-full bg-slate-100 py-3 rounded-xl font-bold text-slate-800 hover:bg-blue-600 hover:text-white transition text-center">Detail
-                                Acara</a>
+                                class="hidden md:block w-full bg-slate-100 py-3 rounded-xl font-bold text-slate-800 hover:bg-blue-600 hover:text-white transition text-center">Detail Acara</a>
                         </div>
                     </div>
                 @empty
@@ -406,17 +365,13 @@
         <div class="container mx-auto px-6">
             <div class="flex justify-between items-center mb-6 md:mb-12">
                 <h2 class="text-xl md:text-3xl font-extrabold text-[#001f3f]">Berita Unggulan</h2>
-                <a href="{{ $routeBerita }}"
-                    class="text-blue-600 font-bold text-xs md:text-base hover:underline uppercase md:capitalize">Lihat
-                    Semua <i class="fas fa-arrow-right ml-1 md:ml-2 text-[10px] md:text-xs"></i></a>
+                <a href="{{ $routeBerita }}" class="text-blue-600 font-bold text-xs md:text-base hover:underline uppercase md:capitalize">Lihat Semua <i class="fas fa-arrow-right ml-1 md:ml-2 text-[10px] md:text-xs"></i></a>
             </div>
-
+            
             <div class="relative group">
-                <div id="news-carousel"
-                    class="flex overflow-x-auto scroll-smooth snap-x snap-mandatory gap-4 pb-6 md:pb-0 md:grid md:grid-cols-3 md:gap-8 no-scrollbar -mx-6 px-6 md:mx-0 md:px-0">
+                <div id="news-carousel" class="flex overflow-x-auto scroll-smooth snap-x snap-mandatory gap-4 pb-6 md:pb-0 md:grid md:grid-cols-3 md:gap-8 no-scrollbar -mx-6 px-6 md:mx-0 md:px-0">
                     @forelse($news as $item)
-                        <div
-                            class="w-[85vw] md:w-auto shrink-0 snap-center bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-xl transition card-zoom job-card flex flex-col justify-between">
+                        <div class="w-[85vw] md:w-auto shrink-0 snap-center bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-xl transition card-zoom job-card flex flex-col justify-between">
                             <div>
                                 <div class="h-40 md:h-48 overflow-hidden relative">
                                     @if ($item->image)
@@ -431,18 +386,14 @@
                                 </div>
                                 <div class="p-5 md:p-6">
                                     <div class="mb-2 md:mb-4">
-                                        <span
-                                            class="inline-block bg-blue-100 text-blue-700 text-[10px] md:text-xs font-bold px-2.5 py-1 rounded-md md:rounded-full mb-2 md:mb-3 uppercase">{{ $item->category ?? 'Warta' }}</span>
-                                        <h4
-                                            class="font-bold text-base md:text-lg text-slate-800 leading-tight line-clamp-2 h-auto md:h-14">
+                                        <span class="inline-block bg-blue-100 text-blue-700 text-[10px] md:text-xs font-bold px-2.5 py-1 rounded-md md:rounded-full mb-2 md:mb-3 uppercase">{{ $item->category ?? 'Warta' }}</span>
+                                        <h4 class="font-bold text-base md:text-lg text-slate-800 leading-tight line-clamp-2 h-auto md:h-14">
                                             {{ $item->title }}</h4>
                                     </div>
                                 </div>
                             </div>
                             <div class="px-5 pb-5 md:px-6 md:pb-6">
-                                <p class="text-[11px] md:text-xs text-slate-500 mb-0 md:mb-4"><i
-                                        class="far fa-calendar-alt mr-1"></i>
-                                    {{ $item->created_at->translatedFormat('d M Y') }}</p>
+                                <p class="text-[11px] md:text-xs text-slate-500 mb-0 md:mb-4"><i class="far fa-calendar-alt mr-1"></i> {{ $item->created_at->translatedFormat('d M Y') }}</p>
 
                                 <a href="{{ route($isStudent ? 'student.berita.detail' : 'public.berita.detail', $item->slug) }}"
                                     class="block w-full mt-4 md:mt-6 bg-slate-100 py-2.5 rounded-lg font-bold text-slate-800 hover:bg-blue-600 hover:text-white transition text-sm text-center">Baca
@@ -459,152 +410,80 @@
         </div>
     </section>
 
-    {{-- ══════════════════════════════════════════════════════════════════════ --}}
-    {{-- KISAH SUKSES ALUMNI                                                  --}}
-    {{-- ══════════════════════════════════════════════════════════════════════ --}}
-    <section class="py-12 md:py-20 bg-gradient-to-b from-slate-50 to-white overflow-hidden relative">
-        <div class="container mx-auto px-6">
+   {{-- ══════════════════════════════════════════════════════════════════════ --}}
+{{-- KISAH SUKSES ALUMNI                                                  --}}
+{{-- ══════════════════════════════════════════════════════════════════════ --}}
+<section class="py-12 md:py-20 bg-gradient-to-b from-slate-50 to-white overflow-hidden relative">
+    <div class="container mx-auto px-6">
 
-            <div class="flex items-center justify-between mb-6 md:mb-12">
-                <div>
-                    <div class="flex items-center gap-2">
-                        <div class="w-1 h-6 bg-blue-600 rounded-full md:hidden"></div>
-                        <h2 class="text-xl md:text-3xl font-extrabold text-[#001f3f] md:pl-6">
-                            Kisah Sukses Alumni
-                        </h2>
-                    </div>
-                    <p class="text-slate-500 mt-2 pl-6 hidden md:block">
-                        Inspirasi karir dari para lulusan terbaik kami
-                    </p>
+        <div class="flex items-center justify-between mb-6 md:mb-12">
+            <div>
+                <div class="flex items-center gap-2">
+                    <div class="w-1 h-6 bg-blue-600 rounded-full md:hidden"></div>
+                    <h2 class="text-xl md:text-3xl font-extrabold text-[#001f3f] md:pl-6">
+                        Kisah Sukses Alumni
+                    </h2>
                 </div>
-                <a href="{{ route('public.alumni-stories') }}"
-                    class="text-blue-600 font-bold text-xs md:text-base hover:underline uppercase md:capitalize md:border md:border-blue-500 md:bg-white md:px-6 md:py-3 md:rounded-full md:shadow-sm md:hover:bg-blue-50 md:transition">
-                    <span class="md:hidden">Lihat Semua <i class="fas fa-arrow-right ml-1 text-[10px]"></i></span>
-                    <span class="hidden md:inline">Semua Kisah <i
-                            class="fas fa-arrow-right ml-1 md:ml-2 text-[10px] md:text-xs"></i></span>
-                </a>
+                <p class="text-slate-500 mt-2 pl-6 hidden md:block">
+                    Inspirasi karir dari para lulusan terbaik kami
+                </p>
             </div>
-
-            @if (isset($alumni_stories) && $alumni_stories->count() > 0)
-                {{-- Marquee Row 1 - kiri --}}
-                <div class="marquee-row overflow-hidden mb-4">
-                    <div id="track-1" class="flex gap-5" style="width:max-content">
-                        @foreach ($alumni_stories as $index => $story)
-                            @php
-                                $colorClass = $avatarColors[$index % count($avatarColors)];
-                                $gradientRaw = ['3b82f6, 1d4ed8', '6366f1, 4338ca', '8b5cf6, 6d28d9'];
-                                $gradientColor = $gradientRaw[$index % count($gradientRaw)];
-                                $avatarUrl = null;
-                                if ($story->student && $story->student->profile_picture) {
-                                    $avatarUrl = \Illuminate\Support\Facades\Storage::disk('public')->url(
-                                        $story->student->profile_picture,
-                                    );
-                                } elseif ($story->photo) {
-                                    $avatarUrl = \Illuminate\Support\Facades\Storage::disk('public')->url(
-                                        $story->photo,
-                                    );
-                                }
-                            @endphp
-                            <div class="marquee-card" data-story="{{ Str::limit($story->story, 300) }}"
-                                data-name="{{ $story->name }}" data-job="{{ $story->job_title }}"
-                                data-avatar="{{ $avatarUrl ?? '' }}" data-initials="{{ $story->initials }}"
-                                data-color="{{ $gradientColor }}"
-                                style="width:300px;flex-shrink:0;background:white;border-radius:20px;padding:20px 22px;box-shadow:0 2px 12px rgba(0,0,0,0.06);border:1px solid #e2e8f0;cursor:pointer;">
-                                <p
-                                    style="color:#475569;font-size:13px;line-height:1.6;margin-bottom:16px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;">
-                                    "{{ Str::limit($story->story, 120) }}"
-                                </p>
-                                <div style="display:flex;align-items:center;gap:10px;">
-                                    @if ($avatarUrl)
-                                        <img src="{{ $avatarUrl }}"
-                                            onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
-                                            style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid #e2e8f0;flex-shrink:0;"
-                                            alt="{{ $story->name }}">
-                                        <div
-                                            style="display:none;width:40px;height:40px;border-radius:50%;background:linear-gradient(to bottom right,#{{ $gradientColor }});align-items:center;justify-content:center;color:white;font-weight:700;font-size:13px;flex-shrink:0;">
-                                            {{ $story->initials }}
-                                        </div>
-                                    @else
-                                        <div
-                                            style="display:flex;width:40px;height:40px;border-radius:50%;background:linear-gradient(to bottom right,#{{ $gradientColor }});align-items:center;justify-content:center;color:white;font-weight:700;font-size:13px;flex-shrink:0;">
-                                            {{ $story->initials }}
-                                        </div>
-                                    @endif
-                                    <div>
-                                        <p style="font-weight:700;color:#1e293b;font-size:13px;margin:0;">
-                                            {{ $story->name }}</p>
-                                        <p style="color:#64748b;font-size:11px;margin:0;">{{ $story->job_title }}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-
-                {{-- Marquee Row 2 - kanan (urutan dibalik) --}}
-                <div class="marquee-row overflow-hidden">
-                    <div id="track-2" class="flex gap-5" style="width:max-content">
-                        @foreach ($alumni_stories->reverse() as $index => $story)
-                            @php
-                                $colorClass = $avatarColors[$index % count($avatarColors)];
-                                $gradientRaw = ['3b82f6, 1d4ed8', '6366f1, 4338ca', '8b5cf6, 6d28d9'];
-                                $gradientColor = $gradientRaw[$index % count($gradientRaw)];
-                                $avatarUrl = null;
-                                if ($story->student && $story->student->profile_picture) {
-                                    $avatarUrl = \Illuminate\Support\Facades\Storage::disk('public')->url(
-                                        $story->student->profile_picture,
-                                    );
-                                } elseif ($story->photo) {
-                                    $avatarUrl = \Illuminate\Support\Facades\Storage::disk('public')->url(
-                                        $story->photo,
-                                    );
-                                }
-                            @endphp
-                            <div class="marquee-card" data-story="{{ Str::limit($story->story, 300) }}"
-                                data-name="{{ $story->name }}" data-job="{{ $story->job_title }}"
-                                data-avatar="{{ $avatarUrl ?? '' }}" data-initials="{{ $story->initials }}"
-                                data-color="{{ $gradientColor }}"
-                                style="width:300px;flex-shrink:0;background:white;border-radius:20px;padding:20px 22px;box-shadow:0 2px 12px rgba(0,0,0,0.06);border:1px solid #e2e8f0;cursor:pointer;">
-                                <p
-                                    style="color:#475569;font-size:13px;line-height:1.6;margin-bottom:16px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;">
-                                    "{{ Str::limit($story->story, 120) }}"
-                                </p>
-                                <div style="display:flex;align-items:center;gap:10px;">
-                                    @if ($avatarUrl)
-                                        <img src="{{ $avatarUrl }}"
-                                            onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
-                                            style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid #e2e8f0;flex-shrink:0;"
-                                            alt="{{ $story->name }}">
-                                        <div
-                                            style="display:none;width:40px;height:40px;border-radius:50%;background:linear-gradient(to bottom right,#{{ $gradientColor }});align-items:center;justify-content:center;color:white;font-weight:700;font-size:13px;flex-shrink:0;">
-                                            {{ $story->initials }}
-                                        </div>
-                                    @else
-                                        <div
-                                            style="display:flex;width:40px;height:40px;border-radius:50%;background:linear-gradient(to bottom right,#{{ $gradientColor }});align-items:center;justify-content:center;color:white;font-weight:700;font-size:13px;flex-shrink:0;">
-                                            {{ $story->initials }}
-                                        </div>
-                                    @endif
-                                    <div>
-                                        <p style="font-weight:700;color:#1e293b;font-size:13px;margin:0;">
-                                            {{ $story->name }}</p>
-                                        <p style="color:#64748b;font-size:11px;margin:0;">{{ $story->job_title }}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-            @else
-                <div class="w-full py-12 md:py-16 text-center">
-                    <p class="text-slate-600 text-sm md:text-lg">Belum ada kisah alumni yang dipublikasikan.</p>
-                </div>
-            @endif
-
+            <a href="{{ route('public.alumni-stories') }}" class="text-blue-600 font-bold text-xs md:text-base hover:underline uppercase md:capitalize md:border md:border-blue-500 md:bg-white md:px-6 md:py-3 md:rounded-full md:shadow-sm md:hover:bg-blue-50 md:transition">
+                <span class="md:hidden">Lihat Semua <i class="fas fa-arrow-right ml-1 text-[10px]"></i></span>
+                <span class="hidden md:inline">Semua Kisah <i class="fas fa-arrow-right ml-1 md:ml-2 text-[10px] md:text-xs"></i></span>
+            </a>
         </div>
-    </section>
 
+        @if (isset($alumni_stories) && $alumni_stories->count() > 0)
+            <div class="relative group">
+                <div id="alumni-carousel" class="flex overflow-x-auto scroll-smooth snap-x snap-mandatory gap-4 pb-6 md:pb-0 md:grid md:gap-6 md:grid-cols-2 xl:grid-cols-3 no-scrollbar -mx-6 px-6 md:mx-0 md:px-0">
+                    @foreach ($alumni_stories as $index => $story)
+                        @php
+                            $colorClass = $avatarColors[$index % count($avatarColors)];
+                            $avatarUrl = null;
 
+                            if ($story->student && $story->student->profile_picture) {
+                                $avatarUrl = \Illuminate\Support\Facades\Storage::disk('public')->url($story->student->profile_picture);
+                            } elseif ($story->photo) {
+                                $avatarUrl = Storage::disk('public')->url($story->photo);
+                            }
+                        @endphp
+
+                        <article class="w-[85vw] md:w-auto shrink-0 snap-center bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-200 transition hover:-translate-y-1 hover:shadow-md flex flex-col justify-between">
+                            <p class="text-slate-600 text-sm italic leading-relaxed mb-6 line-clamp-5">
+                                "{{ Str::limit($story->story, 180) }}"
+                            </p>
+
+                            <div class="flex items-center gap-4">
+                                @if ($avatarUrl)
+                                    <img src="{{ $avatarUrl }}"
+                                        class="w-12 h-12 md:w-14 md:h-14 rounded-full object-cover border border-slate-200 shadow-sm"
+                                        alt="{{ $story->name }}" />
+                                @else
+                                    <div class="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br {{ $colorClass }} flex items-center justify-center text-white font-bold text-base md:text-lg">
+                                        {{ $story->initials }}
+                                    </div>
+                                @endif
+
+                                <div>
+                                    <p class="font-bold text-slate-900 text-sm md:text-base">{{ $story->name }}</p>
+                                    <p class="text-[11px] md:text-xs text-slate-500">{{ $story->job_title }}</p>
+                                </div>
+                            </div>
+                        </article>
+                    @endforeach
+                </div>
+            </div>
+        @else
+            <div class="w-full py-12 md:py-16 text-center">
+                <p class="text-slate-600 text-sm md:text-lg">Belum ada kisah alumni yang dipublikasikan.</p>
+            </div>
+        @endif
+
+    </div>
+</section>
+
+                
 
     {{-- ───────────────────────────────────────── --}}
     {{-- FORM KISAH SUKSES (hanya tampil saat sudah login) --}}
@@ -627,8 +506,7 @@
 
                 {{-- Error Alert --}}
                 @if (session('error') || $errors->any())
-                    <div
-                        class="flex items-start gap-3 bg-red-50 border border-red-200 text-red-800 rounded-xl md:rounded-2xl p-4 mb-6 md:mb-8">
+                    <div class="flex items-start gap-3 bg-red-50 border border-red-200 text-red-800 rounded-xl md:rounded-2xl p-4 mb-6 md:mb-8">
                         <i class="fas fa-exclamation-circle text-red-500 mt-0.5 flex-shrink-0"></i>
                         <ul class="text-sm font-medium space-y-1">
                             @if (session('error'))
@@ -778,10 +656,7 @@
             const container = document.getElementById(containerId);
             if (container) {
                 const scrollAmount = container.clientWidth > 768 ? container.clientWidth / 2 : container.clientWidth * 0.85;
-                container.scrollBy({
-                    left: scrollAmount * direction,
-                    behavior: 'smooth'
-                });
+                container.scrollBy({ left: scrollAmount * direction, behavior: 'smooth' });
             }
         }
 
@@ -800,112 +675,6 @@
                 textarea.addEventListener('input', updateCharCount);
             }
         });
-
-        // --- MARQUEE ALUMNI ---
-        (function() {
-            const SPEED = 0.45;
-            const GAP = 20;
-
-            const popup = document.createElement('div');
-            popup.className = 'marquee-card-popup';
-            popup.style.cssText =
-                'position:fixed;z-index:9999;background:white;border-radius:16px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,0.15);border:1px solid #e2e8f0;width:360px;max-width:90vw;opacity:0;pointer-events:none;transition:opacity 0.2s;';
-            popup.innerHTML = `
-        <p class="popup-story" style="color:#475569;font-size:14px;line-height:1.65;margin-bottom:14px;"></p>
-        <div style="height:1px;background:linear-gradient(90deg,transparent,#e2e8f0,transparent);margin-bottom:12px;"></div>
-        <div style="display:flex;align-items:center;gap:10px;">
-            <div class="popup-avatar-img" style="display:none;">
-                <img style="width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.1);" src="" alt="">
-            </div>
-            <div class="popup-avatar-initials" style="display:none;width:44px;height:44px;border-radius:50%;align-items:center;justify-content:center;color:white;font-weight:700;font-size:14px;flex-shrink:0;"></div>
-            <div>
-                <p class="popup-name" style="font-weight:700;color:#1e293b;font-size:14px;margin:0;"></p>
-                <p class="popup-job" style="color:#64748b;font-size:12px;margin:0;"></p>
-            </div>
-        </div>
-    `;
-            document.body.appendChild(popup);
-
-            function showPopup(card) {
-                popup.querySelector('.popup-story').textContent = card.dataset.story || '';
-                popup.querySelector('.popup-name').textContent = card.dataset.name || '';
-                popup.querySelector('.popup-job').textContent = card.dataset.job || '';
-                const imgWrap = popup.querySelector('.popup-avatar-img');
-                const initWrap = popup.querySelector('.popup-avatar-initials');
-                if (card.dataset.avatar) {
-                    imgWrap.querySelector('img').src = card.dataset.avatar;
-                    imgWrap.style.display = 'block';
-                    initWrap.style.display = 'none';
-                } else {
-                    initWrap.textContent = card.dataset.initials || '';
-                    initWrap.style.cssText =
-                        `display:flex;width:44px;height:44px;border-radius:50%;align-items:center;justify-content:center;color:white;font-weight:700;font-size:14px;flex-shrink:0;background:linear-gradient(to bottom right,#${card.dataset.color || '3b82f6,1d4ed8'});`;
-                    imgWrap.style.display = 'none';
-                }
-                const rect = card.getBoundingClientRect();
-                const pw = 360,
-                    ph = popup.offsetHeight || 150,
-                    margin = 10;
-                let x = rect.left,
-                    y = rect.top - ph - margin;
-                if (y < 10) y = rect.bottom + margin;
-                if (x + pw > window.innerWidth - 10) x = window.innerWidth - pw - 10;
-                if (x < 10) x = 10;
-                popup.style.left = x + 'px';
-                popup.style.top = y + 'px';
-                popup.style.opacity = '1';
-                popup.style.pointerEvents = 'none';
-            }
-
-            function hidePopup() {
-                popup.style.opacity = '0';
-            }
-
-            function setupMarquee(trackId, direction) {
-                const track = document.getElementById(trackId);
-                if (!track) return;
-                const originalCards = Array.from(track.querySelectorAll('.marquee-card'));
-                if (!originalCards.length) return;
-                const cardW = 300 + GAP;
-                const origW = originalCards.length * cardW;
-                const clones = Math.max(5, Math.ceil((window.innerWidth * 5) / origW));
-                for (let i = 0; i < clones; i++) {
-                    originalCards.forEach(c => track.appendChild(c.cloneNode(true)));
-                }
-                const oneSetW = originalCards.length * cardW;
-                let pos = direction === 'left' ? 0 : -oneSetW;
-                let paused = false;
-                track.addEventListener('mouseover', e => {
-                    const card = e.target.closest('.marquee-card');
-                    if (card) {
-                        paused = true;
-                        showPopup(card);
-                    }
-                });
-                track.addEventListener('mouseout', e => {
-                    const card = e.target.closest('.marquee-card');
-                    if (card && (!e.relatedTarget || !card.contains(e.relatedTarget))) {
-                        paused = false;
-                        hidePopup();
-                    }
-                });
-                (function tick() {
-                    if (!paused) {
-                        if (direction === 'left') {
-                            pos -= SPEED;
-                            if (Math.abs(pos) >= oneSetW) pos = 0;
-                        } else {
-                            pos += SPEED;
-                            if (pos >= 0) pos = -oneSetW;
-                        }
-                        track.style.transform = `translateX(${pos}px)`;
-                    }
-                    requestAnimationFrame(tick);
-                })();
-            }
-
-            setupMarquee('track-1', 'left');
-            setupMarquee('track-2', 'right');
-        })();
     </script>
 @endsection
+
