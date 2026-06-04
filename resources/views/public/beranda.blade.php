@@ -774,6 +774,77 @@
 
 @section('extra_js')
     <script>
+        // --- MODAL KISAH ALUMNI ---
+        (function() {
+            // Buat elemen modal secara dinamis
+            const modal = document.createElement('div');
+            modal.id = 'alumni-modal';
+            modal.style.cssText =
+                'display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:16px;';
+            modal.innerHTML = `
+                <div style="background:white;border-radius:24px;padding:32px;max-width:520px;width:100%;max-height:85vh;overflow-y:auto;position:relative;box-shadow:0 25px 60px rgba(0,0,0,0.2);">
+                    <button id="alumni-modal-close" style="position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;background:#f1f5f9;border:none;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;color:#64748b;">✕</button>
+                    <div id="modal-avatar-wrap" style="margin-bottom:20px;"></div>
+                    <p id="modal-story" style="color:#475569;font-size:15px;line-height:1.8;margin-bottom:24px;"></p>
+                    <div style="height:1px;background:#e2e8f0;margin-bottom:20px;"></div>
+                    <div style="display:flex;align-items:center;gap:12px;">
+                        <div id="modal-avatar" style="flex-shrink:0;"></div>
+                        <div>
+                            <p id="modal-name" style="font-weight:700;color:#1e293b;font-size:15px;margin:0;"></p>
+                            <p id="modal-job" style="color:#64748b;font-size:13px;margin:0;"></p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            // Fungsi Tutup modal
+            document.getElementById('alumni-modal-close').addEventListener('click', closeModal);
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) closeModal();
+            });
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') closeModal();
+            });
+
+            function closeModal() {
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+
+            function openModal(card) {
+                const name = card.dataset.name || '';
+                const job = card.dataset.job || '';
+                const story = card.dataset.story || '';
+                const avatar = card.dataset.avatar || '';
+                const initials = card.dataset.initials || '';
+                const color = card.dataset.color || '3b82f6,1d4ed8';
+
+                document.getElementById('modal-story').textContent = story;
+                document.getElementById('modal-name').textContent = name;
+                document.getElementById('modal-job').textContent = job;
+
+                const avatarEl = document.getElementById('modal-avatar');
+                if (avatar) {
+                    avatarEl.innerHTML =
+                        `<img src="${avatar}" style="width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid #e2e8f0;" onerror="this.parentElement.innerHTML='<div style=\\'width:52px;height:52px;border-radius:50%;background:linear-gradient(to bottom right,#${color});display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:16px;\\'>${initials}</div>'"  alt="${name}">`;
+                } else {
+                    avatarEl.innerHTML =
+                        `<div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(to bottom right,#${color});display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:16px;">${initials}</div>`;
+                }
+
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden'; // Kunci scroll background saat modal terbuka
+            }
+
+            // Event delegation — tangkap klik di semua track termasuk element hasil clone marquee
+            document.addEventListener('click', function(e) {
+                const card = e.target.closest('.marquee-card');
+                if (card) openModal(card);
+            });
+        })();
+
+        // --- SCRIPT BAWAAN SEBELUMNYA (TIDAK BERUBAH) ---
         function scrollContainer(containerId, direction) {
             const container = document.getElementById(containerId);
             if (container) {
@@ -811,19 +882,19 @@
             popup.style.cssText =
                 'position:fixed;z-index:9999;background:white;border-radius:16px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,0.15);border:1px solid #e2e8f0;width:360px;max-width:90vw;opacity:0;pointer-events:none;transition:opacity 0.2s;';
             popup.innerHTML = `
-        <p class="popup-story" style="color:#475569;font-size:14px;line-height:1.65;margin-bottom:14px;"></p>
-        <div style="height:1px;background:linear-gradient(90deg,transparent,#e2e8f0,transparent);margin-bottom:12px;"></div>
-        <div style="display:flex;align-items:center;gap:10px;">
-            <div class="popup-avatar-img" style="display:none;">
-                <img style="width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.1);" src="" alt="">
-            </div>
-            <div class="popup-avatar-initials" style="display:none;width:44px;height:44px;border-radius:50%;align-items:center;justify-content:center;color:white;font-weight:700;font-size:14px;flex-shrink:0;"></div>
-            <div>
-                <p class="popup-name" style="font-weight:700;color:#1e293b;font-size:14px;margin:0;"></p>
-                <p class="popup-job" style="color:#64748b;font-size:12px;margin:0;"></p>
-            </div>
-        </div>
-    `;
+                <p class="popup-story" style="color:#475569;font-size:14px;line-height:1.65;margin-bottom:14px;"></p>
+                <div style="height:1px;background:linear-gradient(90deg,transparent,#e2e8f0,transparent);margin-bottom:12px;"></div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <div class="popup-avatar-img" style="display:none;">
+                        <img style="width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.1);" src="" alt="">
+                    </div>
+                    <div class="popup-avatar-initials" style="display:none;width:44px;height:44px;border-radius:50%;align-items:center;justify-content:center;color:white;font-weight:700;font-size:14px;flex-shrink:0;"></div>
+                    <div>
+                        <p class="popup-name" style="font-weight:700;color:#1e293b;font-size:14px;margin:0;"></p>
+                        <p class="popup-job" style="color:#64748b;font-size:12px;margin:0;"></p>
+                    </div>
+                </div>
+            `;
             document.body.appendChild(popup);
 
             function showPopup(card) {
