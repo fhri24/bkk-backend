@@ -12,4 +12,12 @@ class ActivityLogController extends Controller
         $logs = ActivityLog::with('user')->latest()->paginate(15);
         return view('admin.activity-logs.index', compact('logs'));
     }
+
+    public function destroyAll()
+    {
+        // Remove all activity log records
+        ActivityLog::truncate();
+
+        return redirect()->route('admin.activity-logs.index')->with('success', 'Semua log aktivitas telah dihapus.');
+    }
 }

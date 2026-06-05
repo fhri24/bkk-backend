@@ -354,6 +354,7 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
     });
 
     Route::get('/activity-logs', [AdminActivityLogController::class, 'index'])->name('activity-logs.index');
+    Route::delete('/activity-logs', [AdminActivityLogController::class, 'destroyAll'])->name('activity-logs.clear');
 
     /**
      * TRACER STUDY (ADMIN)
