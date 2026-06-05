@@ -42,9 +42,9 @@
     {{-- Breadcrumb --}}
     <div class="bg-[#f8fafc] border-b border-slate-200">
         <div class="container mx-auto px-6 py-4 text-sm text-slate-500">
-            <a href="{{ route('home') }}" class="text-blue-600 hover:underline">Beranda</a> 
+            <a href="{{ route('home') }}" class="text-blue-600 hover:underline">Beranda</a>
             <span class="mx-2">/</span>
-            <a href="{{ route('public.acara') }}" class="text-blue-600 hover:underline">Acara</a> 
+            <a href="{{ route('public.acara') }}" class="text-blue-600 hover:underline">Acara</a>
             <span class="mx-2">/</span>
             <span class="text-slate-400">{{ $event->title }}</span>
         </div>
@@ -76,8 +76,8 @@
                 </div>
                 <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
                     <p class="text-blue-100 text-xs uppercase tracking-wider mb-1"><i class="fas fa-tag mr-2"></i> Biaya</p>
-                    <p class="font-bold {{ $event->is_free ? 'text-green-300' : 'text-white' }}">
-                        {{ $event->is_free ? 'GRATIS' : ($event->price ? 'Rp ' . number_format($event->price, 0, ',', '.') : 'TBD') }}
+                        <p class="font-bold text-white">
+                         {{ $event->fee ?? 'TBD' }}
                     </p>
                 </div>
             </div>
@@ -262,7 +262,7 @@
                                    class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none transition" required />
                         </div>
                     </div>
-                    
+
                     <div class="pt-4">
                         <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-4 rounded-xl font-bold transition flex items-center justify-center shadow-lg shadow-blue-100">
                             Kirim Pendaftaran <i class="fas fa-paper-plane ml-2"></i>
@@ -284,7 +284,7 @@
             document.getElementById('registrationModal').classList.remove('show');
             document.body.style.overflow = 'auto'; // Enable scrolling
         }
-        
+
         // Close on background click
         window.onclick = function(e) {
             const modal = document.getElementById('registrationModal');

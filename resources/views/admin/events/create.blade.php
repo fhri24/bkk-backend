@@ -73,7 +73,13 @@
                         <p class="text-xs text-slate-500 mt-1">Isi '0' jika tidak ada batasan kapasitas.</p>
                     </div>
 
-                    <div></div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Biaya</label>
+                        <input type="text" name="fee" value="{{ old('fee') }}"
+                            placeholder="Contoh: Gratis / Rp 50.000 / TBD"
+                            class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none">
+                        <p class="text-xs text-slate-500 mt-1">Kosongkan jika belum ditentukan.</p>
+                    </div>
 
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">
