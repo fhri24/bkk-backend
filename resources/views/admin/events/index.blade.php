@@ -69,7 +69,8 @@
                                         '{{ $event->end_date->format('d M Y, H:i') }}',
                                         {{ $event->capacity }},
                                         {{ $event->is_published ? 'true' : 'false' }},
-                                        '{{ addslashes($event->description) }}'
+                                        '{{ addslashes($event->description) }}',
+                                        '{{ addslashes($event->fee ?? '') }}'
                                     )"
                                     class="bg-blue-100 text-blue-700 p-2 rounded hover:bg-blue-200 transition" title="Lihat Detail">
                                     <i class="fas fa-eye"></i>
@@ -140,6 +141,10 @@
                 <span id="m-capacity" class="text-sm font-bold text-slate-700"></span>
             </div>
             <div class="flex items-center justify-between px-5 py-3">
+                <span class="text-sm text-slate-500 flex items-center gap-2"><i class="fas fa-money-bill w-4 text-slate-400"></i> Biaya</span>
+                <span id="m-fee" class="text-sm font-bold text-slate-700"></span>
+            </div>
+            <div class="flex items-center justify-between px-5 py-3">
                 <span class="text-sm text-slate-500 flex items-center gap-2"><i class="fas fa-globe w-4 text-slate-400"></i> Status</span>
                 <span id="m-status" class="text-sm font-bold"></span>
             </div>
@@ -155,16 +160,17 @@
 
 @section('extra_js')
 <script>
-function showDetail(title, organizer, category, location, start, end, capacity, isPublished, description) {
-    document.getElementById('m-title').textContent        = title;
-    document.getElementById('m-organizer').textContent    = organizer;
+function showDetail(title, organizer, category, location, start, end, capacity, isPublished, description, fee) {
+    document.getElementById('m-title').textContent         = title;
+    document.getElementById('m-organizer').textContent     = organizer;
     document.getElementById('m-organizer-row').textContent = organizer;
-    document.getElementById('m-category').textContent     = category || 'Umum';
-    document.getElementById('m-location').textContent     = location || '-';
-    document.getElementById('m-start').textContent        = start + ' WIB';
-    document.getElementById('m-end').textContent          = end + ' WIB';
-    document.getElementById('m-capacity').textContent     = capacity + ' Orang';
-    document.getElementById('m-description').textContent  = description || 'Tidak ada deskripsi.';
+    document.getElementById('m-category').textContent      = category || 'Umum';
+    document.getElementById('m-location').textContent      = location || '-';
+    document.getElementById('m-start').textContent         = start + ' WIB';
+    document.getElementById('m-end').textContent           = end + ' WIB';
+    document.getElementById('m-capacity').textContent      = capacity + ' Orang';
+    document.getElementById('m-fee').textContent           = fee || 'TBD';
+    document.getElementById('m-description').textContent   = description || 'Tidak ada deskripsi.';
 
     const statusEl = document.getElementById('m-status');
     if (isPublished) {

@@ -319,6 +319,7 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
     Route::prefix('users')->name('users.')->group(function () {
         Route::get('/', [AdminUserController::class, 'index'])->name('index');
         Route::put('/{id}/status', [AdminUserController::class, 'updateStatus'])->name('update-status');
+        Route::post('/bulk-action', [AdminUserController::class, 'bulkAction'])->name('bulk-action');
     });
 
     // Perubahan ada di sini: ditambahkan route update menu untuk roles matrix toggle
