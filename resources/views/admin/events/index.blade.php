@@ -59,6 +59,22 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-center flex justify-center gap-2">
+                                <button
+                                    onclick="showDetail(
+                                        '{{ addslashes($event->title) }}',
+                                        '{{ addslashes($event->organizer) }}',
+                                        '{{ addslashes($event->category) }}',
+                                        '{{ addslashes($event->location) }}',
+                                        '{{ $event->start_date->format('d M Y, H:i') }}',
+                                        '{{ $event->end_date->format('d M Y, H:i') }}',
+                                        {{ $event->capacity }},
+                                        {{ $event->is_published ? 'true' : 'false' }},
+                                        '{{ addslashes($event->description) }}',
+                                        '{{ addslashes($event->fee ?? '') }}'
+                                    )"
+                                    class="bg-blue-100 text-blue-700 p-2 rounded hover:bg-blue-200 transition" title="Lihat Detail">
+                                    <i class="fas fa-eye"></i>
+                                </button>
                                 <a href="{{ route('admin.events.edit', $event->id) }}" class="bg-amber-100 text-amber-700 p-2 rounded hover:bg-amber-200 transition" title="Edit"><i class="fas fa-edit"></i></a>
                                 <form action="{{ route('admin.events.destroy', $event->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin menghapus acara ini?')">
                                     @csrf @method('DELETE')
@@ -77,4 +93,107 @@
         </div>
     </div>
 </div>
+
+{{-- Modal Detail Acara --}}
+<div id="modalDetail" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 px-4">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg">
+
+        {{-- Header --}}
+        <div class="flex justify-between items-start p-5 border-b border-slate-100">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-calendar-alt text-blue-400 text-lg"></i>
+                </div>
+                <div>
+                    <h2 id="m-title" class="text-base font-bold text-slate-900"></h2>
+                    <p id="m-organizer" class="text-xs text-slate-500 mt-0.5"></p>
+                </div>
+            </div>
+            <button onclick="closeDetail()" class="text-slate-400 hover:text-slate-600 transition">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        {{-- Rows --}}
+        <div class="divide-y divide-slate-100">
+            <div class="flex items-center justify-between px-5 py-3">
+                <span class="text-sm text-slate-500 flex items-center gap-2"><i class="fas fa-tag w-4 text-slate-400"></i> Kategori</span>
+                <span id="m-category" class="text-sm font-bold text-slate-700"></span>
+            </div>
+            <div class="flex items-center justify-between px-5 py-3">
+                <span class="text-sm text-slate-500 flex items-center gap-2"><i class="fas fa-building w-4 text-slate-400"></i> Penyelenggara</span>
+                <span id="m-organizer-row" class="text-sm font-bold text-slate-700"></span>
+            </div>
+            <div class="flex items-center justify-between px-5 py-3">
+                <span class="text-sm text-slate-500 flex items-center gap-2"><i class="fas fa-map-marker-alt w-4 text-slate-400"></i> Lokasi</span>
+                <span id="m-location" class="text-sm font-bold text-slate-700"></span>
+            </div>
+            <div class="flex items-center justify-between px-5 py-3">
+                <span class="text-sm text-slate-500 flex items-center gap-2"><i class="fas fa-play-circle w-4 text-slate-400"></i> Mulai</span>
+                <span id="m-start" class="text-sm font-bold text-slate-700"></span>
+            </div>
+            <div class="flex items-center justify-between px-5 py-3">
+                <span class="text-sm text-slate-500 flex items-center gap-2"><i class="fas fa-stop-circle w-4 text-slate-400"></i> Selesai</span>
+                <span id="m-end" class="text-sm font-bold text-slate-700"></span>
+            </div>
+            <div class="flex items-center justify-between px-5 py-3">
+                <span class="text-sm text-slate-500 flex items-center gap-2"><i class="fas fa-users w-4 text-slate-400"></i> Kapasitas</span>
+                <span id="m-capacity" class="text-sm font-bold text-slate-700"></span>
+            </div>
+            <div class="flex items-center justify-between px-5 py-3">
+                <span class="text-sm text-slate-500 flex items-center gap-2"><i class="fas fa-money-bill w-4 text-slate-400"></i> Biaya</span>
+                <span id="m-fee" class="text-sm font-bold text-slate-700"></span>
+            </div>
+            <div class="flex items-center justify-between px-5 py-3">
+                <span class="text-sm text-slate-500 flex items-center gap-2"><i class="fas fa-globe w-4 text-slate-400"></i> Status</span>
+                <span id="m-status" class="text-sm font-bold"></span>
+            </div>
+            <div class="px-5 py-3">
+                <p class="text-sm text-slate-500 flex items-center gap-2 mb-2"><i class="fas fa-align-left w-4 text-slate-400"></i> Deskripsi</p>
+                <p id="m-description" class="text-sm text-slate-700 leading-relaxed whitespace-pre-line"></p>
+            </div>
+        </div>
+
+    </div>
+</div>
+@endsection
+
+@section('extra_js')
+<script>
+function showDetail(title, organizer, category, location, start, end, capacity, isPublished, description, fee) {
+    document.getElementById('m-title').textContent         = title;
+    document.getElementById('m-organizer').textContent     = organizer;
+    document.getElementById('m-organizer-row').textContent = organizer;
+    document.getElementById('m-category').textContent      = category || 'Umum';
+    document.getElementById('m-location').textContent      = location || '-';
+    document.getElementById('m-start').textContent         = start + ' WIB';
+    document.getElementById('m-end').textContent           = end + ' WIB';
+    document.getElementById('m-capacity').textContent      = capacity + ' Orang';
+    document.getElementById('m-fee').textContent           = fee || 'TBD';
+    document.getElementById('m-description').textContent   = description || 'Tidak ada deskripsi.';
+
+    const statusEl = document.getElementById('m-status');
+    if (isPublished) {
+        statusEl.textContent = '🌐 Publik';
+        statusEl.className   = 'text-sm font-bold px-2 py-1 rounded-full bg-green-100 text-green-700';
+    } else {
+        statusEl.textContent = '🔒 Draft';
+        statusEl.className   = 'text-sm font-bold px-2 py-1 rounded-full bg-slate-100 text-slate-600';
+    }
+
+    const modal = document.getElementById('modalDetail');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+function closeDetail() {
+    const modal = document.getElementById('modalDetail');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+
+document.getElementById('modalDetail').addEventListener('click', function(e) {
+    if (e.target === this) closeDetail();
+});
+</script>
 @endsection

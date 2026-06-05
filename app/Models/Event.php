@@ -12,9 +12,9 @@ class Event extends Model
     protected $table = 'events';
 
     protected $fillable = [
-        'title', 'slug', 'description', 'location',
-        'start_date', 'end_date', 'capacity', 'organizer',
-        'category', 'image', 'thumbnail', 'is_published',
+    'title', 'slug', 'description', 'location',
+    'start_date', 'end_date', 'capacity', 'organizer',
+    'category', 'image', 'thumbnail', 'is_published', 'fee',
     ];
 
     protected $casts = [
@@ -22,6 +22,7 @@ class Event extends Model
         'end_date'     => 'datetime',
         'is_published' => 'integer',
         'capacity'     => 'integer',
+        'fee'          => 'decimal:2',
     ];
 
     public function scopePublished($query)
