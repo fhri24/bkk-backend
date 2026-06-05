@@ -151,12 +151,20 @@ class StudentController extends Controller
             }
 
             if ($profil instanceof \App\Models\Student) {
-                $student = $profil;
-                $applications = JobApplication::where('student_id', $student->student_id)
-                    ->with(['job.company'])
-                    ->latest()
-                    ->get();
-            } else {
+    $student = $profil;
+    if ($roleName === 'alumni') {
+        $applications = JobApplication::where('email', $user->email)
+            ->with(['job.company'])
+            ->latest()
+            ->get();
+    } else {
+        $applications = JobApplication::where('student_id', $student->student_id)
+            ->with(['job.company'])
+            ->latest()
+            ->get();
+    }
+}
+             else {
                 $student = (object) [
                     'student_id'      => $profil->getKey(),
                     'user_id'         => $user->id,

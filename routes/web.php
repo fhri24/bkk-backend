@@ -369,7 +369,7 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
 
         // Industri — Mengarah ke method industri() baru di AdminTracerStudyController
         Route::get('/industri', [AdminTracerStudyController::class, 'industri'])->name('industri');
-        Route::get('/industri/{industryTracer}', [AdminTracerStudyController::class, 'industryShow'])->name('industry.show');
+        Route::get('/industri/{industryTracer}', [AdminTracerStudyController::class, 'industryShow'])->name('industri.show');
         Route::delete('/industri/{industryTracer}', [AdminTracerStudyController::class, 'industryDestroy'])->name('industri.destroy');
 
         // TracerStudy show & destroy — wildcard, harus paling bawah

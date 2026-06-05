@@ -22,17 +22,25 @@ class ComposerAutoloaderInitad14811208359e90a74e249bba62cef8
             return self::$loader;
         }
 
+<<<<<<< Updated upstream
+        spl_autoload_register(array('ComposerAutoloaderInit5c9e4ecb4127d4e850ce45c537ebc133', 'loadClassLoader'), true, true);
+=======
         require __DIR__ . '/platform_check.php';
 
         spl_autoload_register(array('ComposerAutoloaderInitad14811208359e90a74e249bba62cef8', 'loadClassLoader'), true, true);
+>>>>>>> Stashed changes
+        spl_autoload_register(array('ComposerAutoloaderInitad14811208359e90a74e249bba62cef8', 'loadClassLoader'), true, true);
         self::$loader = $loader = new \Composer\Autoload\ClassLoader(\dirname(__DIR__));
+        spl_autoload_unregister(array('ComposerAutoloaderInitad14811208359e90a74e249bba62cef8', 'loadClassLoader'));
         spl_autoload_unregister(array('ComposerAutoloaderInitad14811208359e90a74e249bba62cef8', 'loadClassLoader'));
 
         require __DIR__ . '/autoload_static.php';
         call_user_func(\Composer\Autoload\ComposerStaticInitad14811208359e90a74e249bba62cef8::getInitializer($loader));
+        call_user_func(\Composer\Autoload\ComposerStaticInitad14811208359e90a74e249bba62cef8::getInitializer($loader));
 
         $loader->register(true);
 
+        $filesToLoad = \Composer\Autoload\ComposerStaticInitad14811208359e90a74e249bba62cef8::$files;
         $filesToLoad = \Composer\Autoload\ComposerStaticInitad14811208359e90a74e249bba62cef8::$files;
         $requireFile = \Closure::bind(static function ($fileIdentifier, $file) {
             if (empty($GLOBALS['__composer_autoload_files'][$fileIdentifier])) {
