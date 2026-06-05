@@ -19,7 +19,7 @@
                     <div
                         class="w-20 h-20 rounded-2xl bg-white shadow-lg border-4 border-white mx-auto flex items-center justify-center overflow-hidden">
                         @if (!empty($profile->logo ?? $profile->logo_path))
-                            <img src="{{ Storage::disk('public')->url(($profile->logo ?? $profile->logo_path)) }}"
+                            <img src="{{ Storage::url(($profile->logo ?? $profile->logo_path)) }}"
                                 class="w-full h-full object-contain p-1" alt="Logo" id="preview-logo">
                         @else
                             <i class="fas fa-graduation-cap text-[#001f3f] text-2xl" id="logo-placeholder"></i>
@@ -118,7 +118,7 @@
                                 <div class="w-20 h-20 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden shrink-0"
                                     id="logo-drop-zone">
                                     @if (!empty($profile->logo ?? $profile->logo_path))
-                                        <img src="{{ Storage::disk('public')->url(($profile->logo ?? $profile->logo_path)) }}"
+                                        <img src="{{ Storage::url(($profile->logo ?? $profile->logo_path)) }}"
                                             class="w-full h-full object-contain p-2" id="logo-thumb">
                                     @else
                                         <div id="logo-thumb-placeholder" class="text-center">
@@ -138,6 +138,22 @@
                                         200×200px</p>
                                 </div>
                             </div>
+                        </div>
+
+                        {{-- Nama Sekolah --}}
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Nama Sekolah</label>
+                            <input type="text" name="school_name" id="input-name" value="{{ old('school_name', $profile->school_name ?? '') }}"
+                                placeholder="SMKN 1 Garut"
+                                class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition">
+                        </div>
+
+                        {{-- Tagline --}}
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Tagline</label>
+                            <input type="text" name="tagline" id="input-tagline" value="{{ old('tagline', $profile->tagline ?? '') }}"
+                                placeholder="Menghubungkan alumni..."
+                                class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition">
                         </div>
 
                         {{-- Alamat --}}
@@ -340,6 +356,23 @@
                         if (logoIconPlaceholder) logoIconPlaceholder.classList.add('hidden');
                     };
                     reader.readAsDataURL(file);
+                });
+            }
+
+            // ===== PREVIEW NAMA & TAGLINE REALTIME =====
+            const inputName = document.getElementById('input-name');
+            const previewName = document.getElementById('preview-name');
+            if (inputName && previewName) {
+                inputName.addEventListener('input', function() {
+                    previewName.textContent = this.value || 'Nama Sekolah';
+                });
+            }
+
+            const inputTagline = document.getElementById('input-tagline');
+            const previewTagline = document.getElementById('preview-tagline');
+            if (inputTagline && previewTagline) {
+                inputTagline.addEventListener('input', function() {
+                    previewTagline.textContent = this.value || 'Tagline sekolah';
                 });
             }
 
