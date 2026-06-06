@@ -505,8 +505,8 @@
                                     );
                                 }
                             @endphp
-                            <div class="marquee-card" data-story="{{ Str::limit($story->story, 300) }}"
-                                data-name="{{ $story->name }}" data-job="{{ $story->job_title }}"
+                            <div class="marquee-card" data-story="{{ Str::limit($story->story, 120) }}"
+                                data-fullstory="{{ $story->story }}" data-job="{{ $story->job_title }}"
                                 data-avatar="{{ $avatarUrl ?? '' }}" data-initials="{{ $story->initials }}"
                                 data-color="{{ $gradientColor }}"
                                 style="width:300px;flex-shrink:0;background:white;border-radius:20px;padding:20px 22px;box-shadow:0 2px 12px rgba(0,0,0,0.06);border:1px solid #e2e8f0;cursor:pointer;">
@@ -560,10 +560,10 @@
                                     );
                                 }
                             @endphp
-                            <div class="marquee-card" data-story="{{ Str::limit($story->story, 300) }}"
-                                data-name="{{ $story->name }}" data-job="{{ $story->job_title }}"
-                                data-avatar="{{ $avatarUrl ?? '' }}" data-initials="{{ $story->initials }}"
-                                data-color="{{ $gradientColor }}"
+                            <div class="marquee-card" data-story="{{ Str::limit($story->story, 120) }}"
+                                data-fullstory="{{ $story->story }}" data-name="{{ $story->name }}"
+                                data-job="{{ $story->job_title }}" data-avatar="{{ $avatarUrl ?? '' }}"
+                                data-initials="{{ $story->initials }}" data-color="{{ $gradientColor }}"
                                 style="width:300px;flex-shrink:0;background:white;border-radius:20px;padding:20px 22px;box-shadow:0 2px 12px rgba(0,0,0,0.06);border:1px solid #e2e8f0;cursor:pointer;">
                                 <p
                                     style="color:#475569;font-size:13px;line-height:1.6;margin-bottom:16px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;">
@@ -815,7 +815,7 @@
             function openModal(card) {
                 const name = card.dataset.name || '';
                 const job = card.dataset.job || '';
-                const story = card.dataset.story || '';
+                const story = card.dataset.fullstory || card.dataset.story || '';
                 const avatar = card.dataset.avatar || '';
                 const initials = card.dataset.initials || '';
                 const color = card.dataset.color || '3b82f6,1d4ed8';

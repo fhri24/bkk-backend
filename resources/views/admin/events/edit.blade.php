@@ -41,6 +41,7 @@
                     <div class="md:col-span-2">
                         <label class="block text-sm font-bold text-slate-700 mb-2">Lokasi <span class="text-red-500">*</span></label>
                         <input type="text" name="location" value="{{ old('location', $event->location) }}"
+                            placeholder="Contoh: Aula Utama SMKN 1 Garut / Link Zoom"
                             class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none" required>
                     </div>
 
@@ -72,7 +73,13 @@
                             class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none" required>
                     </div>
 
-                    <div></div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Biaya</label>
+                        <input type="text" name="fee" value="{{ old('fee', $event->fee) }}"
+                            placeholder="Contoh: Gratis / Rp 50.000 / TBD"
+                            class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none">
+                        <p class="text-xs text-slate-500 mt-1">Kosongkan jika belum ditentukan.</p>
+                    </div>
 
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">

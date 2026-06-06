@@ -320,6 +320,7 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
     Route::prefix('users')->name('users.')->group(function () {
         Route::get('/', [AdminUserController::class, 'index'])->name('index');
         Route::put('/{id}/status', [AdminUserController::class, 'updateStatus'])->name('update-status');
+        Route::post('/bulk-action', [AdminUserController::class, 'bulkAction'])->name('bulk-action');
     });
 
     // Perubahan ada di sini: ditambahkan route update menu untuk roles matrix toggle
@@ -355,6 +356,7 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
     });
 
     Route::get('/activity-logs', [AdminActivityLogController::class, 'index'])->name('activity-logs.index');
+    Route::delete('/activity-logs', [AdminActivityLogController::class, 'destroyAll'])->name('activity-logs.clear');
 
     /**
      * TRACER STUDY (ADMIN)
@@ -369,7 +371,7 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
 
         // Industri — Mengarah ke method industri() baru di AdminTracerStudyController
         Route::get('/industri', [AdminTracerStudyController::class, 'industri'])->name('industri');
-        Route::get('/industri/{industryTracer}', [AdminTracerStudyController::class, 'industryShow'])->name('industry.show');
+        Route::get('/industri/{industryTracer}', [AdminTracerStudyController::class, 'industryShow'])->name('industri.show');
         Route::delete('/industri/{industryTracer}', [AdminTracerStudyController::class, 'industryDestroy'])->name('industri.destroy');
 
         // TracerStudy show & destroy — wildcard, harus paling bawah

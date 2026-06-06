@@ -6,20 +6,18 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
+
     public function up(): void
 {
     Schema::table('job_applications', function (Blueprint $table) {
         if (!Schema::hasColumn('job_applications', 'full_name')) {
-            $table->string('full_name')->nullable(); // hapus after()
+            $table->string('full_name')->nullable();
         }
-        
+
         if (!Schema::hasColumn('job_applications', 'email')) {
             $table->string('email')->nullable();
         }
-        
+
         if (!Schema::hasColumn('job_applications', 'phone_number')) {
             $table->string('phone_number')->nullable();
         }

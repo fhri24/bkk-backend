@@ -1,67 +1,203 @@
-@extends('layouts.admin')
+<!DOCTYPE html>
+<html lang="id">
 
-@section('title', 'Export Peserta Acara')
-
-@section('content')
-<div class="min-h-screen bg-slate-50 py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-6">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <div>
-                    <h1 class="text-3xl font-bold text-slate-900">Export Peserta Acara</h1>
-                    <p class="text-slate-600 mt-2">Cetak atau simpan daftar peserta sesuai event yang dipilih.</p>
-                    @if($selectedEvent)
-                        <p class="text-sm text-slate-500 mt-2">Acara: <span class="font-semibold">{{ $selectedEvent->title }}</span></p>
-                    @endif
-                </div>
-                <button onclick="window.print()" class="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-5 py-3 rounded-lg text-sm font-semibold transition">
-                    <i class="fas fa-print"></i> Cetak / Simpan PDF
-                </button>
-            </div>
-        </div>
-
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm">
-                    <thead class="bg-slate-100 border-b border-slate-200">
-                        <tr>
-                            <th class="px-5 py-4 text-left font-semibold text-slate-700">Nama</th>
-                            <th class="px-5 py-4 text-left font-semibold text-slate-700">Email</th>
-                            <th class="px-5 py-4 text-left font-semibold text-slate-700">Telepon</th>
-                            <th class="px-5 py-4 text-left font-semibold text-slate-700">Institusi</th>
-                            <th class="px-5 py-4 text-left font-semibold text-slate-700">Posisi</th>
-                            <th class="px-5 py-4 text-left font-semibold text-slate-700">Status</th>
-                            <th class="px-5 py-4 text-left font-semibold text-slate-700">Tgl Daftar</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($registrations as $reg)
-                            <tr class="border-b border-slate-200">
-                                <td class="px-5 py-4 text-slate-800">{{ $reg->name }}</td>
-                                <td class="px-5 py-4 text-slate-800">{{ $reg->email }}</td>
-                                <td class="px-5 py-4 text-slate-800">{{ $reg->phone }}</td>
-                                <td class="px-5 py-4 text-slate-800">{{ $reg->institution ?? '-' }}</td>
-                                <td class="px-5 py-4 text-slate-800">{{ $reg->position ?? '-' }}</td>
-                                <td class="px-5 py-4 text-slate-800">{{ ucfirst($reg->status) }}</td>
-                                <td class="px-5 py-4 text-slate-800">{{ $reg->registered_at?->format('d M Y H:i') ?? '-' }}</td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="7" class="px-5 py-10 text-center text-slate-500">Tidak ada data registrasi untuk acara ini.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    window.addEventListener('load', function() {
-        if (window.location.search.includes('print=true')) {
-            window.print();
+<head>
+    <meta charset="UTF-8">
+    <title>Export Peserta Acara</title>
+    <style>
+        @page {
+            size: A4 landscape;
+            margin: 10mm 15mm;
         }
-    });
-</script>
-@endsection
+
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+
+            body {
+                padding: 0;
+                margin: 0;
+                background: white;
+            }
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            font-size: 11px;
+            color: #000;
+            padding: 20px;
+            background: #f8fafc;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-green {
+            background: #059669;
+            color: white;
+        }
+
+        .btn-dark {
+            background: #1e293b;
+            color: white;
+        }
+
+        .btn-blue {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-gray {
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .header-box {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+        }
+
+        .header-box h1 {
+            font-size: 20px;
+            font-weight: 700;
+            margin: 0 0 4px;
+        }
+
+        .header-box p {
+            font-size: 12px;
+            color: #64748b;
+            margin: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            font-size: 11px;
+        }
+
+        thead {
+            background: #f1f5f9;
+        }
+
+        th {
+            padding: 10px 14px;
+            text-align: left;
+            font-weight: 700;
+            color: #334155;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        td {
+            padding: 9px 14px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #1e293b;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: #f8fafc;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="no-print toolbar">
+        <a href="{{ route('admin.event-registrations.export.csv', request()->only(['event_slug', 'status'])) }}"
+            class="btn btn-green">
+            ⬇ Download Excel
+        </a>
+        <a href="{{ route('admin.event-registrations.export.pdf', request()->only(['event_slug', 'status'])) }}"
+            class="btn btn-dark">
+            ⬇ Download PDF
+        </a>
+        <button onclick="window.print()" class="btn btn-blue">
+            🖨 Cetak
+        </button>
+        <button onclick="window.close()" class="btn btn-gray">
+            ✕ Tutup
+        </button>
+    </div>
+
+    <div class="header-box">
+        <h1>Daftar Peserta Acara</h1>
+        @if ($selectedEvent)
+            <p>Acara: <strong>{{ $selectedEvent->title }}</strong></p>
+        @else
+            <p>Semua Acara</p>
+        @endif
+        <p>Dicetak pada: {{ now()->format('d M Y, H:i') }}</p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Nama</th>
+                <th>Email</th>
+                <th>Telepon</th>
+                <th>Institusi</th>
+                <th>Status</th>
+                <th>Tgl Daftar</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($registrations as $i => $reg)
+                <tr>
+                    <td>{{ $i + 1 }}</td>
+                    <td>{{ $reg->name }}</td>
+                    <td>{{ $reg->email }}</td>
+                    <td>{{ $reg->phone }}</td>
+                    <td>{{ $reg->institution ?? '-' }}</td>
+                    <td>{{ ucfirst($reg->status) }}</td>
+                    <td>{{ $reg->registered_at?->format('d M Y H:i') ?? '-' }}</td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="7" class="empty">Tidak ada data registrasi.</td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
+
+</body>
+
+</html>

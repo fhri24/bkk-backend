@@ -6,10 +6,23 @@
 @section('content')
 <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
     <div class="p-6 border-b border-slate-200">
-        <h3 class="text-lg font-bold text-slate-800 flex items-center">
-            <i class="fas fa-history text-red-600 mr-3"></i> Log Aktivitas
-        </h3>
-        <p class="text-sm text-slate-500 mt-2">Catatan login dan perubahan data yang dilakukan pengguna.</p>
+        <div class="flex items-start justify-between">
+            <div>
+                <h3 class="text-lg font-bold text-slate-800 flex items-center">
+                    <i class="fas fa-history text-red-600 mr-3"></i> Log Aktivitas
+                </h3>
+                <p class="text-sm text-slate-500 mt-2">Catatan login dan perubahan data yang dilakukan pengguna.</p>
+            </div>
+            <div class="mt-2">
+                <form action="{{ route('admin.activity-logs.clear') }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus semua log aktivitas?')" class="inline">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="inline-flex items-center rounded-lg bg-red-600 px-3 py-2 text-white hover:bg-red-700 transition">
+                        <i class="fas fa-trash-alt mr-2"></i> Hapus Semua Log
+                    </button>
+                </form>
+            </div>
+        </div>
     </div>
     <div class="table-custom">
         <table class="w-full">
