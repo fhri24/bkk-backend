@@ -995,6 +995,7 @@
                 let pos = direction === 'left' ? 0 : -oneSetW;
                 let paused = false;
                 track.addEventListener('mouseover', e => {
+                    if (window.innerWidth < 768) return;
                     const card = e.target.closest('.marquee-card');
                     if (card) {
                         paused = true;
@@ -1002,6 +1003,7 @@
                     }
                 });
                 track.addEventListener('mouseout', e => {
+                    if (window.innerWidth < 768) return;
                     const card = e.target.closest('.marquee-card');
                     if (card && (!e.relatedTarget || !card.contains(e.relatedTarget))) {
                         paused = false;
