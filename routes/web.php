@@ -253,6 +253,7 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
 
     Route::resource('news', AdminNewsController::class);
     Route::get('news/{id}/preview-json', [AdminNewsController::class, 'previewJson'])->name('news.preview-json');
+    Route::get('tips/{id}/preview-json', [AdminTipController::class, 'previewJson'])->name('tips.preview-json');
     Route::resource('events', AdminEventController::class);
 
     Route::get('/export-data', [DashboardActionController::class, 'export'])->name('export');

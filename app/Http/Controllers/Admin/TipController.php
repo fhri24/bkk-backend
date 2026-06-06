@@ -169,6 +169,25 @@ class TipController extends Controller
         return redirect()->route('admin.tips.index')->with('success', 'Tips berhasil diperbarui!');
     }
 
+    public function previewJson($id)
+    {
+        $tip = Tip::with('steps')->findOrFail($id);
+
+        return response()->json([
+            'judul' => $tip->judul,
+            'kategori' => $tip->kategori,
+            'ringkasan' => $tip->ringkasan,
+            'konten' => $tip->konten,
+            'image' => $tip->image ? Storage::disk('public')->url($tip->image) : null,
+            'pro_tips' => $tip->pro_tips ?? [],
+            'avoid_mistakes' => $tip->avoid_mistakes ?? [],
+            'steps' => $tip->steps->map(fn ($s) => [
+                'title' => $s->title,
+                'description' => $s->description,
+            ]),
+        ]);
+    }
+
     public function destroy(Tip $tip)
     {
         if ($tip->image) {
