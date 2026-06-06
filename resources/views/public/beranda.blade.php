@@ -771,45 +771,63 @@
         </div>
     </section>
 @endsection
-
 @section('extra_js')
     <script>
-        // --- MODAL KISAH ALUMNI ---
+        // --- MODAL KISAH ALUMNI (Desktop: Modal, Mobile: Bottom Sheet) ---
         (function() {
-            // Buat elemen modal secara dinamis
+            const isMobile = () => window.innerWidth < 768;
+
+            // Buat overlay
+            const overlay = document.createElement('div');
+            overlay.id = 'alumni-overlay';
+            overlay.style.cssText =
+                'display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:99998;backdrop-filter:blur(2px);';
+            document.body.appendChild(overlay);
+
+            // Buat modal desktop
             const modal = document.createElement('div');
             modal.id = 'alumni-modal';
-            modal.style.cssText =
-                'display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:16px;';
-            modal.innerHTML = `
-                <div style="background:white;border-radius:24px;padding:32px;max-width:520px;width:100%;max-height:85vh;overflow-y:auto;position:relative;box-shadow:0 25px 60px rgba(0,0,0,0.2);">
-                    <button id="alumni-modal-close" style="position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;background:#f1f5f9;border:none;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;color:#64748b;">✕</button>
-                    <div id="modal-avatar-wrap" style="margin-bottom:20px;"></div>
-                    <p id="modal-story" style="color:#475569;font-size:15px;line-height:1.8;margin-bottom:24px;"></p>
-                    <div style="height:1px;background:#e2e8f0;margin-bottom:20px;"></div>
-                    <div style="display:flex;align-items:center;gap:12px;">
-                        <div id="modal-avatar" style="flex-shrink:0;"></div>
-                        <div>
-                            <p id="modal-name" style="font-weight:700;color:#1e293b;font-size:15px;margin:0;"></p>
-                            <p id="modal-job" style="color:#64748b;font-size:13px;margin:0;"></p>
-                        </div>
-                    </div>
-                </div>
+            modal.style.cssText = `
+                display:none;position:fixed;z-index:99999;background:white;border-radius:24px;
+                padding:32px;max-width:520px;width:90%;max-height:85vh;overflow-y:auto;
+                top:50%;left:50%;transform:translate(-50%,-50%);
+                box-shadow:0 25px 60px rgba(0,0,0,0.2);
             `;
             document.body.appendChild(modal);
 
-            // Fungsi Tutup modal
-            document.getElementById('alumni-modal-close').addEventListener('click', closeModal);
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) closeModal();
-            });
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') closeModal();
-            });
+            // Buat bottom sheet mobile
+            const sheet = document.createElement('div');
+            sheet.id = 'alumni-sheet';
+            sheet.style.cssText = `
+                display:none;position:fixed;bottom:0;left:0;right:0;z-index:99999;
+                background:white;border-radius:24px 24px 0 0;
+                padding:0;max-height:80vh;overflow-y:auto;
+                box-shadow:0 -8px 40px rgba(0,0,0,0.15);
+                transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.32,0.72,0,1);
+            `;
+            sheet.innerHTML = `
+                <div style="position:sticky;top:0;background:white;padding:12px 20px 8px;z-index:1;border-radius:24px 24px 0 0;">
+                    <div style="width:40px;height:4px;background:#e2e8f0;border-radius:99px;margin:0 auto 12px;"></div>
+                </div>
+                <div id="sheet-content" style="padding:0 24px 32px;"></div>
+            `;
+            document.body.appendChild(sheet);
 
-            function closeModal() {
-                modal.style.display = 'none';
-                document.body.style.overflow = '';
+            function getInnerHTML(name, job, story, avatar, initials, color) {
+                return `
+                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+                        ${avatar
+                            ? `<img src="${avatar}" style="width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid #e2e8f0;flex-shrink:0;" onerror="this.style.display='none'">`
+                            : `<div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(to bottom right,#${color});display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:16px;flex-shrink:0;">${initials}</div>`
+                        }
+                        <div>
+                            <p style="font-weight:700;color:#1e293b;font-size:15px;margin:0;">${name}</p>
+                            <p style="color:#64748b;font-size:13px;margin:0;">${job}</p>
+                        </div>
+                    </div>
+                    <div style="height:1px;background:#f1f5f9;margin-bottom:16px;"></div>
+                    <p style="color:#475569;font-size:14px;line-height:1.8;margin:0;">${story}</p>
+                `;
             }
 
             function openModal(card) {
@@ -819,25 +837,55 @@
                 const avatar = card.dataset.avatar || '';
                 const initials = card.dataset.initials || '';
                 const color = card.dataset.color || '3b82f6,1d4ed8';
+                const html = getInnerHTML(name, job, story, avatar, initials, color);
 
-                document.getElementById('modal-story').textContent = story;
-                document.getElementById('modal-name').textContent = name;
-                document.getElementById('modal-job').textContent = job;
+                overlay.style.display = 'block';
 
-                const avatarEl = document.getElementById('modal-avatar');
-                if (avatar) {
-                    avatarEl.innerHTML =
-                        `<img src="${avatar}" style="width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid #e2e8f0;" onerror="this.parentElement.innerHTML='<div style=\\'width:52px;height:52px;border-radius:50%;background:linear-gradient(to bottom right,#${color});display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:16px;\\'>${initials}</div>'"  alt="${name}">`;
+                if (isMobile()) {
+                    document.getElementById('sheet-content').innerHTML = html;
+                    sheet.style.display = 'block';
+                    document.body.style.overflow = 'hidden';
+                    requestAnimationFrame(() => {
+                        sheet.style.transform = 'translateY(0)';
+                    });
                 } else {
-                    avatarEl.innerHTML =
-                        `<div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(to bottom right,#${color});display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:16px;">${initials}</div>`;
+                    modal.innerHTML = `
+                        <button onclick="closeAlumni()" style="position:absolute;top:16px;right:16px;width:32px;height:32px;background:#f1f5f9;border:none;border-radius:50%;cursor:pointer;font-size:16px;color:#64748b;">✕</button>
+                        ${html}
+                    `;
+                    modal.style.display = 'block';
+                    document.body.style.overflow = 'hidden';
                 }
-
-                modal.style.display = 'flex';
-                document.body.style.overflow = 'hidden'; // Kunci scroll background saat modal terbuka
             }
 
-            // Event delegation — tangkap klik di semua track termasuk element hasil clone marquee
+            function closeAlumni() {
+                overlay.style.display = 'none';
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+                sheet.style.transform = 'translateY(100%)';
+                setTimeout(() => {
+                    sheet.style.display = 'none';
+                }, 300);
+            }
+
+            // Touch swipe down untuk tutup bottom sheet
+            let startY = 0;
+            sheet.addEventListener('touchstart', e => {
+                startY = e.touches[0].clientY;
+            });
+            sheet.addEventListener('touchend', e => {
+                if (e.changedTouches[0].clientY - startY > 80) closeAlumni();
+            });
+
+            overlay.addEventListener('click', closeAlumni);
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape') closeAlumni();
+            });
+
+            // Expose global
+            window.closeAlumni = closeAlumni;
+
+            // Event delegation klik card
             document.addEventListener('click', function(e) {
                 const card = e.target.closest('.marquee-card');
                 if (card) openModal(card);
