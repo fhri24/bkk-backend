@@ -252,6 +252,7 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
     Route::delete('publik/{id}', [AdminPublikController::class, 'destroy'])->name('publik.destroy');
 
     Route::resource('news', AdminNewsController::class);
+    Route::get('news/{id}/preview-json', [AdminNewsController::class, 'previewJson'])->name('news.preview-json');
     Route::resource('events', AdminEventController::class);
 
     Route::get('/export-data', [DashboardActionController::class, 'export'])->name('export');

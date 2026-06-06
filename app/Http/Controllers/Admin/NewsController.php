@@ -14,6 +14,7 @@ class NewsController extends Controller
     public function index()
     {
         $news = News::latest()->get();
+
         return view('admin.news.index', compact('news'));
     }
 
@@ -34,10 +35,10 @@ class NewsController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title'   => 'required|string|max:255',
+            'title' => 'required|string|max:255',
             'content' => 'required',
-            'tags'    => 'nullable|string',
-            'image'   => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'tags' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         $imagePath = null;
@@ -46,17 +47,17 @@ class NewsController extends Controller
         }
 
         DB::table('news')->insert([
-            'title'        => $request->title,
-            'slug'         => Str::slug($request->title),
-            'author_id'    => auth()->id(),
-            'content'      => $request->content,
-            'excerpt'      => Str::limit(strip_tags($request->content), 150),
-            'tags'         => $request->tags,
-            'image'        => $imagePath,
+            'title' => $request->title,
+            'slug' => Str::slug($request->title),
+            'author_id' => auth()->id(),
+            'content' => $request->content,
+            'excerpt' => Str::limit(strip_tags($request->content), 150),
+            'tags' => $request->tags,
+            'image' => $imagePath,
             'published_at' => now(),
             'is_published' => 1,
-            'created_at'   => now(),
-            'updated_at'   => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         return redirect()->route('admin.news.index')->with('success', 'Berita berhasil diterbitkan!');
@@ -65,6 +66,7 @@ class NewsController extends Controller
     public function edit($id)
     {
         $news = News::findOrFail($id);
+
         return view('admin.news.edit', compact('news'));
     }
 
@@ -73,18 +75,18 @@ class NewsController extends Controller
         $news = News::findOrFail($id);
 
         $request->validate([
-            'title'   => 'required|string|max:255',
+            'title' => 'required|string|max:255',
             'content' => 'required',
-            'tags'    => 'nullable|string',
-            'image'   => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'tags' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         $data = [
-            'title'      => $request->title,
-            'slug'       => Str::slug($request->title),
-            'content'    => $request->content,
-            'excerpt'    => Str::limit(strip_tags($request->content), 150),
-            'tags'       => $request->tags,
+            'title' => $request->title,
+            'slug' => Str::slug($request->title),
+            'content' => $request->content,
+            'excerpt' => Str::limit(strip_tags($request->content), 150),
+            'tags' => $request->tags,
             'updated_at' => now(),
         ];
 
@@ -111,6 +113,20 @@ class NewsController extends Controller
             ->get();
 
         return view('public.berita_detail', compact('news', 'relatedNews'));
+    }
+
+    public function previewJson($id)
+    {
+        $news = News::with('author')->findOrFail($id);
+
+        return response()->json([
+            'title' => $news->title,
+            'category' => $news->category ?? 'Umum',
+            'body' => $news->content,
+            'image' => $news->image ? Storage::disk('public')->url($news->image) : null,
+            'author' => optional($news->author)->name ?? 'Admin',
+            'created_at' => $news->created_at->format('d M Y'),
+        ]);
     }
 
     public function destroy($id)

@@ -1728,6 +1728,7 @@ namespace App\Models {
     /**
      * App\Models\Event
      *
+     * @property string|null $fee
      * @property string|null $thumbnail
      * @property \Illuminate\Support\Carbon|null $updated_at
      * @property \Illuminate\Support\Carbon|null $created_at
@@ -1761,6 +1762,7 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<Event>|Event whereCreatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Event>|Event whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Event>|Event whereThumbnail($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Event>|Event whereFee($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Event>|Event newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Event>|Event newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Event>|Event query()
@@ -9603,6 +9605,7 @@ namespace App\Models {
     /**
      * App\Models\User
      *
+     * @property string|null $deleted_at
      * @property int|null $company_id
      * @property string|null $avatar
      * @property string|null $social_provider
@@ -9649,6 +9652,7 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereSocialProvider($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereAvatar($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereCompanyId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereDeletedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User query()
