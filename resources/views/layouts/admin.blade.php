@@ -214,7 +214,7 @@
 
         {{-- ===== SIDEBAR OVERLAY (Mobile) ===== --}}
         <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/50 z-30 hidden lg:hidden"
-             onclick="document.querySelector('.sidebar').classList.remove('mobile-active'); this.classList.add('hidden')">
+            onclick="document.querySelector('.sidebar').classList.remove('mobile-active'); this.classList.add('hidden')">
         </div>
 
         {{-- ===== SIDEBAR ===== --}}
@@ -234,8 +234,8 @@
             {{ $logoPath ? 'bg-transparent' : 'bg-blue-400' }}">
 
                         @if ($logoPath)
-                            <img src="{{ Storage::disk('public')->url($logoPath) }}" class="w-full h-full object-contain p-1"
-                                alt="Logo Sekolah">
+                            <img src="{{ Storage::disk('public')->url($logoPath) }}"
+                                class="w-full h-full object-contain p-1" alt="Logo Sekolah">
                         @else
                             <span class="font-bold text-lg text-white">
                                 {{ strtoupper(substr($schoolName, 0, 3)) }}
@@ -387,11 +387,11 @@
                             <i class="fas fa-chevron-down transition-transform duration-200"></i>
                         </button>
                         <div class="tracer-submenu ml-8 space-y-1 hidden">
-                                @php $unreadTracer = \Illuminate\Support\Facades\DB::table('tracer_studies')->where('is_read', 0)->count(); @endphp
-                                @if ($unreadTracer > 0)
-                                    <span
-                                        class="ml-auto bg-blue-400 text-blue-900 text-[10px] font-bold px-2 py-0.5 rounded-full">{{ $unreadTracer }}</span>
-                                @endif
+                            @php $unreadTracer = \Illuminate\Support\Facades\DB::table('tracer_studies')->where('is_read', 0)->count(); @endphp
+                            @if ($unreadTracer > 0)
+                                <span
+                                    class="ml-auto bg-blue-400 text-blue-900 text-[10px] font-bold px-2 py-0.5 rounded-full">{{ $unreadTracer }}</span>
+                            @endif
                             </a>
 
                             {{-- Laporan Industri --}}
@@ -465,12 +465,6 @@
                             <a href="{{ route('admin.settings.profile') }}"
                                 class="sidebar-link block px-3 py-2 rounded-lg text-white/80 hover:text-white {{ request()->segment(3) === 'profile' ? 'active' : '' }}">Profil
                                 Sekolah</a>
-                            <a href="{{ route('admin.settings.majors.index') }}"
-                                class="sidebar-link block px-3 py-2 rounded-lg text-white/80 hover:text-white {{ request()->segment(3) === 'majors' ? 'active' : '' }}">Tabel
-                                Jurusan</a>
-                            <a href="{{ route('admin.settings.years.index') }}"
-                                class="sidebar-link block px-3 py-2 rounded-lg text-white/80 hover:text-white {{ request()->segment(3) === 'years' ? 'active' : '' }}">Tahun
-                                Lulus</a>
                         </div>
                     </div>
                 @endif
@@ -755,4 +749,3 @@
 </body>
 
 </html>
-

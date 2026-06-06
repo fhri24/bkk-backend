@@ -334,18 +334,6 @@ Route::middleware(['auth', 'role:any_admin'])->prefix('admin')->name('admin.')->
     Route::prefix('settings')->name('settings.')->group(function () {
         Route::get('/profile', [AdminSettingController::class, 'profile'])->name('profile');
         Route::put('/profile', [AdminSettingController::class, 'updateProfile'])->name('profile.update');
-
-        Route::get('/majors', [AdminSettingController::class, 'majorsIndex'])->name('majors.index');
-        Route::post('/majors', [AdminSettingController::class, 'storeMajor'])->name('majors.store');
-        Route::get('/majors/{major}/edit', [AdminSettingController::class, 'editMajor'])->name('majors.edit');
-        Route::put('/majors/{major}', [AdminSettingController::class, 'updateMajor'])->name('majors.update');
-        Route::delete('/majors/{major}', [AdminSettingController::class, 'destroyMajor'])->name('majors.destroy');
-
-        Route::get('/years', [AdminSettingController::class, 'yearsIndex'])->name('years.index');
-        Route::post('/years', [AdminSettingController::class, 'storeYear'])->name('years.store');
-        Route::get('/years/{year}/edit', [AdminSettingController::class, 'editYear'])->name('years.edit');
-        Route::put('/years/{year}', [AdminSettingController::class, 'updateYear'])->name('years.update');
-        Route::delete('/years/{year}', [AdminSettingController::class, 'destroyYear'])->name('years.destroy');
     });
 
     Route::prefix('reports')->name('reports.')->group(function () {
