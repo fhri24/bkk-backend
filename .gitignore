@@ -22,3 +22,6 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 /vendor
+_laravel_ide_helper.php
+_laravel_ide_helper_models.php
+.phpstorm.meta.php
