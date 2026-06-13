@@ -19,12 +19,14 @@
                     <div
                         class="w-20 h-20 rounded-2xl bg-white shadow-lg border-4 border-white mx-auto flex items-center justify-center overflow-hidden">
                         @if (!empty($profile->logo ?? $profile->logo_path))
-                            <img src="{{ Storage::url(($profile->logo ?? $profile->logo_path)) }}"
-                                class="w-full h-full object-contain p-1" alt="Logo" id="preview-logo">
-                        @else
-                            <i class="fas fa-graduation-cap text-[#001f3f] text-2xl" id="logo-placeholder"></i>
-                            <img src="" class="w-full h-full object-contain p-1 hidden" id="preview-logo">
-                        @endif
+    <img src="{{ \App\Services\SchoolProfileService::storageUrl($profile->logo ?? $profile->logo_path) }}"
+        class="w-full h-full object-contain p-2" id="logo-thumb">
+@else
+    <div id="logo-thumb-placeholder" class="text-center">
+        <i class="fas fa-image text-slate-300 text-2xl"></i>
+    </div>
+    <img src="" class="w-full h-full object-contain p-2 hidden" id="logo-thumb">
+@endif
                     </div>
                     <h2 class="font-bold text-slate-800 text-lg mt-3" id="preview-name">
                         {{ $profile->school_name ?? 'Nama Sekolah' }}
@@ -118,14 +120,12 @@
                                 <div class="w-20 h-20 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden shrink-0"
                                     id="logo-drop-zone">
                                     @if (!empty($profile->logo ?? $profile->logo_path))
-                                        <img src="{{ Storage::url(($profile->logo ?? $profile->logo_path)) }}"
-                                            class="w-full h-full object-contain p-2" id="logo-thumb">
-                                    @else
-                                        <div id="logo-thumb-placeholder" class="text-center">
-                                            <i class="fas fa-image text-slate-300 text-2xl"></i>
-                                        </div>
-                                        <img src="" class="w-full h-full object-contain p-2 hidden" id="logo-thumb">
-                                    @endif
+    <img src="{{ \App\Services\SchoolProfileService::storageUrl($profile->logo ?? $profile->logo_path) }}"
+        class="w-full h-full object-contain p-1" alt="Logo" id="preview-logo">
+@else
+    <i class="fas fa-graduation-cap text-[#001f3f] text-2xl" id="logo-placeholder"></i>
+    <img src="" class="w-full h-full object-contain p-1 hidden" id="preview-logo">
+@endif
                                 </div>
                                 {{-- Input --}}
                                 <div class="flex-1">

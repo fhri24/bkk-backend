@@ -28,4 +28,16 @@ class SchoolProfileService
     {
         Cache::forget(self::CACHE_KEY);
     }
+
+    public static function storageUrl(?string $path): ?string
+{
+    if (!$path) return null;
+    
+    // Kalau sudah full URL, langsung return
+    if (str_starts_with($path, 'http')) return $path;
+    
+    // Generate URL Supabase Storage
+    $base = env('AWS_URL');
+    return rtrim($base, '/') . '/' . ltrim($path, '/');
+}
 }

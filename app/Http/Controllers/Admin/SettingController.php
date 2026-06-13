@@ -89,14 +89,15 @@ class SettingController extends Controller
         }
         // ===== Upload Logo =====
         if ($request->hasFile('logo')) {
-            // Hapus logo lama kalau ada
-            $oldLogo = $profile->logo_path ?? $profile->logo ?? null;
-            if ($oldLogo && Storage::exists($oldLogo)) {
-                Storage::delete($oldLogo);
-            }
-            $validated['logo_path'] = $request->file('logo')->store('school-logos');
-            $validated['logo']      = $validated['logo_path']; // sync dua kolom
-        }
+    $oldLogo = $profile->logo_path ?? $profile->logo ?? null;
+    if ($oldLogo && !str_starts_with($oldLogo, 'http')) {
+        Storage::disk('s3')->delete($oldLogo);
+    }
+    
+    $path = $request->file('logo')->store('school-logos', 's3');
+    $validated['logo_path'] = $path;
+    $validated['logo'] = $path;
+}
 
         $profile->fill($validated);
         $profile->save();
