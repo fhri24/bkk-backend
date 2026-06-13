@@ -234,7 +234,7 @@
             {{ $logoPath ? 'bg-transparent' : 'bg-blue-400' }}">
 
                         @if ($logoPath)
-                            <img src="{{ Storage::disk('public')->url($logoPath) }}"
+                            <img src="{{ \App\Services\SchoolProfileService::storageUrl($logoPath) }}"
                                 class="w-full h-full object-contain p-1" alt="Logo Sekolah">
                         @else
                             <span class="font-bold text-lg text-white">
@@ -256,14 +256,6 @@
 
                 </div>
             </div>
-
-            {{-- 
-    GANTI SELURUH BAGIAN <nav class="flex-1 ..."> di layouts/admin.blade.php 
-    dengan kode di bawah ini.
-    
-    Cara: cari baris "<nav class="flex-1 overflow-y-auto px-4 py-6">"
-    sampai tag "</nav>" penutupnya, lalu replace dengan ini.
---}}
 
             <nav class="flex-1 overflow-y-auto px-4 py-6">
                 @php

@@ -7,10 +7,10 @@
                 <div class="flex items-center space-x-3 mb-6">
                     <div class="w-14 h-14 flex items-center justify-center overflow-hidden">
                         @if (!empty($schoolProfile) && !empty($schoolProfile->logo_path))
-                            <img src="{{ Storage::url($schoolProfile->logo_path) }}"
+                            <img src="{{ \App\Services\SchoolProfileService::storageUrl($schoolProfile->logo_path) }}"
                                 class="w-full h-full object-contain p-1" alt="Logo">
                         @elseif(!empty($schoolProfile) && !empty($schoolProfile->logo))
-                            <img src="{{ Storage::url($schoolProfile->logo) }}"
+                            <img src="{{ \App\Services\SchoolProfileService::storageUrl($schoolProfile->logo) }}"
                                 class="w-full h-full object-contain p-1" alt="Logo">
                         @else
                             <i class="fas fa-briefcase text-[#001f3f]"></i>
